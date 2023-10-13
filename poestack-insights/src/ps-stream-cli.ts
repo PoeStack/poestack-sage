@@ -1,11 +1,11 @@
-
 import "reflect-metadata";
+
 require('dotenv').config()
 
-import { container } from "tsyringe";
-import { PoeApiPublicStashResponse } from "@gql/resolvers-types";
-import { createClient } from "redis";
-import { GGGStashStreamProvider, PublicStashStreamProvider } from "./services/public-stash-stream-providers";
+import {container} from "tsyringe";
+import {PoeApiPublicStashResponse} from "@gql/resolvers-types";
+import {createClient} from "redis";
+import {GGGStashStreamProvider, PublicStashStreamProvider} from "./services/public-stash-stream-providers";
 import ItemGroupingService from "./services/item-grouping-service";
 
 (async () => {
@@ -14,7 +14,7 @@ import ItemGroupingService from "./services/item-grouping-service";
 
     const itemGroupingService = container.resolve(ItemGroupingService);
 
-    const client = await createClient({ url: process.env.REDIS_URL })
+    const client = await createClient({url: process.env.REDIS_URL})
         .on('error', err => console.log('Redis Client Error', err))
         .connect();
 
@@ -38,13 +38,15 @@ import ItemGroupingService from "./services/item-grouping-service";
                             const group = itemGroupingService.findOrCreateItemGroup(item);
                             if (group) {
                                 if (!toWrite[group.hashString]) {
-                                    toWrite[group.hashString] = { stackSize: 0, value: '', currencyType: '' };
+                                    toWrite[group.hashString] = {stackSize: 0, value: '', currencyType: ''};
                                 }
 
-                                const mappingKey = `igmk:${group.key}`
-                                multi
-                                    .set(mappingKey, group.hashString)
-                                    .expire(mappingKey, 60 * 60 * 60)
+                                if (group.parentHashString === null) {
+                                    const mappingKey = `igmk:${group.key}`
+                                    multi
+                                        .set(mappingKey, group.hashString)
+                                        .expire(mappingKey, 60 * 60 * 60)
+                                }
 
                                 const noteSplit = note.trim().split(" ");
                                 const valueString = noteSplit[1];

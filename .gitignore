@@ -1,4 +1,12 @@
-node_modules
-dist
+**/node_modules**
+**/dist**
+**/build**
+**.gradle**
+**.webpack**
+.idea
 poe-offline-data
-.env
+*.env
+
+# CDK asset staging directory
+*.cdk.staging
+*cdk.out

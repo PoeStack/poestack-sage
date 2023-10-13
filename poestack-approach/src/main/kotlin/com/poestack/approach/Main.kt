@@ -11,6 +11,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.util.*
 import kotlinx.serialization.json.Json
 import redis.clients.jedis.JedisPooled
 
@@ -21,7 +22,7 @@ fun main(args: Array<String>) {
 
     val itemGroupValuationService = ItemGroupValuationService(pool)
 
-    embeddedServer(Netty, port = 8080) {
+    embeddedServer(Netty, port = 8081) {
         extracted(itemGroupValuationService, pool)
     }.start(wait = true)
 }
@@ -40,8 +41,12 @@ private fun Application.extracted(
     routing {
         get("/api/approach/item-groups/{league}/valuations") {
             val league = call.parameters["league"]!!
-            val itemGroupHash = call.request.queryParameters["itemGroupHash"]!!
-            val valuation = itemGroupValuationService.findValuation(league, itemGroupHash)
+            var itemGroupHash = call.request.queryParameters["itemGroupHash"]
+            if (itemGroupHash == null) {
+                val itemGroupKey = call.request.queryParameters["itemGroupKey"]
+                itemGroupHash = pool.get("igmk:${itemGroupKey!!.toLowerCasePreservingASCIIRules()}")
+            }
+            val valuation = itemGroupValuationService.findValuation(league, itemGroupHash!!)
             call.respond(valuation)
         }
         post("/api/approach/item-groups/{league}/valuations/search") {
