@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.0"
     kotlin("plugin.serialization").version("1.9.10")
+    id("com.github.johnrengelman.shadow").version("8.1.1")
     application
 }
 
@@ -16,6 +17,8 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:2.3.5")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.5")
     implementation("io.ktor:ktor-server-content-negotiation:2.3.5")
+
+    implementation("com.amazonaws:aws-lambda-java-core:1.2.0")
 
     implementation("redis.clients:jedis:5.0.0")
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
