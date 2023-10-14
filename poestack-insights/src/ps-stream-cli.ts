@@ -4,9 +4,10 @@ require('dotenv').config()
 
 import {container} from "tsyringe";
 import {PoeApiPublicStashResponse} from "@gql/resolvers-types";
-import {createClient} from "redis";
+
 import {GGGStashStreamProvider, PublicStashStreamProvider} from "./services/public-stash-stream-providers";
 import ItemGroupingService from "./services/item-grouping-service";
+import Redis from "ioredis";
 
 (async () => {
     const streamProvider: PublicStashStreamProvider = container.resolve(GGGStashStreamProvider);
@@ -14,9 +15,10 @@ import ItemGroupingService from "./services/item-grouping-service";
 
     const itemGroupingService = container.resolve(ItemGroupingService);
 
-    const client = await createClient({url: process.env.REDIS_URL})
-        .on('error', err => console.log('Redis Client Error', err))
-        .connect();
+    const client = new Redis.Cluster([{
+        host: "ps-stream-cache-2.lgibek.clustercfg.memorydb.us-east-1.amazonaws.com",
+        port: 6379
+    }]);
 
     for (; ;) {
         try {
@@ -26,6 +28,7 @@ import ItemGroupingService from "./services/item-grouping-service";
                 const dateTurncatedMins = Math.round(dateMs / 1000 / 60);
                 let updates = 0;
                 const multi = client.multi();
+                const multi2 = client.multi();
                 for (const stashData of data.stashes) {
                     if (!stashData.league || stashData.league.includes('(PL') || stashData.league.includes("SSF ") || stashData.league.includes("Ruthless ")) {
                         continue;
@@ -42,8 +45,8 @@ import ItemGroupingService from "./services/item-grouping-service";
                                 }
 
                                 if (group.parentHashString === null) {
-                                    const mappingKey = `igmk:${group.key}`
-                                    multi
+                                    const mappingKey = `{igmk}:${group.key}`
+                                    multi2
                                         .set(mappingKey, group.hashString)
                                         .expire(mappingKey, 60 * 60 * 60)
                                 }
@@ -63,16 +66,24 @@ import ItemGroupingService from "./services/item-grouping-service";
 
                     for (const [itemGroupHashString, data] of Object.entries(toWrite)) {
                         updates++;
-                        const groupKey = `psEntries:${stashData.league}:${itemGroupHashString}`;
+                        const groupKey = `{psEntries}:${stashData.league}:${itemGroupHashString}`;
                         multi
-                            .hSet(groupKey, stashData.accountName, `${dateTurncatedMins},${data.stackSize},${data.value},${data.currencyType}`)
+                            .hset(groupKey, stashData.accountName, `${dateTurncatedMins},${data.stackSize},${data.value},${data.currencyType}`)
                             .expire(groupKey, 60 * 60 * 48)
                     }
                 }
 
                 if (updates > 0) {
-                    await multi.exec();
-                    console.log("finished", updates, "updates in", Date.now() - dateMs, "ms");
+                    Promise.all(
+                        [
+                            multi.exec(),
+                            multi2.exec()
+                        ]
+                    ).catch((e) => {
+                        console.log("error in write", e)
+                    }).finally(() => {
+                        console.log("finished", updates, "updates in", Date.now() - dateMs, "ms");
+                    })
                 }
             }
         } catch (error) {

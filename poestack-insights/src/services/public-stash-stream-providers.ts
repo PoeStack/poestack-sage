@@ -19,7 +19,7 @@ export class GGGStashStreamProvider implements PublicStashStreamProvider {
     }
 
     public async init() {
-        const changeIds = await this.poeApi.fetchCurrentChangeIds();
+        const changeIds = "2145640831-2137918784-2068567059-2296748038-2229165629\"";
         this.lastChangeId = changeIds;
     }
 
