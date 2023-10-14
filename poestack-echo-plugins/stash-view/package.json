@@ -11,5 +11,8 @@
   "devDependencies": {
     "@types/node": "^20.8.6",
     "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "poestack-echo-common": "file:../../poestack-echo-common"
   }
 }
