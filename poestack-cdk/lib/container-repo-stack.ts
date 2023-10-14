@@ -13,7 +13,7 @@ export class ContainerRepoStack extends cdk.Stack {
             repositoryName: "poestack-insights"
         })
         this.approachRepo = new aws_ecr.Repository(this, "ApproachRepo", {
-            repositoryName: "poestack-approach"
+            repositoryName: "poestack-approach",
         })
     }
 }
