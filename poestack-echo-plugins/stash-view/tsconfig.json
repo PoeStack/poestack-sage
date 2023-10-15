@@ -1,22 +1,16 @@
 {
   "compilerOptions": {
-    "rootDirs": ["src"],
-    "outDir": "dist",
-    "lib": ["es2022", "esnext.asynciterable", "esnext", "dom"],
-    "target": "es2022",
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "target": "ES2015",
+    "module": "CommonJS",
+    "strict": true,
     "esModuleInterop": true,
-    "types": ["node"],
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "baseUrl": "src",
-    "paths": {
-      "@gql/*": ["gql/__generated__/*"],
-      "@poe/*": ["poe/*"],
-      "@services/*": ["services/*"],
-    }
-  }
+    "moduleResolution":"node",
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "declaration": true,
+    "jsx": "react-jsx"
+  },
+  "include": [
+    "./src"
+  ]
 }

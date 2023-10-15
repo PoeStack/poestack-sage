@@ -1,12 +1,14 @@
 {
   "name": "poestack-echo-common",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "type": "module",
+  "version": "1.0.2",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "files": [
+    "dist/"
+  ],
   "scripts": {
-    "build": "npx tsc",
-    "test": "node dist/test.js"
+    "tsc": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+    "prepublishOnly": "npm run tsc"
   },
   "devDependencies": {
     "@types/node": "^20.8.6",

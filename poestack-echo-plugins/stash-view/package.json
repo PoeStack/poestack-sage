@@ -2,17 +2,19 @@
   "name": "poestack-echo-common",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
   "scripts": {
-    "build": "npx tsc",
+    "build": "tsc",
     "test": "node dist/test.js"
   },
   "devDependencies": {
     "@types/node": "^20.8.6",
+    "@types/react": "^18.2.28",
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "poestack-echo-common": "file:../../poestack-echo-common"
+    "poestack-echo-common": "file:../../poestack-echo-common/",
+    "react": "^18.2.0"
   }
 }

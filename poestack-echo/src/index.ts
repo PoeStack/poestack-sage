@@ -23,7 +23,9 @@ const createWindow = (): void => {
     mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 };
 
-app.on('ready', createWindow);
+app.whenReady().then(() => {
+    createWindow()
+})
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {

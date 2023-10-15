@@ -4,7 +4,6 @@
 **/.gradle**
 **.webpack**
 .idea
-poe-offline-data
 *.env
 
 # CDK asset staging directory
