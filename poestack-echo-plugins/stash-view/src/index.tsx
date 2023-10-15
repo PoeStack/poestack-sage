@@ -1,17 +1,21 @@
-import * as fs from "fs";
-import Path from "path";
+import {bind} from "@react-rxjs/core";
+import {PoeApi} from "poestack-echo-common";
+import {useEffect, useState} from "react";
+
+
+const poeApi = new PoeApi();
+const [useCurrentStash, y] = bind(poeApi.currentStash, {})
 
 function StashViewPlugin() {
+    console.log("Render")
 
+    useEffect(() => {
+        poeApi.loadTab("0d67eb540d")
+    }, [])
 
-    const poeItems = JSON.parse(fs.readFileSync(Path.resolve(process.cwd(), "..", "poe-offline-data/stash/run-1/f5c66b30a1.json")).toString())
+    const currentStash = useCurrentStash()
 
-    return <div>{poeItems?.items.map((e: any) => (
-        <div>
-            <div>{e.icon}</div>
-            <img src={e.icon}/>
-        </div>
-    ))}</div>
+    return <div>{JSON.stringify(currentStash)}</div>
 }
 
 export {

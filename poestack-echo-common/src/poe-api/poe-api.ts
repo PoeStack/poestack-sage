@@ -5,46 +5,29 @@ import {PoeStashTab} from "./poe-api-model";
 
 export class PoeApi {
 
-    public currentStash = new BehaviorSubject<{
-        stashTabs: PoeStashTab[],
-        stashTabContents: Record<any, any>
-    }>({stashTabs: [], stashTabContents: {}})
+    public stashTabContent$: Subject<any>;
+    public currentStash: BehaviorSubject<any>
 
-    public stashTabs = new Observable<PoeStashTab[]>((s) => {
-        console.log("Loading Stash Tabs")
-        fs.readFile(Path.resolve(process.cwd(), "..", `poe-offline-data/stash/run-1/tabs.json`), (e, d) => {
-            const tabs = JSON.parse(d.toString());
-            s.next(tabs)
-            s.complete()
+    constructor() {
+        console.log("poe api construct")
+        this.stashTabContent$ = new Subject<any>()
+        this.currentStash = new BehaviorSubject({})
+        this.stashTabContent$.subscribe((stashUpdate) => {
+            const nextStash: any = {...this.currentStash.value}
+            nextStash[stashUpdate.id] = stashUpdate
+            this.currentStash.next(nextStash);
         })
-    }).pipe(share({
-        connector: () => new ReplaySubject(1),
-        resetOnComplete: () => timer(5000),
-    }))
-
-    public flatStashTabs = this.stashTabs
-        .pipe(
-            concatMap((tabs) => tabs),
-            concatMap(tab => tab.children ? tab.children : [tab]),
-        )
-
-    public loadTab(path: string) {
-        this.currentStash
-            .pipe(take(1))
-            .subscribe((e) => {
-                new Observable<any>((s) => {
-                    console.log("Loading item data", path)
-                    fs.readFile(Path.resolve(process.cwd(), "..", `poe-offline-data/stash/run-1/${path}.json`), (e, d) => {
-                        if (d) {
-                            s.next(JSON.parse(d.toString()))
-                        }
-                        s.complete()
-                    })
-                }).subscribe((tabData) => {
-                    e.stashTabContents[path] = tabData
-                    this.currentStash.next(e)
-                })
-            })
     }
 
+    public loadTab(path: string) {
+        new Observable<any>((s) => {
+            console.log("Loading item data", path)
+            fs.readFile(Path.resolve(process.cwd(), "..", `poe-offline-data/stash/run-1/${path}.json`), (e, d) => {
+                if (d) {
+                    s.next(JSON.parse(d.toString()))
+                }
+                s.complete()
+            })
+        }).subscribe((e) => this.stashTabContent$.next(e))
+    }
 }

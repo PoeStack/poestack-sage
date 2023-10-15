@@ -23,15 +23,12 @@ interval(5000).subscribe(() => {
     poeApi.loadTab("0dcf95da7a")
 })
 
+interval(10000).subscribe(() => {
+    poeApi.loadTab("0fbced58da")
+})
 
-poeApi.currentStash
-    .subscribe(() => {
-        poeApi.currentStash
-            .pipe(
-                take(1),
-                mergeMap((e) => Object.values(e.stashTabContents)),
-                concatMap((e) => e.items),
-                tap((e) => console.log(e)),
-                count((e: any) => e.frameType === 3)
-            ).subscribe((e) => console.log(e))
-    })
+poeApi.stashTabContent$.subscribe((e) => {
+    console.log("update ", e.id)
+})
+
+poeApi.currentStash.subscribe((e) => console.log("curr", Object.keys(e)))
