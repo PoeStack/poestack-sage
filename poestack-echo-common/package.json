@@ -7,11 +7,15 @@
     "dist/"
   ],
   "scripts": {
-    "tsc": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+    "test": "npm run build && node dist/cjs/poe-api-test.js",
     "prepublishOnly": "npm run tsc"
   },
   "devDependencies": {
     "@types/node": "^20.8.6",
     "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "rxjs": "^7.8.1"
   }
 }

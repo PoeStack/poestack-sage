@@ -1,8 +1,8 @@
 import * as cdk from 'aws-cdk-lib';
-import {aws_ec2, aws_ecr, aws_ecs, aws_lambda, aws_memorydb, Duration, RemovalPolicy} from 'aws-cdk-lib';
+import {aws_ec2, aws_ecs, aws_memorydb} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import * as ec2 from "aws-cdk-lib/aws-ec2";
-import {Peer, Port, SecurityGroup} from "aws-cdk-lib/aws-ec2";
+import {Peer, Port, SecurityGroup, SubnetType} from "aws-cdk-lib/aws-ec2";
 import {ContainerRepoStack} from "./container-repo-stack";
 import {Bucket} from "aws-cdk-lib/aws-s3";
 
@@ -22,7 +22,10 @@ export class SageStack extends cdk.Stack {
         this.configBucket = new Bucket(this, "sage-config", {bucketName: "sage-config"})
 
         this.vpc = new aws_ec2.Vpc(this, "VPC", {
-            availabilityZones: ['us-east-1c', 'us-east-1d', 'us-east-1b']
+            availabilityZones: ['us-east-1c', 'us-east-1d', 'us-east-1b'],
+            subnetConfiguration: [
+                {cidrMask: 18, name: 'Public', subnetType: SubnetType.PUBLIC},
+            ]
         })
 
         const redisSubnetGroup = new aws_memorydb.CfnSubnetGroup(this, "redisSubnetGroup", {
@@ -56,6 +59,7 @@ export class SageStack extends cdk.Stack {
 
         this.ecsCluster.addCapacity("DefaultAutoScalingGroupCapacity", {
             allowAllOutbound: true,
+            vpcSubnets: this.vpc.selectSubnets({subnetType: SubnetType.PUBLIC}),
             instanceType: new ec2.InstanceType("t2.medium"),
             minCapacity: 0,
             desiredCapacity: 1,
