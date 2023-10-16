@@ -1,21 +1,9 @@
-import {bind} from "@react-rxjs/core";
-import {PoeApi} from "poestack-echo-common";
-import {useEffect, useState} from "react";
-
-
-const poeApi = new PoeApi();
-const [useCurrentStash, y] = bind(poeApi.currentStash, {})
+import React, {useState} from 'react';
 
 function StashViewPlugin() {
-    console.log("Render")
-
-    useEffect(() => {
-        poeApi.loadTab("0d67eb540d")
-    }, [])
-
-    const currentStash = useCurrentStash()
-
-    return <div>{JSON.stringify(currentStash)}</div>
+    window['React2'] = require('react');
+    const [xx, setXX] = useState("ddddddd");
+    return <div>{xx}</div>
 }
 
 export {

@@ -1,16 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
+    "target": "ES6",
+    "lib": ["DOM", "ES6"],
+    "jsx": "react",
     "module": "CommonJS",
-    "strict": true,
-    "esModuleInterop": true,
-    "moduleResolution":"node",
-    "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
-    "declaration": true,
-    "jsx": "react-jsx"
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "noImplicitAny": false,
+    "strict": false
   },
-  "include": [
-    "./src"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules"]
 }
