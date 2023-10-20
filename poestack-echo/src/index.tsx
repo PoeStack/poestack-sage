@@ -1,23 +1,23 @@
 import React, {useState, useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import * as fs from "fs";
+import {usePluginManager} from "./plugins-hook";
 
-
-
-var x = null
-window['registerString'] = function (name, comp) {
-    console.log("register", name, comp)
-    x = comp
-}
-const f = fs.readFileSync("/Users/zach/workplace/poestack-sage/poestack-echo-plugins/example-plugin/dist/plugin.umd.js").toString()
-eval(f);
 
 const App: React.FC = () => {
 
+    const {selectedPlugin, setSelectedPlugin, plugins} = usePluginManager()
+
+    const PluginBody = selectedPlugin.component
+
     return (
         <div>
-            {x()}
-            <h1>Hello, React Electron TypeScript App!</h1>
+            <button onClick={() => {
+                const next = plugins.indexOf(selectedPlugin) + 1;
+                setSelectedPlugin(plugins[next >= plugins.length ? 0 : next])
+            }}>Switch
+            </button>
+            <PluginBody/>
         </div>
     );
 };

@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
+    "build": "rollup -c --configPlugin typescript",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make"
@@ -20,6 +21,10 @@
     "@react-rxjs/utils": "^0.9.7"
   },
   "devDependencies": {
+    "rollup": "^4.1.4",
+    "rollup-plugin-peer-deps-external": "^2.2.3",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/react": "^18.2.0",
     "@electron-forge/cli": "^6.4.2",
     "@electron-forge/maker-deb": "^6.4.2",
     "@electron-forge/maker-dmg": "^6.4.2",

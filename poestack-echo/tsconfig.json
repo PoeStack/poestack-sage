@@ -1,15 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "lib": ["DOM", "ES6"],
-    "jsx": "react",
-    "module": "CommonJS",
-    "outDir": "./dist",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "noImplicitAny": false,
-    "strict": false
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*.ts", "src/**/*.tsx","rollup.config.ts"],
 }
