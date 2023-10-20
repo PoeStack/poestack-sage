@@ -2,6 +2,7 @@
 **/dist**
 **/build**
 **/.gradle**
+**/out**
 **.webpack**
 .idea
 *.env

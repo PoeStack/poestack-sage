@@ -1,18 +1,33 @@
 {
   "name": "your-electron-app",
+  "description": "poestack v2",
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "dependencies": {
-    "electron": "^27.0.0",
     "electron-is-dev": "^2.0.0",
+    "electron-squirrel-startup": "^1.0.0",
+    "poestack-echo-common": "^1.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "rxjs": "^7.8.1",
+    "@react-rxjs/core": "^0.10.7",
+    "@react-rxjs/utils": "^0.9.7"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^6.4.2",
+    "@electron-forge/maker-deb": "^6.4.2",
+    "@electron-forge/maker-dmg": "^6.4.2",
+    "@electron-forge/maker-rpm": "^6.4.2",
+    "@electron-forge/maker-squirrel": "^6.4.2",
+    "@electron-forge/maker-zip": "^6.4.2",
+    "@electron-forge/plugin-auto-unpack-natives": "^6.4.2",
+    "electron": "^27.0.0",
     "electron-reload": "^2.0.0-alpha.1"
   }
 }
