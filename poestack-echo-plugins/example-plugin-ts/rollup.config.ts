@@ -12,4 +12,5 @@ const config: RollupOptions = {
     },
     plugins: [typescript(), peerDepsExternal()]
 }
+// noinspection JSUnusedGlobalSymbols
 export default config;

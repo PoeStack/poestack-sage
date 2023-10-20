@@ -1,29 +1,31 @@
 import {useEffect, useState} from 'react'
 import * as fs from "fs";
-function App() {
-    const [count, setCount] = useState(0)
-    const [body, setBody] = useState("")
+import {PoeApi} from "poestack-echo-common";
+import {bind} from "@react-rxjs/core";
+import {concatAll, map, mergeMap, take, tap, toArray} from "rxjs";
 
+
+const poeApi = new PoeApi()
+const [useStash, stash$] = bind(poeApi.currentStash, {})
+const [useItems, item$] = bind(
+    poeApi.currentItems.pipe(
+        tap((e) => console.log("item", e)),
+    ), [])
+
+function App() {
+    const items = useItems()
     useEffect(() => {
-        const x = fs.readFileSync("/Users/zach/workplace/poestack-sage/poestack-echo-plugins/example-plugin-ts/src/App.tsx").toString()
-        console.log(x)
-        setBody(x)
+        poeApi.loadTab("0dcf95da7a")
+        poeApi.loadTab("7e4bc38ef3")
     }, []);
 
+    console.log("stash items", items)
 
     return (
         <>
-            <div className="card">
-                <button onClick={() => setCount((count) => count + 1)}>
-                    count is {count}
-                </button>
-                <p>
-                    {body}
-                </p>
-            </div>
-            <p className="read-the-docs">
-                Click on the Vite and React logos to learn more
-            </p>
+            {(items as any).map((item) => (
+                <img src={item.icon}/>
+            ))}
         </>
     )
 }
