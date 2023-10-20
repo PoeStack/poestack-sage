@@ -14,13 +14,9 @@ function createWindow() {
         },
     });
 
-    mainWindow.loadFile(path.join(__dirname, 'src/index.html'));
+    console.log("create!!!")
 
-    if (isDev) {
-        require('electron-reload')(__dirname, {
-            electron: path.join(__dirname, 'node_modules', '.bin', 'electron'),
-        });
-    }
+    mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
     mainWindow.on('closed', () => {
         mainWindow = null;

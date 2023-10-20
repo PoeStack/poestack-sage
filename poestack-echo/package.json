@@ -6,9 +6,22 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && rollup -c --configPlugin typescript",
-    "start": "npm run build && electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
+    "start": "npm run build && electron .",
+    "pack": "electron-builder --dir",
+    "make": "electron-builder"
+  },
+  "build": {
+    "appId": "poestack.sage",
+    "files": [
+      "**/*",
+      "dist/index.js"
+    ],
+    "extraMetadata": {
+      "main": "main.js"
+    },
+    "mac": {
+      "category": "tool"
+    }
   },
   "dependencies": {
     "@react-rxjs/core": "^0.10.7",
@@ -22,17 +35,10 @@
     "typescript": "^5.2.2"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^6.4.2",
-    "@electron-forge/maker-deb": "^6.4.2",
-    "@electron-forge/maker-dmg": "^6.4.2",
-    "@electron-forge/maker-rpm": "^6.4.2",
-    "@electron-forge/maker-squirrel": "^6.4.2",
-    "@electron-forge/maker-zip": "^6.4.2",
-    "@electron-forge/plugin-auto-unpack-natives": "^6.4.2",
     "@rollup/plugin-typescript": "^11.1.5",
     "@types/react": "^18.2.0",
     "electron": "^27.0.0",
-    "electron-reload": "^2.0.0-alpha.1",
+    "electron-builder": "^24.6.4",
     "rimraf": "^5.0.5",
     "rollup": "^4.1.4",
     "rollup-plugin-peer-deps-external": "^2.2.3"

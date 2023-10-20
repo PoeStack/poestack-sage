@@ -6,13 +6,14 @@ import {concatAll, map, mergeMap, take, tap, toArray} from "rxjs";
 
 
 const poeApi = new PoeApi()
-const [useStash, stash$] = bind(poeApi.currentStash, {})
+const [useStash, stash$] = bind(poeApi.stashTabContent$, {})
 const [useItems, item$] = bind(
     poeApi.currentItems.pipe(
         tap((e) => console.log("item", e)),
     ), [])
 
 function App() {
+    const stash = useStash()
     const items = useItems()
     useEffect(() => {
         poeApi.loadTab("0dcf95da7a")
@@ -23,6 +24,9 @@ function App() {
 
     return (
         <>
+
+            {JSON.stringify(stash)}
+
             {(items as any).map((item) => (
                 <img src={item.icon}/>
             ))}

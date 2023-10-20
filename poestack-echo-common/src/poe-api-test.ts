@@ -1,34 +1,32 @@
-import {
-    combineLatest,
-    combineLatestAll,
-    concatMap,
-    count,
-    filter,
-    from, interval,
-    map, mergeAll,
-    mergeMap,
-    Observable, of, ReplaySubject, shareReplay, startWith, Subject, take,
-    tap
-} from 'rxjs';
-import fs from "fs";
-import Path from "path";
-import {PoeApi} from "./poe-api/poe-api";
-import {PoeStashTab} from "./poe-api/poe-api-model";
-import {takeCoverage} from "v8";
+import {PoeLogEventsApi} from "./poe-api/poe-log-events-api";
+import {bufferCount, filter, interval, shareReplay, take, tap, toArray} from "rxjs";
 
 
-const poeApi = new PoeApi()
+const poeLogApi = new PoeLogEventsApi()
+poeLogApi.startTestEvents()
 
-interval(5000).subscribe(() => {
-    poeApi.loadTab("0dcf95da7a")
+
+const replayAble = poeLogApi
+    .logEvents$
+    .pipe(
+        shareReplay(1),
+    )
+
+
+replayAble.subscribe((e) => {
+    console.log("a2", e)
 })
 
-interval(10000).subscribe(() => {
-    poeApi.loadTab("0fbced58da")
+replayAble.subscribe((e) => {
+    console.log("a1", e)
 })
 
-poeApi.stashTabContent$.subscribe((e) => {
-    console.log("update ", e.id)
-})
 
-poeApi.currentStash.subscribe((e) => console.log("curr", Object.keys(e)))
+
+interval()
+
+replayAble
+    .pipe(
+        bufferCount(5)
+    )
+    .subscribe((e) => console.log("aaa", e))
