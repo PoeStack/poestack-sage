@@ -4,17 +4,16 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "clean": "rimraf dist",
-    "build": "npm run clean && rollup -c --configPlugin typescript",
+    "clean": "rimraf build dist",
+    "build": "rimraf build && rollup -c --configPlugin typescript",
     "start": "npm run build && electron .",
-    "pack": "electron-builder --dir",
-    "make": "electron-builder"
+    "make": "npm run build && rimraf dist && electron-builder"
   },
   "build": {
     "appId": "poestack.sage",
     "files": [
       "**/*",
-      "dist/index.js"
+      "./build/**/*"
     ],
     "extraMetadata": {
       "main": "main.js"

@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const {app, BrowserWindow} = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
 
@@ -13,8 +13,6 @@ function createWindow() {
             contextIsolation: false,
         },
     });
-
-    console.log("create!!!")
 
     mainWindow.loadFile(path.join(__dirname, 'index.html'));
 

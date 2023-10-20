@@ -7,7 +7,7 @@ const config: RollupOptions = {
     input: 'src/index.tsx',
     external: ['fs'],
     output: {
-        file: "dist/index.js",
+        file: "build/index.js",
         format: 'cjs'
     },
     plugins: [typescript(), peerDepsExternal()]
