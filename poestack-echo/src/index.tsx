@@ -12,12 +12,19 @@ const App: React.FC = () => {
 
     return (
         <div>
-            <button onClick={() => {
-                const next = plugins.indexOf(selectedPlugin) + 1;
-                setSelectedPlugin(plugins[next >= plugins.length ? 0 : next])
-            }}>Switch
-            </button>
-            <PluginBody/>
+            <div>
+                {plugins.map((plugin) => (
+                    <div onClick={() => {
+                        setSelectedPlugin(plugin)
+                    }}>
+                        Plugin: {plugin.name}
+                    </div>
+                ))}
+            </div>
+
+            <div style={{paddingTop: "10px"}}>
+                <PluginBody/>
+            </div>
         </div>
     );
 };
