@@ -1,32 +1,12 @@
-import {PoeLogEventsApi} from "./poe-api/poe-log-events-api";
-import {bufferCount, filter, interval, shareReplay, take, tap, toArray} from "rxjs";
+import {StashApi} from "poe-api";
+import {from, mergeMap} from "rxjs";
 
 
-const poeLogApi = new PoeLogEventsApi()
-poeLogApi.startTestEvents()
 
-
-const replayAble = poeLogApi
-    .logEvents$
+const stashApi = new StashApi();
+stashApi.stashTabs$
     .pipe(
-        shareReplay(1),
+        mergeMap((e) => from(e))
     )
-
-
-replayAble.subscribe((e) => {
-    console.log("a2", e)
-})
-
-replayAble.subscribe((e) => {
-    console.log("a1", e)
-})
-
-
-
-interval()
-
-replayAble
-    .pipe(
-        bufferCount(5)
-    )
-    .subscribe((e) => console.log("aaa", e))
+    .subscribe((e) => console.log("tabs got", e.id))
+stashApi.load().subscribe()

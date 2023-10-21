@@ -28,6 +28,7 @@
     "electron-is-dev": "^2.0.0",
     "electron-squirrel-startup": "^1.0.0",
     "poestack-echo-common": "file:../poestack-echo-common",
+    "poe-api": "file:../poe-api",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "rxjs": "^7.8.1",

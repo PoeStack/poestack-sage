@@ -10,5 +10,6 @@
 
 2023/09/06 19:50:56 12225765 1186a0e2 [DEBUG Client 22532] Generating level 82 area "MapWorldsUndergroundRiverUnique" with seed 1501940440
 2023/09/06 19:50:57 12226890 cffb0719 [INFO Client 22532] : You have entered Caer Blaidd, Wolfpack's Den.
+2023/08/18 13:18:31 551299265 cffb0719 [INFO Client 10500] : ZachAncestor (Ranger) is now level 9
 2023/09/06 21:59:40 19948328 cffb0719 [INFO Client 6704] : ZachAncestors has been slain.
 2023/09/06 19:31:12 11041875 cffb0719 [INFO Client 22532] : You have entered Atlas Hideout.

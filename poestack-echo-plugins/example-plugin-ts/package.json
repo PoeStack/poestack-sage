@@ -10,7 +10,7 @@
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "poestack-echo-common": "file:../../poestack-echo-common",
+    "poe-api": "file:../../poe-api",
     "@react-rxjs/core": "^0.10.7",
     "@react-rxjs/utils": "^0.9.7",
     "rxjs": "^7.8.1"

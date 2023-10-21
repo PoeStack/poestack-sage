@@ -1,35 +1,24 @@
 import {useEffect, useState} from 'react'
 import * as fs from "fs";
-import {PoeApi} from "poestack-echo-common";
+
 import {bind} from "@react-rxjs/core";
 import {concatAll, map, mergeMap, take, tap, toArray} from "rxjs";
+import {StashApi} from "poe-api";
 
 
-const poeApi = new PoeApi()
-const [useStash, stash$] = bind(poeApi.stashTabContent$, {})
-const [useItems, item$] = bind(
-    poeApi.currentItems.pipe(
-        tap((e) => console.log("item", e)),
-    ), [])
+const poeApi = new StashApi()
+const [useStashTabs, stash$] = bind(poeApi.stashTabs$, [])
 
 function App() {
-    const stash = useStash()
-    const items = useItems()
+    const stashTabs = useStashTabs()
     useEffect(() => {
-        poeApi.loadTab("0dcf95da7a")
-        poeApi.loadTab("7e4bc38ef3")
+        poeApi.load().subscribe()
     }, []);
 
-    console.log("stash items", items)
 
     return (
         <>
-
-            {JSON.stringify(stash)}
-
-            {(items as any).map((item) => (
-                <img src={item.icon}/>
-            ))}
+            {JSON.stringify(stashTabs)}
         </>
     )
 }
