@@ -1,8 +1,20 @@
-// @ts-ignore
+// noinspection JSUnusedGlobalSymbols
+
 import App from "./App";
 
-export function init() {
+function start() {
+    console.log("entry")
     return {
-        navItems: [{name: "file", component: App}]
+        navItems: [{name: "ExamplePlugin v2", component: App}]
+    }
+}
+
+function destroy() {
+}
+
+export default function () {
+    return {
+        start: start,
+        destroy: destroy
     }
 }

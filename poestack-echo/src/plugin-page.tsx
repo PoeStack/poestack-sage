@@ -5,25 +5,24 @@ import fs from "fs";
 
 export const PluginPage: React.FC = () => {
 
-    const {plugins, setSelectedPlugin, selectedPlugin, setPlugins} = useEchoContext()
+    const {pluginManager} = useEchoContext()
 
-    const PluginBody = selectedPlugin.component
+    const PluginBody = pluginManager.selectedPlugin.component
 
     useEffect(() => {
         const f = fs.readFileSync("/Users/zach/workplace/poestack-sage/poestack-echo-plugins/example-plugin-ts/dist/cjs/plugin.js").toString()
-        const x = eval(f);
-        console.log("x", x)
-        const e = x();
-        console.log("e", e);
-        setPlugins([...plugins, ...e.navItems])
+        const entry = eval(f);
+        const plugin = entry();
+        const mapping = plugin.start()
+        pluginManager.setPlugins([...pluginManager.plugins, ...mapping.navItems])
     }, []);
 
     return (
         <div>
             <div>
-                {plugins.map((plugin) => (
+                {pluginManager.plugins.map((plugin) => (
                     <div onClick={() => {
-                        setSelectedPlugin(plugin)
+                        pluginManager.setSelectedPlugin(plugin)
                     }}>
                         Plugin: {plugin.name}
                     </div>
