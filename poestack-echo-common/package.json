@@ -13,11 +13,16 @@
   },
   "devDependencies": {
     "@types/node": "^20.8.6",
+    "@types/react": "^18.2.31",
     "typescript": "^5.2.2"
   },
-  "dependencies": {
-    "rxjs": "^7.8.1",
+  "peerDependencies": {
+    "@react-rxjs/core": "^0.10.7",
+    "@react-rxjs/utils": "^0.9.7",
+    "poe-api": "file:../poe-api",
     "poestack-ts-ratchet": "file:../poestack-ts-ratchet",
-    "poe-api": "file:../poe-api"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rxjs": "^7.8.1"
   }
 }

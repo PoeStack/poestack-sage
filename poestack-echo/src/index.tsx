@@ -1,30 +1,14 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
-import * as fs from "fs";
-import {usePluginManager} from "./plugins-hook";
-
+import {PluginPage} from "./plugin-page";
+import { EchoContextProvider } from 'poestack-echo-common';
 
 const App: React.FC = () => {
-
-    const {selectedPlugin, setSelectedPlugin, plugins} = usePluginManager()
-
-    const PluginBody = selectedPlugin.component
-
     return (
         <div>
-            <div>
-                {plugins.map((plugin) => (
-                    <div onClick={() => {
-                        setSelectedPlugin(plugin)
-                    }}>
-                        Plugin: {plugin.name}
-                    </div>
-                ))}
-            </div>
-
-            <div style={{paddingTop: "10px"}}>
-                <PluginBody/>
-            </div>
+            <EchoContextProvider>
+                <PluginPage/>
+            </EchoContextProvider>
         </div>
     );
 };

@@ -1,30 +1,25 @@
 import {StashApi} from "poe-api";
-import {filterNullish} from "poestack-ts-ratchet";
-import {
-    catchError,
-    concatMap,
-    filter,
-    from, map,
-    mergeMap,
-    Observable,
-    of,
-    OperatorFunction, pipe, tap,
-    toArray,
-    UnaryFunction
-} from "rxjs";
+import {from, mergeMap, of, toArray} from "rxjs";
+import {bind} from "@react-rxjs/core";
 
-const stashApi = new StashApi();
+const stashApi = new StashApi()
+const [useStashTabs, stashTabs$] = bind(
+    stashApi.stashes$, []
+)
+const [useStashItems, stashItems$] = bind(
+    stashTabs$.pipe(
+        mergeMap((tabs) =>
+            of(tabs.flatMap((t) => t.children ? t.children : [t])).pipe(
+                mergeMap((tabs) => stashApi.getStashContents("Ancestor", tabs.map((t) => t.id!))),
+                mergeMap((e) => from(e.items!)),
+                toArray()
+            )
+        ),
+    ), []
+)
 
-stashApi.stashContent$.subscribe((e) => console.log("loaded contents", e.id, e.items!.length))
-
-stashApi.stashes$
-    .pipe(
-        map((e) => {
-            return e.flatMap((t) => t.children ? t.children!.map((c) => c.id!) : [t.id!])
-        }),
-        mergeMap((ids) => stashApi.getStashContents("Ancestor", ids)),
-        mergeMap((e) => from(e.items!)),
-        toArray()
-    ).subscribe((e) => console.log(e))
-
-stashApi.getStashes("Ancestor").subscribe()
+export {
+    useStashTabs,
+    useStashItems,
+    stashApi
+}
