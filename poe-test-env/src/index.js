@@ -4,9 +4,8 @@ const path = require("path");
 const app = express()
 const port = 3000
 
-app.get('/*', (req, res) => {
-
-    const paths = ["poe-data", ...req.path.split("/").filter((e) => e.length > 0)]
+app.get('*', (req, res) => {
+    const paths = ["poe-api-data", ...req.path.split("/").filter((e) => e.length > 0)]
     const target = path.resolve(...paths) + ".json"
     console.log("paths", target)
     const body = fs.readFileSync(target).toString()
@@ -14,5 +13,5 @@ app.get('/*', (req, res) => {
 })
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+    console.log(`poe-api-test server running on port ${port}`)
 })

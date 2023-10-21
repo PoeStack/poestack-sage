@@ -1,10 +1,10 @@
 {
-  "name": "poe-api-test-server",
+  "name": "poe-test-env",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js"
+    "start-api": "node src/index.js"
   },
   "author": "",
   "license": "ISC",
