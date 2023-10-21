@@ -1,9 +1,10 @@
-import {EchoContext, EchoContextProvider, EchoContextType } from "./echo-context";
+import {EchoContext, EchoContextProvider, EchoContextType, useEchoContext } from "./echo-context";
 import { SageTestComp } from "./test";
 
 export {
     SageTestComp,
     EchoContextProvider,
     EchoContext,
-    EchoContextType
+    EchoContextType,
+    useEchoContext
 }
