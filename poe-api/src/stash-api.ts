@@ -25,9 +25,7 @@ export class StashApi {
     public getStashContents(league: string, stashIds: string[]): Observable<PoeApiStashTab> {
         return of(stashIds)
             .pipe(
-
                 concatMap((e) => from(e)),
-
                 concatMap((e) =>
                     this.getStashContent(league, e)
                         .pipe(catchError((e, c) => {

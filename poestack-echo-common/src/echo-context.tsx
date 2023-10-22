@@ -1,21 +1,21 @@
 import React, {PropsWithChildren, useEffect, useState} from "react";
-import {StashApi} from "poe-api";
-import {usePluginManager} from "./plugin-manager";
+import {PluginServiceType, usePluginService} from "./plugin-service";
+import {StashService, useStashService} from "./stash-service";
 
 export type EchoContextType = {
-    stashApi: StashApi,
-    pluginManager: any,
+    stashService: StashService,
+    pluginManager: PluginServiceType,
 }
-
-export const STASH_API = new StashApi()
 
 export const EchoContext = React.createContext<EchoContextType | null>(null);
 
 export const EchoContextProvider: React.FC<PropsWithChildren> = ({children}) => {
-    const pluginManager = usePluginManager()
+    const pluginManager = usePluginService()
+
+    const stashService = useStashService()
 
     const value = {
-        stashApi: STASH_API,
+        stashService,
         pluginManager
     }
     return (<EchoContext.Provider value={value}>{children}</EchoContext.Provider>)

@@ -1,14 +1,14 @@
-import {useEchoContext, useStashItems} from 'poestack-echo-common'
+import {useEchoContext} from 'poestack-echo-common'
 import React, {useEffect, useState} from 'react'
 
-
-function App() {
+function App(): JSX.Element {
     const [search, setSearch] = useState("")
 
-    const {stashApi} = useEchoContext()
-    const stashItems = useStashItems()
+    const {stashService} = useEchoContext()
+
+    const stashItems = stashService.useStashItems()
     useEffect(() => {
-        stashApi.getStashes("Ancestor").subscribe()
+        stashService.stashApi.getStashes("Ancestor").subscribe()
     }, []);
 
     return (

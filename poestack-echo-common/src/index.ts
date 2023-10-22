@@ -1,12 +1,13 @@
-import {EchoContext, EchoContextProvider, EchoContextType, useEchoContext } from "./echo-context";
-import { SageTestComp } from "./test";
-import {useStashItems} from "./stash-util";
+import {EchoContext, EchoContextProvider, EchoContextType, useEchoContext} from "./echo-context";
+import {PluginServiceType, RegisteredPlugin} from "./plugin-service";
+import {StashService} from "./stash-service";
 
 export {
-    SageTestComp,
     EchoContextProvider,
     EchoContext,
     EchoContextType,
     useEchoContext,
-    useStashItems
+    PluginServiceType,
+    StashService,
+    RegisteredPlugin
 }

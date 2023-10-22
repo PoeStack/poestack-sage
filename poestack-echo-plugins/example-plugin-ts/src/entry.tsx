@@ -1,20 +1,27 @@
 // noinspection JSUnusedGlobalSymbols
 
-import {EchoContextType} from "poestack-echo-common";
+import {EchoContextType, RegisteredPlugin} from "poestack-echo-common";
 import App from "./App";
+import {randomUUID} from "crypto";
+
+const instanceUid = randomUUID()
 
 function start(echoContext: EchoContextType) {
-    echoContext.pluginManager.setPlugins([...echoContext.pluginManager.plugins, ...[{
-        name: "ExamplePlugin v2",
-        component: App
-    }]])
+    echoContext.pluginManager.addNavItem({
+        pluginInstanceId: instanceUid,
+        name: "ExamplePlugin",
+        page: App
+    })
+
 }
 
 function destroy(echoContext: EchoContextType) {
+    echoContext.pluginManager.removeNavItem(instanceUid, "ExamplePlugin")
 }
 
-export default function () {
+export default function (): RegisteredPlugin {
     return {
+        pluginInstanceId: instanceUid,
         start: start,
         destroy: destroy
     }
