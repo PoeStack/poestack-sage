@@ -1,11 +1,11 @@
 {
-  "name": "your-electron-app",
+  "name": "poestack-sage",
   "description": "poestack v2",
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "clean": "rimraf build dist",
-    "build": "rimraf build && rollup -c --configPlugin typescript",
+    "clean": "rimraf build/index.js dist",
+    "build": "rimraf build/index.js && rollup -c --configPlugin typescript",
     "start": "npm run build && electron .",
     "make": "npm run build && rimraf dist && electron-builder"
   },

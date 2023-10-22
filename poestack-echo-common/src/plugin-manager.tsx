@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 
 export function usePluginManager() {
-    const defaultPlugin = {name: "basic", component: BaseComp};
+    const defaultPlugin = {name: "Home", component: BaseComp};
     const [plugins, setPlugins] = useState([defaultPlugin])
     const [selectedPlugin, setSelectedPlugin] = useState(defaultPlugin)
 

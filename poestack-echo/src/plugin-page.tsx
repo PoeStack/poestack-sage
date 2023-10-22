@@ -18,18 +18,18 @@ export const PluginPage: React.FC = () => {
     }, []);
 
     return (
-        <div>
-            <div>
+        <div className="min-h-screen flex flex-row gap-1 text-white">
+            <div className="flex flex-col bg-black p-2">
                 {pluginManager.plugins.map((plugin) => (
-                    <div onClick={() => {
+                    <div className="cursor-pointer" onClick={() => {
                         pluginManager.setSelectedPlugin(plugin)
                     }}>
-                        Plugin: {plugin.name}
+                        {plugin.name}
                     </div>
                 ))}
             </div>
 
-            <div style={{paddingTop: "10px"}}>
+            <div className="max-h-screen w-full p-3 overflow-y-scroll">
                 <PluginBody/>
             </div>
         </div>

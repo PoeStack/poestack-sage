@@ -1,36 +1,30 @@
-import {EchoContext, EchoContextType, SageTestComp} from 'poestack-echo-common'
+import {useEchoContext, useStashItems} from 'poestack-echo-common'
 import React, {useEffect, useState} from 'react'
 
 
 function App() {
-    /*    const stashItems = useStashItems()*/
-
     const [search, setSearch] = useState("")
 
-
-    /*
-        useEffect(() => {
-            stashApi.getStashes("Ancestor").subscribe()
-        }, []);
-    */
-
-    const { test} = React.useContext(EchoContext) as EchoContextType;
-
+    const {stashApi} = useEchoContext()
+    const stashItems = useStashItems()
+    useEffect(() => {
+        stashApi.getStashes("Ancestor").subscribe()
+    }, []);
 
     return (
         <>
             <div>
                 <input
+                    className="appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight"
                     value={search}
-                    onChange={(e) => test()}
+                    onChange={(e) => setSearch(e.target.value)}
                 />
-                asdasdas
-                <SageTestComp/>
-                {/*         <div>
+                <div>
                     {stashItems
+                        .filter((e) => !!e.note)
                         .filter((item) => !search.length || item.typeLine.toLowerCase().includes(search.toLowerCase()))
-                        .map((item) => (<div>{item.typeLine}</div>))}
-                </div>*/}
+                        .map((item) => (<div>{item.typeLine}: {item.note}</div>))}
+                </div>
             </div>
         </>
     )
