@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    :root {
+        --color-neutral: #1d283a;
+        --color-base-100: #0f1729;
+    }
+
+    [data-theme="Dark"] {
+        --color-neutral: #3abff8;
+        --color-base-100: #828df8;
+    }
+}

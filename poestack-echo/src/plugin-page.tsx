@@ -1,11 +1,10 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 
 import {RegisteredPlugin, useEchoContext} from "poestack-echo-common";
 import fs from "fs";
 import * as path from "path";
 
 export const PluginPage: React.FC = () => {
-
     const echoContext = useEchoContext()
     const pluginManager = echoContext.pluginManager
 
@@ -32,9 +31,13 @@ export const PluginPage: React.FC = () => {
         loadPlugins(path.resolve("..", "poestack-echo-plugins"))
     }, []);
 
+
+    const themes = ['Default', "Dark"]
+    const [selectedTheme, setSelectedTheme] = useState(themes[0])
+
     return (
-        <div className="min-h-screen flex flex-row gap-1 text-white">
-            <div className="flex flex-col bg-black p-2">
+        <div className="min-h-screen flex flex-row gap-1 text-white" data-theme={selectedTheme}>
+            <div className="flex flex-col bg-neutral p-2">
                 {pluginManager.registeredPluginNavItems.map((navItem) => (
                     <div className="cursor-pointer" onClick={() => {
                         pluginManager.setSelectedNavItem(navItem)
@@ -42,6 +45,10 @@ export const PluginPage: React.FC = () => {
                         {navItem.name}
                     </div>
                 ))}
+                <div className="flex-grow"></div>
+                {
+                    themes.map((t) => (<div onClick={() => {setSelectedTheme(t)}}>{t}</div>))
+                }
             </div>
 
             <div className="max-h-screen w-full p-3 overflow-y-scroll">
