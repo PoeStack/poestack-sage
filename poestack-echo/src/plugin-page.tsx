@@ -5,7 +5,8 @@ import fs from "fs";
 
 export const PluginPage: React.FC = () => {
 
-    const {pluginManager} = useEchoContext()
+    const echoContext = useEchoContext()
+    const pluginManager = echoContext.pluginManager
 
     const PluginBody = pluginManager.selectedPlugin.component
 
@@ -13,8 +14,7 @@ export const PluginPage: React.FC = () => {
         const f = fs.readFileSync("/Users/zach/workplace/poestack-sage/poestack-echo-plugins/example-plugin-ts/dist/cjs/plugin.js").toString()
         const entry = eval(f);
         const plugin = entry();
-        const mapping = plugin.start()
-        pluginManager.setPlugins([...pluginManager.plugins, ...mapping.navItems])
+        plugin.start(echoContext)
     }, []);
 
     return (
