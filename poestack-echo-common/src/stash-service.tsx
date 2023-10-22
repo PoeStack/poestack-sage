@@ -14,7 +14,6 @@ export type StashService = {
 export function useStashService(): StashService {
     const stashApi = new StashApi()
 
-
     const [useStashTabs, stashTabs$] = bind(
         stashApi.stashes$, []
     )

@@ -2,6 +2,7 @@ import React, {useEffect} from "react";
 
 import {RegisteredPlugin, useEchoContext} from "poestack-echo-common";
 import fs from "fs";
+import * as path from "path";
 
 export const PluginPage: React.FC = () => {
 
@@ -11,11 +12,24 @@ export const PluginPage: React.FC = () => {
     const PluginBody = pluginManager.selectedNavItem.page
 
     useEffect(() => {
-        const f = fs.readFileSync("/Users/zach/workplace/poestack-sage/poestack-echo-plugins/example-plugin-ts/dist/cjs/plugin.js").toString()
-        const entry = eval(f);
-        const plugin: RegisteredPlugin = entry();
-        pluginManager.registerPlugin(plugin)
-        plugin.start(echoContext)
+        function loadPlugins(baseDir: string) {
+            fs.readdir(baseDir, (err, files) => {
+                if (err) {
+                    return console.log('Unable to scan directory: ' + err);
+                }
+                files.forEach(function (file) {
+                    const pluginDistPath = path.resolve(baseDir, file, "dist", "cjs", "plugin.js");
+                    console.log("loading", pluginDistPath)
+                    const pluginRaw = fs.readFileSync(pluginDistPath).toString()
+                    const entry = eval(pluginRaw);
+                    const plugin: RegisteredPlugin = entry();
+                    pluginManager.registerPlugin(plugin)
+                    plugin.start(echoContext)
+                });
+            });
+        }
+
+        loadPlugins(path.resolve("..", "poestack-echo-plugins"))
     }, []);
 
     return (

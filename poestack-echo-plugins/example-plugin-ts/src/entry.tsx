@@ -12,7 +12,6 @@ function start(echoContext: EchoContextType) {
         name: "ExamplePlugin",
         page: App
     })
-
 }
 
 function destroy(echoContext: EchoContextType) {
