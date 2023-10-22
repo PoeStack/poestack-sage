@@ -17,13 +17,18 @@ export const PluginPage: React.FC = () => {
                     return console.log('Unable to scan directory: ' + err);
                 }
                 files.forEach(function (file) {
-                    const pluginDistPath = path.resolve(baseDir, file, "dist", "cjs", "plugin.js");
-                    console.log("loading", pluginDistPath)
-                    const pluginRaw = fs.readFileSync(pluginDistPath).toString()
-                    const entry = eval(pluginRaw);
-                    const plugin: RegisteredPlugin = entry();
-                    pluginManager.registerPlugin(plugin)
-                    plugin.start(echoContext)
+                    const pluginPackagePath = path.resolve(baseDir, file, "package.json");
+                    if (fs.existsSync(pluginPackagePath)) {
+                        const pluginPackage = JSON.parse(fs.readFileSync(pluginPackagePath).toString())
+                        const pluginDistPath = path.resolve(baseDir, file, "dist", "cjs", "plugin.js");
+                        console.log("loading", pluginDistPath)
+                        const pluginRaw = fs.readFileSync(pluginDistPath).toString()
+                        const entry = eval(pluginRaw);
+                        const plugin: RegisteredPlugin = entry();
+                        plugin.name = pluginPackage.name;
+                        pluginManager.registerPlugin(plugin)
+                        plugin.start(echoContext)
+                    }
                 });
             });
         }
@@ -32,22 +37,26 @@ export const PluginPage: React.FC = () => {
     }, []);
 
 
-    const themes = ['Default', "Dark"]
+    const themes = ["Tokyo Night", 'Default']
     const [selectedTheme, setSelectedTheme] = useState(themes[0])
 
     return (
-        <div className="min-h-screen flex flex-row gap-1 text-white" data-theme={selectedTheme}>
-            <div className="flex flex-col bg-neutral p-2">
+        <div className="min-h-screen flex flex-row gap-1 text-primary-text" data-theme={selectedTheme}>
+            <div className="flex flex-col bg-secondary-surface p-2">
                 {pluginManager.registeredPluginNavItems.map((navItem) => (
-                    <div className="cursor-pointer" onClick={() => {
-                        pluginManager.setSelectedNavItem(navItem)
-                    }}>
+                    <div
+                        className={"cursor-pointer " + (pluginManager.selectedNavItem === navItem ? "text-green-300" : "")}
+                        onClick={() => {
+                            pluginManager.setSelectedNavItem(navItem)
+                        }}>
                         {navItem.name}
                     </div>
                 ))}
                 <div className="flex-grow"></div>
                 {
-                    themes.map((t) => (<div onClick={() => {setSelectedTheme(t)}}>{t}</div>))
+                    themes.map((t) => (<div onClick={() => {
+                        setSelectedTheme(t)
+                    }}>{t}</div>))
                 }
             </div>
 

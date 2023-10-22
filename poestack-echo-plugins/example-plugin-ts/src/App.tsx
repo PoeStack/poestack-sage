@@ -15,7 +15,7 @@ function App(): JSX.Element {
                 }}>Load Stashes
                 </button>
                 <input
-                    className="appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight"
+                    className="appearance-none bg-indigo-700 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />

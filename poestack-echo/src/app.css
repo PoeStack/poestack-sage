@@ -4,12 +4,14 @@
 
 @layer base {
     :root {
-        --color-neutral: #1d283a;
-        --color-base-100: #0f1729;
+        --color-primary-surface: #1d283a;
+        --color-secondary-surface: #0f1729;
+        --color-text: #f8f8f2;
     }
 
-    [data-theme="Dark"] {
-        --color-neutral: #3abff8;
-        --color-base-100: #828df8;
+    [data-theme="Tokyo Night"] {
+        --color-primary-surface: #24283b;
+        --color-secondary-surface: #1a1b26;
+        --color-text: #9aa5ce;
     }
 }

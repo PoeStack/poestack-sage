@@ -1,10 +1,15 @@
 module.exports = {
-    content: ['./src/**/*.{js,jsx,ts,tsx}'],
+    content: [
+        './**/*.{js,jsx,ts,tsx}',
+        '../poestack-echo-common/src/**/*.{js,jsx,ts,tsx}',
+        '../poestack-echo-plugins/**/*.{js,jsx,ts,tsx}'
+    ],
     theme: {
         extend: {
             colors: {
-                neutral: "var(--color-neutral)",
-                base: "var(--color-base-100)",
+                "primary-surface": "var(--color-primary-surface)",
+                "secondary-surface": "var(--color-secondary-surface)",
+                "primary-text": "var(--color-text)",
             },
         },
     },

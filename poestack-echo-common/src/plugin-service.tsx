@@ -1,16 +1,14 @@
-import React, {JSX, useState} from "react";
+import React, {useState} from "react";
 import {EchoContextType} from "./echo-context";
-import {randomUUID} from "crypto";
 
 
 export type RegisteredPlugin = {
-    pluginInstanceId: string,
+    name: string | null | undefined,
     start: (c: EchoContextType) => void,
     destroy: (c: EchoContextType) => void
 }
 
 export type RegisteredPluginNavItem = {
-    pluginInstanceId: string,
     name: string,
     page: React.FC
 }
@@ -20,21 +18,20 @@ export type PluginServiceType = {
     registerPlugin: (plugin: RegisteredPlugin) => void,
     registeredPluginNavItems: RegisteredPluginNavItem[],
     addNavItem: (item: RegisteredPluginNavItem) => void,
-    removeNavItem: (pluginInstanceId: string, name: string) => void,
+    removeNavItem: (name: string) => void,
     selectedNavItem: RegisteredPluginNavItem,
     setSelectedNavItem: (plugin: RegisteredPluginNavItem) => void,
 }
 
 export function usePluginService(): PluginServiceType {
     const homeScreenPlugin: RegisteredPlugin = {
-        pluginInstanceId: randomUUID(),
+        name: "home-plugin",
         destroy: () => {
         },
         start: () => {
         }
     }
     const homeScreenNavItem = {
-        pluginInstanceId: homeScreenPlugin.pluginInstanceId,
         page: BaseComp,
         name: "Home"
     }
@@ -47,7 +44,7 @@ export function usePluginService(): PluginServiceType {
         registeredPlugins,
         registerPlugin: (p) => setRegisteredPlugins([...registeredPlugins, p]),
         addNavItem: (p) => setRegisteredPluginNavItems([...registeredPluginNavItems, p]),
-        removeNavItem: (pid, name) => setRegisteredPluginNavItems(registeredPluginNavItems.filter((nav) => nav.pluginInstanceId !== pid && nav.name !== name)),
+        removeNavItem: (name) => setRegisteredPluginNavItems(registeredPluginNavItems.filter((nav) => nav.name !== name)),
         registeredPluginNavItems,
         selectedNavItem,
         setSelectedNavItem
