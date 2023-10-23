@@ -3,7 +3,9 @@ This package holds a few untilites to make it easier to test POE related code. C
 
 ## Setup
 Install libs: `npm install`
+
 Start the server: `npm run start-api`
+
 Test the server: Navigate to http://localhost:3000/stash/Ancestor/stashes
 
 
