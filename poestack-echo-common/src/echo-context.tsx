@@ -1,6 +1,6 @@
-import React, {PropsWithChildren, useEffect, useState} from "react";
+import React, {PropsWithChildren} from "react";
 import {PluginServiceType, usePluginService} from "./plugin-service";
-import {StashService, useStashService} from "./stash-service";
+import {STASH_SERVICE, StashService} from "./stash-service";
 
 export type EchoContextType = {
     stashService: StashService,
@@ -12,10 +12,9 @@ export const EchoContext = React.createContext<EchoContextType | null>(null);
 export const EchoContextProvider: React.FC<PropsWithChildren> = ({children}) => {
     const pluginManager = usePluginService()
 
-    const stashService = useStashService()
 
     const value = {
-        stashService,
+        stashService: STASH_SERVICE,
         pluginManager
     }
     return (<EchoContext.Provider value={value}>{children}</EchoContext.Provider>)

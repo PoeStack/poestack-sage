@@ -3,13 +3,16 @@ import ReactDOM from 'react-dom';
 import {PluginPage} from "./plugin-page";
 import './app.css'
 import {EchoContextProvider} from 'poestack-echo-common';
+import {Subscribe} from "@react-rxjs/core";
 
 const App: React.FC = () => {
     return (
         <>
-            <EchoContextProvider>
-                <PluginPage/>
-            </EchoContextProvider>
+            <Subscribe>
+                <EchoContextProvider>
+                    <PluginPage/>
+                </EchoContextProvider>
+            </Subscribe>
         </>
     );
 };

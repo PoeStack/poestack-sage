@@ -1,6 +1,7 @@
 import {EchoContext, EchoContextProvider, EchoContextType, useEchoContext} from "./echo-context";
 import {PluginServiceType, RegisteredPlugin} from "./plugin-service";
 import {StashService} from "./stash-service";
+import {useCurrentStashContents, useCurrentStashes, useCurrentStashesFlat, useStashItems} from "./test";
 
 export {
     EchoContextProvider,
@@ -9,5 +10,9 @@ export {
     useEchoContext,
     PluginServiceType,
     StashService,
-    RegisteredPlugin
+    RegisteredPlugin,
+    useCurrentStashes,
+    useCurrentStashesFlat,
+    useCurrentStashContents,
+    useStashItems
 }

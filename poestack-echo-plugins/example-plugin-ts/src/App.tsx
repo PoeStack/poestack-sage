@@ -1,29 +1,53 @@
-import {useEchoContext} from 'poestack-echo-common'
-import React, {useEffect, useState} from 'react'
+import {
+    useCurrentStashesFlat,
+    useEchoContext, useStashItems,
+} from 'poestack-echo-common'
+import React from 'react'
+import {PoePartialStashTab} from "poe-api";
 
 function App(): JSX.Element {
-    const {stashService} = useEchoContext()
-    const stashItems = stashService.useStashItems()
+    const league = "Ancestor"
 
-    const [search, setSearch] = useState("")
+    const {stashService} = useEchoContext()
+    const stashes = useCurrentStashesFlat()
+    const stashItems = useStashItems(league)
+        .sort((a, b) => b.stash.loadedAtTimestamp.getTime() - a.stash.loadedAtTimestamp.getTime())
+
+    function onStashClicked(stash: PoePartialStashTab) {
+        stashService.stashApi.getStashContent(league, stash.id!).subscribe()
+    }
 
     return (
         <>
             <div>
-                <button onClick={() => {
-                    stashService.stashApi.getStashes("Ancestor").subscribe()
-                }}>Load Stashes
+                <button className="py-2 px-4 rounded bg-blue-500" onClick={() => {
+                    stashService.stashApi.getStashes(league).subscribe()
+                }}>
+                    Load Stashes
                 </button>
-                <input
-                    className="appearance-none bg-indigo-700 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
+                <div className="flex flex-row gap-2 overflow-y-scroll pb-5">
+                    {stashes.map((e) => (
+                        <div key={e.id} className="flex-shrink-0 cursor-pointer" onClick={() => {
+                            onStashClicked(e)
+                        }}>{e.name}</div>
+                    ))}
+                </div>
                 <div>
-                    {stashItems
-                        .filter((e) => !!e.note)
-                        .filter((item) => !search.length || item.typeLine.toLowerCase().includes(search.toLowerCase()))
-                        .map((item) => (<div>{item.typeLine}: {item.note}</div>))}
+                    <div>
+                        {
+                            stashItems.map((e) => (
+                                <div key={e.item.id}>
+                                    <div>
+                                        <span
+                                            style={{color: `#${e.stash.metadata.colour}`}}>{e.stash.name}</span>: {e.item.stackSize} {e.item.typeLine}
+                                    </div>
+                                    <div>
+                                        {e.item.properties?.map((p) => (<li>{p.name}: {p.values.join(", ")}</li>))}
+                                    </div>
+                                </div>
+                            ))
+                        }
+                    </div>
                 </div>
             </div>
         </>

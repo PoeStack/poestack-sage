@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import {RegisteredPlugin, useEchoContext} from "poestack-echo-common";
 import fs from "fs";
 import * as path from "path";
+import {Subscribe} from "@react-rxjs/core";
 
 export const PluginPage: React.FC = () => {
     const echoContext = useEchoContext()
@@ -61,7 +62,9 @@ export const PluginPage: React.FC = () => {
             </div>
 
             <div className="max-h-screen w-full p-3 overflow-y-scroll">
-                <PluginBody/>
+                <Subscribe>
+                    <PluginBody/>
+                </Subscribe>
             </div>
         </div>
     );

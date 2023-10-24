@@ -1,20 +1,20 @@
-export type PoeApiCharacter = {
+export type PoeCharacter = {
     class?: string;
     current?: boolean;
     deleted?: boolean;
-    equipment?: PoeApiItem[];
+    equipment?: PoeItem[];
     experience?: number;
     expired?: boolean;
     id?: string;
-    inventory?: PoeApiItem[];
-    jewels?: PoeApiItem[];
+    inventory?: PoeItem[];
+    jewels?: PoeItem[];
     league?: string;
     level?: number;
     name?: string;
-    passives?: PoeApiCharacterPassive[];
+    passives?: PoeCharacterPassive[];
 };
 
-export type PoeApiCharacterPassive = {
+export type PoeCharacterPassive = {
     bandit_choice?: string;
     hashes?: number[];
     hashes_ex?: number[];
@@ -22,19 +22,19 @@ export type PoeApiCharacterPassive = {
     pantheon_minor?: string;
 };
 
-export type PoeApiFlavourTextInfo = {
+export type PoeFlavourTextInfo = {
     class?: string;
     id?: string;
     type?: string;
 };
 
-export type PoeApiInfluence = {
+export type PoeInfluence = {
     name?: string;
 };
 
-export type PoeApiItem = {
+export type PoeItem = {
     abyssJewel?: boolean;
-    additionalProperties?: PoeApiItemProperty[];
+    additionalProperties?: PoeItemProperty[];
     artFilename?: string;
     baseType?: string;
     cisRaceReward?: boolean;
@@ -42,55 +42,55 @@ export type PoeApiItem = {
     corrupted?: boolean;
     cosmeticMods?: string[];
     craftedMods?: string[];
-    crucible?: PoeApiItemCrucibleMods[];
+    crucible?: PoeItemCrucibleMods[];
     delve?: boolean;
     descrText?: string;
     duplicated?: boolean;
     elder?: boolean;
     enchantMods?: string[];
     explicitMods?: string[];
-    extended?: PoeApiItemExtended;
+    extended?: PoeItemExtended;
     flavourText?: string[];
-    flavourTextParsed?: PoeApiFlavourTextInfo[];
+    flavourTextParsed?: PoeFlavourTextInfo[];
     foilVariation?: number;
     forum_note?: string;
     fractured?: boolean;
     fracturedMods?: string[];
     frameType?: number;
     h?: number;
-    hybrid?: PoeApiItemHybrid;
+    hybrid?: PoeItemHybrid;
     icon?: string;
     id?: string;
     identified?: boolean;
     implicitMods?: string[];
-    incubatedItem?: PoeApiItemIncubatedItem;
-    influences?: PoeApiInfluence;
+    incubatedItem?: PoeItemIncubatedItem;
+    influences?: PoeInfluence;
     inventoryId?: string;
     isRelic?: boolean;
     itemLevel?: number;
     league?: string;
     lockedToAccount?: boolean;
     lockedToCharacter?: boolean;
-    logbookMods?: PoeApiItemLogbookMod[];
+    logbookMods?: PoeItemLogbookMod[];
     maxStackSize?: number;
     name?: string;
-    nextLevelRequirements?: PoeApiItemProperty[];
-    notableProperties?: PoeApiItemProperty[];
+    nextLevelRequirements?: PoeItemProperty[];
+    notableProperties?: PoeItemProperty[];
     note?: string;
-    properties?: PoeApiItemProperty[];
+    properties?: PoeItemProperty[];
     prophecyText?: string;
     replica?: boolean;
-    requirements?: PoeApiItemProperty[];
+    requirements?: PoeItemProperty[];
     ruthless?: boolean;
     scourgeMods?: string[];
-    scourged?: PoeApiItemScourged;
+    scourged?: PoeItemScourged;
     seaRaceReward?: boolean;
     searing?: boolean;
     secDescrText?: string;
     shaper?: boolean;
     socket?: number;
-    socketedItems?: PoeApiItem[];
-    sockets?: PoeApiItemSocket[];
+    socketedItems?: PoeItem[];
+    sockets?: PoeItemSocket[];
     split?: boolean;
     stackSize?: number;
     stackSizeText?: string;
@@ -100,7 +100,7 @@ export type PoeApiItem = {
     tangled?: boolean;
     thRaceReward?: boolean;
     typeLine?: string;
-    ultimatumMods?: PoeApiItemUltimatumMods[];
+    ultimatumMods?: PoeItemUltimatumMods[];
     unmodifiable?: boolean;
     utilityMods?: string[];
     veiled?: boolean;
@@ -111,11 +111,11 @@ export type PoeApiItem = {
     y?: number;
 };
 
-export type PoeApiItemCrucibleMods = {
+export type PoeItemCrucibleMods = {
     layout?: string;
 };
 
-export type PoeApiItemCrucibleNode = {
+export type PoeItemCrucibleNode = {
     allocated?: boolean;
     icon?: string;
     in?: string[];
@@ -126,40 +126,40 @@ export type PoeApiItemCrucibleNode = {
     stats?: string[];
 };
 
-export type PoeApiItemExtended = {
+export type PoeItemExtended = {
     category?: string;
     prefixes?: number;
     subcategories?: string[];
     suffixes?: number;
 };
 
-export type PoeApiItemHybrid = {
+export type PoeItemHybrid = {
     baseTypeName?: string;
     explicitMods?: string[];
     isVaalGem?: boolean;
-    properties?: PoeApiItemProperty[];
+    properties?: PoeItemProperty[];
     secDescrText?: string;
 };
 
-export type PoeApiItemIncubatedItem = {
+export type PoeItemIncubatedItem = {
     level?: number;
     name?: string;
     progress?: number;
     total?: number;
 };
 
-export type PoeApiItemLogbookFaction = {
+export type PoeItemLogbookFaction = {
     id?: string;
     name?: string;
 };
 
-export type PoeApiItemLogbookMod = {
-    faction?: PoeApiItemLogbookFaction;
+export type PoeItemLogbookMod = {
+    faction?: PoeItemLogbookFaction;
     mod?: string[];
     name?: string;
 };
 
-export type PoeApiItemProperty = {
+export type PoeItemProperty = {
     displayMode?: number;
     name?: string;
     progress?: number;
@@ -168,73 +168,80 @@ export type PoeApiItemProperty = {
     values?: string[][];
 };
 
-export type PoeApiItemScourged = {
+export type PoeItemScourged = {
     level?: number;
     progress?: number;
     tier?: number;
     total?: number;
 };
 
-export type PoeApiItemSocket = {
+export type PoeItemSocket = {
     attr?: string;
     group?: number;
     sColour?: string;
 };
 
-export type PoeApiItemUltimatumMods = {
+export type PoeItemUltimatumMods = {
     tier?: number;
     type?: string;
 };
 
-export type PoeApiProfile = {
-    guild?: PoeApiProfileGuild;
+export type PoeProfile = {
+    guild?: PoeProfileGuild;
     name?: string;
     realm?: string;
-    twitch?: PoeApiProfileTwitch;
+    twitch?: PoeProfileTwitch;
     uuid?: string;
 };
 
-export type PoeApiProfileGuild = {
+export type PoeProfileGuild = {
     name?: string;
 };
 
-export type PoeApiProfileTwitch = {
+export type PoeProfileTwitch = {
     name?: string;
 };
 
-export type PoeApiPublicStashChange = {
+export type PoePublicStashChange = {
     accountName?: string;
     id?: string;
-    items?: PoeApiItem[];
+    items?: PoeItem[];
     league?: string;
     public?: boolean;
     stash?: string;
     stashType?: string;
 };
 
-export type PoeApiPublicStashResponse = {
+export type PoePublicStashResponse = {
     next_change_id?: string;
-    stashes?: PoeApiPublicStashChange[];
+    stashes?: PoePublicStashChange[];
 };
 
-export type PoeApiStashTab = {
-    children?: PoeApiStashTab[];
+export type PoePartialStashTab = {
+    children?: PoePartialStashTab[];
     id?: string;
     index?: number;
-    items?: PoeApiItem[];
-    metadata?: PoeApiStashTabMetadata;
+    metadata?: PoeStashTabMetadata;
     name?: string;
     parent?: string;
     type?: string;
+
+    //Injected
+    league: string;
 };
 
-export type PoeApiStashTabMetadata = {
+export type PoeStashTab = PoePartialStashTab & {
+    items?: PoeItem[];
+    loadedAtTimestamp: Date;
+};
+
+export type PoeStashTabMetadata = {
     colour?: string;
     folder?: boolean;
     public?: boolean;
 };
 
-export type PoeApiTokenExchangeResponse = {
+export type PoeTokenExchangeResponse = {
     access_token?: string;
     expires_in?: string;
     refresh_token?: string;
