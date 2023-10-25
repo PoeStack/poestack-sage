@@ -1,24 +1,43 @@
 import {BehaviorSubject, filter, from, map, mergeMap, Observable, scan, tap, toArray} from "rxjs";
 import {PoeItem, PoePartialStashTab, PoeStashTab, StashApi} from "poe-api";
+import * as fs from "fs";
+import path from "path";
 
 export class StashService {
     public stashApi: StashApi
 
-    public currentStashes$: BehaviorSubject<PoePartialStashTab[]> = new BehaviorSubject<PoePartialStashTab[]>([])
+    public currentStashes$: BehaviorSubject<Record<string, PoePartialStashTab[]>> = new BehaviorSubject<Record<string, PoePartialStashTab[]>>({})
     public currentStashContents$: BehaviorSubject<PoeStashTab[]> = new BehaviorSubject<PoeStashTab[]>([])
 
     constructor(stashApi: StashApi) {
         this.stashApi = stashApi
-        this.stashApi.stashes$.subscribe(this.currentStashes$)
+
+        const stashesCache = path.resolve("test.json");
+        if (fs.existsSync(stashesCache)) {
+            this.currentStashes$.next(JSON.parse(fs.readFileSync(stashesCache).toString())
+            )
+        }
+
+        this.stashApi.stashes$
+            .pipe(
+                scan((current: Record<string, PoePartialStashTab[]>, update) => {
+                    const next = {...current}
+                    const league = update[0]?.league
+                    if (league) {
+                        next[league] = update
+                    }
+                    return next
+                }, {}),
+                tap((e) => fs.writeFileSync(path.resolve("test.json"), JSON.stringify(e)))
+            ).subscribe(this.currentStashes$)
         this.stashApi.stashContent$
             .pipe(
                 scan((currentContents: PoeStashTab[], newStash) => {
-                    const updatedContents = currentContents.filter(item => item.id !== newStash.id);
+                    const updatedContents = currentContents.filter(stash => stash.id !== newStash.id);
                     updatedContents.push(newStash);
                     return updatedContents;
-                }, [])
-            )
-            .subscribe(this.currentStashContents$);
+                }, []),
+            ).subscribe(this.currentStashContents$);
     }
 }
 

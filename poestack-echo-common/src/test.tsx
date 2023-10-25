@@ -3,24 +3,16 @@ import {STASH_SERVICE} from "./stash-service";
 import {filter, from, map, mergeMap, tap, toArray} from "rxjs";
 import {PoeItem, PoePartialStashTab} from "poe-api";
 
-const [useCurrentStashes] = bind(STASH_SERVICE.currentStashes$, [])
-const [useCurrentStashesFlat] = bind(
-    STASH_SERVICE.currentStashes$
-        .pipe(
-            map((stashes) => stashes.flatMap((stash) => stash.children ? stash.children : [stash]))
-        ),
-    []
-)
-
-const [useCurrentStashContents] = bind(
-    STASH_SERVICE.currentStashContents$,
-    []
-)
-
 export type PoeStashItemPair = {
     stash: PoePartialStashTab & { items?: PoeItem[] | undefined, loadedAtTimestamp: Date },
     item: PoeItem
 }
+
+export const [useStashes] = bind((league: string) => STASH_SERVICE.currentStashes$
+    .pipe(
+        map((e) => e[league] ?? []),
+        map((e) => e.flatMap((t) => t.children ?? [t]))
+    ), [])
 
 const [useStashItems] = bind((league: string) => STASH_SERVICE.currentStashContents$
     .pipe(
@@ -33,8 +25,5 @@ const [useStashItems] = bind((league: string) => STASH_SERVICE.currentStashConte
     ), [])
 
 export {
-    useCurrentStashes,
-    useCurrentStashesFlat,
-    useCurrentStashContents,
     useStashItems
 }

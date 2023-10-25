@@ -5,7 +5,7 @@ import App from "./App";
 
 function start(echoContext: EchoContextType) {
     echoContext.pluginManager.addNavItem({
-        name: "ExamplePlugin",
+        name: "Stash",
         page: App
     })
 }

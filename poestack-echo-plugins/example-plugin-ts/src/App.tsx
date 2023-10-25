@@ -1,16 +1,18 @@
 import {
-    useCurrentStashesFlat,
+    useStashes,
     useEchoContext, useStashItems,
 } from 'poestack-echo-common'
-import React from 'react'
+import React, {useState} from 'react'
 import {PoePartialStashTab} from "poe-api";
 
 function App(): JSX.Element {
     const league = "Ancestor"
 
+    const [searchString, setSearchString] = useState("")
     const {stashService} = useEchoContext()
-    const stashes = useCurrentStashesFlat()
+    const stashes = useStashes(league)
     const stashItems = useStashItems(league)
+        .filter((e) => !searchString.length || e.item.typeLine.toLowerCase().includes(searchString.toLowerCase()))
         .sort((a, b) => b.stash.loadedAtTimestamp.getTime() - a.stash.loadedAtTimestamp.getTime())
 
     function onStashClicked(stash: PoePartialStashTab) {
@@ -19,35 +21,44 @@ function App(): JSX.Element {
 
     return (
         <>
-            <div>
-                <button className="py-2 px-4 rounded bg-blue-500" onClick={() => {
+            <div className="flex flex-col h-full w-full p-3">
+                <button className="flex-shrink-0 py-2 px-4 rounded text-white bg-blue-500" onClick={() => {
                     stashService.stashApi.getStashes(league).subscribe()
                 }}>
                     Load Stashes
                 </button>
-                <div className="flex flex-row gap-2 overflow-y-scroll pb-5">
+                <div className="flex-shrink-0 flex flex-row gap-2 overflow-y-scroll pb-5 pt-2">
                     {stashes.map((e) => (
-                        <div key={e.id} className="flex-shrink-0 cursor-pointer" onClick={() => {
-                            onStashClicked(e)
-                        }}>{e.name}</div>
+                        <div key={e.id}
+                             style={{backgroundColor: `#${e.metadata.colour}`}}
+                             className="flex-shrink-0 cursor-pointer py-2 px-4 shadow-md no-underline rounded-full  text-white text-sm hover:text-white hover:bg-blue-light focus:outline-none active:shadow-none mr-2"
+                             onClick={() => {
+                                 onStashClicked(e)
+                             }}>{e.name}</div>
                     ))}
                 </div>
-                <div>
-                    <div>
-                        {
-                            stashItems.map((e) => (
-                                <div key={e.item.id}>
-                                    <div>
+                <div className="flex-shrink-0">
+                    <input
+                        type="text"
+                        value={searchString}
+                        onChange={(e) => setSearchString(e.target.value)}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    />
+                </div>
+                <div className="overflow-y-scroll flex-1 mt-2">
+                    {
+                        stashItems.map((e) => (
+                            <div key={e.item.id}>
+                                <div>
                                         <span
                                             style={{color: `#${e.stash.metadata.colour}`}}>{e.stash.name}</span>: {e.item.stackSize} {e.item.typeLine}
-                                    </div>
-                                    <div>
-                                        {e.item.properties?.map((p) => (<li>{p.name}: {p.values.join(", ")}</li>))}
-                                    </div>
                                 </div>
-                            ))
-                        }
-                    </div>
+                                <div>
+                                    {e.item.properties?.map((p) => (<li>{p.name}: {p.values.join(", ")}</li>))}
+                                </div>
+                            </div>
+                        ))
+                    }
                 </div>
             </div>
         </>

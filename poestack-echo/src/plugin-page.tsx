@@ -42,8 +42,8 @@ export const PluginPage: React.FC = () => {
     const [selectedTheme, setSelectedTheme] = useState(themes[0])
 
     return (
-        <div className="min-h-screen flex flex-row gap-1 text-primary-text" data-theme={selectedTheme}>
-            <div className="flex flex-col bg-secondary-surface p-2">
+        <div className="h-screen w-screen text-primary-text" data-theme={selectedTheme}>
+            <div className="w-16 h-full fixed flex flex-col bg-secondary-surface p-2">
                 {pluginManager.registeredPluginNavItems.map((navItem) => (
                     <div
                         className={"cursor-pointer " + (pluginManager.selectedNavItem === navItem ? "text-green-300" : "")}
@@ -53,18 +53,15 @@ export const PluginPage: React.FC = () => {
                         {navItem.name}
                     </div>
                 ))}
-                <div className="flex-grow"></div>
+                <div className="flex-1"></div>
                 {
                     themes.map((t) => (<div onClick={() => {
                         setSelectedTheme(t)
                     }}>{t}</div>))
                 }
             </div>
-
-            <div className="max-h-screen w-full p-3 overflow-y-scroll">
-                <Subscribe>
-                    <PluginBody/>
-                </Subscribe>
+            <div className="ml-16 h-full">
+                <PluginBody/>
             </div>
         </div>
     );
