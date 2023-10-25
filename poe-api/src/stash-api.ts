@@ -9,11 +9,11 @@ export class StashApi {
     public stashContent$: Subject<PoeStashTab> = new Subject()
 
     public getStashes(league: string): Observable<PoePartialStashTab[]> {
-        const now = new Date();
         return HttpUtil.get<PoePartialStashTab[]>(`/stash/${league}/stashes`)
             .pipe(
                 tap((e) => {
                     e.forEach((t) => {
+                        t.children?.forEach((c) => c.league = league)
                         t.league = league;
                     })
                 }),
@@ -29,20 +29,6 @@ export class StashApi {
                     e.loadedAtTimestamp = new Date();
                 }),
                 tap((e) => this.stashContent$.next(e))
-            )
-    }
-
-    public getStashContents(league: string, stashIds: string[]): Observable<PoeStashTab> {
-        return of(stashIds)
-            .pipe(
-                concatMap((e) => from(e)),
-                concatMap((e) =>
-                    this.getStashContent(league, e)
-                        .pipe(catchError((e, c) => {
-                            return of(null)
-                        }),)
-                ),
-                filterNullish(),
             )
     }
 }

@@ -15,26 +15,20 @@ function App(): JSX.Element {
         .filter((e) => !searchString.length || e.item.typeLine.toLowerCase().includes(searchString.toLowerCase()))
         .sort((a, b) => b.stash.loadedAtTimestamp.getTime() - a.stash.loadedAtTimestamp.getTime())
 
-    function onStashClicked(stash: PoePartialStashTab) {
-        stashService.stashApi.getStashContent(league, stash.id!).subscribe()
-    }
+    stashService.loadStashes(league)
 
     return (
         <>
             <div className="flex flex-col h-full w-full p-3">
-                <button className="flex-shrink-0 py-2 px-4 rounded text-white bg-blue-500" onClick={() => {
-                    stashService.stashApi.getStashes(league).subscribe()
-                }}>
-                    Load Stashes
-                </button>
                 <div className="flex-shrink-0 flex flex-row gap-2 overflow-y-scroll pb-5 pt-2">
                     {stashes.map((e) => (
                         <div key={e.id}
                              style={{backgroundColor: `#${e.metadata.colour}`}}
                              className="flex-shrink-0 cursor-pointer py-2 px-4 shadow-md no-underline rounded-full  text-white text-sm hover:text-white hover:bg-blue-light focus:outline-none active:shadow-none mr-2"
-                             onClick={() => {
-                                 onStashClicked(e)
-                             }}>{e.name}</div>
+                             onClick={() => stashService.loadStashContent(e.league, e.id)}
+                        >
+                            {e.name}
+                        </div>
                     ))}
                 </div>
                 <div className="flex-shrink-0">
