@@ -1,5 +1,8 @@
 # PoeStack - Sage
 
+![image](https://github.com/PoeStack/poestack-sage/assets/6809142/f31d1f01-4f3d-4682-a5df-93ee2eb9a942)
+
+
 ## Intro: What is this?
 This is my work in progress repo for building what is basically PoeStack v2.
 I started building PoeStack a year ago and I've learned a lot of things and the v1 has over 100k users.
