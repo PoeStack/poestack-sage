@@ -7,7 +7,7 @@ export class StashService {
     public stashApi: StashApi
 
     public currentStashes$: BehaviorSubject<Record<string, PoePartialStashTab[]>> = new BehaviorSubject<Record<string, PoePartialStashTab[]>>({})
-    public currentStashContents$: BehaviorSubject<PoeStashTab[]> = new BehaviorSubject<PoeStashTab[]>([])
+    public currentStashContents$: BehaviorSubject<Record<string, PoeStashTab>> = new BehaviorSubject<Record<string, PoeStashTab>>({})
 
     constructor(stashApi: StashApi) {
         this.stashApi = stashApi
@@ -32,11 +32,9 @@ export class StashService {
             ).subscribe(this.currentStashes$)
         this.stashApi.stashContent$
             .pipe(
-                scan((currentContents: PoeStashTab[], newStash) => {
-                    const updatedContents = currentContents.filter(stash => stash.id !== newStash.id);
-                    updatedContents.push(newStash);
-                    return updatedContents;
-                }, []),
+                scan((currentContents: Record<string, PoeStashTab>, newStash) => {
+                    return {...currentContents, [newStash.id!]: newStash};
+                }, {}),
             ).subscribe(this.currentStashContents$);
     }
 }

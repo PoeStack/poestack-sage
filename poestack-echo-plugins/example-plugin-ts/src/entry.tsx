@@ -11,7 +11,7 @@ function start(echoContext: EchoContextType) {
 }
 
 function destroy(echoContext: EchoContextType) {
-    echoContext.pluginManager.removeNavItem("ExamplePlugin")
+    echoContext.pluginManager.removeNavItem("Stash")
 }
 
 export default function (): RegisteredPlugin {

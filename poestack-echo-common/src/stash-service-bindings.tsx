@@ -14,16 +14,12 @@ export const [useStashes] = bind((league: string) => STASH_SERVICE.currentStashe
         map((e) => e.flatMap((t) => t.children ?? [t]))
     ), [])
 
-const [useStashItems] = bind((league: string) => STASH_SERVICE.currentStashContents$
+export const [useStashItems] = bind((league: string) => STASH_SERVICE.currentStashContents$
     .pipe(
         mergeMap((tabs) =>
-            from(tabs).pipe(
+            from(Object.values(tabs)).pipe(
                 filter((e) => e.league === league),
                 mergeMap((stash) => stash.items!.map((item) => ({stash, item}))),
                 toArray<PoeStashItemPair>(),
             ))
     ), [])
-
-export {
-    useStashItems
-}
