@@ -11,6 +11,6 @@ include(
     "poestack-ts-ratchet"
 )
 
-File("poestack-echo-plugins").listFiles()!!.forEach {
+File("poestack-echo-plugins").listFiles()?.forEach {
     include("poestack-echo-plugins:${it.name}")
 }

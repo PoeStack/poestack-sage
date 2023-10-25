@@ -1,3 +1,7 @@
-task<Exec>("start") {
-    commandLine("npm", "run", "start-api")
+task<Exec>("npmInstall") {
+    commandLine("npm", "install")
+}
+
+task<Exec>("npmBuild") {
+    commandLine("npm", "run", "build")
 }
