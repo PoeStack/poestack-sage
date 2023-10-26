@@ -2,13 +2,10 @@
   "name": "poestack-aws-cdk",
   "version": "0.1.0",
   "bin": {
-    "poestack-cdk": "bin/poestack-cdk.js"
+    "poestack-cdk": "dist/bin/poestack-cdk.js"
   },
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "test": "jest",
-    "cdk": "cdk"
+    "build": "tsc"
   },
   "devDependencies": {
     "@types/node": "20.7.1",

@@ -3,7 +3,7 @@ task<Exec>("npmInstall") {
 }
 
 task<Exec>("npmClean") {
-    commandLine("npx", "rimraf", "build")
+    commandLine("npx", "rimraf", "build/index.js")
 }
 
 task<Exec>("npmCleanModules") {
