@@ -15,6 +15,7 @@ Steps needed to enter pre-alpha (build only):
 
 Steps needed to enter alpha (releases):
 - Figure out how our Sqlite implementation should be used by scripts
+- Move these docs to mdBook
 - Add automatic updating for install versions
 - Add a button to the v1 to make authentication not require copy/paste
 - Add a basic stash tracking/character tracking plugin
