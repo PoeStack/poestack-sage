@@ -12,5 +12,15 @@ The goal of Sage is mainly to allow people in the POE community to easily create
 Since plugin development is the goal of sage all core functionality that can be a plugin should be a plugin. 
 
 ### Monorepo
+Sage is a monorepo that contains all projects that go into running the Sage application. This includes:
+- Common libraries for building plugins
+- The Electron application
+- Example plugins
+- The GGG api wrapper
+- Backend code for:
+  - Tracking POE pricing information
+  - Handling user auth
+  - TFT integrations
+- All core and published plugins
 
 ### Electron/React
