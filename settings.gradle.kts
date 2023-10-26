@@ -1,16 +1,16 @@
 rootProject.name = "poestack-sage"
 
 include(
-    "poe-api",
-    "poe-test-env",
-    "poestack-cdk",
-    "poestack-echo",
-    "poestack-echo-common",
-    "poestack-insights",
-    "poestack-insights-api",
-    "poestack-ts-ratchet"
+    "src:ts-ratchet",
+    "src:ggg-api",
+    "src:echo-common",
+    "src:echo-app",
+    "src:insights",
+    "src:insights-api",
+    "src:ggg-test-env",
+    "src:sage-aws-cdk",
 )
 
-File("poestack-echo-example-plugins").listFiles()?.forEach {
-    include("poestack-echo-example-plugins:${it.name}")
+File("src/echo-plugin-examples").listFiles()?.forEach {
+    include("src:echo-plugin-examples:${it.name}")
 }

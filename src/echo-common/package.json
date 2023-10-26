@@ -1,0 +1,28 @@
+{
+  "name": "echo-common",
+  "version": "1.0.3",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+    "test": "npm run build && node dist/cjs/poe-api-test.js",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.6",
+    "@types/react": "^18.2.31",
+    "typescript": "^5.2.2"
+  },
+  "peerDependencies": {
+    "@react-rxjs/core": "^0.10.7",
+    "@react-rxjs/utils": "^0.9.7",
+    "ggg-api": "file:../ggg-api",
+    "ts-ratchet": "file:../ts-ratchet",
+    "react": "file:../echo-app/node_modules/react",
+    "react-dom": "file:../echo-app/node_modules/react-dom",
+    "rxjs": "^7.8.1"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "poestack-insights",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "rimraf ./dist && tsc",
+    "start": "npm run build && node dist/index.js",
+    "ps-stream-cli": "npm run build && node dist/ps-stream-cli.js",
+    "stash-cli": "npm run build && node dist/stash-cli.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.8.3",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@types/lodash": "^4.14.199",
+    "dotenv": "^16.3.1",
+    "ioredis": "^5.3.2",
+    "lodash": "^4.17.21",
+    "node-fetch": "^2.7.0",
+    "object-hash": "^3.0.0",
+    "redis": "^4.6.10",
+    "reflect-metadata": "^0.1.13",
+    "tsyringe": "^4.8.0",
+    "winston": "^3.10.0",
+    "ggg-api": "../ggg-api"
+  }
+}
