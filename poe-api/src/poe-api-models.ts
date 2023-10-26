@@ -232,7 +232,7 @@ export type PoePartialStashTab = {
 
 export type PoeStashTab = PoePartialStashTab & {
     items?: PoeItem[];
-    loadedAtTimestamp: Date;
+    loadedAtTimestamp: string;
 };
 
 export type PoeStashTabMetadata = {

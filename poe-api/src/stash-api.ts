@@ -29,7 +29,7 @@ export class StashApi {
                 map((e) => e?.stash),
                 tap((e) => {
                     e.league = league;
-                    e.loadedAtTimestamp = new Date();
+                    e.loadedAtTimestamp = new Date().toString();
                 }),
                 tap((e) => this.stashContent$.next(e))
             )

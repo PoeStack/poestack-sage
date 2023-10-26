@@ -13,7 +13,7 @@ function App(): JSX.Element {
     const stashes = useStashes(league)
     const stashItems = useStashItems(league)
         .filter((e) => !searchString.length || e.item.typeLine.toLowerCase().includes(searchString.toLowerCase()))
-        .sort((a, b) => b.stash.loadedAtTimestamp.getTime() - a.stash.loadedAtTimestamp.getTime())
+        .sort((a, b) => new Date(b.stash.loadedAtTimestamp).getTime() - new Date(a.stash.loadedAtTimestamp).getTime())
 
     stashService.currentStashes.load(league)
     stashService.currentStashes.load("Standard")

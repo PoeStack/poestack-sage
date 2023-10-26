@@ -5,7 +5,7 @@ import {PoeItem, PoePartialStashTab} from "poe-api";
 import {filterNullish} from "poestack-ts-ratchet";
 
 export type PoeStashItemPair = {
-    stash: PoePartialStashTab & { items?: PoeItem[] | undefined, loadedAtTimestamp: Date },
+    stash: PoePartialStashTab & { items?: PoeItem[] | undefined, loadedAtTimestamp: string },
     item: PoeItem
 }
 
@@ -21,7 +21,7 @@ export const [useStashItems] = bind((league: string) => STASH_SERVICE.currentSta
             from(Object.values(tabs).map((e) => e.value)).pipe(
                 filterNullish(),
                 filter((e) => e.league === league),
-                mergeMap((stash) => stash.items!.map((item) => ({stash, item}))),
+                mergeMap((stash) => (stash?.items ?? []).map((item) => ({stash, item}))),
                 toArray<PoeStashItemPair>(),
             ))
     ), [])
