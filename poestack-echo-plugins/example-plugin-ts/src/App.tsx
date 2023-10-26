@@ -15,7 +15,8 @@ function App(): JSX.Element {
         .filter((e) => !searchString.length || e.item.typeLine.toLowerCase().includes(searchString.toLowerCase()))
         .sort((a, b) => b.stash.loadedAtTimestamp.getTime() - a.stash.loadedAtTimestamp.getTime())
 
-    stashService.loadStashes(league)
+    stashService.currentStashes.load(league)
+    stashService.currentStashes.load("Standard")
 
     return (
         <>
@@ -25,7 +26,7 @@ function App(): JSX.Element {
                         <div key={e.id}
                              style={{backgroundColor: `#${e.metadata.colour}`}}
                              className="flex-shrink-0 cursor-pointer py-2 px-4 shadow-md no-underline rounded-full  text-white text-sm hover:text-white hover:bg-blue-light focus:outline-none active:shadow-none mr-2"
-                             onClick={() => stashService.loadStashContent(e.league, e.id)}
+                             onClick={() => stashService.currentStashContents.load(e.league + "_" + e.id)}
                         >
                             {e.name}
                         </div>
