@@ -34,7 +34,7 @@ export const PluginPage: React.FC = () => {
             });
         }
 
-        loadPlugins(path.resolve("..", "poestack-echo-plugins"))
+        loadPlugins(path.resolve("..", "poestack-echo-example-plugins"))
     }, []);
 
 
