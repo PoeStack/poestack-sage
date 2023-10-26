@@ -31,3 +31,5 @@ What if our change to the common repo wasn't just a new feature but a change to 
 Finally the mono repo helps keep all pugins updated. If we made the breaking change described above and published a new library version plugin developers would need to update their dependancy and publish a new version of their plugin. When they did this we would need to make sure that people running the newest version of the Electron app pull in the newest version of the plugin while people running an older version of the Electron app need to pull in the older version of the plugin. The mono repo simplfies this all by making sure that when something is merge into the mono repo it must build and pass tests with the current version of the common libraries, and when the common libraries are updated that PR must also pass build and tests for all the consumers. In this way everyone stays in sync.
 
 ### Electron/React
+
+### RxJS
