@@ -11,7 +11,7 @@ Steps needed to enter pre-alpha (build only):
 - Add visible version to the UI
 - Switch to icons only in the sidebar
 - Add a general guard panel for ensuring connection
-- Test the Windows installer
+- Test the Windows build
 
 Steps needed to enter alpha (releases):
 - Figure out how our Sqlite implementation should be used by scripts
@@ -20,6 +20,7 @@ Steps needed to enter alpha (releases):
 - Add a basic stash tracking/character tracking plugin
 - Add a plugin managment plugin to enabled/disable and install/uninstall/update plugins
 - Work more on themeing, add a theme selector
+- Test the Windows installer
 
 Steps needed to enter beta:
 - Add ability to connect a Discord account
