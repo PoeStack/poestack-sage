@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "clean": "rimraf build/index.js dist",
-    "build": "rimraf build/index.js && rollup -c --configPlugin typescript",
+    "build": "rollup -c --configPlugin typescript",
     "start": "npm run build && electron .",
     "make": "npm run build && rimraf dist && electron-builder"
   },
@@ -44,7 +44,6 @@
     "postcss-loader": "^7.3.3",
     "rimraf": "^5.0.5",
     "rollup": "^4.1.4",
-    "rollup-plugin-peer-deps-external": "^2.2.3",
     "tailwindcss": "^2.2.19"
   }
 }

@@ -1,5 +1,4 @@
 import typescript from "@rollup/plugin-typescript";
-import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import postcss from 'rollup-plugin-postcss';
 import type {RollupOptions} from 'rollup';
 
@@ -12,8 +11,7 @@ const config: RollupOptions = {
     },
     plugins: [
         postcss({}),
-        typescript(),
-        peerDepsExternal()
+        typescript()
     ]
 }
 export default config;

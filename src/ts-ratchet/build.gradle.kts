@@ -5,3 +5,11 @@ task<Exec>("npmInstall") {
 task<Exec>("npmBuild") {
     commandLine("npm", "run", "build")
 }
+
+task<Exec>("npmCleanModules") {
+    commandLine("npx", "rimraf", "node_modules")
+}
+
+task<Exec>("npmClean") {
+    commandLine("npx", "rimraf", "dist")
+}
