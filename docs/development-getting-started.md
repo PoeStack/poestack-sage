@@ -12,18 +12,18 @@ To effecitvely work on a sage plugin or the common library it would be helpful i
 
 ### System Requirements
 Before moving on make sure you have the following installed:
-- NodeJS - `node -v` and `npm -v` should work.
-- Java - `java -version` should show a jdk higher than version 8 (technically to build plugins you do not need this but it will make it much more complicated).
-- Git - `git -v` should work.
+- NodeJS - `node -v` and `npm -v` should work
+- Java - `java -version` should show a jdk higher than version 8 (technically to build plugins you do not need this but it will make it much more complicated)
+- Git - `git -v` should work
 
 ### Project Setup
 Follow these instructions to clone and setup the project:
-- Clone the Sage project `git clone https://github.com/PoeStack/poestack-sage`.
-- You should now have a directory containing the code from this repo.
-- Inside the repo run the following command `gradle npmInstall`. This will install all the npm modules for all sub projects in the repo.
-- Next run `gradle npmBuild` NOTE: on some systems this command stalls the first time it is ran if it has been running a bit kill it and run it again.
+- Clone the Sage project `git clone https://github.com/PoeStack/poestack-sage`
+- You should now have a directory containing the code from this repo
+- Inside the repo run the following command `gradle npmInstall`. This will install all the npm modules for all sub projects in the repo
+- Next run `gradle npmBuild` NOTE: on some systems this command stalls the first time it is ran if it has been running a bit kill it and run it again
 - Next navigate to the `src/echo-app` directory `cd ./src/echo-app`
 - Execute the following command `npm run start`
-- A Electron window should open. Contratulations you have correctly installed Sage for local development.
+- A Electron window should open. Contratulations you have correctly installed Sage for local development
 
 ### Creating Your First Plugin
