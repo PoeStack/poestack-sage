@@ -1,4 +1,4 @@
-# PoeStack - Sage Roadmap
+# Roadmap
 
 For now I'll just keep this as a general todo list.
 
@@ -29,7 +29,7 @@ Steps needed to enter beta:
 - Add TFT integration to the api
 - Add TFT livesearch/bulk tool plugins  
 
-Long term ideas:
+# Long term ideas
 - Add API for sending users Discord messages
 - Add API for interacting with local item filters, it would be nice to have a way to enable filters to automatically adjust to econmoic data or active account
 - Add overlay API to allow plugins to overlay POE
