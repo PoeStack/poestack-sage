@@ -5,8 +5,8 @@ This document will help you get started with Sage development. By the end of the
 ### Prerequisites
 To effecitvely work on a Sage plugin or the common library it would be helpful if you had some experience with the following:
 - Typescript/Javascript - All the plugins are written in Typescript/Javascript these are not hard languages to pick up but you might struggle a bit at the start.
-- React - All the UI is built with React/Electron you don't need to be a React wizard but some understanding will go a long way.
-- Tailwindcss - All of the CSS in the project is done with Tailwind again you don't need much experience but understand what it is would help a lot.
+- React - All the UI is built with React you don't need to be a React wizard but some understanding will go a long way.
+- Tailwindcss - All of the CSS in the project is done with Tailwind again you don't need much experience but understanding what it is would help a lot.
 
 As you get into more advanced features it might also be helpful to have experience with:
 - RxJs - The common library uitilizes this heavily you will need a basic understanding to work inside the common library, while writing scripts you can use RxJs but most of it can also be abstracted with prebuilt bindings/promises.
