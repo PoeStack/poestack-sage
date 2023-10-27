@@ -3,10 +3,11 @@ import React, {useEffect, useState} from "react";
 import {ECHO_ROUTER, RegisteredPlugin, useEchoContext} from "echo-common";
 import fs from "fs";
 import * as path from "path";
-import {UserCircleIcon} from "@heroicons/react/24/outline";
+import {HomeIcon, UserCircleIcon} from "@heroicons/react/24/outline";
 import {QuestionMarkCircleIcon} from "@heroicons/react/20/solid";
-import {EchoRouter} from "echo-common/dist/cjs/echo-router";
+import {EchoRoute, EchoRouter, EchoRouterNavItem} from "echo-common/dist/cjs/echo-router";
 import {bind} from "@react-rxjs/core";
+import {ProfilePage} from "./profile-page";
 
 const [useCurrentRoute] = bind(ECHO_ROUTER.currentRoute$)
 const [useCurrentRoutes] = bind(ECHO_ROUTER.routes$)
@@ -21,6 +22,20 @@ export const PluginPage: React.FC = () => {
     const PluginBody = currentRoute?.page ?? DefaultPage
 
     useEffect(() => {
+        const homeRoute: EchoRoute = {
+            navItems: [
+                {
+                    location: "l-sidebar-m",
+                    icon: HomeIcon
+                }
+            ],
+            page: DefaultPage,
+            path: "home",
+            plugin: "sage"
+        }
+        echoRouter.registerRoute(homeRoute)
+        echoRouter.push(homeRoute)
+
         echoRouter.registerRoute({
                 navItems: [
                     {
@@ -28,7 +43,7 @@ export const PluginPage: React.FC = () => {
                         icon: UserCircleIcon
                     }
                 ],
-                page: DefaultPage,
+                page: ProfilePage,
                 path: "profile",
                 plugin: "sage"
             }
