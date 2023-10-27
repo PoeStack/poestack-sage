@@ -1,5 +1,6 @@
+import {CachedTask, CachedTaskEvent} from "./cached-task";
 import {EchoContext, EchoContextProvider, EchoContextType, useEchoContext} from "./echo-context";
-import { LOCAL_STORAGE } from "./local-storage-service";
+import {LOCAL_STORAGE} from "./local-storage-service";
 import {PluginServiceType, RegisteredPlugin} from "./plugin-service";
 import {StashService} from "./stash-service";
 import {useStashes, useStashItems} from "./stash-service-bindings";
@@ -14,5 +15,7 @@ export {
     RegisteredPlugin,
     useStashes,
     useStashItems,
-    LOCAL_STORAGE
+    LOCAL_STORAGE,
+    CachedTask,
+    CachedTaskEvent
 }

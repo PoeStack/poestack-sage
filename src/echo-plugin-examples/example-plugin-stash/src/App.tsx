@@ -14,8 +14,10 @@ function App(): JSX.Element {
         .filter((e) => !searchString.length || e.item.typeLine.toLowerCase().includes(searchString.toLowerCase()))
         .sort((a, b) => new Date(b.stash.loadedAtTimestamp).getTime() - new Date(a.stash.loadedAtTimestamp).getTime())
 
-    stashService.currentStashes.load(league)
-    stashService.currentStashes.load("Standard")
+
+
+    stashService.currentStashes.load(league).subscribe()
+    stashService.currentStashes.load("Standard").subscribe()
 
     return (
         <>
@@ -25,7 +27,7 @@ function App(): JSX.Element {
                         <div key={e.id}
                              style={{backgroundColor: `#${e.metadata.colour}`}}
                              className="flex-shrink-0 cursor-pointer py-2 px-4 shadow-md no-underline rounded-full  text-white text-sm hover:text-white hover:bg-blue-light focus:outline-none active:shadow-none mr-2"
-                             onClick={() => stashService.currentStashContents.load(e.league + "_" + e.id)}
+                             onClick={() => stashService.currentStashContents.load(e.league + "_" + e.id).subscribe()}
                         >
                             {e.name}
                         </div>

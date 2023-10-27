@@ -6,7 +6,6 @@ export type EchoContextType = {
     stashService: StashService,
     pluginManager: PluginServiceType,
 }
-
 export const EchoContext = React.createContext<EchoContextType | null>(null);
 
 export const EchoContextProvider: React.FC<PropsWithChildren> = ({children}) => {
