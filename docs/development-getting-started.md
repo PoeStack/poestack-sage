@@ -25,6 +25,6 @@ Follow these instructions to clone and setup the project:
 - Next run `gradle npmBuild` NOTE: on some systems this command stalls the first time it is ran if it has been running a bit kill it and run it again
 - Next navigate to the `src/echo-app` directory `cd ./src/echo-app`
 - Execute the following command `npm run start`
-- A Electron window should open. Contratulations you have correctly installed Sage for local development
+- A Electron window should open. Congratulations you have correctly installed Sage for local development
 
 ### Creating Your First Plugin
