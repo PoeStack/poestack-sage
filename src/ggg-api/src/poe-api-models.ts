@@ -230,6 +230,29 @@ export type PoePartialStashTab = {
     league: string;
 };
 
+export type PoeLeague = {
+    id: string,
+    realm?: string,
+    description?: string,
+    rules?: PoeLeagueRule[],
+    registerAt?: string,
+    event?: boolean,
+    url?: string,
+    startAt?: string,
+    endAt?: string,
+    timedEvent?: boolean,
+    scoreEvent?: boolean,
+    delveEvent?: boolean,
+    ancestorEvent?: boolean,
+    leagueEvent?: boolean
+}
+
+export type PoeLeagueRule = {
+    id: string,
+    name: string,
+    description?: string
+}
+
 export type PoeStashTab = PoePartialStashTab & {
     items?: PoeItem[];
     loadedAtTimestamp: string;

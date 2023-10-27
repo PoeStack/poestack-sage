@@ -3,6 +3,7 @@ import {EchoContext, EchoContextProvider, EchoContextType, useEchoContext} from 
 import { ECHO_ROUTER } from "./echo-router";
 import {LOCAL_STORAGE} from "./local-storage-service";
 import {PluginServiceType, RegisteredPlugin} from "./plugin-service";
+import {POE_ACCOUNT_SERVICE, PoeAccountService, usePoeLeagues, usePoeProfile } from "./poe-account-service";
 import {StashService} from "./stash-service";
 import {useStashes, useStashItems} from "./stash-service-bindings";
 
@@ -19,5 +20,9 @@ export {
     LOCAL_STORAGE,
     CachedTask,
     CachedTaskEvent,
-    ECHO_ROUTER
+    ECHO_ROUTER,
+    PoeAccountService,
+    POE_ACCOUNT_SERVICE,
+    usePoeProfile,
+    usePoeLeagues
 }

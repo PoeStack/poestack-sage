@@ -1,13 +1,25 @@
+import {POE_ACCOUNT_SERVICE, usePoeLeagues, usePoeProfile} from "echo-common";
+
+
 export function ProfilePage() {
+
+    const profile = usePoeProfile()
+    const leagues = usePoeLeagues()
+
+    POE_ACCOUNT_SERVICE.profile.load("profile").subscribe()
+    POE_ACCOUNT_SERVICE.leagues.load("leagues").subscribe()
 
     return (
         <>
-            <div className="w-full flex flex-row bg-indigo-700">
-                <div className="basis-1/3"></div>
+            <div className="w-full h-full overflow-y-scroll flex flex-row">
+                <div className="basis-1/4"></div>
                 <div className="flex flex-col">
-                    <div>Welcome to your profile</div>
+                    <div>Welcome {profile?.name} to your profile</div>
+                    {leagues?.map((league) => (
+                        <div>{league.id}</div>
+                    ))}
                 </div>
-                <div className="basis-1/3"></div>
+                <div className="basis-1/4"></div>
             </div>
         </>
     )

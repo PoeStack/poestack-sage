@@ -25,10 +25,10 @@ import {
     PoeStashTabMetadata,
     PoeTokenExchangeResponse
 } from "./poe-api-models"
-import {StashApi} from "./stash-api";
+import {GggApi} from "./ggg-api";
 
 export {
-    StashApi,
+    GggApi,
     PoeCharacter,
     PoeCharacterPassive,
     PoeFlavourTextInfo,

@@ -17,10 +17,12 @@ export class HttpUtil {
                 }
             })
                 .then((response) => {
+                    console.log("GGG response", path, response.status)
                     observer.next(response.data);
                     observer.complete();
                 })
                 .catch((error) => {
+                    console.log("GGG response - error")
                     observer.error(error);
                 });
         })
