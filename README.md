@@ -14,3 +14,5 @@ Welcome to PoeStack - Sage, Sage is a plugin focused tool to help enchance you P
 [Project Design Overview](https://github.com/PoeStack/poestack-sage/blob/main/docs/project-design-overview.md)
 
 [Development Getting Started](https://github.com/PoeStack/poestack-sage/blob/main/docs/development-getting-started.md)
+
+[Example Plugins](https://github.com/PoeStack/poestack-sage/tree/main/src/echo-plugin-examples)
