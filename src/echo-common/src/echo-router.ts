@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import {BehaviorSubject} from "rxjs";
 
 export type EchoRoute = {
     plugin: string,
@@ -7,38 +8,28 @@ export type EchoRoute = {
     navItems?: EchoRouterNavItem[] | null
 }
 
+export type RouterNavLocation = "l-sidebar-m" | "l-sidebar-b"
+
 export type EchoRouterNavItem = {
-    location: "l-sidebar-m" | "l-sidebar-b",
+    location: RouterNavLocation,
     icon: any,
 }
 
-export type EchoRouter = {
-    registerRoute: (route: EchoRoute) => void,
-    removeRoute: (plugin: string, path: string) => void,
+export class EchoRouter {
+    routes$ = new BehaviorSubject<EchoRoute[]>([])
+    currentRoute$ = new BehaviorSubject<EchoRoute | null>(null)
 
-    routes: EchoRoute[],
-    current: EchoRoute | null,
-    push: (next: { plugin: string, path: string }) => void
-}
+    public registerRoute(route: EchoRoute) {
+        this.routes$.next([...this.routes$.value, route])
+    }
 
-export function useEchoRouter(): EchoRouter {
+    public removeRoute(next: { plugin: string, path: string }) {
+    }
 
-    const [routes, setRoutes] = useState<EchoRoute[]>([])
-    const [currentRoute, setCurrentRoute] = useState<EchoRoute | null>(null)
-
-    return {
-        registerRoute: (route) => {
-            setRoutes([...routes, route])
-        },
-        removeRoute: (plugin, path) => {
-        },
-        routes: routes,
-        current: currentRoute,
-        push: (next) => {
-            const nextRoute = routes.find((e) => e.plugin === next.plugin && e.path === next.path)
-            if (nextRoute) {
-                setCurrentRoute(nextRoute)
-            }
-        }
+    public push(next: { plugin: string, path: string }) {
+        const nextRoute = this.routes$.value.find((e) => e.plugin === next.plugin && e.path === next.path)
+        this.currentRoute$.next(nextRoute ?? null)
     }
 }
+
+export const ECHO_ROUTER = new EchoRouter()

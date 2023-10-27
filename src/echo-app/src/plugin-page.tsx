@@ -1,17 +1,39 @@
 import React, {useEffect, useState} from "react";
 
-import {RegisteredPlugin, useEchoContext} from "echo-common";
+import {ECHO_ROUTER, RegisteredPlugin, useEchoContext} from "echo-common";
 import fs from "fs";
 import * as path from "path";
 import {UserCircleIcon} from "@heroicons/react/24/outline";
 import {QuestionMarkCircleIcon} from "@heroicons/react/20/solid";
+import {EchoRouter} from "echo-common/dist/cjs/echo-router";
+import {bind} from "@react-rxjs/core";
+
+const [useCurrentRoute] = bind(ECHO_ROUTER.currentRoute$)
+const [useCurrentRoutes] = bind(ECHO_ROUTER.routes$)
 
 export const PluginPage: React.FC = () => {
     const echoContext = useEchoContext()
     const pluginManager = echoContext.pluginManager
     const echoRouter = echoContext.echoRouter
 
-    const PluginBody = echoRouter.current?.page ?? DefaultPage
+    const currentRoute = useCurrentRoute()
+
+    const PluginBody = currentRoute?.page ?? DefaultPage
+
+    useEffect(() => {
+        echoRouter.registerRoute({
+                navItems: [
+                    {
+                        location: "l-sidebar-b",
+                        icon: UserCircleIcon
+                    }
+                ],
+                page: DefaultPage,
+                path: "profile",
+                plugin: "sage"
+            }
+        )
+    }, []);
 
     useEffect(() => {
         function loadPlugins(baseDir: string) {
@@ -49,7 +71,7 @@ export const PluginPage: React.FC = () => {
                 className="w-12 border-r-2 shadow-sm border-black h-full fixed flex flex-col bg-secondary-surface p-2 gap-2">
                 <RouterIconNavigator location="l-sidebar-m"/>
                 <div className="flex-1"></div>
-                <RouterIconNavigator location="l-sidebar-m"/>
+                <RouterIconNavigator location="l-sidebar-b"/>
             </div>
             <div className="ml-12 pb-7 h-full">
                 <PluginBody/>
@@ -60,25 +82,42 @@ export const PluginPage: React.FC = () => {
 };
 
 const RouterIconNavigator = ({location}: { location: string }) => {
-    const echoContext = useEchoContext()
-    const pluginManager = echoContext.pluginManager
-    const echoRouter = echoContext.echoRouter
-    return <>{echoRouter.routes.flatMap((echoRoute) => {
+    const currentRoutes = useCurrentRoutes()
+    const currentRoute = useCurrentRoute()
+
+    return <>{currentRoutes.flatMap((echoRoute) => {
             return (echoRoute.navItems ?? [])
                 .filter((e) => e.location === location)
                 .map((navItem) => {
                     const Icon = navItem.icon ?? QuestionMarkCircleIcon
                     return (
                         <Icon
-                            className={"h-7 w-7 cursor-pointer " + (echoRouter.current === echoRoute ? "text-blue-600" : "")}
+                            className={"h-7 w-7 cursor-pointer " + (currentRoute === echoRoute ? "text-blue-600" : "")}
                             onClick={() => {
-                                echoRouter.push(echoRoute)
+                                ECHO_ROUTER.push(echoRoute)
                             }}>
                         </Icon>
                     )
                 })
         }
     )}</>
+}
+
+
+const setupRoutes = (echoRouter: EchoRouter) => {
+    console.log("setup route")
+    echoRouter.registerRoute({
+            navItems: [
+                {
+                    location: "l-sidebar-b",
+                    icon: UserCircleIcon
+                }
+            ],
+            page: DefaultPage,
+            path: "profile",
+            plugin: "sage"
+        }
+    )
 }
 
 const DefaultPage = () => {
