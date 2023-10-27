@@ -133,6 +133,10 @@ export type PoeItemExtended = {
     suffixes?: number;
 };
 
+export type PoeLeagueAccount = {
+
+}
+
 export type PoeItemHybrid = {
     baseTypeName?: string;
     explicitMods?: string[];

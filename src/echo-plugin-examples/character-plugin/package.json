@@ -1,5 +1,5 @@
 {
-  "name": "example-plugin-stash",
+  "name": "example-character-plugin",
   "private": true,
   "version": "0.0.0",
   "type": "module",

@@ -26,7 +26,7 @@ export function LoginPage() {
     return (
         <div className="min-h-screen flex items-center justify-center text-primary-text">
             <div className="flex flex-col gap-2">
-                <div className="text-lg font-semibold">Login</div>
+                <div className="text-lg font-semibold">PoeStack - Sage</div>
                 <div className="text-sm">Enter your PoeStack token. <a
                     className="text-primary-accent text-sm"
                     href="https://poestack.com/poe-stack/development">

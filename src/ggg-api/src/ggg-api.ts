@@ -1,5 +1,5 @@
 import {map, Observable, tap} from "rxjs";
-import {PoeLeague, PoePartialStashTab, PoeProfile, PoeStashTab} from "./poe-api-models";
+import {PoeCharacter, PoeLeague, PoeLeagueAccount, PoePartialStashTab, PoeProfile, PoeStashTab} from "./poe-api-models";
 import {GGG_API_UTIL} from "./http-util";
 
 export class GggApi {
@@ -11,6 +11,24 @@ export class GggApi {
     public getLeagues(): Observable<PoeLeague[]> {
         return GGG_API_UTIL.get<{ leagues: PoeLeague[] }>('/account/leagues').pipe(
             map((e) => e?.leagues)
+        )
+    }
+
+    public getCharacters(): Observable<PoeCharacter[]> {
+        return GGG_API_UTIL.get<{ characters: PoeCharacter[] }>(`/character`).pipe(
+            map((e) => e?.characters)
+        )
+    }
+
+    public getCharacter(name: string): Observable<PoeCharacter> {
+        return GGG_API_UTIL.get<{ character: PoeCharacter }>(`/character/${name}`).pipe(
+            map((e) => e?.character)
+        )
+    }
+
+    public getLeagueAccount(league: string): Observable<PoeLeagueAccount> {
+        return GGG_API_UTIL.get<{ league_account: PoeLeagueAccount }>(`/league-account/${league}`).pipe(
+            map((e) => e.league_account)
         )
     }
 

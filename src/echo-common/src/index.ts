@@ -4,6 +4,7 @@ import { ECHO_ROUTER } from "./echo-router";
 import {LOCAL_STORAGE} from "./local-storage-service";
 import {PluginServiceType, RegisteredPlugin} from "./plugin-service";
 import {POE_ACCOUNT_SERVICE, PoeAccountService, usePoeLeagues, usePoeProfile } from "./poe-account-service";
+import {POE_CHARACTER_SERVICE, PoeCharactersService, usePoeCharacterList } from "./poe-characters-service";
 import {StashService} from "./stash-service";
 import {useStashes, useStashItems} from "./stash-service-bindings";
 
@@ -24,5 +25,8 @@ export {
     PoeAccountService,
     POE_ACCOUNT_SERVICE,
     usePoeProfile,
-    usePoeLeagues
+    usePoeLeagues,
+    PoeCharactersService,
+    POE_CHARACTER_SERVICE,
+    usePoeCharacterList
 }
