@@ -34,9 +34,10 @@ function App(): JSX.Element {
                 <div className="flex-shrink-0">
                     <input
                         type="text"
+                        placeholder="Search..."
                         value={searchString}
                         onChange={(e) => setSearchString(e.target.value)}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="w-full px-2 py-0.5 bg-input-surface rounded-lg shadow-md border-0 focus:outline-none focus:ring focus:border-primary-accent"
                     />
                 </div>
                 <div className="overflow-y-scroll flex-1 mt-2">

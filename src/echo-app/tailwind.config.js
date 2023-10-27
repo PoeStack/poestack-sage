@@ -10,8 +10,10 @@ module.exports = {
         extend: {
             colors: {
                 "primary-surface": "var(--color-primary-surface)",
+                "input-surface": "var(--color-input-surface)",
                 "secondary-surface": "var(--color-secondary-surface)",
                 "primary-text": "var(--color-text)",
+                "primary-accent": "var(--color-primary-accent)",
             },
         },
     },

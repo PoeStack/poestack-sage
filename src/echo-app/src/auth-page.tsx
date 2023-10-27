@@ -25,12 +25,16 @@ export function LoginPage() {
     return (
         <div className="min-h-screen flex items-center justify-center text-primary-text">
             <div className="flex flex-col gap-2">
-                <div>Enter your JWT</div>
+                <div className="text-lg font-semibold">Login</div>
+                <div className="text-sm">Enter your PoeStack token</div>
                 <input type="password"
-                       className="px-1 py-0.5 bg-secondary-surface border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+                       placeholder="Token"
+                       className="px-2 py-0.5 bg-input-surface rounded-lg shadow-md border-0 focus:outline-none focus:ring focus:border-primary-accent"
                        onChange={(e) => setInputValue(e.target.value)}
                        value={inputValue}/>
-                <button onClick={handleSet}>Set</button>
+                <button
+                    className="bg-primary-accent px-1 py-0.5 rounded-lg"
+                    onClick={handleSet}>Login</button>
             </div>
         </div>
     )

@@ -106,7 +106,7 @@ const RouterIconNavigator = ({location}: { location: string }) => {
                     const Icon = navItem.icon ?? QuestionMarkCircleIcon
                     return (
                         <Icon
-                            className={"h-7 w-7 cursor-pointer " + (currentRoute === echoRoute ? "text-blue-600" : "")}
+                            className={"h-7 w-7 cursor-pointer " + (currentRoute === echoRoute ? "text-primary-accent" : "")}
                             onClick={() => {
                                 ECHO_ROUTER.push(echoRoute)
                             }}>
