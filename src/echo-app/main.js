@@ -1,4 +1,4 @@
-const {app, BrowserWindow} = require('electron');
+const {app, BrowserWindow, shell} = require('electron');
 const path = require('path');
 
 let mainWindow;
@@ -14,12 +14,20 @@ function createWindow() {
         },
     });
 
+    const handleRedirect = (e, url) => {
+        e.preventDefault()
+        shell.openExternal(url)
+    }
+    mainWindow.webContents.on('will-navigate', handleRedirect)
+
     mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
 }
+
+
 
 app.on('ready', createWindow);
 
