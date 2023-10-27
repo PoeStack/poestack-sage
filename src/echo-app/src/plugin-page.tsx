@@ -3,13 +3,15 @@ import React, {useEffect, useState} from "react";
 import {RegisteredPlugin, useEchoContext} from "echo-common";
 import fs from "fs";
 import * as path from "path";
-import {Subscribe} from "@react-rxjs/core";
+import {UserCircleIcon} from "@heroicons/react/24/outline";
+import {QuestionMarkCircleIcon} from "@heroicons/react/20/solid";
 
 export const PluginPage: React.FC = () => {
     const echoContext = useEchoContext()
     const pluginManager = echoContext.pluginManager
+    const echoRouter = echoContext.echoRouter
 
-    const PluginBody = pluginManager.selectedNavItem.page
+    const PluginBody = echoRouter.current?.page ?? DefaultPage
 
     useEffect(() => {
         function loadPlugins(baseDir: string) {
@@ -38,31 +40,47 @@ export const PluginPage: React.FC = () => {
     }, []);
 
 
-    const themes = ["Tokyo Night", 'Default']
+    const themes = ['root']
     const [selectedTheme, setSelectedTheme] = useState(themes[0])
 
     return (
         <div className="h-screen w-screen text-primary-text" data-theme={selectedTheme}>
-            <div className="w-16 h-full fixed flex flex-col bg-secondary-surface p-2">
-                {pluginManager.registeredPluginNavItems.map((navItem) => (
-                    <div
-                        className={"cursor-pointer " + (pluginManager.selectedNavItem === navItem ? "text-green-300" : "")}
-                        onClick={() => {
-                            pluginManager.setSelectedNavItem(navItem)
-                        }}>
-                        {navItem.name}
-                    </div>
-                ))}
+            <div
+                className="w-12 border-r-2 shadow-sm border-black h-full fixed flex flex-col bg-secondary-surface p-2 gap-2">
+                <RouterIconNavigator location="l-sidebar-m"/>
                 <div className="flex-1"></div>
-                {
-                    themes.map((t) => (<div onClick={() => {
-                        setSelectedTheme(t)
-                    }}>{t}</div>))
-                }
+                <RouterIconNavigator location="l-sidebar-m"/>
             </div>
-            <div className="ml-16 h-full">
+            <div className="ml-12 pb-7 h-full">
                 <PluginBody/>
             </div>
+            <div className="bg-secondary-surface fixed bottom-0 h-7 w-full ml-12"></div>
         </div>
     );
 };
+
+const RouterIconNavigator = ({location}: { location: string }) => {
+    const echoContext = useEchoContext()
+    const pluginManager = echoContext.pluginManager
+    const echoRouter = echoContext.echoRouter
+    return <>{echoRouter.routes.flatMap((echoRoute) => {
+            return (echoRoute.navItems ?? [])
+                .filter((e) => e.location === location)
+                .map((navItem) => {
+                    const Icon = navItem.icon ?? QuestionMarkCircleIcon
+                    return (
+                        <Icon
+                            className={"h-7 w-7 cursor-pointer " + (echoRouter.current === echoRoute ? "text-blue-600" : "")}
+                            onClick={() => {
+                                echoRouter.push(echoRoute)
+                            }}>
+                        </Icon>
+                    )
+                })
+        }
+    )}</>
+}
+
+const DefaultPage = () => {
+    return <>Welcome to PoeStack - Sage</>
+}

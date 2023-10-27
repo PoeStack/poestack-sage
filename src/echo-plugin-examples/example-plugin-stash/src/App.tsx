@@ -14,14 +14,12 @@ function App(): JSX.Element {
         .filter((e) => !searchString.length || e.item.typeLine.toLowerCase().includes(searchString.toLowerCase()))
         .sort((a, b) => new Date(b.stash.loadedAtTimestamp).getTime() - new Date(a.stash.loadedAtTimestamp).getTime())
 
-
-
     stashService.currentStashes.load(league).subscribe()
     stashService.currentStashes.load("Standard").subscribe()
 
     return (
         <>
-            <div className="flex flex-col h-full w-full p-3">
+            <div className="flex flex-col h-full w-full pt-2 pl-2 pr-2">
                 <div className="flex-shrink-0 flex flex-row gap-2 overflow-y-scroll pb-5 pt-2">
                     {stashes.map((e) => (
                         <div key={e.id}

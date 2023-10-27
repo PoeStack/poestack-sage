@@ -1,13 +1,8 @@
-import {catchError, concatMap, from, map, mergeMap, Observable, of, Subject, tap, toArray} from "rxjs";
+import {map, Observable, tap} from "rxjs";
 import {PoePartialStashTab, PoeStashTab} from "./poe-api-models";
-import {GGG_API_UTIL, HttpUtil} from "./http-util";
-import {filterNullish} from "poestack-ts-ratchet";
+import {GGG_API_UTIL} from "./http-util";
 
 export class StashApi {
-
-
-    public stashes$: Subject<PoePartialStashTab[]> = new Subject()
-    public stashContent$: Subject<PoeStashTab> = new Subject()
 
     public getStashes(league: string): Observable<PoePartialStashTab[]> {
         return GGG_API_UTIL.get<{ stashes: PoePartialStashTab[] }>(`/stash/${league}`)
@@ -19,7 +14,6 @@ export class StashApi {
                         t.league = league;
                     })
                 }),
-                tap((e) => this.stashes$.next(e))
             )
     }
 
@@ -31,7 +25,6 @@ export class StashApi {
                     e.league = league;
                     e.loadedAtTimestamp = new Date().toString();
                 }),
-                tap((e) => this.stashContent$.next(e))
             )
     }
 }

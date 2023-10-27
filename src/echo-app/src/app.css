@@ -4,14 +4,8 @@
 
 @layer base {
     :root {
-        --color-primary-surface: #1d283a;
-        --color-secondary-surface: #0f1729;
-        --color-text: #f8f8f2;
-    }
-
-    [data-theme="Tokyo Night"] {
-        --color-primary-surface: #24283b;
-        --color-secondary-surface: #1a1b26;
-        --color-text: #9aa5ce;
+        --color-primary-surface: #313338;
+        --color-secondary-surface: #1e1f22;
+        --color-text: #D4D4D4;
     }
 }

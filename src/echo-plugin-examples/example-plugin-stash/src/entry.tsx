@@ -2,17 +2,22 @@
 
 import {EchoContextType, RegisteredPlugin} from "echo-common";
 import App from "./App";
+import {ArchiveBoxIcon} from "@heroicons/react/24/outline";
 
 function start(echoContext: EchoContextType) {
-    echoContext.pluginManager.addNavItem({
-        name: "Stash",
-        page: App
+    echoContext.echoRouter.registerRoute({
+        plugin: "example-stash",
+        path: "main",
+        page: App,
+        navItems: [
+            {location: "l-sidebar-m", icon: ArchiveBoxIcon}
+        ]
     })
 }
 
 function destroy(echoContext: EchoContextType) {
-    echoContext.pluginManager.removeNavItem("Stash")
 }
+
 export default function (): RegisteredPlugin {
     return {
         name: null,

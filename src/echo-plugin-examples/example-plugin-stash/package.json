@@ -9,6 +9,7 @@
   },
   "peerDependencies": {
     "react": "^18.2.0",
+    "@heroicons/react": "^2.0.18",
     "react-dom": "^18.2.0",
     "ggg-api": "file:../../ggg-api",
     "echo-common": "file:../../echo-common",
