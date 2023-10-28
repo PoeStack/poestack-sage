@@ -18,11 +18,10 @@ USER node
 WORKDIR /usr/src/app
 
 COPY package*.json ./
-COPY data ./data
 
 RUN npm ci --production
 
 COPY --from=builder /usr/src/app/dist ./dist
 
 EXPOSE 8080
-CMD [ "node", "dist/ps-stream-cli.js" ]
+CMD [ "node", "dist/test.js" ]

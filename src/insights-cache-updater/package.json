@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@types/lodash": "^4.14.199",
+    "aws-sdk": "^2.1483.0",
     "dotenv": "^16.3.1",
     "ioredis": "^5.3.2",
     "lodash": "^4.17.21",
