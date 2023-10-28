@@ -9,6 +9,43 @@ import {GGGStashStreamProvider, PublicStashStreamProvider} from "./services/publ
 import ItemGroupingService from "./services/item-grouping-service";
 import Redis from "ioredis";
 
+const divineTypes = new Set(['d', 'div', 'divine'])
+const chaosTypes = new Set(['c', 'chaos'])
+const extractCurrencyType = (currencyTypeRaw: string): string | null => {
+    const formattedType = currencyTypeRaw?.trim()?.toLowerCase()
+
+    if (!formattedType?.length) return null
+    if (chaosTypes.has(formattedType)) return 'c'
+    if (divineTypes.has(formattedType)) return 'd'
+
+    return null
+}
+
+function twoDecimals(n) {
+    var log10 = n ? Math.floor(Math.log10(n)) : 0,
+        div = log10 < 0 ? Math.pow(10, 1 - log10) : 100;
+
+    return Math.round(n * div) / div;
+}
+
+const extractCurrencyValue = (currencyValueRaw: string): string | null => {
+    try {
+        var numericValue: number
+        if (currencyValueRaw.includes("/")) {
+            const split = currencyValueRaw.split("/")
+            numericValue = parseFloat(split[0]) / parseFloat(split[1])
+        } else {
+            numericValue = parseFloat(currencyValueRaw)
+        }
+
+        if (numericValue) {
+            return twoDecimals(numericValue).toString();
+        }
+    } catch (e) {
+    }
+    return null
+}
+
 (async () => {
     const streamProvider: PublicStashStreamProvider = container.resolve(GGGStashStreamProvider);
     await streamProvider.init();
@@ -16,23 +53,17 @@ import Redis from "ioredis";
     const itemGroupingService = container.resolve(ItemGroupingService);
 
     const client = new Redis({
-        host: "redis-sviluppo.lgibek.0001.use1.cache.amazonaws.com",
+        host: "sage-redis-cluster.lgibek.0001.use1.cache.amazonaws.com",
         port: 6379,
         tls: undefined
     });
 
-    let last = ''
     for (; ;) {
         try {
-            if (last?.length) {
-                const tr = await client.hgetall(last)
-                console.log("test hget", JSON.stringify(tr))
-            }
-
             const data: PoeApiPublicStashResponse = await streamProvider.nextUpdate();
             if (data?.stashes) {
                 const dateMs = Date.now();
-                const dateTurncatedMins = Math.round(dateMs / 1000 / 60);
+                const dateTruncatedMains = Math.round(dateMs / 1000 / 60);
                 let updates = 0;
                 const multi = client.multi();
                 for (const stashData of data.stashes) {
@@ -50,21 +81,14 @@ import Redis from "ioredis";
                                     toWrite[group.hashString] = {stackSize: 0, value: '', currencyType: ''};
                                 }
 
-                                if (group.parentHashString === null) {
-                                    const mappingKey = `igmk:${group.key}`
-                                    multi
-                                        .set(mappingKey, group.hashString)
-                                        .expire(mappingKey, 60 * 60 * 60)
-                                }
-
                                 const noteSplit = note.trim().split(" ");
-                                const valueString = noteSplit[1];
-                                const currenyType = noteSplit[2]?.toLowerCase();
+                                const valueString = extractCurrencyValue(noteSplit[1]);
+                                const currencyType = extractCurrencyType(noteSplit[2]);
 
-                                if (valueString?.length > 0 && currenyType?.length > 2) {
+                                if (valueString?.length && currencyType?.length) {
                                     toWrite[group.hashString].stackSize = toWrite[group.hashString].stackSize + (item.stackSize ?? 1);
                                     toWrite[group.hashString].value = valueString;
-                                    toWrite[group.hashString].currencyType = currenyType;
+                                    toWrite[group.hashString].currencyType = currencyType;
                                 }
                             }
                         }
@@ -73,9 +97,8 @@ import Redis from "ioredis";
                     for (const [itemGroupHashString, data] of Object.entries(toWrite)) {
                         updates++;
                         const groupKey = `psEntries:${stashData.league}:${itemGroupHashString}`;
-                        last = groupKey
                         multi
-                            .hset(groupKey, stashData.accountName, `${dateTurncatedMins},${data.stackSize},${data.value},${data.currencyType}`)
+                            .hset(groupKey, stashData.accountName, `${dateTruncatedMains},${data.stackSize},${data.value},${data.currencyType}`)
                             .expire(groupKey, 60 * 60 * 48)
                     }
                 }

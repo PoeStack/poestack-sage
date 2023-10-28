@@ -1,5 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
-import {aws_ec2, aws_ecs, aws_elasticache, aws_memorydb} from 'aws-cdk-lib';
+import {aws_ec2, aws_ecs, aws_elasticache} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import {Peer, Port, SecurityGroup, SubnetType} from "aws-cdk-lib/aws-ec2";
@@ -12,7 +12,6 @@ export class SageStack extends cdk.Stack {
 
     public ecsCluster: aws_ecs.Cluster;
 
-    public psStream: aws_memorydb.CfnCluster;
     public psStreamSecurityGroup: SecurityGroup;
 
     public configBucket: Bucket;
@@ -40,16 +39,16 @@ export class SageStack extends cdk.Stack {
             this,
             "RedisClusterPrivateSubnetGroup",
             {
-                cacheSubnetGroupName: "privata",
+                cacheSubnetGroupName: "sage-redis-subnet",
                 subnetIds: this.vpc.selectSubnets().subnetIds,
-                description: "subnet di sviluppo privata"
+                description: "redis cluster private subgroup"
             }
         );
-        const redis = new aws_elasticache.CfnCacheCluster(this, `RedisCluster`, {
+        const redis = new aws_elasticache.CfnCacheCluster(this, `SageRedisCluster`, {
             engine: "redis",
             cacheNodeType: "cache.t2.small",
             numCacheNodes: 1,
-            clusterName: "redis-sviluppo",
+            clusterName: "sage-redis-cluster",
             vpcSecurityGroupIds: [this.psStreamSecurityGroup.securityGroupId],
             cacheSubnetGroupName: subnetGroup.cacheSubnetGroupName
         });
