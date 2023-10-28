@@ -1,5 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
-import {aws_ec2, aws_ecs, aws_memorydb} from 'aws-cdk-lib';
+import {aws_ec2, aws_ecs, aws_elasticache, aws_memorydb} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import {Peer, Port, SecurityGroup, SubnetType} from "aws-cdk-lib/aws-ec2";
@@ -28,10 +28,6 @@ export class SageStack extends cdk.Stack {
             ]
         })
 
-        const redisSubnetGroup = new aws_memorydb.CfnSubnetGroup(this, "redisSubnetGroup", {
-            subnetGroupName: "redis-subnet-group",
-            subnetIds: this.vpc.selectSubnets().subnetIds
-        })
         this.psStreamSecurityGroup = new SecurityGroup(this, "redisSecurityGroup", {
             securityGroupName: "redis-security-group",
             vpc: this.vpc,
@@ -40,23 +36,29 @@ export class SageStack extends cdk.Stack {
         this.psStreamSecurityGroup.connections.allowFrom(Peer.ipv4(this.vpc.vpcCidrBlock), Port.allTcp())
         this.psStreamSecurityGroup.connections.allowTo(Peer.ipv4(this.vpc.vpcCidrBlock), Port.allTcp())
 
-        this.psStream = new aws_memorydb.CfnCluster(this, "PsStreamCache", {
-            aclName: "open-access",
-            clusterName: "ps-stream-cache-2",
-            nodeType: "db.t4g.medium",
-            numShards: 1,
-            numReplicasPerShard: 0,
-            subnetGroupName: redisSubnetGroup.subnetGroupName,
-            securityGroupIds: [this.psStreamSecurityGroup.securityGroupId],
-            tlsEnabled:
-                false,
-        })
+        const subnetGroup = new aws_elasticache. CfnSubnetGroup(
+            this,
+            "RedisClusterPrivateSubnetGroup",
+            {
+                cacheSubnetGroupName: "privata",
+                subnetIds: this.vpc.selectSubnets().subnetIds,
+                description: "subnet di sviluppo privata"
+            }
+        );
+        const redis = new aws_elasticache.CfnCacheCluster(this, `RedisCluster`, {
+            engine: "redis",
+            cacheNodeType: "cache.t2.small",
+            numCacheNodes: 1,
+            clusterName: "redis-sviluppo",
+            vpcSecurityGroupIds: [this.psStreamSecurityGroup.securityGroupId],
+            cacheSubnetGroupName: subnetGroup.cacheSubnetGroupName
+        });
+        redis.addDependency(subnetGroup);
 
         this.ecsCluster = new aws_ecs.Cluster(this, "EscCluster", {
             clusterName: "poestack-sage-cluster",
             vpc: this.vpc
         })
-
         this.ecsCluster.addCapacity("DefaultAutoScalingGroupCapacity", {
             allowAllOutbound: true,
             vpcSubnets: this.vpc.selectSubnets({subnetType: SubnetType.PUBLIC}),

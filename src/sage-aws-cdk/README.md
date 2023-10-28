@@ -1,14 +1,12 @@
-# Welcome to your CDK TypeScript project
+## Sage AWS CDK
+This is the "AWS infrastructure as code" repo that is used to deploy the backend code to AWS
 
-This is a blank project for CDK development with TypeScript.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
-
-## Useful commands
-
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk synth`       emits the synthesized CloudFormation template
+### Deployment from scratch
+- Setup the AWS CLI and auth it to the account you want to deploy the sage stack too
+- Run `cd ./src/sage-aws-cdk`
+- Run `npm install`
+- Run `npm run build`
+- Run `cdk list`
+- You should now see a list of stacks you can deploy
+- For each stack in the order they are listed run `cdk deploy STACK_NAME_HERE`

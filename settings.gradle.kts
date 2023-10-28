@@ -6,7 +6,7 @@ include(
     "src:echo-common",
     "src:echo-app",
     "src:insights",
-    "src:insights-api",
+    "src:insights-cache-updater",
     "src:ggg-test-env",
     "src:sage-aws-cdk",
 )
