@@ -17,3 +17,7 @@ export const [usePoeCharacterList] = bind(
     POE_CHARACTER_SERVICE.characterList.cache$.pipe(
         map((e) => Object.values(e)?.[0]?.result)
     ), [])
+
+export const [usePoeCharacter] = bind((name: string) => POE_CHARACTER_SERVICE.characters.cache$.pipe(
+    map((e) => e[name]?.result)
+), null)
