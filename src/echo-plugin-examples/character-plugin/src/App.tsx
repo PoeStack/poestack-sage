@@ -27,7 +27,7 @@ function App(): JSX.Element {
                         </div>
                     ))}
                 </div>
-                <div className="flex-1 flex flex-col h-full h-full">
+                <div className="flex-1 flex flex-col h-full">
                     <div className="font-semibold">{selectedName}</div>
                     <div className="flex flex-col h-full overflow-y-scroll">
                         {

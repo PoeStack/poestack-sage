@@ -1,10 +1,10 @@
-import {Observable} from "rxjs";
+import {BehaviorSubject, Observable} from "rxjs";
 import axios from "axios";
 
 export class HttpUtil {
 
-    gggApiEndpoint = process.env['GGG_API_ENDPOINT'] ?? 'https://api.pathofexile.com'
-    token = process.env['GGG_TOKEN']
+    public tokenSubject$ = new BehaviorSubject(process.env['GGG_TOKEN'])
+    public gggApiEndpoint = process.env['GGG_API_ENDPOINT'] ?? 'https://api.pathofexile.com'
 
     private client = axios.create({adapter: "http"})
 
@@ -12,7 +12,7 @@ export class HttpUtil {
         return new Observable((observer) => {
             this.client.get(`${this.gggApiEndpoint}${path}`, {
                 headers: {
-                    Authorization: `Bearer ${this.token}`,
+                    Authorization: `Bearer ${this.tokenSubject$.value}`,
                     "User-Agent": "OAuth poestack/2.0.0 (contact: zgherridge@gmail.com)",
                 }
             })

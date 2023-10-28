@@ -11,6 +11,10 @@ export class LocalStorageService {
         }
     }
 
+    public existsJson(...jsonPath: string[]): boolean {
+        return fs.existsSync(path.resolve(this.homeDirPath, ...jsonPath) + ".json")
+    }
+
     public loadJson<T>(...jsonPath: string[]): T | null {
         const resolvedPath = path.resolve(this.homeDirPath, ...jsonPath) + ".json"
         try {

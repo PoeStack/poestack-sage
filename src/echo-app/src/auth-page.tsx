@@ -1,9 +1,11 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {BehaviorSubject} from "rxjs";
 import {bind} from "@react-rxjs/core";
+import jwt from 'jsonwebtoken';
+import {GGG_API_UTIL} from "ggg-api";
+import {LOCAL_STORAGE} from "echo-common";
 
-const jwtSubject$ = new BehaviorSubject<string | null>(null)
-const [useJwt] = bind(jwtSubject$, null)
+const [useJwt] = bind(GGG_API_UTIL.tokenSubject$, null)
 
 export function AuthGuard({children}) {
     const jwt = useJwt()
@@ -16,12 +18,30 @@ export function AuthGuard({children}) {
 }
 
 export function LoginPage() {
-    const jwt = useJwt()
-    const [inputValue, setInputValue] = useState(jwt)
+    const currentJwt = useJwt()
+    const [inputValue, setInputValue] = useState("")
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-    function handleSet() {
-        jwtSubject$.next(inputValue)
+    function handleSet(input: string) {
+        console.log("setting", input)
+        const decoded = jwt.decode(input)
+        console.log("decoding", decoded)
+        const oAuthCode = decoded?.['oAuthToken'];
+        if (oAuthCode) {
+            LOCAL_STORAGE.writeJson(['auth'], {jwt: input})
+            setErrorMessage(null)
+            GGG_API_UTIL.tokenSubject$.next(oAuthCode)
+        } else {
+            setErrorMessage("Failed to decode jwt.")
+        }
     }
+
+    useEffect(() => {
+        if (LOCAL_STORAGE.existsJson('auth')) {
+            const loadedAuth = LOCAL_STORAGE.loadJson('auth')
+            handleSet(loadedAuth?.['jwt'])
+        }
+    }, []);
 
     return (
         <div className="min-h-screen flex items-center justify-center text-primary-text">
@@ -32,7 +52,7 @@ export function LoginPage() {
                     href="https://poestack.com/poe-stack/development">
                     Get Token
                 </a></div>
-
+                {errorMessage && <div className="text-sm text-red-600">{errorMessage}</div>}
                 <input type="password"
                        placeholder="Token"
                        className="px-2 py-0.5 bg-input-surface rounded-lg shadow-md border-0 focus:outline-none focus:ring focus:border-primary-accent"
@@ -40,7 +60,7 @@ export function LoginPage() {
                        value={inputValue}/>
                 <button
                     className="bg-primary-accent px-1 py-0.5 rounded-lg"
-                    onClick={handleSet}>Login
+                    onClick={() => handleSet(inputValue)}>Login
                 </button>
             </div>
         </div>

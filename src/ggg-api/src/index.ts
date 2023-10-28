@@ -26,6 +26,7 @@ import {
     PoeTokenExchangeResponse
 } from "./poe-api-models"
 import {GggApi} from "./ggg-api";
+import { GGG_API_UTIL } from "./http-util";
 
 export {
     GggApi,
@@ -53,5 +54,6 @@ export {
     PoeStashTab,
     PoeStashTabMetadata,
     PoePartialStashTab,
-    PoeTokenExchangeResponse
+    PoeTokenExchangeResponse,
+    GGG_API_UTIL
 }
