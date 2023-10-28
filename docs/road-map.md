@@ -4,7 +4,7 @@ For now I'll just keep this as a general todo list.
 
 Steps needed to enter pre-alpha (build only):
 - Setup user profile/authentication
-- Add leagues, characters, profile to the api
+- ~~Add leagues, characters, profile to the api~~
 - Add Client.txt event tailing
 - Add PoeStack pricing info to the api
 - ~~Add top/bottom bar to the UI~~
