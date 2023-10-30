@@ -9,6 +9,7 @@ include(
     "src:insights-cache-updater",
     "src:ggg-test-env",
     "src:sage-aws-cdk",
+    "src:sage-docs"
 )
 
 File("src/echo-plugin-examples").listFiles()?.forEach {
