@@ -49,7 +49,7 @@ export class InsightsStack extends cdk.Stack {
                 taskDefinition: cacheUpdaterTask
             },
             cluster: sageStack.ecsCluster,
-            schedule: Schedule.expression('rate(1 minute)'),
+            schedule: Schedule.expression('rate(10 minutes)'),
             enabled: true,
             ruleName: 'insights-cache-updater-schedule',
         })

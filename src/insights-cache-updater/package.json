@@ -24,6 +24,7 @@
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.8.0",
     "winston": "^3.10.0",
+    "rxjs": "^7.8.1",
     "ggg-api": "../ggg-api"
   }
 }

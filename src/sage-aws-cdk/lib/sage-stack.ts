@@ -44,11 +44,11 @@ export class SageStack extends cdk.Stack {
                 description: "redis cluster private subgroup"
             }
         );
-        const redis = new aws_elasticache.CfnCacheCluster(this, `SageRedisCluster`, {
+        const redis = new aws_elasticache.CfnCacheCluster(this, `SageRedisCluster3`, {
             engine: "redis",
             cacheNodeType: "cache.t2.small",
             numCacheNodes: 1,
-            clusterName: "sage-redis-cluster",
+            clusterName: "sage-redis-cluster-3",
             vpcSecurityGroupIds: [this.psStreamSecurityGroup.securityGroupId],
             cacheSubnetGroupName: subnetGroup.cacheSubnetGroupName
         });

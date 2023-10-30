@@ -53,7 +53,7 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
     const itemGroupingService = container.resolve(ItemGroupingService);
 
     const client = new Redis({
-        host: "sage-redis-cluster.lgibek.0001.use1.cache.amazonaws.com",
+        host: "sage-redis-cluster-3.lgibek.0001.use1.cache.amazonaws.com",
         port: 6379,
         tls: undefined
     });
@@ -63,7 +63,7 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
             const data: PoeApiPublicStashResponse = await streamProvider.nextUpdate();
             if (data?.stashes) {
                 const dateMs = Date.now();
-                const dateTruncatedMains = Math.round(dateMs / 1000 / 60);
+                const dateTruncatedMins = Math.round(dateMs / 1000 / 60);
                 let updates = 0;
                 const multi = client.multi();
                 for (const stashData of data.stashes) {
@@ -71,14 +71,14 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
                         continue;
                     }
 
-                    const toWrite: Record<string, { stackSize: number, value: string, currencyType: string }> = {};
+                    const toWrite: Record<string, { stackSize: number, value: string, currencyType: string, tag: string }> = {};
                     for (const item of stashData.items) {
                         const note = item.note ?? item.forum_note ?? stashData.stash;
                         if (note.length > 3 && (note.includes("~b/o ") || note.includes("~price "))) {
                             const group = itemGroupingService.findOrCreateItemGroup(item);
                             if (group) {
                                 if (!toWrite[group.hashString]) {
-                                    toWrite[group.hashString] = {stackSize: 0, value: '', currencyType: ''};
+                                    toWrite[group.hashString] = {stackSize: 0, value: '', currencyType: '', tag: ''};
                                 }
 
                                 const noteSplit = note.trim().split(" ");
@@ -86,9 +86,12 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
                                 const currencyType = extractCurrencyType(noteSplit[2]);
 
                                 if (valueString?.length && currencyType?.length) {
-                                    toWrite[group.hashString].stackSize = toWrite[group.hashString].stackSize + (item.stackSize ?? 1);
-                                    toWrite[group.hashString].value = valueString;
-                                    toWrite[group.hashString].currencyType = currencyType;
+                                    const doc = toWrite[group.hashString];
+
+                                    doc.stackSize = toWrite[group.hashString].stackSize + (item.stackSize ?? 1);
+                                    doc.value = valueString;
+                                    doc.currencyType = currencyType;
+                                    doc.tag = group.tag
                                 }
                             }
                         }
@@ -96,9 +99,10 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
 
                     for (const [itemGroupHashString, data] of Object.entries(toWrite)) {
                         updates++;
-                        const groupKey = `psEntries:${stashData.league}:${itemGroupHashString}`;
+                        const shared = parseInt(itemGroupHashString, 16) % 10;
+                        const groupKey = `psEntries:${data.tag}:${shared}:${stashData.league}:${itemGroupHashString}`;
                         multi
-                            .hset(groupKey, stashData.accountName, `${dateTruncatedMains},${data.stackSize},${data.value},${data.currencyType}`)
+                            .hset(groupKey, stashData.accountName, `${dateTruncatedMins},${data.stackSize},${data.value},${data.currencyType}`)
                             .expire(groupKey, 60 * 60 * 48)
                     }
                 }
