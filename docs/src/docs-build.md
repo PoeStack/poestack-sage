@@ -9,7 +9,7 @@ cargo install mdbook
 cargo install mdbook-pagetoc
 cargo install mdbook-theme
 
-mdbook serve
+mdbook serve ./docs
 
 navigate to http://localhost:3000/
 
