@@ -1,3 +1,4 @@
+
 # Getting Started
 
 This document will help you get started with Sage development. By the end of the document you will have a development enviroment setup and a test plugin running.
