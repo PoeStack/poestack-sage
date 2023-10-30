@@ -1,5 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
-import {aws_ecs, aws_ecs_patterns} from 'aws-cdk-lib';
+import {aws_cloudfront, aws_ecs, aws_ecs_patterns} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import {ContainerRepoStack} from "./container-repo-stack";
 import {EnvironmentFile, LogDriver} from "aws-cdk-lib/aws-ecs";
@@ -7,6 +7,7 @@ import {SageStack} from "./sage-stack";
 import {RetentionDays} from "aws-cdk-lib/aws-logs";
 import {Schedule} from 'aws-cdk-lib/aws-applicationautoscaling';
 import {Bucket} from "aws-cdk-lib/aws-s3";
+import {S3Origin} from "aws-cdk-lib/aws-cloudfront-origins";
 
 export class InsightsStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: cdk.StackProps, containerRepoStack: ContainerRepoStack, sageStack: SageStack) {
@@ -54,6 +55,8 @@ export class InsightsStack extends cdk.Stack {
             ruleName: 'insights-cache-updater-schedule',
         })
 
-
+        new aws_cloudfront.Distribution(this, 'InsightsCache', {
+            defaultBehavior: {origin: new S3Origin(cacheBucket)},
+        });
     }
 }
