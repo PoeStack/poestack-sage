@@ -6,7 +6,7 @@ src = "src"
 title = "PoeStack Sage"
 
 [build]
-build-dir = "../book"
+build-dir = "../../book"
 
 [preprocessor.pagetoc]
 [output.html]
