@@ -1,0 +1,16 @@
+[book]
+authors = ["Zach Herridge <zgherridge@gmail.com>"]
+language = "en"
+multilingual = false
+src = "src"
+title = "PoeStack Sage"
+
+[build]
+build-dir = "../book"
+
+[preprocessor.pagetoc]
+[output.html]
+additional-css = ["theme/pagetoc.css"]
+additional-js  = ["theme/pagetoc.js"]
+default-theme = "navy"
+preferred-dark-theme = "navy"
