@@ -5,12 +5,11 @@ import * as ec2 from "aws-cdk-lib/aws-ec2";
 import {Peer, Port, SecurityGroup, SubnetType} from "aws-cdk-lib/aws-ec2";
 import {ContainerRepoStack} from "./container-repo-stack";
 import {Bucket} from "aws-cdk-lib/aws-s3";
+import {UpdatePolicy} from "aws-cdk-lib/aws-autoscaling";
 
 export class SageStack extends cdk.Stack {
 
     public vpc: aws_ec2.Vpc;
-
-    public ecsCluster: aws_ecs.Cluster;
 
     public psStreamSecurityGroup: SecurityGroup;
 
@@ -35,7 +34,7 @@ export class SageStack extends cdk.Stack {
         this.psStreamSecurityGroup.connections.allowFrom(Peer.ipv4(this.vpc.vpcCidrBlock), Port.allTcp())
         this.psStreamSecurityGroup.connections.allowTo(Peer.ipv4(this.vpc.vpcCidrBlock), Port.allTcp())
 
-        const subnetGroup = new aws_elasticache. CfnSubnetGroup(
+        const subnetGroup = new aws_elasticache.CfnSubnetGroup(
             this,
             "RedisClusterPrivateSubnetGroup",
             {
@@ -53,18 +52,5 @@ export class SageStack extends cdk.Stack {
             cacheSubnetGroupName: subnetGroup.cacheSubnetGroupName
         });
         redis.addDependency(subnetGroup);
-
-        this.ecsCluster = new aws_ecs.Cluster(this, "EscCluster", {
-            clusterName: "poestack-sage-cluster",
-            vpc: this.vpc
-        })
-        this.ecsCluster.addCapacity("DefaultAutoScalingGroupCapacity", {
-            allowAllOutbound: true,
-            vpcSubnets: this.vpc.selectSubnets({subnetType: SubnetType.PUBLIC}),
-            instanceType: new ec2.InstanceType("t2.medium"),
-            minCapacity: 0,
-            desiredCapacity: 1,
-            maxCapacity: 1,
-        })
     }
 }

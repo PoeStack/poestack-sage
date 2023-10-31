@@ -71,7 +71,12 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
                         continue;
                     }
 
-                    const toWrite: Record<string, { stackSize: number, value: string, currencyType: string, tag: string }> = {};
+                    const toWrite: Record<string, {
+                        stackSize: number,
+                        value: string,
+                        currencyType: string,
+                        tag: string
+                    }> = {};
                     for (const item of stashData.items) {
                         const note = item.note ?? item.forum_note ?? stashData.stash;
                         if (note.length > 3 && (note.includes("~b/o ") || note.includes("~price "))) {
@@ -123,5 +128,4 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
             console.error(error);
         }
     }
-})
-();
+})();
