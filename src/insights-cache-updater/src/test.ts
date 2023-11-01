@@ -73,7 +73,7 @@ function run(tag: string, shard: string, league: string) {
 
 
 of('currency', 'unique').pipe(
-    concatMap(item1 => range(0, 10).pipe(
+    concatMap(item1 => range(0, 102).pipe(
         concatMap(item2 => of([item1, item2.toString()]))
     )),
     tap((e) => console.log("starting", e)),

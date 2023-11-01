@@ -3,11 +3,11 @@ import "reflect-metadata";
 require('dotenv').config()
 
 import {container} from "tsyringe";
-import {PoeApiPublicStashResponse} from "@gql/resolvers-types";
 
 import {GGGStashStreamProvider, PublicStashStreamProvider} from "./services/public-stash-stream-providers";
 import ItemGroupingService from "./services/item-grouping-service";
 import Redis from "ioredis";
+import {PoeApiPublicStashResponse} from "./gql/__generated__/resolvers-types";
 
 const divineTypes = new Set(['d', 'div', 'divine'])
 const chaosTypes = new Set(['c', 'chaos'])
@@ -82,8 +82,8 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
                         if (note.length > 3 && (note.includes("~b/o ") || note.includes("~price "))) {
                             const group = itemGroupingService.findOrCreateItemGroup(item);
                             if (group) {
-                                if (!toWrite[group.hashString]) {
-                                    toWrite[group.hashString] = {stackSize: 0, value: '', currencyType: '', tag: ''};
+                                if (!toWrite[group.hash]) {
+                                    toWrite[group.hash] = {stackSize: 0, value: '', currencyType: '', tag: group.tag};
                                 }
 
                                 const noteSplit = note.trim().split(" ");
@@ -91,12 +91,11 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
                                 const currencyType = extractCurrencyType(noteSplit[2]);
 
                                 if (valueString?.length && currencyType?.length) {
-                                    const doc = toWrite[group.hashString];
+                                    const doc = toWrite[group.hash];
 
-                                    doc.stackSize = toWrite[group.hashString].stackSize + (item.stackSize ?? 1);
+                                    doc.stackSize = toWrite[group.hash].stackSize + (item.stackSize ?? 1);
                                     doc.value = valueString;
                                     doc.currencyType = currencyType;
-                                    doc.tag = group.tag
                                 }
                             }
                         }
@@ -104,24 +103,23 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
 
                     for (const [itemGroupHashString, data] of Object.entries(toWrite)) {
                         updates++;
-                        const shared = parseInt(itemGroupHashString, 16) % 10;
-                        const groupKey = `psEntries:${data.tag}:${shared}:${stashData.league}:${itemGroupHashString}`;
-                        multi
-                            .hset(groupKey, stashData.accountName, `${dateTruncatedMins},${data.stackSize},${data.value},${data.currencyType}`)
-                            .expire(groupKey, 60 * 60 * 48)
+                        const shared = parseInt(itemGroupHashString, 16) % 101;
+                        multi.hset(
+                            `psev4:${data.tag}:${shared}`,
+                            `${stashData.league}:${itemGroupHashString}:${stashData.accountName}`,
+                            `${dateTruncatedMins},${data.stackSize},${data.value},${data.currencyType}`
+                        )
                     }
                 }
 
                 if (updates > 0) {
-                    Promise.all(
-                        [
-                            multi.exec()
-                        ]
-                    ).catch((e) => {
-                        console.log("error in write", e)
-                    }).finally(() => {
-                        console.log("finished", updates, "updates in", Date.now() - dateMs, "ms");
-                    })
+                    multi.exec()
+                        .catch((e) => {
+                            console.log("error in write", e);
+                        })
+                        .finally(() => {
+                            console.log("finished", updates, "updates in", Date.now() - dateMs, "ms");
+                        })
                 }
             }
         } catch (error) {

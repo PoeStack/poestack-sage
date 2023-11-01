@@ -1,12 +1,12 @@
-
-import { PoeApiPublicStashResponse } from "@gql/resolvers-types";
 import PoeApi from "../poe/poe-api";
-import { singleton } from "tsyringe";
+import {singleton} from "tsyringe";
 import fs from "fs";
 import os from "os";
+import {PoeApiPublicStashResponse} from "../gql/__generated__/resolvers-types";
 
 export interface PublicStashStreamProvider {
     init(): Promise<void>;
+
     nextUpdate(): Promise<PoeApiPublicStashResponse | null>;
 }
 
@@ -19,7 +19,7 @@ export class GGGStashStreamProvider implements PublicStashStreamProvider {
     }
 
     public async init() {
-        const changeIds = "2145640831-2137918784-2068567059-2296748038-2229165629\"";
+        const changeIds = "2145640831-2137918784-2068567059-2296748038-2229165629";
         this.lastChangeId = changeIds;
     }
 
@@ -35,7 +35,7 @@ export class GGGStashStreamProvider implements PublicStashStreamProvider {
         }
 
         if (resp.rateLimitedForMs > 0) {
-            console.log("GGG ratelimited, sleeping for ", resp.rateLimitedForMs, "ms")
+            console.log("GGG rate-limited, sleeping for ", resp.rateLimitedForMs, "ms")
             await new Promise((res) => setTimeout(res, resp.rateLimitedForMs));
         }
     }
@@ -44,6 +44,7 @@ export class GGGStashStreamProvider implements PublicStashStreamProvider {
 @singleton()
 export class OfflineStashStreamProvider implements PublicStashStreamProvider {
     private reads = 0;
+
     async init() {
     }
 
