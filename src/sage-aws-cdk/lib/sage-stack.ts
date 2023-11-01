@@ -25,32 +25,5 @@ export class SageStack extends cdk.Stack {
                 {cidrMask: 18, name: 'Public', subnetType: SubnetType.PUBLIC},
             ]
         })
-
-        this.psStreamSecurityGroup = new SecurityGroup(this, "redisSecurityGroup", {
-            securityGroupName: "redis-security-group",
-            vpc: this.vpc,
-            allowAllOutbound: true
-        })
-        this.psStreamSecurityGroup.connections.allowFrom(Peer.ipv4(this.vpc.vpcCidrBlock), Port.allTcp())
-        this.psStreamSecurityGroup.connections.allowTo(Peer.ipv4(this.vpc.vpcCidrBlock), Port.allTcp())
-
-        const subnetGroup = new aws_elasticache.CfnSubnetGroup(
-            this,
-            "RedisClusterPrivateSubnetGroup",
-            {
-                cacheSubnetGroupName: "sage-redis-subnet",
-                subnetIds: this.vpc.selectSubnets().subnetIds,
-                description: "redis cluster private subgroup"
-            }
-        );
-        const redis = new aws_elasticache.CfnCacheCluster(this, `SageRedisCluster3`, {
-            engine: "redis",
-            cacheNodeType: "cache.t2.small",
-            numCacheNodes: 1,
-            clusterName: "sage-redis-cluster-3",
-            vpcSecurityGroupIds: [this.psStreamSecurityGroup.securityGroupId],
-            cacheSubnetGroupName: subnetGroup.cacheSubnetGroupName
-        });
-        redis.addDependency(subnetGroup);
     }
 }

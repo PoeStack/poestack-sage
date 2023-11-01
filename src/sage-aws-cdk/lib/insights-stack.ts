@@ -1,5 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
-import {aws_cloudfront, aws_ecs, aws_ecs_patterns} from 'aws-cdk-lib';
+import {aws_cloudfront, aws_ecs, aws_ecs_patterns, aws_elasticache} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import {ContainerRepoStack} from "./container-repo-stack";
 import {EnvironmentFile, LogDriver} from "aws-cdk-lib/aws-ecs";
@@ -7,13 +7,40 @@ import {SageStack} from "./sage-stack";
 import {RetentionDays} from "aws-cdk-lib/aws-logs";
 import {Bucket} from "aws-cdk-lib/aws-s3";
 import {S3Origin} from "aws-cdk-lib/aws-cloudfront-origins";
-import {SubnetType} from "aws-cdk-lib/aws-ec2";
+import {Peer, Port, SecurityGroup, SubnetType} from "aws-cdk-lib/aws-ec2";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import {UpdatePolicy} from "aws-cdk-lib/aws-autoscaling";
 
 export class InsightsStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: cdk.StackProps, containerRepoStack: ContainerRepoStack, sageStack: SageStack) {
         super(scope, id, props);
+
+        const redisSecurityGroup = new SecurityGroup(this, "InsRedisSG", {
+            securityGroupName: "ins-redis-security-group",
+            vpc: sageStack.vpc,
+            allowAllOutbound: true
+        })
+        redisSecurityGroup.connections.allowFrom(Peer.ipv4(sageStack.vpc.vpcCidrBlock), Port.allTcp())
+        redisSecurityGroup.connections.allowTo(Peer.ipv4(sageStack.vpc.vpcCidrBlock), Port.allTcp())
+
+        const subnetGroup = new aws_elasticache.CfnSubnetGroup(
+            this,
+            "InsRedisSubG",
+            {
+                cacheSubnetGroupName: "ins-redis-subnet",
+                subnetIds: sageStack.vpc.selectSubnets().subnetIds,
+                description: "redis cluster private subgroup"
+            }
+        );
+        const redis = new aws_elasticache.CfnCacheCluster(this, `InsRedisCluster4`, {
+            engine: "redis",
+            cacheNodeType: "cache.t2.small",
+            numCacheNodes: 1,
+            clusterName: "ins-redis-cluster-4",
+            vpcSecurityGroupIds: [redisSecurityGroup.securityGroupId],
+            cacheSubnetGroupName: subnetGroup.cacheSubnetGroupName
+        });
+        redis.addDependency(subnetGroup);
 
         const ecsCluster = new aws_ecs.Cluster(this, "InsightCluster", {
             clusterName: "insights-cluster",
@@ -41,6 +68,9 @@ export class InsightsStack extends cdk.Stack {
                 streamPrefix: "insights-stream-consumer-container",
                 logRetention: RetentionDays.THREE_DAYS
             }),
+            environment: {
+                REDIS_URL: redis.attrRedisEndpointAddress
+            },
             environmentFiles: [EnvironmentFile.fromBucket(sageStack.configBucket, "insights.env")]
         });
         sageStack.configBucket.grantRead(streamConsumerTask.executionRole!!)
@@ -57,6 +87,9 @@ export class InsightsStack extends cdk.Stack {
                 streamPrefix: "insights-cache-updater-container",
                 logRetention: RetentionDays.THREE_DAYS
             }),
+            environment: {
+                REDIS_URL: redis.attrRedisEndpointAddress
+            },
             environmentFiles: [EnvironmentFile.fromBucket(sageStack.configBucket, "insights.env")]
         });
         sageStack.configBucket.grantRead(cacheUpdaterTask.executionRole!!)

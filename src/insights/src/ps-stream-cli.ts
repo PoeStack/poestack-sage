@@ -8,6 +8,7 @@ import {GGGStashStreamProvider, PublicStashStreamProvider} from "./services/publ
 import ItemGroupingService from "./services/item-grouping-service";
 import Redis from "ioredis";
 import {PoeApiPublicStashResponse} from "./gql/__generated__/resolvers-types";
+import * as process from "process";
 
 const divineTypes = new Set(['d', 'div', 'divine'])
 const chaosTypes = new Set(['c', 'chaos'])
@@ -52,8 +53,9 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
 
     const itemGroupingService = container.resolve(ItemGroupingService);
 
+    console.log("redis url", process.env['REDIS_URL'])
     const client = new Redis({
-        host: "sage-redis-cluster-3.lgibek.0001.use1.cache.amazonaws.com",
+        host: process.env['REDIS_URL'],
         port: 6379,
         tls: undefined
     });
@@ -103,10 +105,10 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
 
                     for (const [itemGroupHashString, data] of Object.entries(toWrite)) {
                         updates++;
-                        const shared = parseInt(itemGroupHashString, 16) % 101;
+                        const shard = parseInt(itemGroupHashString, 16) % 101;
                         multi.hset(
-                            `psev4:${data.tag}:${shared}`,
-                            `${stashData.league}:${itemGroupHashString}:${stashData.accountName}`,
+                            `psev5:${data.tag}:${shard}:${stashData.league}`,
+                            `${itemGroupHashString}:${stashData.accountName}`,
                             `${dateTruncatedMins},${data.stackSize},${data.value},${data.currencyType}`
                         )
                     }
