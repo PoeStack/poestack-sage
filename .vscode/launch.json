@@ -1,0 +1,47 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Echo App: Main",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/src/echo-app",
+      "runtimeExecutable": "${workspaceFolder}/src/echo-app/node_modules/.bin/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceFolder}/src/echo-app/node_modules/.bin/electron.cmd"
+      },
+      "runtimeArgs": [
+        "--remote-debugging-port=9223" //open debugging port for renderer process
+      ],
+      "args": [
+        "."
+      ],
+      "outputCapture": "std",
+      "sourceMaps": true,
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/src/echo-app/**", //use source maps for files in workspace folder
+        "!**/node_modules/**" //but ignore everything in the node_modules folder
+      ]
+    },
+    {
+      "name": "Echo App: Renderer",
+      "type": "chrome", //use the Chrome debugger that comes with VS Code
+      "request": "attach",
+      "port": 9223, //use debug port opened in Electron: Main configuration
+      "webRoot": "${workspaceFolder}/src/echo-app",
+      "timeout": 30000
+    }
+  ],
+  "compounds": [ //launch multiple configurations concurrently
+    {
+      "name": "Echo App: All",
+      "configurations": [
+        "Echo App: Main",
+        "Echo App: Renderer"
+      ]
+    }
+  ]
+}

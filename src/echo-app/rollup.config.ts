@@ -7,7 +7,8 @@ const config: RollupOptions = {
     external: ['fs'],
     output: {
         file: "build/index.js",
-        format: 'cjs'
+        format: 'cjs',
+        sourcemap: true
     },
     plugins: [
         postcss({}),
