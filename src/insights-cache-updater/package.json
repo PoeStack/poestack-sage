@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rimraf ./dist && tsc"
+    "build": "rimraf ./dist && tsc",
+    "start": "npm run build && node ./dist/test.js"
   },
   "author": "",
   "license": "ISC",
@@ -17,14 +18,15 @@
     "@types/lodash": "^4.14.199",
     "aws-sdk": "^2.1483.0",
     "dotenv": "^16.3.1",
+    "ggg-api": "../ggg-api",
     "ioredis": "^5.3.2",
     "lodash": "^4.17.21",
     "node-fetch": "^2.7.0",
+    "percentile": "^1.6.0",
     "redis": "^4.6.10",
     "reflect-metadata": "^0.1.13",
-    "tsyringe": "^4.8.0",
-    "winston": "^3.10.0",
     "rxjs": "^7.8.1",
-    "ggg-api": "../ggg-api"
+    "tsyringe": "^4.8.0",
+    "winston": "^3.10.0"
   }
 }

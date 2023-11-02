@@ -10,6 +10,7 @@ import {S3Origin} from "aws-cdk-lib/aws-cloudfront-origins";
 import {Peer, Port, SecurityGroup, SubnetType} from "aws-cdk-lib/aws-ec2";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import {UpdatePolicy} from "aws-cdk-lib/aws-autoscaling";
+import {Schedule} from "aws-cdk-lib/aws-events";
 
 export class InsightsStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: cdk.StackProps, containerRepoStack: ContainerRepoStack, sageStack: SageStack) {
@@ -87,6 +88,7 @@ export class InsightsStack extends cdk.Stack {
                 streamPrefix: "insights-cache-updater-container",
                 logRetention: RetentionDays.THREE_DAYS
             }),
+            command: ["node", "dist/cache-valuations.js"],
             environment: {
                 REDIS_URL: redis.attrRedisEndpointAddress
             },
@@ -94,10 +96,40 @@ export class InsightsStack extends cdk.Stack {
         });
         sageStack.configBucket.grantRead(cacheUpdaterTask.executionRole!!)
         cacheBucket.grantReadWrite(cacheUpdaterTask.taskRole!!)
-        new aws_ecs.Ec2Service(this, 'InsCacheUpdaterSvc', {
+        new aws_ecs_patterns.ScheduledEc2Task(this, "InsUpdateCacheSch", {
+            scheduledEc2TaskDefinitionOptions: {
+                taskDefinition: cacheUpdaterTask
+            },
             cluster: ecsCluster,
-            taskDefinition: cacheUpdaterTask,
+            schedule: Schedule.expression('rate(20 minutes)'),
+            enabled: true,
+            ruleName: 'insights-update-cache-schedule',
+        })
+
+        const expireListingsTask = new aws_ecs.Ec2TaskDefinition(this, 'ExpireListingsTask');
+        expireListingsTask.addContainer('InsExpireC', {
+            image: aws_ecs.ContainerImage.fromEcrRepository(containerRepoStack.insightsCacheUpdaterRepo),
+            memoryLimitMiB: 512,
+            logging: LogDriver.awsLogs({
+                streamPrefix: "insights-expire-listings-container",
+                logRetention: RetentionDays.THREE_DAYS
+            }),
+            command: ["node", "dist/expire-listings.js"],
+            environment: {
+                REDIS_URL: redis.attrRedisEndpointAddress
+            },
+            environmentFiles: [EnvironmentFile.fromBucket(sageStack.configBucket, "insights.env")]
         });
+        sageStack.configBucket.grantRead(expireListingsTask.executionRole!!)
+        new aws_ecs_patterns.ScheduledEc2Task(this, "InsExpireListingSch", {
+            scheduledEc2TaskDefinitionOptions: {
+                taskDefinition: expireListingsTask
+            },
+            cluster: ecsCluster,
+            schedule: Schedule.expression('rate(60 minutes)'),
+            enabled: true,
+            ruleName: 'insights-expire-listings-schedule',
+        })
 
         new aws_cloudfront.Distribution(this, 'InsightsCache', {
             defaultBehavior: {origin: new S3Origin(cacheBucket)},

@@ -2,35 +2,14 @@ import * as AWS from "aws-sdk";
 import Redis from "ioredis";
 import {from, groupBy, GroupedObservable, map, mergeMap, Observable, of, tap, toArray} from "rxjs";
 import * as process from "process";
+import percentile from "percentile";
+import {scanKeys} from "./utils";
 
 const client = new Redis({
     host: process.env['REDIS_URL'],
     port: 6379,
     tls: undefined
 });
-
-function scanKeys(pattern: string): Observable<string> {
-    return new Observable<string>((sub) => {
-        const scan = client.scanStream({match: pattern})
-        scan.on("data", (keys) => {
-            for (const key of keys) {
-                sub.next(key);
-            }
-        });
-
-        scan.on('error', (error) => {
-            sub.error(error);
-        });
-
-        scan.on('end', () => {
-            sub.complete();
-        });
-    })
-}
-
-
-const dateMs = Date.now()
-const dateTruncatedMins = Math.round(dateMs / 1000 / 60);
 
 AWS.config.update({region: 'us-east-1'})
 const s3bucket = new AWS.S3();
@@ -45,7 +24,8 @@ type Listing = {
 }
 
 type Valuation = {
-    p15: number
+    pvs: number[],
+    l: number
 }
 
 type GroupValuation = {
@@ -55,13 +35,21 @@ type GroupValuation = {
     valuation: Valuation
 }
 
-function valueListings(group: GroupedObservable<string, Listing>): Observable<Valuation> {
-    return group.pipe(
-        toArray(),
-        map((e) => {
-            return {p15: e[0].value}
-        })
-    )
+function valueListings(listings: Listing[]): Observable<Valuation> {
+    const filteredListings = listings.filter((e) => !isNaN(e.value))
+    const convertedListings = filteredListings.map((e) => {
+        if (e.valueCurrency === 'd') {
+            return {...e, valueCurrency: 'c', value: e.value * 240}
+        }
+        return e
+    })
+    const values = convertedListings.map((e) => e.value).sort((a, b) => a - b)
+    const result = percentile(
+        [1, 5, 7, 10, 12, 15, 18, 20, 25, 30, 40, 50, 70, 95, 99],
+        values
+    ) as number[];
+
+    return of({l: filteredListings.length, pvs: result})
 }
 
 function valueShard(shardKey: string): Observable<{ key: string, valuations: GroupValuation[] }> {
@@ -83,7 +71,10 @@ function valueShard(shardKey: string): Observable<{ key: string, valuations: Gro
             }
         }),
         groupBy((e) => e.itemGroupHash),
-        mergeMap((e) => valueListings(e).pipe(
+        mergeMap((e) =>
+            e.pipe(
+                toArray(),
+                mergeMap((listings) => valueListings(listings)),
                 map((v): GroupValuation => ({
                     league: league,
                     itemGroupHash: e.key,
@@ -99,21 +90,23 @@ function valueShard(shardKey: string): Observable<{ key: string, valuations: Gro
 
 
 function writeShard(e: { key: string, valuations: GroupValuation[] }) {
-    const output = {}
+    const output = {
+        timestampMs: Date.now()
+    }
 
     for (const valuation of e.valuations) {
-        output[valuation.itemGroupHash] = valuation.valuation.p15
+        output[valuation.itemGroupHash] = valuation.valuation
     }
 
     return from(s3bucket.putObject({
         Bucket: 'sage-insights-cache',
-        Key: `v1/${e.key}.json`,
+        Key: `v2/${e.key.replaceAll(" ", "_")}.json`,
         Body: JSON.stringify(output),
         ContentType: "application/json",
     }).promise())
 }
 
-scanKeys("psev5:*")
+scanKeys(client, "psev5:*")
     .pipe(
         mergeMap((e) => valueShard(e), 5),
         tap((e) => console.log("writing", e.key, e.valuations.length)),
