@@ -22,7 +22,7 @@ Before moving on make sure you have the following installed:
 ### Project Setup
 Follow these instructions to clone and setup the project:
 - Clone the Sage project `git clone https://github.com/PoeStack/poestack-sage` You should now have a directory containing the code from this repo
-- Inside the repo run the following command `./gradlew npmInstall` or `./gradlew.bat` on Windows. This will install all the npm modules for all sub projects in the repo
+- Inside the repo run the following command `./gradlew npmInstall` or `./gradlew.bat npmInstall` on Windows. This will install all the npm modules for all sub projects in the repo
 - Next run `./gradlew npmBuild` or `./gradlew.bat npmBuild` on Windows. NOTE: on some systems this command stalls the first time it is ran if it has been running a bit kill it and run it again
 - Next navigate to the `src/echo-app` directory `cd ./src/echo-app`
 - Execute the following command `npm run start`
