@@ -1,5 +1,6 @@
+
 val npm = rootProject.extra.get("npm")
-val npx = rootProject.extra.get("npx") 
+val npx = rootProject.extra.get("npx")
 
 task<Exec>("npmInstall") {
     commandLine(npm, "install")
@@ -16,5 +17,4 @@ task<Exec>("npmCleanModules") {
 task<Exec>("npmBuild") {
     commandLine(npm, "run", "build")
     dependsOn(":src:ts-ratchet:npmBuild")
-    dependsOn(":src:sage-common:npmBuild")
 }

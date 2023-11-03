@@ -1,8 +1,9 @@
-import {PoePartialStashTab, PoeStashTab, GggApi, PoeItem} from "ggg-api";
+import {GggApi} from "ggg-api";
 import {CachedTask} from "./cached-task";
 import {bind} from "@react-rxjs/core";
 import {filter, from, map, mergeMap, toArray} from "rxjs";
 import {filterNullish} from "ts-ratchet";
+import {PoeItem, PoePartialStashTab, PoeStashTab} from "sage-common";
 
 export class PoeStashService {
     public gggApi: GggApi

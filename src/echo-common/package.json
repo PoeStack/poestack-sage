@@ -20,6 +20,7 @@
     "@react-rxjs/core": "^0.10.7",
     "@react-rxjs/utils": "^0.9.7",
     "ggg-api": "file:../ggg-api",
+    "sage-common": "file:../sage-common",
     "react": "file:../echo-app/node_modules/react",
     "react-dom": "file:../echo-app/node_modules/react-dom",
     "rxjs": "^7.8.1",

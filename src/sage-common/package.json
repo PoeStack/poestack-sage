@@ -1,5 +1,5 @@
 {
-  "name": "ggg-api",
+  "name": "sage-common",
   "version": "1.0.3",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -8,16 +8,18 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+    "test": "npm run build && node dist/cjs/poe-api-test.js",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@types/node": "^20.8.6",
+    "@types/react": "^18.2.31",
     "typescript": "^5.2.2"
   },
-  "dependencies": {
-    "axios": "^1.5.1",
+  "peerDependencies": {
+    "@react-rxjs/core": "^0.10.7",
+    "@react-rxjs/utils": "^0.9.7",
     "rxjs": "^7.8.1",
-    "poestack-ts-ratchet": "file:../ts-ratchet",
-    "sage-common": "file:../sage-common"
+    "ts-ratchet": "file:../ts-ratchet"
   }
 }

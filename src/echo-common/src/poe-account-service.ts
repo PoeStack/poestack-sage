@@ -1,9 +1,8 @@
 import {map} from "rxjs";
-import {PoeProfile} from "ggg-api";
 import {CachedTask} from "./cached-task";
 import {bind} from "@react-rxjs/core";
-import {PoeLeague} from "ggg-api/dist/cjs/poe-api-models";
 import {GGG_API} from "./echo-context";
+import {PoeLeague, PoeProfile} from "sage-common";
 
 export class PoeAccountService {
 

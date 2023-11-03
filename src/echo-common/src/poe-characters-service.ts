@@ -1,8 +1,8 @@
 import {CachedTask} from "./cached-task";
-import {PoeCharacter} from "ggg-api";
 import {GGG_API} from "./echo-context";
 import {bind} from "@react-rxjs/core";
 import {map} from "rxjs";
+import {PoeCharacter} from "sage-common";
 
 export class PoeCharactersService {
 

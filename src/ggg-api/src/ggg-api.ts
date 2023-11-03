@@ -1,6 +1,7 @@
 import {map, Observable, tap} from "rxjs";
-import {PoeCharacter, PoeLeague, PoeLeagueAccount, PoePartialStashTab, PoeProfile, PoeStashTab} from "./poe-api-models";
 import {GGG_API_UTIL} from "./http-util";
+import {PoeCharacter, PoeLeague, PoePartialStashTab, PoeProfile, PoeStashTab} from "sage-common";
+import {PoeLeagueAccount} from "sage-common/dist/cjs/ggg/poe-api-models";
 
 export class GggApi {
 
