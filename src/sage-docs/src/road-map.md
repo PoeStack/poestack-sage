@@ -16,11 +16,13 @@ Steps needed to enter pre-alpha (build only):
 Steps needed to enter alpha (releases):
 - Figure out how our Sqlite implementation should be used by scripts
 - ~~Move these docs to mdBook~~
+- Make the scroll bars on windows look better
+- Remove the Window top bar and add a better looking one
 - Add automatic updating for install versions
 - Add a button to the v1 to make authentication not require copy/paste
 - Add a basic stash tracking/character tracking plugin
-- Add a plugin managment plugin to enabled/disable and install/uninstall/update plugins
-- Work more on themeing, add a theme selector
+- Add a plugin management plugin to enabled/disable and install/uninstall/update plugins
+- Work more on theming, add a theme selector
 - Test the Windows installer
 
 Steps needed to enter beta:
@@ -28,7 +30,7 @@ Steps needed to enter beta:
 - Feature parity for stash tracking plugin
 - Setup new TFT integration on the backend
 - Add TFT integration to the api
-- Add TFT livesearch/bulk tool plugins  
+- Add TFT live search/bulk tool plugins  
 
 # Long term ideas
 - Add API for sending users Discord messages
