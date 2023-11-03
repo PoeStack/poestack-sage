@@ -1,11 +1,11 @@
 // noinspection JSUnusedGlobalSymbols
 
-import {EchoContextType, RegisteredPlugin} from "echo-common";
 import App from "./App";
 import {ArchiveBoxIcon} from "@heroicons/react/24/outline";
+import {ECHO_ROUTER, EchoPluginHook} from "echo-common";
 
-function start(echoContext: EchoContextType) {
-    echoContext.echoRouter.registerRoute({
+function start() {
+    ECHO_ROUTER.registerRoute({
         plugin: "example-stash",
         path: "main",
         page: App,
@@ -15,12 +15,11 @@ function start(echoContext: EchoContextType) {
     })
 }
 
-function destroy(echoContext: EchoContextType) {
+function destroy() {
 }
 
-export default function (): RegisteredPlugin {
+export default function (): EchoPluginHook {
     return {
-        name: null,
         start: start,
         destroy: destroy
     }

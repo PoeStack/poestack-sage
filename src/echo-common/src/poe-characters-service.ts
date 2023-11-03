@@ -8,7 +8,6 @@ export class PoeCharactersService {
 
     public characterList = new CachedTask<PoeCharacter[]>((key) => GGG_API.getCharacters())
     public characters = new CachedTask<PoeCharacter>((key) => GGG_API.getCharacter(key))
-
 }
 
 export const POE_CHARACTER_SERVICE = new PoeCharactersService()

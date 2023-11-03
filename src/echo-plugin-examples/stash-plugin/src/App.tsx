@@ -1,21 +1,18 @@
-import {
-    useStashes,
-    useEchoContext, useStashItems,
-} from 'echo-common'
 import React, {useState} from 'react'
+import {usePoeStashes, usePoeStashItems} from "echo-common";
+import {POE_STASH_SERVICE} from "echo-common/dist/cjs/poe-stash-service";
 
 function App(): JSX.Element {
     const league = "Ancestor"
 
     const [searchString, setSearchString] = useState("")
-    const {stashService} = useEchoContext()
-    const stashes = useStashes(league)
-    const stashItems = useStashItems(league)
-        .filter((e) => !searchString.length || e.item.typeLine.toLowerCase().includes(searchString.toLowerCase()))
+    const stashes = usePoeStashes(league)
+    const stashItems = usePoeStashItems(league)
+        .filter((e) => !searchString.length || e.data.typeLine.toLowerCase().includes(searchString.toLowerCase()))
         .sort((a, b) => new Date(b.stash.loadedAtTimestamp).getTime() - new Date(a.stash.loadedAtTimestamp).getTime())
 
-    stashService.currentStashes.load(league).subscribe()
-    stashService.currentStashes.load("Standard").subscribe()
+    POE_STASH_SERVICE.currentStashes.load(league).subscribe()
+    POE_STASH_SERVICE.currentStashes.load("Standard").subscribe()
 
     return (
         <>
@@ -25,7 +22,7 @@ function App(): JSX.Element {
                         <div key={e.id}
                              style={{backgroundColor: `#${e.metadata.colour}`}}
                              className="flex-shrink-0 cursor-pointer py-2 px-4 shadow-md no-underline rounded-full  text-white text-sm hover:text-white hover:bg-blue-light focus:outline-none active:shadow-none mr-2"
-                             onClick={() => stashService.currentStashContents.load(e.league + "_" + e.id).subscribe()}
+                             onClick={() => POE_STASH_SERVICE.currentStashContents.load(e.league + "_" + e.id).subscribe()}
                         >
                             {e.name}
                         </div>
@@ -43,13 +40,13 @@ function App(): JSX.Element {
                 <div className="overflow-y-scroll flex-1 mt-2">
                     {
                         stashItems.map((e) => (
-                            <div key={e.item.id}>
+                            <div key={e.data.id}>
                                 <div>
                                         <span
-                                            style={{color: `#${e.stash.metadata.colour}`}}>{e.stash.name}</span>: {e.item.stackSize} {e.item.typeLine}
+                                            style={{color: `#${e.stash.metadata.colour}`}}>{e.stash.name}</span>: {e.data.stackSize} {e.data.typeLine}
                                 </div>
                                 <div>
-                                    {e.item.properties?.map((p) => (<li>{p.name}: {p.values.join(", ")}</li>))}
+                                    {e.data.properties?.map((p) => (<li>{p.name}: {p.values.join(", ")}</li>))}
                                 </div>
                             </div>
                         ))

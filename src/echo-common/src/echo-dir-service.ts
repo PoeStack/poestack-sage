@@ -2,7 +2,7 @@ import path from "path";
 import * as os from "os";
 import * as fs from "fs";
 
-export class LocalStorageService {
+export class EchoDirService {
     homeDirPath = path.resolve(os.homedir(), "poestack-sage")
 
     constructor() {
@@ -32,4 +32,4 @@ export class LocalStorageService {
     }
 }
 
-export const LOCAL_STORAGE = new LocalStorageService()
+export const ECHO_DIR = new EchoDirService()

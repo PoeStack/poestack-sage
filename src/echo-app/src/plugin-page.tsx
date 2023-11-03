@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
 
-import {ECHO_ROUTER, RegisteredPlugin, useEchoContext} from "echo-common";
+import {ECHO_ROUTER, EchoPluginHook} from "echo-common";
 import fs from "fs";
 import * as path from "path";
 import {HomeIcon, UserCircleIcon} from "@heroicons/react/24/outline";
 import {QuestionMarkCircleIcon} from "@heroicons/react/20/solid";
-import {EchoRoute, EchoRouter, EchoRouterNavItem} from "echo-common/dist/cjs/echo-router";
+import {EchoRoute} from "echo-common/dist/cjs/echo-router";
 import {bind} from "@react-rxjs/core";
 import {ProfilePage} from "./profile-page";
 
@@ -13,10 +13,6 @@ const [useCurrentRoute] = bind(ECHO_ROUTER.currentRoute$)
 const [useCurrentRoutes] = bind(ECHO_ROUTER.routes$)
 
 export const PluginPage: React.FC = () => {
-    const echoContext = useEchoContext()
-    const pluginManager = echoContext.pluginManager
-    const echoRouter = echoContext.echoRouter
-
     const currentRoute = useCurrentRoute()
 
     const PluginBody = currentRoute?.page ?? DefaultPage
@@ -33,10 +29,10 @@ export const PluginPage: React.FC = () => {
             path: "home",
             plugin: "sage"
         }
-        echoRouter.registerRoute(homeRoute)
-        echoRouter.push(homeRoute)
+        ECHO_ROUTER.registerRoute(homeRoute)
+        ECHO_ROUTER.push(homeRoute)
 
-        echoRouter.registerRoute({
+        ECHO_ROUTER.registerRoute({
                 navItems: [
                     {
                         location: "l-sidebar-b",
@@ -64,16 +60,16 @@ export const PluginPage: React.FC = () => {
                         console.log("loading", pluginDistPath)
                         const pluginRaw = fs.readFileSync(pluginDistPath).toString()
                         const entry = eval(pluginRaw);
-                        const plugin: RegisteredPlugin = entry();
-                        plugin.name = pluginPackage.name;
-                        pluginManager.registerPlugin(plugin)
-                        plugin.start(echoContext)
+                        const plugin: EchoPluginHook = entry();
+
+                        plugin.start()
                     }
                 });
             });
         }
 
         loadPlugins(path.resolve("..", "echo-plugin-examples"))
+        loadPlugins(path.resolve("..", "echo-plugins"))
     }, []);
 
 
@@ -82,7 +78,8 @@ export const PluginPage: React.FC = () => {
 
     return (
         <div className="h-screen w-screen text-primary-text" data-theme={selectedTheme}>
-            <div className="w-12 drop-shadow-md h-full fixed flex flex-col bg-secondary-surface items-center p-2 justify-center gap-2">
+            <div
+                className="w-12 drop-shadow-md h-full fixed flex flex-col bg-secondary-surface items-center p-2 justify-center gap-2">
                 <RouterIconNavigator location="l-sidebar-m"/>
                 <div className="flex-1 border-gray-500 w-full border-b-2"></div>
                 <RouterIconNavigator location="l-sidebar-b"/>
@@ -115,23 +112,6 @@ const RouterIconNavigator = ({location}: { location: string }) => {
                 })
         }
     )}</>
-}
-
-
-const setupRoutes = (echoRouter: EchoRouter) => {
-    console.log("setup route")
-    echoRouter.registerRoute({
-            navItems: [
-                {
-                    location: "l-sidebar-b",
-                    icon: UserCircleIcon
-                }
-            ],
-            page: DefaultPage,
-            path: "profile",
-            plugin: "sage"
-        }
-    )
 }
 
 const DefaultPage = () => {

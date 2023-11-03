@@ -14,7 +14,7 @@ import {
 } from "rxjs";
 import {throttleTime} from "rxjs/operators";
 import {filterNullish} from "ts-ratchet";
-import {LOCAL_STORAGE} from "./local-storage-service";
+import {ECHO_DIR} from "./echo-dir-service";
 
 
 export type CachedTaskEvent<T> = {
@@ -74,7 +74,7 @@ export class CachedTask<T> {
             return false
         }
 
-        const localCachedValue = LOCAL_STORAGE.loadJson<CachedTaskEvent<T>>('cache', key);
+        const localCachedValue = ECHO_DIR.loadJson<CachedTaskEvent<T>>('cache', key);
         if (this.isValid(localCachedValue)) {
             this.cache$.next({...this.cache$.value, [key]: localCachedValue!!})
             return true
@@ -83,7 +83,7 @@ export class CachedTask<T> {
     }
 
     private addToCache(event: CachedTaskEvent<T>) {
-        LOCAL_STORAGE.writeJson(['cache', event.key], event)
+        ECHO_DIR.writeJson(['cache', event.key], event)
         this.cache$.next({...this.cache$.value, [event.key]: event})
     }
 

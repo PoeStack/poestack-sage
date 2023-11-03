@@ -3,7 +3,7 @@ import {BehaviorSubject} from "rxjs";
 import {bind} from "@react-rxjs/core";
 import jwt from 'jsonwebtoken';
 import {GGG_API_UTIL} from "ggg-api";
-import {LOCAL_STORAGE} from "echo-common";
+import {ECHO_DIR} from "echo-common";
 
 const [useJwt] = bind(GGG_API_UTIL.tokenSubject$, null)
 
@@ -28,7 +28,7 @@ export function LoginPage() {
         console.log("decoding", decoded)
         const oAuthCode = decoded?.['oAuthToken'];
         if (oAuthCode) {
-            LOCAL_STORAGE.writeJson(['auth'], {jwt: input})
+            ECHO_DIR.writeJson(['auth'], {jwt: input})
             setErrorMessage(null)
             GGG_API_UTIL.tokenSubject$.next(oAuthCode)
         } else {
@@ -37,8 +37,8 @@ export function LoginPage() {
     }
 
     useEffect(() => {
-        if (LOCAL_STORAGE.existsJson('auth')) {
-            const loadedAuth = LOCAL_STORAGE.loadJson('auth')
+        if (ECHO_DIR.existsJson('auth')) {
+            const loadedAuth = ECHO_DIR.loadJson('auth')
             handleSet(loadedAuth?.['jwt'])
         }
     }, []);
