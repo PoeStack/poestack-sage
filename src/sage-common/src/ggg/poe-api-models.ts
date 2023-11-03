@@ -68,6 +68,7 @@ export type PoeItem = {
     inventoryId?: string;
     isRelic?: boolean;
     itemLevel?: number;
+    ilvl?: number;
     league?: string;
     lockedToAccount?: boolean;
     lockedToCharacter?: boolean;
@@ -133,9 +134,7 @@ export type PoeItemExtended = {
     suffixes?: number;
 };
 
-export type PoeLeagueAccount = {
-
-}
+export type PoeLeagueAccount = {}
 
 export type PoeItemHybrid = {
     baseTypeName?: string;
