@@ -45,6 +45,7 @@ function App(): JSX.Element {
                                         <span
                                             style={{color: `#${e.stash.metadata.colour}`}}>{e.stash.name}</span>: {e.data.stackSize} {e.data.typeLine}
                                 </div>
+                                <div>{e.group?.hash}</div>
                                 <div>
                                     {e.data.properties?.map((p) => (<li>{p.name}: {p.values.join(", ")}</li>))}
                                 </div>

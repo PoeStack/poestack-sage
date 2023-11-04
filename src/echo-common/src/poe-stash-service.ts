@@ -3,7 +3,7 @@ import {CachedTask} from "./cached-task";
 import {bind} from "@react-rxjs/core";
 import {filter, from, map, mergeMap, toArray} from "rxjs";
 import {filterNullish} from "ts-ratchet";
-import {PoeItem, PoePartialStashTab, PoeStashTab} from "sage-common";
+import {ItemGroupingService, PoeItem, PoePartialStashTab, PoeStashTab, SageItemGroup} from "sage-common";
 
 export class PoeStashService {
     public gggApi: GggApi
@@ -20,7 +20,8 @@ export const POE_STASH_SERVICE = new PoeStashService(new GggApi())
 
 export type EchoPoeItem = {
     stash: PoePartialStashTab & { items?: PoeItem[] | undefined, loadedAtTimestamp: string },
-    data: PoeItem
+    data: PoeItem,
+    group: SageItemGroup | null
 }
 
 export const [usePoeStashes] = bind((league: string) => POE_STASH_SERVICE.currentStashes.cache$
@@ -29,13 +30,18 @@ export const [usePoeStashes] = bind((league: string) => POE_STASH_SERVICE.curren
         map((e) => (e?.result ?? []).flatMap((t) => t.children ?? [t]))
     ), [])
 
+const groupingService = new ItemGroupingService()
+
 export const [usePoeStashItems] = bind((league: string) => POE_STASH_SERVICE.currentStashContents.cache$
     .pipe(
         mergeMap((tabs) =>
             from(Object.values(tabs).map((e) => e.result)).pipe(
                 filterNullish(),
                 filter((e) => e.league === league),
-                mergeMap((stash) => (stash?.items ?? []).map((item) => ({stash, data: item}))),
+                mergeMap((stash) => (stash?.items ?? []).map((item) => {
+                    const group = groupingService.group(item)
+                    return {stash, data: item, group: group}
+                })),
                 toArray<EchoPoeItem>(),
             ))
     ), [])

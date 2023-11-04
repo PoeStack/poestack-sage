@@ -27,7 +27,11 @@ import {
     PoeLeague
 } from "./ggg/poe-api-models"
 
+import {ItemGroupingService, SageItemGroup} from "./item-groups/item-grouping-service"
+
 export {
+    SageItemGroup,
+    ItemGroupingService,
     PoeCharacter,
     PoeCharacterPassive,
     PoeFlavourTextInfo,

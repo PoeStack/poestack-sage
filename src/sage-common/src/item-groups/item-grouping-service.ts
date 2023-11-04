@@ -2,8 +2,11 @@ import fs from "fs";
 import {PoeItem} from "../ggg/poe-api-models";
 import {ItemUtils} from "./item-utils";
 import objectHash from "object-hash";
+import {compasses} from "./compasses";
 
-class ItemGroupingService {
+export type SageItemGroup = { key: string, tag: string, hash: string }
+
+export class ItemGroupingService {
     private readonly pricingHandlers: ItemGroupIdentifier[] = [];
 
     constructor() {
@@ -29,7 +32,7 @@ class ItemGroupingService {
     }
 
     public group(
-        item: PoeItem): { key: string, tag: string, hash: string } | null {
+        item: PoeItem): SageItemGroup | null {
         if (item.lockedToAccount || item.lockedToCharacter) {
             return null;
         }
@@ -455,9 +458,7 @@ export class CompassGroupIdentifier implements ItemGroupIdentifier {
     public static DISPLAY_OVERRIDES: Record<string, string> = {};
 
     constructor() {
-        Object.entries(
-            JSON.parse(fs.readFileSync("data/tft/tft-compas.json").toString())
-        ).forEach((e) => {
+        Object.entries(compasses).forEach((e) => {
             CompassGroupIdentifier.DISPLAY_OVERRIDES[
                 e[0]?.toLowerCase().replace("sextant ", "")
                 ] = e[1] as string;
