@@ -105,9 +105,9 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
 
                     for (const [itemGroupHashString, data] of Object.entries(toWrite)) {
                         updates++;
-                        const shard = parseInt(itemGroupHashString, 16) % 101;
+                        const shard = parseInt(itemGroupHashString, 16) % 5;
                         multi.hset(
-                            `psev5:${data.tag}:${shard}:${stashData.league}`,
+                            `psev6:${data.tag}:${shard}:${stashData.league}`,
                             `${itemGroupHashString}:${stashData.accountName}`,
                             `${dateTruncatedMins},${data.stackSize},${data.value},${data.currencyType}`
                         )

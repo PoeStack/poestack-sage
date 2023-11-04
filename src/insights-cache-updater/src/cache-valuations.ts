@@ -100,13 +100,13 @@ function writeShard(e: { key: string, valuations: GroupValuation[] }) {
 
     return from(s3bucket.putObject({
         Bucket: 'sage-insights-cache',
-        Key: `v2/${e.key.replaceAll(" ", "_")}.json`,
+        Key: `v3/${e.key.replaceAll(" ", "_")}.json`,
         Body: JSON.stringify(output),
         ContentType: "application/json",
     }).promise())
 }
 
-scanKeys(client, "psev5:*")
+scanKeys(client, "psev6:*")
     .pipe(
         mergeMap((e) => valueShard(e), 5),
         tap((e) => console.log("writing", e.key, e.valuations.length)),

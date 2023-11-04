@@ -9,7 +9,7 @@ const client = new Redis({
     tls: undefined
 });
 
-scanKeys(client, "psev5:*")
+scanKeys(client, "psev6:*")
     .pipe(
         mergeMap((e) => from(client.hgetall(e)).pipe(
                 map((r) => ({key: e, listings: Object.entries(r)}))
