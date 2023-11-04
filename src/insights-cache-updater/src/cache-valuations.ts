@@ -91,11 +91,12 @@ function valueShard(shardKey: string): Observable<{ key: string, valuations: Gro
 
 function writeShard(e: { key: string, valuations: GroupValuation[] }) {
     const output = {
-        timestampMs: Date.now()
+        timestampMs: Date.now(),
+        valuations: {}
     }
 
     for (const valuation of e.valuations) {
-        output[valuation.itemGroupHash] = valuation.valuation
+        output.valuations[valuation.itemGroupHash] = valuation.valuation
     }
 
     return from(s3bucket.putObject({

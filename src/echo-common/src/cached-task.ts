@@ -31,27 +31,13 @@ export class CachedTask<T> {
     public events$ = new Subject<CachedTaskEvent<T>>()
     public cache$ = new BehaviorSubject<{ [key: string]: CachedTaskEvent<T> }>({})
 
-    private lastEventTime = 0
-
     constructor(loadFun: (key: string) => Observable<T | null>) {
-        this.tasks$.pipe(filter(({key}) => !this.isValid(this.cache$.value[key])),
+        this.tasks$.pipe(
+            filter(({key}) => !this.isValid(this.cache$.value[key])),
             groupBy(item => item.key),
-            mergeMap(group => group.pipe(throttleTime(10000))),
+            mergeMap(group => group.pipe(throttleTime(60000))),
             map((e) => this.loadFromLocal(e.key) ? null : e),
-            filterNullish(),
-            switchMap(event => {
-                const currentTime = Date.now();
-                const timeSinceLastEvent = currentTime - this.lastEventTime;
-
-                if (timeSinceLastEvent >= 2000) {
-                    this.lastEventTime = currentTime;
-                    return of(event);
-                } else {
-                    this.lastEventTime = this.lastEventTime + 2000;
-                    const delayTime = this.lastEventTime - currentTime;
-                    return timer(delayTime).pipe(concatMap(() => of(event)));
-                }
-            }),
+            filterNullish()
         ).subscribe((e) => {
                 loadFun(e.key).pipe(
                     take(1)
@@ -74,11 +60,14 @@ export class CachedTask<T> {
             return false
         }
 
-        const localCachedValue = ECHO_DIR.loadJson<CachedTaskEvent<T>>('cache', key);
-        if (this.isValid(localCachedValue)) {
-            this.cache$.next({...this.cache$.value, [key]: localCachedValue!!})
-            return true
+        if (ECHO_DIR.existsJson('cache', key)) {
+            const localCachedValue = ECHO_DIR.loadJson<CachedTaskEvent<T>>('cache', key);
+            if (this.isValid(localCachedValue)) {
+                this.cache$.next({...this.cache$.value, [key]: localCachedValue!!})
+                return true
+            }
         }
+
         return false
     }
 
@@ -92,7 +81,6 @@ export class CachedTask<T> {
     }
 
     public load(key: string): Observable<CachedTaskEvent<T>> {
-        console.log("loading", key)
         return new Observable<CachedTaskEvent<T>>((sub) => {
             const eventSub = this.events$.pipe(
                 filter((e) => e.key === key),

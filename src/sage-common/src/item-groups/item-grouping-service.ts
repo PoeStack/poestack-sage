@@ -4,7 +4,7 @@ import {ItemUtils} from "./item-utils";
 import objectHash from "object-hash";
 import {compasses} from "./compasses";
 
-export type SageItemGroup = { key: string, tag: string, hash: string }
+export type SageItemGroup = { key: string, tag: string, hash: string, shard: number }
 
 export class ItemGroupingService {
     private readonly pricingHandlers: ItemGroupIdentifier[] = [];
@@ -48,7 +48,9 @@ export class ItemGroupingService {
                     },
                     {unorderedArrays: true, unorderedObjects: true}
                 );
-                return {key: internalGroup.key, tag: internalGroup.tag, hash: hash}
+
+                const shard = parseInt(hash, 16) % 5;
+                return {key: internalGroup.key, tag: internalGroup.tag, hash: hash, shard: shard}
             }
         }
 

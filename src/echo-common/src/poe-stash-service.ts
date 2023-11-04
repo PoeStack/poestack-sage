@@ -1,9 +1,11 @@
 import {GggApi} from "ggg-api";
 import {CachedTask} from "./cached-task";
 import {bind} from "@react-rxjs/core";
-import {filter, from, map, mergeMap, toArray} from "rxjs";
+import {catchError, combineLatestWith, concatMap, filter, from, map, mergeMap, of, switchMap, tap, toArray} from "rxjs";
 import {filterNullish} from "ts-ratchet";
 import {ItemGroupingService, PoeItem, PoePartialStashTab, PoeStashTab, SageItemGroup} from "sage-common";
+import {SAGE_VALUATION_SERVICE, SageValuation} from "./sage-valuation-service";
+import {it} from "node:test";
 
 export class PoeStashService {
     public gggApi: GggApi
@@ -21,7 +23,8 @@ export const POE_STASH_SERVICE = new PoeStashService(new GggApi())
 export type EchoPoeItem = {
     stash: PoePartialStashTab & { items?: PoeItem[] | undefined, loadedAtTimestamp: string },
     data: PoeItem,
-    group: SageItemGroup | null
+    group: SageItemGroup | null,
+    valuation: SageValuation | null
 }
 
 export const [usePoeStashes] = bind((league: string) => POE_STASH_SERVICE.currentStashes.cache$
@@ -34,15 +37,25 @@ const groupingService = new ItemGroupingService()
 
 export const [usePoeStashItems] = bind((league: string) => POE_STASH_SERVICE.currentStashContents.cache$
     .pipe(
-        mergeMap((tabs) =>
+        combineLatestWith(SAGE_VALUATION_SERVICE.currentStashes.cache$),
+        mergeMap(([tabs, valuationCache]) =>
             from(Object.values(tabs).map((e) => e.result)).pipe(
                 filterNullish(),
                 filter((e) => e.league === league),
                 mergeMap((stash) => (stash?.items ?? []).map((item) => {
                     const group = groupingService.group(item)
-                    return {stash, data: item, group: group}
+
+                    if (group) {
+                        const valuationKey = `${group.tag}_${group.shard}_${league}`
+                        const valuation = valuationCache[valuationKey]?.result?.valuations[group.hash] ?? null;
+                        SAGE_VALUATION_SERVICE.load(group.tag, group.shard, league)
+                        return {stash, data: item, group, valuation}
+                    }
+
+                    return {stash, data: item, group: group, valuation: null}
                 })),
                 toArray<EchoPoeItem>(),
+                tap((e) => console.log("aa", e)),
             ))
     ), [])
 
