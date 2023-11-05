@@ -30,7 +30,7 @@ const App = () => {
               style={{ backgroundColor: `#${e.metadata.colour}` }}
               className="flex-shrink-0 cursor-pointer py-2 px-4 shadow-md no-underline rounded-full  text-white text-sm hover:text-white hover:bg-blue-light focus:outline-none active:shadow-none mr-2"
               onClick={() =>
-                POE_STASH_SERVICE.currentStashContents.load(e.league + '_' + e.id).subscribe()
+                POE_STASH_SERVICE.currentStashContents.load(`${e.league}_${e.id}`).subscribe()
               }
             >
               {e.name}

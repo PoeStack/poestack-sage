@@ -205,7 +205,7 @@ export class UnqiueGearGroupIdentifier implements ItemGroupIdentifier {
         }
       }
 
-      if (!!item.corrupted) {
+      if (item.corrupted) {
         const corruptedMods = item.implicitMods?.map((e) => e.replaceAll(/[0-9]+/g, '#')) ?? []
         corruptedMods.sort()
         res = {

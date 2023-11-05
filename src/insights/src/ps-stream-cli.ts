@@ -26,7 +26,7 @@ const extractCurrencyType = (currencyTypeRaw: string): string | null => {
 }
 
 function twoDecimals(n) {
-  var log10 = n ? Math.floor(Math.log10(n)) : 0,
+  const log10 = n ? Math.floor(Math.log10(n)) : 0,
     div = log10 < 0 ? Math.pow(10, 1 - log10) : 100
 
   return Math.round(n * div) / div
@@ -34,7 +34,7 @@ function twoDecimals(n) {
 
 const extractCurrencyValue = (currencyValueRaw: string): string | null => {
   try {
-    var numericValue: number
+    let numericValue: number
     if (currencyValueRaw.includes('/')) {
       const split = currencyValueRaw.split('/')
       numericValue = parseFloat(split[0]) / parseFloat(split[1])
