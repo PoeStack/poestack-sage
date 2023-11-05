@@ -43,6 +43,7 @@
     "typescript": "^5.2.2"
   },
   "optionalDependencies": {
+    "@rollup/rollup-darwin-x64": "^4.3.0",
     "dmg-license": "^1.0.11"
   },
   "devDependencies": {
