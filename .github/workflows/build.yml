@@ -2,7 +2,7 @@ name: Mdbook build
 
 on:
   push:
-    branches: ["main"]
+    branches: ['main']
 
 jobs:
   build:
@@ -13,28 +13,28 @@ jobs:
       MDBOOK_PAGETOC_VERSION: '0.1.7'
       MDBOOK_LINKCHECK_VERSION: '0.7.7'
     steps:
-    - uses: actions/checkout@v2
-      with:
-        submodules: true
-    - name: Install mdbook
-      run: |
-        mkdir ~/tools
-        curl -L https://github.com/rust-lang/mdBook/releases/download/v$MDBOOK_VERSION/mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-gnu.tar.gz | tar xz -C ~/tools
-        curl -L https://github.com/slowsage/mdbook-pagetoc/releases/download/v$MDBOOK_PAGETOC_VERSION/mdbook-pagetoc-v$MDBOOK_PAGETOC_VERSION-x86_64-unknown-linux-gnu.tar.gz | tar xz -C ~/tools
-        curl -L https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v$MDBOOK_LINKCHECK_VERSION/mdbook-linkcheck.x86_64-unknown-linux-gnu.zip -O
-        unzip mdbook-linkcheck.x86_64-unknown-linux-gnu.zip -d ~/tools
-        chmod +x ~/tools/mdbook-linkcheck
-        curl -s https://api.github.com/repos/zjp-CN/mdbook-theme/releases/latest \
-               | grep browser_download_url \
-               | grep mdbook-theme_linux \
-               | cut -d '"' -f 4 \
-               | wget -qi -
-        tar -xzf mdbook-theme_linux.tar.gz -C ~/tools
-        echo ~/tools >> $GITHUB_PATH
-    - name: Build
-      run: mdbook build ./src/sage-docs
-    # share between different jobs
-    - uses: actions/upload-artifact@v3
-      with:
-        name: book
-        path: book/
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Install mdbook
+        run: |
+          mkdir ~/tools
+          curl -L https://github.com/rust-lang/mdBook/releases/download/v$MDBOOK_VERSION/mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-gnu.tar.gz | tar xz -C ~/tools
+          curl -L https://github.com/slowsage/mdbook-pagetoc/releases/download/v$MDBOOK_PAGETOC_VERSION/mdbook-pagetoc-v$MDBOOK_PAGETOC_VERSION-x86_64-unknown-linux-gnu.tar.gz | tar xz -C ~/tools
+          curl -L https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v$MDBOOK_LINKCHECK_VERSION/mdbook-linkcheck.x86_64-unknown-linux-gnu.zip -O
+          unzip mdbook-linkcheck.x86_64-unknown-linux-gnu.zip -d ~/tools
+          chmod +x ~/tools/mdbook-linkcheck
+          curl -s https://api.github.com/repos/zjp-CN/mdbook-theme/releases/latest \
+                 | grep browser_download_url \
+                 | grep mdbook-theme_linux \
+                 | cut -d '"' -f 4 \
+                 | wget -qi -
+          tar -xzf mdbook-theme_linux.tar.gz -C ~/tools
+          echo ~/tools >> $GITHUB_PATH
+      - name: Build
+        run: mdbook build ./src/sage-docs
+      # share between different jobs
+      - uses: actions/upload-artifact@v3
+        with:
+          name: book
+          path: book/

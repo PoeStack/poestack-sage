@@ -16,7 +16,7 @@
     "paths": {
       "@gql/*": ["gql/__generated__/*"],
       "@poe/*": ["poe/*"],
-      "@services/*": ["services/*"],
+      "@services/*": ["services/*"]
     }
   }
 }

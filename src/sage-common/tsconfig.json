@@ -9,7 +9,5 @@
     "outDir": "./dist/esm",
     "declaration": true
   },
-  "include": [
-    "./src"
-  ]
+  "include": ["./src"]
 }

@@ -3,10 +3,7 @@
     "target": "ES2020",
     "module": "commonjs",
     "outDir": "./dist",
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2020", "dom"],
     "declaration": true,
     "strict": true,
     "noImplicitAny": true,
@@ -21,12 +18,7 @@
     "inlineSources": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
-    "typeRoots": [
-      "./node_modules/@types"
-    ]
+    "typeRoots": ["./node_modules/@types"]
   },
-  "include": [
-    "./bin",
-    "./lib"
-  ]
+  "include": ["./bin", "./lib"]
 }
