@@ -67,7 +67,7 @@ export const PluginPage: React.FC = () => {
         }
 
         loadPlugins(path.resolve("..", "..", "dist_plugins"))
-        loadPlugins("/Users/zach/workplace/poestack-sage/dist_plugins")
+        //loadPlugins("/Users/zach/workplace/poestack-sage/dist_plugins")
     }, []);
 
 
