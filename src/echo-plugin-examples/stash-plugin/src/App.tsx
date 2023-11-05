@@ -12,7 +12,6 @@ const App = () => {
         .sort((a, b) => new Date(b.stash.loadedAtTimestamp).getTime() - new Date(a.stash.loadedAtTimestamp).getTime())
 
     POE_STASH_SERVICE.currentStashes.load(league).subscribe()
-    POE_STASH_SERVICE.currentStashes.load("Standard").subscribe()
 
     return (
         <>
