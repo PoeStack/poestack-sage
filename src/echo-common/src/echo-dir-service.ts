@@ -15,6 +15,14 @@ export class EchoDirService {
         return fs.existsSync(path.resolve(this.homeDirPath, ...jsonPath) + ".json")
     }
 
+    public deleteJson(...jsonPath: string[]) {
+        try {
+            fs.rmSync(path.resolve(this.homeDirPath, ...jsonPath) + ".json")
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
     public loadJson<T>(...jsonPath: string[]): T | null {
         const resolvedPath = path.resolve(this.homeDirPath, ...jsonPath) + ".json"
         try {

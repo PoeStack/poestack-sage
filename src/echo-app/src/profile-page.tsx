@@ -1,13 +1,12 @@
-import {POE_ACCOUNT_SERVICE, usePoeLeagues, usePoeProfile} from "echo-common";
+import {ECHO_DIR, POE_ACCOUNT_SERVICE, usePoeLeagues, usePoeProfile} from "echo-common";
+import {GGG_API_UTIL} from "ggg-api";
 
 
 export function ProfilePage() {
 
     const profile = usePoeProfile()
-    const leagues = usePoeLeagues()
 
     POE_ACCOUNT_SERVICE.profile.load("profile").subscribe()
-    POE_ACCOUNT_SERVICE.leagues.load("leagues").subscribe()
 
     return (
         <>
@@ -15,9 +14,11 @@ export function ProfilePage() {
                 <div className="basis-1/4"></div>
                 <div className="flex flex-col">
                     <div>Welcome {profile?.name} to your profile</div>
-                    {leagues?.map((league) => (
-                        <div>{league.id}</div>
-                    ))}
+                    <button onClick={() => {
+                        ECHO_DIR.deleteJson('auth')
+                        GGG_API_UTIL.tokenSubject$.next(undefined)
+                    }}>Logout
+                    </button>
                 </div>
                 <div className="basis-1/4"></div>
             </div>

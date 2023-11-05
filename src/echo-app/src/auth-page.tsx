@@ -1,5 +1,4 @@
 import {useEffect, useState} from "react";
-import {BehaviorSubject} from "rxjs";
 import {bind} from "@react-rxjs/core";
 import jwt from 'jsonwebtoken';
 import {GGG_API_UTIL} from "ggg-api";
@@ -44,8 +43,9 @@ export function LoginPage() {
     }, []);
 
     return (
-        <div className="min-h-screen flex items-center justify-center text-primary-text">
-            <div className="flex flex-col gap-2">
+        <div style={{'-webkit-app-region': "drag"} as unknown}
+             className="min-h-screen flex items-center justify-center text-primary-text">
+            <div style={{'-webkit-app-region': "no-drag"} as unknown} className="flex flex-col gap-2" draggable={false}>
                 <div className="text-lg font-semibold">PoeStack - Sage</div>
                 <div className="text-sm">Enter your PoeStack token. <a
                     className="text-primary-accent text-sm"

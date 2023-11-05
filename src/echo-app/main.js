@@ -4,11 +4,13 @@ const path = require('path');
 let mainWindow;
 
 function createWindow() {
+    require('@electron/remote/main').initialize()
+
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
         icon: "./build/icon.png",
-        titleBarStyle: 'hidden',
+        frame: false,
         backgroundColor: "#303338",
         webPreferences: {
             nodeIntegration: true,
@@ -16,6 +18,7 @@ function createWindow() {
         },
     });
 
+    require("@electron/remote/main").enable(mainWindow.webContents)
     const handleRedirect = (e, url) => {
         e.preventDefault()
         shell.openExternal(url)
@@ -28,7 +31,6 @@ function createWindow() {
         mainWindow = null;
     });
 }
-
 
 
 app.on('ready', createWindow);
