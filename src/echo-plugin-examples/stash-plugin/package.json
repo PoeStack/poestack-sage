@@ -5,7 +5,8 @@
   "type": "commonjs",
   "scripts": {
     "clean": "rimraf dist",
-    "build": "rollup -c --configPlugin typescript"
+    "build": "rollup -c --environment STAGE:dev --configPlugin typescript",
+    "release": "rollup -c --environment STAGE:prod --configPlugin typescript"
   },
   "peerDependencies": {
     "react": "^18.2.0",
