@@ -13,7 +13,7 @@ const App = () => {
     return (
         <>
             <div className="flex h-full w-full pt-2 pl-2 pr-2">
-                <div className="flex-shrink-0 flex flex-col gap-2 h-full overflow-y-scroll pr-4">
+                <div className="flex-shrink-0 flex flex-col gap-2 h-full overflow-y-scroll">
                     {characterList?.map((c) => (
                         <div
                             onClick={() => {

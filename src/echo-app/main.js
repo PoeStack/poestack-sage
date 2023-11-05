@@ -8,6 +8,8 @@ function createWindow() {
         width: 800,
         height: 600,
         icon: "./build/icon.png",
+        titleBarStyle: 'hidden',
+        backgroundColor: "#303338",
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,

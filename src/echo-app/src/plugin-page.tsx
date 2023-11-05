@@ -1,13 +1,13 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 
-import {ECHO_ROUTER, EchoPluginHook} from "echo-common";
+import { ECHO_ROUTER, EchoPluginHook } from "echo-common";
 import fs from "fs";
 import * as path from "path";
-import {HomeIcon, UserCircleIcon} from "@heroicons/react/24/outline";
-import {QuestionMarkCircleIcon} from "@heroicons/react/20/solid";
-import {EchoRoute} from "echo-common/dist/cjs/echo-router";
-import {bind} from "@react-rxjs/core";
-import {ProfilePage} from "./profile-page";
+import { HomeIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
+import { EchoRoute } from "echo-common/dist/cjs/echo-router";
+import { bind } from "@react-rxjs/core";
+import { ProfilePage } from "./profile-page";
 
 
 const [useCurrentRoute] = bind(ECHO_ROUTER.currentRoute$)
@@ -34,16 +34,16 @@ export const PluginPage: React.FC = () => {
         ECHO_ROUTER.push(homeRoute)
 
         ECHO_ROUTER.registerRoute({
-                navItems: [
-                    {
-                        location: "l-sidebar-b",
-                        icon: UserCircleIcon
-                    }
-                ],
-                page: ProfilePage,
-                path: "profile",
-                plugin: "sage"
-            }
+            navItems: [
+                {
+                    location: "l-sidebar-b",
+                    icon: UserCircleIcon
+                }
+            ],
+            page: ProfilePage,
+            path: "profile",
+            plugin: "sage"
+        }
         )
     }, []);
 
@@ -66,6 +66,7 @@ export const PluginPage: React.FC = () => {
             });
         }
 
+
         loadPlugins(path.resolve("..", "..", "dist_plugins"))
         //loadPlugins("/Users/zach/workplace/poestack-sage/dist_plugins")
     }, []);
@@ -76,39 +77,40 @@ export const PluginPage: React.FC = () => {
 
     return (
         <div className="h-screen w-screen text-primary-text" data-theme={selectedTheme}>
+            <div style={{ '-webkit-app-region': "drag" } as unknown} className="bg-secondary-surface fixed top-0 h-7 w-full">PoeStack - Sage</div>
             <div
-                className="w-12 drop-shadow-md h-full fixed flex flex-col bg-secondary-surface items-center p-2 justify-center gap-2">
-                <RouterIconNavigator location="l-sidebar-m"/>
+                className="w-12 drop-shadow-md h-full top-7 fixed flex flex-col bg-secondary-surface items-center px-2 pt-2 pb-9 justify-center gap-2">
+                <RouterIconNavigator location="l-sidebar-m" />
                 <div className="flex-1 border-gray-500 w-full border-b-2"></div>
-                <RouterIconNavigator location="l-sidebar-b"/>
+                <RouterIconNavigator location="l-sidebar-b" />
             </div>
-            <div className="ml-12 pb-7 h-full">
-                <PluginBody/>
+            <div className="ml-12 pb-7 pt-7 h-full">
+                <PluginBody />
             </div>
             <div className="bg-secondary-surface fixed bottom-0 h-7 w-full ml-12"></div>
         </div>
     );
 };
 
-const RouterIconNavigator = ({location}: { location: string }) => {
+const RouterIconNavigator = ({ location }: { location: string }) => {
     const currentRoutes = useCurrentRoutes()
     const currentRoute = useCurrentRoute()
 
     return <>{currentRoutes.flatMap((echoRoute) => {
-            return (echoRoute.navItems ?? [])
-                .filter((e) => e.location === location)
-                .map((navItem) => {
-                    const Icon = navItem.icon ?? QuestionMarkCircleIcon
-                    return (
-                        <Icon
-                            className={"h-7 w-7 cursor-pointer " + (currentRoute === echoRoute ? "text-primary-accent" : "")}
-                            onClick={() => {
-                                ECHO_ROUTER.push(echoRoute)
-                            }}>
-                        </Icon>
-                    )
-                })
-        }
+        return (echoRoute.navItems ?? [])
+            .filter((e) => e.location === location)
+            .map((navItem) => {
+                const Icon = navItem.icon ?? QuestionMarkCircleIcon
+                return (
+                    <Icon
+                        className={"h-7 w-7 cursor-pointer " + (currentRoute === echoRoute ? "text-primary-accent" : "")}
+                        onClick={() => {
+                            ECHO_ROUTER.push(echoRoute)
+                        }}>
+                    </Icon>
+                )
+            })
+    }
     )}</>
 }
 

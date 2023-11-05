@@ -27,7 +27,6 @@
     "@react-rxjs/core": "^0.10.7",
     "@react-rxjs/utils": "^0.9.7",
     "axios": "^1.6.0",
-    "dmg-license": "^1.0.11",
     "echo-common": "file:../echo-common",
     "electron-squirrel-startup": "^1.0.0",
     "ggg-api": "file:../ggg-api",
@@ -41,6 +40,9 @@
     "tail": "^2.2.6",
     "ts-ratchet": "file:../ts-ratchet",
     "typescript": "^5.2.2"
+  },
+  "optionalDependencies": {
+    "dmg-license": "^1.0.11"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.5",

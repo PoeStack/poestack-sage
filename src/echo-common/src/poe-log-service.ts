@@ -1,6 +1,6 @@
-import {Tail} from "tail"
-import {map, Subject} from "rxjs";
-import {filterNullish} from "ts-ratchet";
+import { Tail } from "tail"
+import { map, Subject } from "rxjs";
+import { filterNullish } from "ts-ratchet";
 import path from "path";
 import * as os from "os";
 import * as fs from "fs";
@@ -30,7 +30,7 @@ export class PoeLogService {
     constructor() {
         const path = this.getLogFilePath()
         if (path) {
-            this.logTail = new Tail(path);
+            this.logTail = new Tail(path, { useWatchFile: true, fsWatchOptions: { interval: 1000 } });
             this.logTail.on("line", (line) => this.logRaw$.next(line));
         }
 

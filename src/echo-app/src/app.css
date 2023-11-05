@@ -11,3 +11,35 @@
         --color-primary-accent: #5764F2;
     }
 }
+
+* {
+    scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+    background-color: rgba(0, 0, 0, 0);
+    width: 18px;
+    height: 18px;
+}
+
+/* background of the scrollbar except button or resizer */  
+*::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+*::-webkit-scrollbar-corner  {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+/* scrollbar itself */
+*::-webkit-scrollbar-thumb {
+    border: 6px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: #AAAAAA;
+}
+
+/* set button(top and bottom of the scrollbar) */
+*::-webkit-scrollbar-button {
+    display:none;
+}
