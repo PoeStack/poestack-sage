@@ -2,7 +2,7 @@
   "name": "example-character-plugin",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && rollup -c --configPlugin typescript"

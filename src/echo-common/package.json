@@ -14,6 +14,7 @@
   "devDependencies": {
     "@types/node": "^20.8.6",
     "@types/react": "^18.2.31",
+    "@types/tail": "^2.2.2",
     "typescript": "^5.2.2"
   },
   "peerDependencies": {
@@ -25,6 +26,7 @@
     "react-dom": "file:../echo-app/node_modules/react-dom",
     "rxjs": "^7.8.1",
     "sage-common": "file:../sage-common",
+    "tail": "^2.2.6",
     "ts-ratchet": "file:../ts-ratchet"
   }
 }

@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import {usePoeStashes, usePoeStashItems} from "echo-common";
 import {POE_STASH_SERVICE} from "echo-common/dist/cjs/poe-stash-service";
 
-function App(): JSX.Element {
+const App = () => {
     const league = "Ancestor"
 
     const [searchString, setSearchString] = useState("")

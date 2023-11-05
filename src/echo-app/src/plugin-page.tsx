@@ -9,6 +9,7 @@ import {EchoRoute} from "echo-common/dist/cjs/echo-router";
 import {bind} from "@react-rxjs/core";
 import {ProfilePage} from "./profile-page";
 
+
 const [useCurrentRoute] = bind(ECHO_ROUTER.currentRoute$)
 const [useCurrentRoutes] = bind(ECHO_ROUTER.routes$)
 
@@ -55,11 +56,10 @@ export const PluginPage: React.FC = () => {
                 files.forEach(function (file) {
                     const pluginPackagePath = path.resolve(baseDir, file, "package.json");
                     if (fs.existsSync(pluginPackagePath)) {
-                        const pluginPackage = JSON.parse(fs.readFileSync(pluginPackagePath).toString())
                         const pluginDistPath = path.resolve(baseDir, file, "dist", "cjs", "plugin.js");
                         console.log("loading", pluginDistPath)
-                        const pluginRaw = fs.readFileSync(pluginDistPath).toString()
-                        const entry = eval(pluginRaw);
+
+                        const entry = module.require(pluginDistPath)
                         const plugin: EchoPluginHook = entry();
 
                         plugin.start()

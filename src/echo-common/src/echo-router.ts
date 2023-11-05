@@ -1,10 +1,9 @@
-import React, {useState} from "react";
 import {BehaviorSubject} from "rxjs";
 
 export type EchoRoute = {
     plugin: string,
     path: string,
-    page: React.FC,
+    page: any,
     navItems?: EchoRouterNavItem[] | null
 }
 

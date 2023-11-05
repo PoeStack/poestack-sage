@@ -32,6 +32,7 @@
       "request": "attach",
       "port": 9223, //use debug port opened in Electron: Main configuration
       "webRoot": "${workspaceFolder}/src/echo-app",
+      "sourceMap": true,
       "timeout": 30000
     }
   ],

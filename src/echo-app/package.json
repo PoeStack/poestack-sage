@@ -27,7 +27,6 @@
     "@react-rxjs/core": "^0.10.7",
     "@react-rxjs/utils": "^0.9.7",
     "echo-common": "file:../echo-common",
-    "sage-common": "file:../sage-common",
     "electron-squirrel-startup": "^1.0.0",
     "ggg-api": "file:../ggg-api",
     "jsonwebtoken": "^9.0.2",
@@ -35,6 +34,8 @@
     "react-dom": "^18.2.0",
     "rollup-plugin-postcss": "^4.0.2",
     "rxjs": "^7.8.1",
+    "sage-common": "file:../sage-common",
+    "tail": "^2.2.6",
     "typescript": "^5.2.2"
   },
   "devDependencies": {

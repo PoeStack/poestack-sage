@@ -1,4 +1,3 @@
-
 import typescript from "@rollup/plugin-typescript";
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import type {RollupOptions} from 'rollup';
@@ -8,9 +7,10 @@ const config: RollupOptions = {
     external: ['fs'],
     output: {
         file: "dist/cjs/plugin.js",
-        format: 'cjs'
+        format: 'cjs',
+        sourcemap: true
     },
-    plugins: [typescript(), peerDepsExternal()]
+    plugins: [typescript()]
 }
 // noinspection JSUnusedGlobalSymbols
 export default config;

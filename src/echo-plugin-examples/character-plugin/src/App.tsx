@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {POE_CHARACTER_SERVICE, usePoeCharacter, usePoeCharacterList} from "echo-common";
 
-function App(): JSX.Element {
+const App = () => {
 
     const [selectedName, setSelectedName] = useState<string | null>(null)
 

@@ -10,6 +10,7 @@ import {
     usePoeCharacterList
 } from "./poe-characters-service";
 import {PoeStashService, usePoeStashItems, usePoeStashes} from "./poe-stash-service";
+import { POE_LOG_SERVICE, PoeLogService } from "./poe-log-service";
 
 export {
     PoeStashService,
@@ -27,5 +28,7 @@ export {
     PoeCharactersService,
     POE_CHARACTER_SERVICE,
     usePoeCharacterList,
-    usePoeCharacter
+    usePoeCharacter,
+    PoeLogService,
+    POE_LOG_SERVICE
 }
