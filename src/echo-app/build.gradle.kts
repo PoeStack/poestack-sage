@@ -18,3 +18,11 @@ task<Exec>("npmBuild") {
     commandLine(npm, "run", "build")
     dependsOn(":src:echo-common:npmBuild")
 }
+
+task<Exec>("npmFormat") {
+    commandLine(npm, "run", "format")
+}
+
+task<Exec>("npmLint") {
+    commandLine(npm, "run", "lint")
+}

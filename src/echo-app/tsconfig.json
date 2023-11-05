@@ -4,11 +4,12 @@
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
+    "strict": true,
+    "useUnknownInCatchVariables": true,
     "skipLibCheck": true,
-
     /* Bundler mode */
     "moduleResolution": "bundler",
     "jsx": "react-jsx"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx","rollup.config.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "rollup.config.ts"]
 }
