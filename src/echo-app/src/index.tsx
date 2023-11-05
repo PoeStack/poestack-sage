@@ -1,6 +1,6 @@
 import { Module } from 'module'
 
-const localModulesPath = path.resolve(__dirname, 'node_modules')
+const localModulesPath = path.resolve(__dirname, '..', 'node_modules')
 //const orgResolvePath = Module['_resolveLookupPaths']
 // @ts-ignore
 Module['_resolveLookupPaths'] = function (request, parent) {
