@@ -6,11 +6,11 @@ const config: RollupOptions = {
     input: 'src/entry.tsx',
     external: ['fs'],
     output: {
-        file: "dist/cjs/plugin.js",
+        file: "../../../dist_plugins/character_plugin.js",
         format: 'cjs',
         sourcemap: true
     },
-    plugins: [typescript()]
+    plugins: [peerDepsExternal(), typescript()]
 }
 // noinspection JSUnusedGlobalSymbols
 export default config;

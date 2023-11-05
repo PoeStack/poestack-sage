@@ -54,22 +54,20 @@ export const PluginPage: React.FC = () => {
                     return console.log('Unable to scan directory: ' + err);
                 }
                 files.forEach(function (file) {
-                    const pluginPackagePath = path.resolve(baseDir, file, "package.json");
-                    if (fs.existsSync(pluginPackagePath)) {
-                        const pluginDistPath = path.resolve(baseDir, file, "dist", "cjs", "plugin.js");
-                        console.log("loading", pluginDistPath)
-
-                        const entry = module.require(pluginDistPath)
+                    if (file.endsWith(".js")) {
+                        const p = path.resolve(baseDir, file)
+                        console.log("loading", p)
+                        const entry = module.require(p)
+                        console.log("entry", entry)
                         const plugin: EchoPluginHook = entry();
-
                         plugin.start()
                     }
                 });
             });
         }
 
-        loadPlugins(path.resolve("..", "echo-plugin-examples"))
-        loadPlugins(path.resolve("..", "echo-plugins"))
+        loadPlugins(path.resolve("..", "..", "dist_plugins"))
+        loadPlugins("/Users/zach/workplace/poestack-sage/dist_plugins")
     }, []);
 
 

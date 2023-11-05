@@ -1,16 +1,14 @@
 import {Module} from "module";
 
-const originalResolveFilename = Module['_resolveFilename'];
-Module["_resolveFilename"] = function (request, parent) {
-    const res = originalResolveFilename(request, parent)
-    const rPath = path.resolve(".", "node_modules", request, 'index.js')
-    if (fs.existsSync(rPath)) {
-        console.log(request, "found", rPath, "vs", res)
-        return rPath
-    }
-
-    return res;
-};
+//const orgResolvePath = Module['_resolveLookupPaths']
+Module['_resolveLookupPaths'] = function (request, parent) {
+    const res = [
+        path.resolve(__dirname, "node_modules"),
+        "/Applications/echo-app.app/Contents/Resources/app.asar/node_modules",
+        "/Applications/echo-app.app/Contents/Resources/node_modules",
+    ]
+    return res
+}
 
 import React from 'react';
 import {PluginPage} from "./plugin-page";
