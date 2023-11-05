@@ -1,15 +1,27 @@
 import typescript from '@rollup/plugin-typescript'
+import copy from 'rollup-plugin-copy'
 import postcss from 'rollup-plugin-postcss'
 import type { RollupOptions } from 'rollup'
 
 const config: RollupOptions = {
-  input: 'src/index.tsx',
+  input: 'src/renderer/src/index.tsx',
   external: ['fs'],
   output: {
-    file: 'build/index.js',
+    file: 'build/renderer/src/index.js',
     format: 'cjs',
-    sourcemap: true
+    sourcemap: process.env.STAGE === 'prod' ? false : 'inline'
   },
-  plugins: [postcss({}), typescript()]
+  plugins: [
+    postcss({}),
+    typescript(),
+    copy({
+      targets: [
+        {
+          src: 'src/renderer/index.html',
+          dest: 'build/renderer/'
+        }
+      ]
+    })
+  ]
 }
 export default config

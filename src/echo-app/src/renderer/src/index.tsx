@@ -1,6 +1,6 @@
 import { Module } from 'module'
 
-const localModulesPath = path.resolve(__dirname, '..', 'node_modules')
+const localModulesPath = path.resolve(__dirname, '..', '..', 'node_modules')
 //const orgResolvePath = Module['_resolveLookupPaths']
 // @ts-ignore
 Module['_resolveLookupPaths'] = function (request, parent) {
@@ -17,11 +17,11 @@ import { PluginPage } from './plugin-page'
 import './app.css'
 import { Subscribe } from '@react-rxjs/core'
 import { AuthGuard } from './auth-page'
-// import { POE_LOG_SERVICE } from 'echo-common'
+import { POE_LOG_SERVICE } from 'echo-common'
 import { createRoot } from 'react-dom/client'
 import * as path from 'path'
 
-// POE_LOG_SERVICE.logRaw$.subscribe((e) => console.log('GGG LOG', e))
+POE_LOG_SERVICE.logRaw$.subscribe((e) => console.log('GGG LOG', e))
 
 const App: React.FC = () => {
   return (

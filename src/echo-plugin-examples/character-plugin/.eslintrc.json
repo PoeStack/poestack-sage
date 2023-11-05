@@ -27,6 +27,9 @@
   },
   "rules": {
     "no-debugger": 0,
+    "prefer-const": 1,
+    "react/prop-types": 0,
+    "prefer-template": 1,
     "@typescript-eslint/no-unused-vars": [
       1,
       {
@@ -35,10 +38,9 @@
         "argsIgnorePattern": "^_"
       }
     ],
-    "prefer-const": 1,
-    "react/prop-types": 0,
-    "prefer-template": 1,
     "@typescript-eslint/no-explicit-any": 1,
-    "@typescript-eslint/ban-ts-comment": 0
+    "@typescript-eslint/ban-ts-comment": 0,
+    "@typescript-eslint/no-var-requires": 1,
+    "@typescript-eslint/no-extra-non-null-assertion": 0
   }
 }

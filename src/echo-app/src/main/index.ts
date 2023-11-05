@@ -24,7 +24,7 @@ function createWindow() {
   }
   mainWindow.webContents.on('will-navigate', handleRedirect)
 
-  mainWindow.loadFile(path.join(__dirname, '..', '..', 'electron', 'index.html'))
+  mainWindow.loadFile(path.join(__dirname, '..', 'renderer', 'index.html'))
 
   mainWindow.on('closed', () => {
     mainWindow = null

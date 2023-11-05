@@ -1,0 +1,10 @@
+node_modules
+package-lock.json
+dist
+build
+**/*.html
+**/*.hbs
+**/*.md
+**/*.bat
+**/*.kts
+**/poe-api-data/**

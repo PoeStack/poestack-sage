@@ -19,10 +19,8 @@ task<Exec>("npmBuild") {
     dependsOn(":src:echo-common:npmBuild")
 }
 
-task<Exec>("npmFormat") {
-    commandLine(npm, "run", "format")
+task<Exec>("npmRelease") {
+    commandLine(npm, "run", "release")
+    dependsOn(":src:echo-common:npmBuild")
 }
 
-task<Exec>("npmLint") {
-    commandLine(npm, "run", "lint")
-}
