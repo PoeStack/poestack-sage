@@ -38,9 +38,9 @@
         "argsIgnorePattern": "^_"
       }
     ],
-    "@typescript-eslint/no-explicit-any": 1,
-    "@typescript-eslint/ban-ts-comment": 0,
-    "@typescript-eslint/no-var-requires": 1,
-    "@typescript-eslint/no-extra-non-null-assertion": 0
+    "@typescript-eslint/no-explicit-any": false,
+    "@typescript-eslint/ban-ts-comment": false,
+    "@typescript-eslint/no-var-requires": true,
+    "@typescript-eslint/no-extra-non-null-assertion": false
   }
 }

@@ -1,18 +1,23 @@
-import { app, BrowserWindow, shell } from 'electron'
+import {app, BrowserWindow, shell} from 'electron'
 import path from 'path'
+import {initialize, enable} from "@electron/remote/main"
 
 let mainWindow: BrowserWindow | null
+
 function createWindow() {
+  initialize()
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     show: false,
+    frame: false,
     icon: './build/icon.png',
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
     }
   })
+  enable(mainWindow.webContents)
 
   mainWindow.on('ready-to-show', () => {
     mainWindow?.show()
