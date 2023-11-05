@@ -18,3 +18,9 @@ task<Exec>("npmBuild") {
     commandLine(npm, "run", "build")
     dependsOn(":src:echo-common:npmBuild")
 }
+
+task<Exec>("npmRelease") {
+    commandLine(npm, "run", "release")
+    dependsOn(":src:echo-common:npmBuild")
+}
+

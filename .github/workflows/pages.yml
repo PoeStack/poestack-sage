@@ -4,9 +4,9 @@ name: Deploy static content to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["main"]
+    branches: ['main']
   workflow_run:
-    workflows: ["Mdbook build"]
+    workflows: ['Mdbook build']
     types:
       - completed
 
@@ -18,7 +18,7 @@ permissions:
 
 # Disallow one concurrent deployment
 concurrency:
-  group: "pages"
+  group: 'pages'
   cancel-in-progress: false
 
 jobs:

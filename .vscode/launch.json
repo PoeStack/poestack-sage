@@ -16,9 +16,7 @@
       "runtimeArgs": [
         "--remote-debugging-port=9223" //open debugging port for renderer process
       ],
-      "args": [
-        "."
-      ],
+      "args": ["."],
       "outputCapture": "std",
       "sourceMaps": true,
       "resolveSourceMapLocations": [
@@ -36,13 +34,11 @@
       "timeout": 30000
     }
   ],
-  "compounds": [ //launch multiple configurations concurrently
+  "compounds": [
+    //launch multiple configurations concurrently
     {
       "name": "Echo App: All",
-      "configurations": [
-        "Echo App: Main",
-        "Echo App: Renderer"
-      ]
+      "configurations": ["Echo App: Main", "Echo App: Renderer"]
     }
   ]
 }

@@ -1,5 +1,3 @@
-import {filterNullish} from "./rx-utils";
+import { filterNullish } from './rx-utils'
 
-export {
-    filterNullish
-}
+export { filterNullish }

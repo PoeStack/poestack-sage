@@ -1,4 +1,4 @@
 export type EchoPluginHook = {
-    start: () => void,
-    destroy: () => void
+  start: () => void
+  destroy: () => void
 }
