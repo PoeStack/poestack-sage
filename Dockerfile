@@ -21,7 +21,7 @@ COPY gradlew.bat .
 COPY gradle ./gradle
 COPY --from=copy-gradle-files /app/gradle_struct/ .
 
-ARG PROJECT="src:insights-cache-updater"
+ARG PROJECT="src:insights"
 ARG INSTALL_COMMAND="npmInstall"
 ARG BUILD_COMMAND="npmBuild"
 

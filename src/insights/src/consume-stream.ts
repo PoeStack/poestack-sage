@@ -59,7 +59,7 @@ const resultsSubject = new Subject<PoePublicStashResponse>()
 
 resultsSubject
   .pipe(
-    debounceTime(1000)
+    debounceTime(60000)
   ).subscribe((e) => {
   console.log("loading", e.next_change_id)
   loadChanges(e.next_change_id)
