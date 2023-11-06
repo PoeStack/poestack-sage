@@ -1,0 +1,7 @@
+**node_modules
+**dist
+**build
+**cdk.out
+.idea
+dist_plugins
+.gradle

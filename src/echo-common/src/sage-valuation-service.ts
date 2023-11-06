@@ -1,8 +1,9 @@
-import { CachedTask } from './cached-task'
-import { PoePartialStashTab } from 'sage-common'
-import { HTTP_UTIL } from './http-util'
+import {CachedTask} from './cached-task'
+import {HttpUtil} from 'sage-common'
 
 export class SageValuationService {
+  private httpUtil = new HttpUtil()
+
   public currentStashes = new CachedTask<SageValuationShard>((key) => this.loadInternal(key))
 
   public load(tag: string, shard: number | string, league: string) {
@@ -10,7 +11,7 @@ export class SageValuationService {
   }
 
   private loadInternal(key: string) {
-    return HTTP_UTIL.get<SageValuationShard>(`https://d2irw5qsw9zuri.cloudfront.net/v3/${key}.json`)
+    return this.httpUtil.get<SageValuationShard>(`https://d2irw5qsw9zuri.cloudfront.net/v3/${key}.json`)
   }
 }
 

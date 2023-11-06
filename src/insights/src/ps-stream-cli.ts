@@ -2,7 +2,7 @@ import 'reflect-metadata'
 
 require('dotenv').config()
 
-import { container } from 'tsyringe'
+import {container} from 'tsyringe'
 
 import {
   GGGStashStreamProvider,
@@ -10,7 +10,7 @@ import {
 } from './services/public-stash-stream-providers'
 import ItemGroupingService from './services/item-grouping-service'
 import Redis from 'ioredis'
-import { PoeApiPublicStashResponse } from './gql/__generated__/resolvers-types'
+import {PoeApiPublicStashResponse} from './gql/__generated__/resolvers-types'
 import * as process from 'process'
 
 const divineTypes = new Set(['d', 'div', 'divine'])
@@ -45,11 +45,12 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
     if (numericValue) {
       return twoDecimals(numericValue).toString()
     }
-  } catch (e) {}
+  } catch (e) {
+  }
   return null
 }
 
-;(async () => {
+(async () => {
   const streamProvider: PublicStashStreamProvider = container.resolve(GGGStashStreamProvider)
   await streamProvider.init()
 
@@ -62,7 +63,7 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
     tls: undefined
   })
 
-  for (;;) {
+  for (; ;) {
     try {
       const data: PoeApiPublicStashResponse = await streamProvider.nextUpdate()
       if (data?.stashes) {
