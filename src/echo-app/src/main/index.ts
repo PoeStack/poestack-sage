@@ -4,13 +4,14 @@ import {initialize, enable} from "@electron/remote/main"
 
 let mainWindow: BrowserWindow | null
 
+initialize()
+
 function createWindow() {
-  initialize()
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     show: false,
-    frame: false,
+    titleBarStyle: 'hidden',
     icon: './build/icon.png',
     webPreferences: {
       nodeIntegration: true,

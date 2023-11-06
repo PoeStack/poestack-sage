@@ -5,8 +5,8 @@ const orgResolvePath = Module['_resolveLookupPaths']
 Module['_resolveLookupPaths'] = function (request, parent) {
   const res = [
     localModulesPath,
-    /*"/Applications/echo-app.app/Contents/Resources/app.asar/node_modules",
-    "/Applications/echo-app.app/Contents/Resources/node_modules",*/
+    "/Applications/echo-app.app/Contents/Resources/app.asar/node_modules",
+    "/Applications/echo-app.app/Contents/Resources/node_modules",
   ]
   console.log("resolved lookup path", request, parent, res)
   return res

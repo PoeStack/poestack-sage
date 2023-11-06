@@ -1,4 +1,5 @@
 import React from "react";
+
 import {getCurrentWindow} from "@electron/remote"
 
 export function PluginPageHeader() {
