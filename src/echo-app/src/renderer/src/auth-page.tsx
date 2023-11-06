@@ -1,16 +1,16 @@
-import {useEffect, useState} from "react";
-import {bind} from "@react-rxjs/core";
+import { useEffect, useState } from "react";
+import { bind } from "@react-rxjs/core";
 import jwt from 'jsonwebtoken';
-import {GGG_API_UTIL} from "ggg-api";
-import {ECHO_DIR} from "echo-common";
+import { GGG_API_UTIL } from "ggg-api";
+import { ECHO_DIR } from "echo-common";
 
 const [useJwt] = bind(GGG_API_UTIL.tokenSubject$, null)
 
-export function AuthGuard({children}) {
+export function AuthGuard({ children }) {
   const jwt = useJwt()
 
   if (!jwt) {
-    return <LoginPage/>
+    return <LoginPage />
   }
 
   return <>{children}</>
@@ -27,7 +27,7 @@ export function LoginPage() {
     console.log("decoding", decoded)
     const oAuthCode = decoded?.['oAuthToken'];
     if (oAuthCode) {
-      ECHO_DIR.writeJson(['auth'], {jwt: input})
+      ECHO_DIR.writeJson(['auth'], { jwt: input })
       setErrorMessage(null)
       GGG_API_UTIL.tokenSubject$.next(oAuthCode)
     } else {
@@ -43,9 +43,9 @@ export function LoginPage() {
   }, []);
 
   return (
-    <div style={{'-webkit-app-region': "drag"} as unknown}
-         className="min-h-screen flex items-center justify-center text-primary-text">
-      <div style={{'-webkit-app-region': "no-drag"} as unknown} className="flex flex-col gap-2" draggable={false}>
+    <div style={{ '-webkit-app-region': "drag" } as unknown}
+      className="min-h-screen flex items-center justify-center text-primary-text">
+      <div style={{ '-webkit-app-region': "no-drag" } as unknown} className="flex flex-col gap-2" draggable={false}>
         <div className="text-lg font-semibold">PoeStack - Sage</div>
         <div className="text-sm">Enter your PoeStack token. <a
           className="text-primary-accent text-sm"
@@ -54,10 +54,10 @@ export function LoginPage() {
         </a></div>
         {errorMessage && <div className="text-sm text-red-600">{errorMessage}</div>}
         <input type="password"
-               placeholder="Token"
-               className="px-2 py-0.5 bg-input-surface rounded-lg shadow-md border-0 focus:outline-none focus:ring focus:border-primary-accent"
-               onChange={(e) => setInputValue(e.target.value)}
-               value={inputValue}/>
+          placeholder="Token"
+          className="px-2 py-0.5 bg-input-surface rounded-lg shadow-md border-0 focus:outline-none focus:ring focus:border-primary-accent"
+          onChange={(e) => setInputValue(e.target.value)}
+          value={inputValue} />
         <button
           className="bg-primary-accent px-1 py-0.5 rounded-lg"
           onClick={() => handleSet(inputValue)}>Login

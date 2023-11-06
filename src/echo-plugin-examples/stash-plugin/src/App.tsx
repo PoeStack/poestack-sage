@@ -23,7 +23,7 @@ const App = () => {
   return (
     <>
       <div className="flex flex-col h-full w-full pt-2 pl-2 pr-2">
-        <div className="flex-shrink-0 flex flex-row gap-2 overflow-y-scroll pb-5 pt-2">
+        <div className="flex-shrink-0 flex flex-row gap-2 overflow-x-scroll pb-5 pt-2">
           {stashes.map((e) => (
             <div
               key={e.id}
