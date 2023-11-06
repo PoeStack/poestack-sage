@@ -101,10 +101,11 @@ const RouterIconNavigator = ({ location }: { location: string }) => {
       {currentRoutes.flatMap((echoRoute) => {
         return (echoRoute.navItems ?? [])
           .filter((e) => e.location === location)
-          .map((navItem) => {
+          .map((navItem, idx) => {
             const Icon = navItem.icon ?? QuestionMarkCircleIcon
             return (
               <Icon
+                key={echoRoute.plugin + echoRoute.path + navItem.location + idx}
                 className={
                   'h-7 w-7 cursor-pointer ' +
                   (currentRoute === echoRoute ? 'text-primary-accent' : '')

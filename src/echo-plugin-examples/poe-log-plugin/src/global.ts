@@ -16,7 +16,7 @@ POE_LOG_SERVICE.logRaw$
 export const [useCurrentZone] = bind(
   interval(100).pipe(
     combineLatestWith(lastZone$),
-    map(([t, e]) => (!!e ? { ...e, timeInZone: Date.now() - e.timestamp } : null))
+    map(([t, e]) => (e ? { ...e, timeInZone: Date.now() - e.timestamp } : null))
   ),
   null
 )
