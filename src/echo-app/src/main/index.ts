@@ -1,6 +1,6 @@
-import {app, BrowserWindow, shell} from 'electron'
+import { app, BrowserWindow, shell } from 'electron'
 import path from 'path'
-import {initialize, enable} from "@electron/remote/main"
+import { initialize, enable } from '@electron/remote/main'
 
 let mainWindow: BrowserWindow | null
 
