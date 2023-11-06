@@ -28,6 +28,7 @@ import {
 } from './ggg/poe-api-models'
 
 import { ItemGroupingService, SageItemGroup } from './item-groups/item-grouping-service'
+import { HttpUtil } from './utils/http-util'
 
 export {
   SageItemGroup,
@@ -57,5 +58,6 @@ export {
   PoeStashTabMetadata,
   PoePartialStashTab,
   PoeLeague,
-  PoeTokenExchangeResponse
+  PoeTokenExchangeResponse,
+  HttpUtil
 }

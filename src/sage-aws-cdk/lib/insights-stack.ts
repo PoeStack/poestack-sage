@@ -37,9 +37,9 @@ export class InsightsStack extends cdk.Stack {
     })
     const redis = new aws_elasticache.CfnCacheCluster(this, `InsRedisCluster4`, {
       engine: 'redis',
-      cacheNodeType: 'cache.t2.small',
+      cacheNodeType: 'cache.t2.medium',
       numCacheNodes: 1,
-      clusterName: 'ins-redis-cluster-4',
+      clusterName: 'ins-redis-cluster-5',
       vpcSecurityGroupIds: [redisSecurityGroup.securityGroupId],
       cacheSubnetGroupName: subnetGroup.cacheSubnetGroupName
     })
@@ -65,12 +65,13 @@ export class InsightsStack extends cdk.Stack {
 
     const streamConsumerTask = new aws_ecs.Ec2TaskDefinition(this, 'InsStreamConsumerTask')
     streamConsumerTask.addContainer('InsStreamConsumer', {
-      image: aws_ecs.ContainerImage.fromEcrRepository(containerRepoStack.insightsRepo),
+      image: aws_ecs.ContainerImage.fromEcrRepository(containerRepoStack.insightsCacheUpdaterRepo),
       memoryLimitMiB: 512,
       logging: LogDriver.awsLogs({
         streamPrefix: 'insights-stream-consumer-container',
         logRetention: RetentionDays.THREE_DAYS
       }),
+      command: ['node', 'dist/consume-stream.js'],
       environment: {
         REDIS_URL: redis.attrRedisEndpointAddress
       },
