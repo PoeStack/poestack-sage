@@ -9,13 +9,16 @@
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
     "test": "npm run build && node dist/cjs/poe-api-test.js",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "format": "prettier --write ./src",
+    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../eslint-config-sage"
   },
   "devDependencies": {
     "@types/node": "^20.8.6",
     "@types/object-hash": "^3.0.5",
     "@types/react": "^18.2.31",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "prettier": "^3.0.3"
   },
   "peerDependencies": {
     "@react-rxjs/core": "^0.10.7",

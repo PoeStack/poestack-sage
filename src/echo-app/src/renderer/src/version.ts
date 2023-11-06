@@ -1,1 +1,1 @@
-export const SAGE_VERSION = "LOCAL_BUILD"
+export const SAGE_VERSION = 'LOCAL_BUILD'

@@ -9,7 +9,9 @@
     "release": "rollup -c --environment STAGE:prod --configPlugin typescript && tsc -p src/main --outDir build",
     "start": "npm run build && electron .",
     "make": "npm run release && rimraf dist && electron-builder",
-    "bump-version": "node bump-version.js"
+    "bump-version": "node bump-version.js",
+    "format": "prettier --write ./src",
+    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../eslint-config-sage"
   },
   "build": {
     "appId": "poestack.sage",
@@ -62,6 +64,7 @@
     "rimraf": "^5.0.5",
     "rollup": "^4.2.0",
     "rollup-plugin-copy": "^3.5.0",
-    "tailwindcss": "^3.3.5"
+    "tailwindcss": "^3.3.5",
+    "prettier": "^3.0.3"
   }
 }
