@@ -1,23 +1,18 @@
 import * as cdk from 'aws-cdk-lib'
-import {aws_cloudfront, aws_ecr, aws_ecs, aws_ecs_patterns, aws_elasticache} from 'aws-cdk-lib'
-import {Construct} from 'constructs'
-import {DeploymentControllerType, EnvironmentFile, LogDriver} from 'aws-cdk-lib/aws-ecs'
-import {SageStack} from './sage-stack'
-import {RetentionDays} from 'aws-cdk-lib/aws-logs'
-import {Bucket} from 'aws-cdk-lib/aws-s3'
-import {S3Origin} from 'aws-cdk-lib/aws-cloudfront-origins'
+import { aws_cloudfront, aws_ecr, aws_ecs, aws_ecs_patterns, aws_elasticache } from 'aws-cdk-lib'
+import { Construct } from 'constructs'
+import { DeploymentControllerType, EnvironmentFile, LogDriver } from 'aws-cdk-lib/aws-ecs'
+import { SageStack } from './sage-stack'
+import { RetentionDays } from 'aws-cdk-lib/aws-logs'
+import { Bucket } from 'aws-cdk-lib/aws-s3'
+import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins'
 import * as ec2 from 'aws-cdk-lib/aws-ec2'
-import {Peer, Port, SecurityGroup, SubnetType} from 'aws-cdk-lib/aws-ec2'
-import {UpdatePolicy} from 'aws-cdk-lib/aws-autoscaling'
-import {Schedule} from 'aws-cdk-lib/aws-events'
+import { Peer, Port, SecurityGroup, SubnetType } from 'aws-cdk-lib/aws-ec2'
+import { UpdatePolicy } from 'aws-cdk-lib/aws-autoscaling'
+import { Schedule } from 'aws-cdk-lib/aws-events'
 
 export class InsightsStack extends cdk.Stack {
-  constructor(
-    scope: Construct,
-    id: string,
-    props: cdk.StackProps,
-    sageStack: SageStack
-  ) {
+  constructor(scope: Construct, id: string, props: cdk.StackProps, sageStack: SageStack) {
     super(scope, id, props)
 
     const redisSecurityGroup = new SecurityGroup(this, 'InsRedisSG', {
@@ -49,7 +44,7 @@ export class InsightsStack extends cdk.Stack {
     })
     ecsCluster.addCapacity('DefaultAutoScalingGroupCapacity', {
       allowAllOutbound: true,
-      vpcSubnets: sageStack.vpc.selectSubnets({subnetType: SubnetType.PUBLIC}),
+      vpcSubnets: sageStack.vpc.selectSubnets({ subnetType: SubnetType.PUBLIC }),
       instanceType: new ec2.InstanceType('t2.medium'),
       minCapacity: 0,
       desiredCapacity: 1,
@@ -62,7 +57,7 @@ export class InsightsStack extends cdk.Stack {
     })
 
     const ecr = new aws_ecr.Repository(this, 'InsightsRepoX', {
-      repositoryName: 'poestack-insightsx',
+      repositoryName: 'poestack-insightsx'
     })
 
     const streamConsumerTask = new aws_ecs.Ec2TaskDefinition(this, 'InsStreamConsumerTask')
@@ -141,7 +136,7 @@ export class InsightsStack extends cdk.Stack {
     })
 
     new aws_cloudfront.Distribution(this, 'InsightsCache', {
-      defaultBehavior: {origin: new S3Origin(cacheBucket)}
+      defaultBehavior: { origin: new S3Origin(cacheBucket) }
     })
   }
 }

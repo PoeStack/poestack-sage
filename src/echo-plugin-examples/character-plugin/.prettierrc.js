@@ -1,9 +1,11 @@
-const {resolve} = require("path");
-
-const baseConfig = require(resolve("..", "..", "eslint-config-sage", ".prettierrc.js"))
-
 const config = {
-  ...baseConfig
-};
+  trailingComma: 'none',
+  singleQuote: true,
+  semi: false,
+  tabWidth: 2,
+  printWidth: 100,
+  useTabs: false,
+  endOfLine: 'lf'
+}
 
-module.exports = config;
+module.exports = config

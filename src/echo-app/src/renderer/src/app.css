@@ -5,10 +5,10 @@
 @layer base {
   :root {
     --color-primary-surface: #303338;
-    --color-secondary-surface: #2A2D31;
-    --color-input-surface: #373A3F;
-    --color-text: #D4D4D4;
-    --color-primary-accent: #5764F2;
+    --color-secondary-surface: #2a2d31;
+    --color-input-surface: #373a3f;
+    --color-text: #d4d4d4;
+    --color-primary-accent: #5764f2;
   }
 }
 
@@ -27,7 +27,7 @@
   background-color: rgba(0, 0, 0, 0);
 }
 
-*::-webkit-scrollbar-corner  {
+*::-webkit-scrollbar-corner {
   background-color: rgba(0, 0, 0, 0);
 }
 
@@ -36,10 +36,10 @@
   border: 6px solid rgba(0, 0, 0, 0);
   background-clip: padding-box;
   border-radius: 9999px;
-  background-color: #AAAAAA;
+  background-color: #aaaaaa;
 }
 
 /* set button(top and bottom of the scrollbar) */
 *::-webkit-scrollbar-button {
-  display:none;
+  display: none;
 }

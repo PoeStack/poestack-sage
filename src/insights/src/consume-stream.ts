@@ -1,7 +1,7 @@
-import {HttpUtil, ItemGroupingService, PoePublicStashResponse} from "sage-common";
-import {debounceTime, Subject, throttleTime} from "rxjs";
-import process from "process";
-import Redis from "ioredis";
+import { HttpUtil, ItemGroupingService, PoePublicStashResponse } from 'sage-common'
+import { debounceTime, Subject, throttleTime } from 'rxjs'
+import process from 'process'
+import Redis from 'ioredis'
 
 const divineTypes = new Set(['d', 'div', 'divine'])
 const chaosTypes = new Set(['c', 'chaos'])
@@ -36,6 +36,7 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
       return twoDecimals(numericValue).toString()
     }
   } catch (e) {
+    // @ts-ignore
   }
   return null
 }
@@ -57,20 +58,16 @@ function loadChanges(paginationCode: string) {
 const itemGroupingService = new ItemGroupingService()
 const resultsSubject = new Subject<PoePublicStashResponse>()
 
-resultsSubject
-  .pipe(
-    debounceTime(60000)
-  ).subscribe((e) => {
-  console.log("loading", e.next_change_id)
-  loadChanges(e.next_change_id)
-    .subscribe((e) => {
-      resultsSubject.next(e)
-    })
+resultsSubject.pipe(debounceTime(60000)).subscribe((e) => {
+  console.log('loading', e.next_change_id)
+  loadChanges(e.next_change_id).subscribe((e) => {
+    resultsSubject.next(e)
+  })
 })
 
 console.log('redis url', process.env['REDIS_URL'])
 const client = new Redis({
-  host: process.env['REDIS_URL'] ?? "localhost",
+  host: process.env['REDIS_URL'] ?? 'localhost',
   port: 6379,
   tls: undefined
 })
@@ -156,7 +153,9 @@ resultsSubject.subscribe((data) => {
   }
 })
 
-resultsSubject.subscribe((e) => console.log("got", e.stashes?.length))
+resultsSubject.subscribe((e) => console.log('got', e.stashes?.length))
 
-
-resultsSubject.next({next_change_id: "2145640831-2137918784-2068567059-2296748038-2229165629", stashes: []})
+resultsSubject.next({
+  next_change_id: '2145640831-2137918784-2068567059-2296748038-2229165629',
+  stashes: []
+})

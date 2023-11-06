@@ -16,3 +16,11 @@ task<Exec>("npmCleanModules") {
 task<Exec>("npmBuild") {
     commandLine(npm, "run", "build")
 }
+
+task<Exec>("npmFormat") {
+    commandLine(npm, "run", "format")
+}
+
+task<Exec>("npmLint") {
+    commandLine(npm, "run", "lint")
+}
