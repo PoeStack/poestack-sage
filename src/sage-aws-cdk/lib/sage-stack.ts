@@ -11,10 +11,7 @@ export class SageStack extends cdk.Stack {
 
   public configBucket: Bucket
 
-  constructor(
-    scope: Construct,
-    id: string,
-    props: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: cdk.StackProps) {
     super(scope, id, props)
     this.configBucket = new Bucket(this, 'sage-config', { bucketName: 'sage-config' })
 

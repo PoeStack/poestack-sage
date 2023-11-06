@@ -1,5 +1,5 @@
-import {CachedTask} from './cached-task'
-import {HttpUtil} from 'sage-common'
+import { CachedTask } from './cached-task'
+import { HttpUtil } from 'sage-common'
 
 export class SageValuationService {
   private httpUtil = new HttpUtil()
@@ -11,7 +11,9 @@ export class SageValuationService {
   }
 
   private loadInternal(key: string) {
-    return this.httpUtil.get<SageValuationShard>(`https://d2irw5qsw9zuri.cloudfront.net/v3/${key}.json`)
+    return this.httpUtil.get<SageValuationShard>(
+      `https://d2irw5qsw9zuri.cloudfront.net/v3/${key}.json`
+    )
   }
 }
 
