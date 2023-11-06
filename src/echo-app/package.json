@@ -11,7 +11,7 @@
     "make": "npm run release && rimraf dist && electron-builder",
     "bump-version": "node bump-version.js",
     "format": "prettier --write ./src",
-    "lint": "eslint ./src --fix"
+    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../eslint-config-sage"
   },
   "build": {
     "appId": "poestack.sage",
@@ -65,13 +65,6 @@
     "rollup": "^4.2.0",
     "rollup-plugin-copy": "^3.5.0",
     "tailwindcss": "^3.3.5",
-    "@typescript-eslint/eslint-plugin": "^6.9.1",
-    "@typescript-eslint/parser": "^6.9.1",
-    "eslint": "^8.53.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-prettier": "^5.0.1",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^3.0.3"
   }
 }

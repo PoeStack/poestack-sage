@@ -1,42 +1,35 @@
 {
-  "name": "poestack-insights",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "echo-common",
+  "version": "1.0.3",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "files": [
+    "dist/"
+  ],
   "scripts": {
-    "build": "rimraf ./dist && tsc",
-    "start": "npm run build && node ./dist/test.js",
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+    "test": "npm run build && node dist/cjs/poe-api-test.js",
+    "prepublishOnly": "npm run build",
     "format": "prettier --write ./src",
-    "lint": "eslint ./src --fix"
+    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../eslint-config-sage"
   },
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
-    "@types/node": "^20.8.3",
-    "rimraf": "^5.0.5",
+    "@types/node": "^20.8.6",
+    "@types/react": "^18.2.31",
+    "@types/tail": "^2.2.2",
     "typescript": "^5.2.2",
-    "@typescript-eslint/eslint-plugin": "^6.9.1",
-    "@typescript-eslint/parser": "^6.9.1",
-    "eslint": "^8.53.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-prettier": "^5.0.1",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^3.0.3"
   },
-  "dependencies": {
-    "@types/lodash": "^4.14.199",
-    "aws-sdk": "^2.1483.0",
-    "dotenv": "^16.3.1",
-    "ioredis": "^5.3.2",
-    "lodash": "^4.17.21",
-    "node-fetch": "^2.7.0",
-    "percentile": "^1.6.0",
-    "redis": "^4.6.10",
-    "sage-common": "file:../sage-common",
-    "reflect-metadata": "^0.1.13",
+  "peerDependencies": {
+    "@react-rxjs/core": "^0.10.7",
+    "@react-rxjs/utils": "^0.9.7",
+    "axios": "^1.6.0",
+    "ggg-api": "file:../ggg-api",
+    "react": "file:../echo-app/node_modules/react",
+    "react-dom": "file:../echo-app/node_modules/react-dom",
     "rxjs": "^7.8.1",
-    "tsyringe": "^4.8.0",
-    "winston": "^3.10.0"
+    "sage-common": "file:../sage-common",
+    "tail": "^2.2.6",
+    "ts-ratchet": "file:../ts-ratchet"
   }
 }
