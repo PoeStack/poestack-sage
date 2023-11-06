@@ -1,7 +1,8 @@
-import { from, map, mergeMap, tap, toArray } from 'rxjs'
-import { scanKeys } from './utils'
+import {from, map, mergeMap, tap, toArray} from 'rxjs'
+import {scanKeys} from './utils'
 import Redis from 'ioredis'
 import process from 'process'
+import {keys} from "lodash";
 
 const client = new Redis({
   host: process.env['REDIS_URL'],
@@ -12,15 +13,30 @@ const client = new Redis({
 scanKeys(client, 'psev6:*')
   .pipe(
     mergeMap((e) =>
-      from(client.hgetall(e)).pipe(map((r) => ({ key: e, listings: Object.entries(r) })))
+      from(client.hgetall(e)).pipe(map((r) => ({key: e, listings: Object.entries(r)})))
     ),
     map((e) => {
-      const expiredListings = e.listings.filter(([k, v]) => {
+      const mappedListings = e.listings.map(([k, v]) => {
         const timestampMs = parseInt(v.split(',')[0]) * 60 * 1000
         const ageMs = Date.now() - timestampMs
-        return ageMs > 1000 * 60 * 60 * 48
+        return {key: k, ageMs: ageMs}
       })
-      return { key: e.key, expiredListings }
+      mappedListings.sort((a, b) => b.ageMs - a.ageMs)
+
+      const expiredListings: string [] = []
+      const validListings = mappedListings
+        .filter((l) => {
+          if (l.ageMs < 1000 * 60 * 60 * 48) {
+            return true;
+          } else {
+            expiredListings.push(l.key);
+            return false
+          }
+        })
+
+      expiredListings.push(...validListings.slice(30).map((l) => l.key))
+
+      return {key: e.key, expiredListings}
     }),
     toArray(),
     mergeMap((e) => {
@@ -28,7 +44,7 @@ scanKeys(client, 'psev6:*')
       let removals = 0
       e.filter((e) => e.expiredListings.length > 0).forEach((e) => {
         removals++
-        multi.hdel(e.key, ...e.expiredListings.map((x) => x[0]))
+        multi.hdel(e.key, ...e.expiredListings.map((x) => x))
       })
       console.log('removing', removals, 'listings')
       return from(multi.exec())

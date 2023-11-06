@@ -97,7 +97,7 @@ export class InsightsStack extends cdk.Stack {
         streamPrefix: 'insights-cache-updater-container',
         logRetention: RetentionDays.THREE_DAYS
       }),
-      command: ['node', 'dist/cache-valuations.js'],
+      command: ['node', 'src/insights-cache-updater/dist/cache-valuations.js'],
       environment: {
         REDIS_URL: redis.attrRedisEndpointAddress
       },
@@ -123,7 +123,7 @@ export class InsightsStack extends cdk.Stack {
         streamPrefix: 'insights-expire-listings-container',
         logRetention: RetentionDays.THREE_DAYS
       }),
-      command: ['node', 'dist/expire-listings.js'],
+      command: ['node', 'src/insights-cache-updater/dist/expire-listings.js'],
       environment: {
         REDIS_URL: redis.attrRedisEndpointAddress
       },
@@ -135,7 +135,7 @@ export class InsightsStack extends cdk.Stack {
         taskDefinition: expireListingsTask
       },
       cluster: ecsCluster,
-      schedule: Schedule.expression('rate(60 minutes)'),
+      schedule: Schedule.expression('rate(10 minutes)'),
       enabled: true,
       ruleName: 'insights-expire-listings-schedule'
     })
