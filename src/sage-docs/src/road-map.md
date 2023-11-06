@@ -8,7 +8,7 @@ Steps needed to enter pre-alpha (build only):
 - ~~Add Client.txt event tailing~~
 - ~~Add PoeStack pricing info to the api~~
 - ~~Add top/bottom bar to the UI~~
-- Add visible version to the UI
+- ~~Add visible version to the UI~~
 - ~~Switch to icons only in the sidebar~~
 - ~~Add a general guard panel for ensuring connection~~
 - ~~Test the Windows build~~
