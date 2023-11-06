@@ -36,3 +36,11 @@ task("dockerBuildAndPublish") {
         }
     }
 }
+
+task<Exec>("npmFormat") {
+    commandLine(npm, "run", "format")
+}
+
+task<Exec>("npmLint") {
+    commandLine(npm, "run", "lint")
+}

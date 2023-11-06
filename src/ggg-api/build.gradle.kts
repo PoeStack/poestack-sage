@@ -18,3 +18,11 @@ task<Exec>("npmBuild") {
     dependsOn(":src:ts-ratchet:npmBuild")
     dependsOn(":src:sage-common:npmBuild")
 }
+
+task<Exec>("npmFormat") {
+    commandLine(npm, "run", "format")
+}
+
+task<Exec>("npmLint") {
+    commandLine(npm, "run", "lint")
+}

@@ -10,14 +10,22 @@
     "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
     "test": "npm run build && node dist/cjs/poe-api-test.js",
     "prepublishOnly": "npm run build",
-    "format": "prettier --write .",
-    "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix"
+    "format": "prettier --write ./src",
+    "lint": "eslint ./src --fix"
   },
   "devDependencies": {
     "@types/node": "^20.8.6",
     "@types/react": "^18.2.31",
     "@types/tail": "^2.2.2",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "@typescript-eslint/parser": "^6.9.1",
+    "eslint": "^8.53.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.0.3"
   },
   "peerDependencies": {
     "@react-rxjs/core": "^0.10.7",
