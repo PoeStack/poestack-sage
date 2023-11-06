@@ -61,7 +61,7 @@ const App = () => {
               {e.valuation ? <div>Value {e.valuation?.pvs?.[5]}c</div> : null}
               <div>
                 {e.data.properties?.map((p) => (
-                  <li>
+                  <li key={p.name}>
                     {p.name}: {p.values.join(', ')}
                   </li>
                 ))}

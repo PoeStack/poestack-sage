@@ -9,7 +9,12 @@ function start() {
     plugin: 'example-characters',
     path: 'main',
     page: App,
-    navItems: [{ location: 'l-sidebar-m', icon: UsersIcon }]
+    navItems: [
+      {
+        location: 'l-sidebar-m',
+        icon: UsersIcon
+      }
+    ]
   })
 }
 

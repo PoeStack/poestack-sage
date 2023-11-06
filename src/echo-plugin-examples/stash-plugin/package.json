@@ -8,7 +8,7 @@
     "build": "rollup -c --environment STAGE:dev --configPlugin typescript",
     "release": "rollup -c --environment STAGE:prod --configPlugin typescript",
     "format": "prettier --write .",
-    "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix"
+    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../../eslint-config-sage"
   },
   "peerDependencies": {
     "react": "^18.2.0",
@@ -29,13 +29,8 @@
     "rollup": "^4.2.0",
     "rollup-plugin-peer-deps-external": "^2.2.3",
     "tslib": "^2.6.2",
-    "@typescript-eslint/eslint-plugin": "^6.9.1",
     "@typescript-eslint/parser": "^6.9.1",
     "eslint": "^8.53.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "prettier": "^3.0.3",
     "typescript": "^5.2.2"
   }
 }

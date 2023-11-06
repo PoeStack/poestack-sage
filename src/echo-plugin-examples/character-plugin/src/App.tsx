@@ -15,6 +15,7 @@ const App = () => {
         <div className="flex-shrink-0 flex flex-col gap-2 h-full overflow-y-scroll pr-4">
           {characterList?.map((c) => (
             <div
+              key={c.id}
               onClick={() => {
                 POE_CHARACTER_SERVICE.characters.load(c.name).subscribe()
                 setSelectedName(c.name)
@@ -37,7 +38,7 @@ const App = () => {
                 ...selectedCharacter.inventory,
                 ...selectedCharacter.equipment,
                 ...selectedCharacter.jewels
-              ].map((item) => <div>{item.typeLine}</div>)}
+              ].map((item) => <div key={item.id}>{item.typeLine}</div>)}
           </div>
         </div>
       </div>
