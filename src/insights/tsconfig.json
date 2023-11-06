@@ -12,6 +12,11 @@
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "baseUrl": "src"
+    "baseUrl": "src",
+    "paths": {
+      "@gql/*": ["gql/__generated__/*"],
+      "@poe/*": ["poe/*"],
+      "@services/*": ["services/*"]
+    }
   }
 }
