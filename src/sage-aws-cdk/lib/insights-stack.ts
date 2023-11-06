@@ -1,7 +1,6 @@
 import * as cdk from 'aws-cdk-lib'
 import {aws_cloudfront, aws_ecr, aws_ecs, aws_ecs_patterns, aws_elasticache} from 'aws-cdk-lib'
 import {Construct} from 'constructs'
-import {ContainerRepoStack} from './container-repo-stack'
 import {DeploymentControllerType, EnvironmentFile, LogDriver} from 'aws-cdk-lib/aws-ecs'
 import {SageStack} from './sage-stack'
 import {RetentionDays} from 'aws-cdk-lib/aws-logs'
@@ -17,7 +16,6 @@ export class InsightsStack extends cdk.Stack {
     scope: Construct,
     id: string,
     props: cdk.StackProps,
-    containerRepoStack: ContainerRepoStack,
     sageStack: SageStack
   ) {
     super(scope, id, props)
