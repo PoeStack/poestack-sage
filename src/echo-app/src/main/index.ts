@@ -11,7 +11,7 @@ function createWindow() {
     width: 800,
     height: 600,
     show: false,
-    titleBarStyle: 'hidden',
+    frame: false,
     icon: './build/icon.png',
     webPreferences: {
       nodeIntegration: true,

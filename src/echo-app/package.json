@@ -5,7 +5,7 @@
   "main": "build/main/index.js",
   "scripts": {
     "clean": "rimraf build/index.js dist",
-    "build": "rollup -c --environment STAGE:dev --configPlugin typescript && tsc -p src/main --outDir build",
+    "build": "node bump-version.js && rollup -c --environment STAGE:dev --configPlugin typescript && tsc -p src/main --outDir build",
     "release": "rollup -c --environment STAGE:prod --configPlugin typescript && tsc -p src/main --outDir build",
     "start": "npm run build && electron .",
     "make": "npm run release && rimraf dist && electron-builder"
@@ -55,6 +55,7 @@
     "autoprefixer": "^10.4.16",
     "electron": "^27.0.0",
     "electron-builder": "^24.6.4",
+    "next-build-id": "^3.0.0",
     "postcss": "^8.4.31",
     "postcss-loader": "^7.3.3",
     "rimraf": "^5.0.5",
