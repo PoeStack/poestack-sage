@@ -1,8 +1,0 @@
-node_modules
-package-lock.json
-dist
-build
-**/*.hbs
-**/*.md
-**/*.bat
-**/poe-api-data/**

@@ -11,8 +11,12 @@ RUN find . -type f -name 'package-lock.json' -exec cp --parents {} gradle_struct
 
 FROM adoptopenjdk:11-jre-hotspot as build
 
-RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
-RUN apt-get install -y nodejs
+RUN apt-get update && apt-get install -y \
+    software-properties-common \
+    npm
+RUN npm install npm@latest -g && \
+    npm install n -g && \
+    n latest
 
 WORKDIR /app
 

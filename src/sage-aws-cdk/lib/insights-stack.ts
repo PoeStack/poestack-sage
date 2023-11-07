@@ -68,7 +68,7 @@ export class InsightsStack extends cdk.Stack {
         streamPrefix: 'insights-stream-consumer-container',
         logRetention: RetentionDays.THREE_DAYS
       }),
-      command: ['node', 'src/insights-cache-updater/dist/consume-stream.js'],
+      command: ['node', 'src/insights/dist/consume-stream.js'],
       environment: {
         REDIS_URL: redis.attrRedisEndpointAddress
       },
@@ -92,7 +92,7 @@ export class InsightsStack extends cdk.Stack {
         streamPrefix: 'insights-cache-updater-container',
         logRetention: RetentionDays.THREE_DAYS
       }),
-      command: ['node', 'src/insights-cache-updater/dist/cache-valuations.js'],
+      command: ['node', 'src/insights/dist/cache-valuations.js'],
       environment: {
         REDIS_URL: redis.attrRedisEndpointAddress
       },
@@ -118,7 +118,7 @@ export class InsightsStack extends cdk.Stack {
         streamPrefix: 'insights-expire-listings-container',
         logRetention: RetentionDays.THREE_DAYS
       }),
-      command: ['node', 'src/insights-cache-updater/dist/expire-listings.js'],
+      command: ['node', 'src/insights/dist/expire-listings.js'],
       environment: {
         REDIS_URL: redis.attrRedisEndpointAddress
       },

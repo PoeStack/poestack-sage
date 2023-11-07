@@ -1,55 +1,57 @@
-import {from, map, mergeMap, tap, toArray} from 'rxjs'
+import {concatMap, from, groupBy, map, mergeMap, of, toArray} from 'rxjs'
 import {scanKeys} from './utils'
 import Redis from 'ioredis'
 import process from 'process'
-import {keys} from "lodash";
 
 const client = new Redis({
-  host: process.env['REDIS_URL'],
+  host: process.env['REDIS_URL'] ?? "localhost",
   port: 6379,
   tls: undefined
 })
 
-scanKeys(client, 'psev6:*')
-  .pipe(
+function cleanShard(shard: string) {
+  console.log("cleaning", shard)
+  return of(shard).pipe(
     mergeMap((e) =>
-      from(client.hgetall(e)).pipe(map((r) => ({key: e, listings: Object.entries(r)})))
+      from(client.hgetall(e)).pipe(map((r) => ({shard: e, listings: Object.entries(r)})))
     ),
-    map((e) => {
+    mergeMap((e) => {
       const mappedListings = e.listings.map(([k, v]) => {
         const timestampMs = parseInt(v.split(',')[0]) * 60 * 1000
         const ageMs = Date.now() - timestampMs
-        return {key: k, ageMs: ageMs}
+        return {shard: e.shard, key: k, hash: k.split(":")[0], ageMs: ageMs}
       })
-      mappedListings.sort((a, b) => b.ageMs - a.ageMs)
-
-      const expiredListings: string [] = []
-      const validListings = mappedListings
-        .filter((l) => {
-          if (l.ageMs < 1000 * 60 * 60 * 48) {
-            return true;
-          } else {
-            expiredListings.push(l.key);
-            return false
-          }
-        })
-
-      expiredListings.push(...validListings.slice(30).map((l) => l.key))
-
-      return {key: e.key, expiredListings}
+      return mappedListings
+    }),
+    groupBy((e) => e.hash),
+    mergeMap((e) => e.pipe(
+      toArray()
+    )),
+    map((e) => {
+      e.sort((a, b) => a.ageMs - b.ageMs)
+      return [
+        ...e.slice(200),
+        ...e.slice(0, 200).filter((e) => e.ageMs > 1000 * 60 * 60 * 48)
+      ]
     }),
     toArray(),
     mergeMap((e) => {
       const multi = client.multi()
-      let removals = 0
-      e.filter((e) => e.expiredListings.length > 0).forEach((e) => {
-        removals++
-        multi.hdel(e.key, ...e.expiredListings.map((x) => x))
-      })
-      console.log('removing', removals, 'listings')
+
+      for (const group of e) {
+        if (group.length) {
+          console.log(group[0].shard, group.length)
+          multi.hdel(group[0].shard, ...group.map((e) => e.key))
+        }
+      }
+
       return from(multi.exec())
     })
   )
+}
+
+scanKeys(client, 'psev6:*')
+  .pipe(concatMap((shard) => cleanShard(shard)))
   .subscribe({
     complete: () => {
       client.disconnect(false)
