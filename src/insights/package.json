@@ -5,14 +5,19 @@
   "main": "index.js",
   "scripts": {
     "build": "rimraf ./dist && tsc",
-    "start": "npm run build && node ./dist/test.js"
+    "start": "npm run build && node ./dist/test.js",
+    "format": "prettier --write ./src",
+    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../eslint-config-sage"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.8.3",
     "rimraf": "^5.0.5",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "prettier": "^3.0.3",
+    "eslint": "^8.53.0",
+    "@typescript-eslint/parser": "^6.10.0"
   },
   "dependencies": {
     "@types/lodash": "^4.14.199",

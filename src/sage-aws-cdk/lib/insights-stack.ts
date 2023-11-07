@@ -113,7 +113,7 @@ export class InsightsStack extends cdk.Stack {
     const expireListingsTask = new aws_ecs.Ec2TaskDefinition(this, 'ExpireListingsTask')
     expireListingsTask.addContainer('InsExpireC', {
       image: aws_ecs.ContainerImage.fromEcrRepository(ecr),
-      memoryLimitMiB: 512,
+      memoryLimitMiB: 1024,
       logging: LogDriver.awsLogs({
         streamPrefix: 'insights-expire-listings-container',
         logRetention: RetentionDays.THREE_DAYS
@@ -130,7 +130,7 @@ export class InsightsStack extends cdk.Stack {
         taskDefinition: expireListingsTask
       },
       cluster: ecsCluster,
-      schedule: Schedule.expression('rate(10 minutes)'),
+      schedule: Schedule.expression('rate(45 minutes)'),
       enabled: true,
       ruleName: 'insights-expire-listings-schedule'
     })

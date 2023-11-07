@@ -18,7 +18,9 @@
     "@types/react": "^18.2.31",
     "@types/tail": "^2.2.2",
     "typescript": "^5.2.2",
-    "prettier": "^3.0.3"
+    "prettier": "^3.0.3",
+    "eslint": "^8.53.0",
+    "@typescript-eslint/parser": "^6.10.0"
   },
   "peerDependencies": {
     "@react-rxjs/core": "^0.10.7",
