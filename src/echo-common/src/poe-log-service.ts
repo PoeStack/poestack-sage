@@ -1,5 +1,5 @@
 import { Tail } from 'tail'
-import { map, Subject } from 'rxjs'
+import { from, map, Subject } from 'rxjs'
 import { filterNullish } from 'ts-ratchet'
 import path from 'path'
 import * as os from 'os'
@@ -7,14 +7,37 @@ import * as fs from 'fs'
 
 export type PoeLogEventType = 'GENERATING_AREA'
 
-export type PoeLogEvent = {
-  type: PoeLogEventType
+export type PoeLogTextEvent = {
   raw: string
-  properties: { [key: string]: string }
 }
+
+export type PoeZoneGenerationEvent = PoeLogTextEvent & {
+  type: 'ZoneGenerationEvent'
+  location: string
+}
+
+export type PoeZoneEntranceEvent = PoeLogTextEvent & {
+  type: 'ZoneEntranceEvent'
+  location: string
+}
+
+export type PoeLogEvent = PoeZoneGenerationEvent | PoeZoneEntranceEvent
 
 interface PoeLogEventParser {
   parse(raw: string): PoeLogEvent | undefined
+}
+
+class ZoneEnteranceEventParser implements PoeLogEventParser {
+  parse(raw: string): PoeZoneEntranceEvent | undefined {
+    if (raw.includes('] : You have entered')) {
+      return {
+        type: 'ZoneEntranceEvent',
+        raw: raw,
+        location: raw.slice(raw.indexOf('entered ') + 'entered '.length, -1)
+      }
+    }
+    return undefined
+  }
 }
 
 export class PoeLogService {
@@ -23,7 +46,7 @@ export class PoeLogService {
   public logRaw$ = new Subject<string>()
   public logEvents$ = new Subject<PoeLogEvent>()
 
-  public parsers: PoeLogEventParser[] = []
+  public parsers: PoeLogEventParser[] = [new ZoneEnteranceEventParser()]
 
   constructor() {
     const path = this.getLogFilePath()

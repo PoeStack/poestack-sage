@@ -8,6 +8,9 @@
 .idea
 *.env
 
+
+
+*.DS_STORE
 # CDK asset staging directory
 *.cdk.staging
 *cdk.out

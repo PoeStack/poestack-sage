@@ -9,6 +9,9 @@ const client = new Redis({
   tls: undefined
 })
 
+const cacheLimit = 500
+const ageLimit = 1000 * 60 * 60 * 48
+
 function cleanShard(shard: string) {
   console.log('cleaning', shard)
   return of(shard).pipe(
@@ -27,7 +30,7 @@ function cleanShard(shard: string) {
     mergeMap((e) => e.pipe(toArray())),
     map((e) => {
       e.sort((a, b) => a.ageMs - b.ageMs)
-      return [...e.slice(200), ...e.slice(0, 200).filter((e) => e.ageMs > 1000 * 60 * 60 * 48)]
+      return [...e.slice(cacheLimit), ...e.slice(0, cacheLimit).filter((e) => e.ageMs > ageLimit)]
     }),
     toArray(),
     mergeMap((e) => {

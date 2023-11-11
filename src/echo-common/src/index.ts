@@ -14,12 +14,18 @@ import {
   usePoeCharacter,
   usePoeCharacterList
 } from './poe-characters-service'
-import { PoeStashService, usePoeStashItems, usePoeStashes } from './poe-stash-service'
+import {
+  POE_STASH_SERVICE,
+  PoeStashService,
+  usePoeStashItems,
+  usePoeStashes
+} from './poe-stash-service'
 import { POE_LOG_SERVICE, PoeLogService } from './poe-log-service'
 
 export {
   PoeStashService,
   EchoPluginHook,
+  POE_STASH_SERVICE,
   usePoeStashes,
   usePoeStashItems,
   ECHO_DIR,

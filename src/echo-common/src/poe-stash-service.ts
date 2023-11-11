@@ -1,19 +1,7 @@
 import { GggApi } from 'ggg-api'
 import { CachedTask } from './cached-task'
 import { bind } from '@react-rxjs/core'
-import {
-  catchError,
-  combineLatestWith,
-  concatMap,
-  filter,
-  from,
-  map,
-  mergeMap,
-  of,
-  switchMap,
-  tap,
-  toArray
-} from 'rxjs'
+import { combineLatestWith, filter, from, map, mergeMap, tap, toArray } from 'rxjs'
 import { filterNullish } from 'ts-ratchet'
 import {
   ItemGroupingService,
@@ -23,7 +11,6 @@ import {
   SageItemGroup
 } from 'sage-common'
 import { SAGE_VALUATION_SERVICE, SageValuation } from './sage-valuation-service'
-import { it } from 'node:test'
 
 export class PoeStashService {
   public gggApi: GggApi
