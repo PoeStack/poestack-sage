@@ -13,7 +13,7 @@ export type PoeLogTextEvent = {
 
 export type PoeZoneGenerationEvent = PoeLogTextEvent & {
   type: 'ZoneGenerationEvent'
-  location: string
+  area: string
 }
 
 export type PoeZoneEntranceEvent = PoeLogTextEvent & {
