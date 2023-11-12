@@ -3,7 +3,6 @@ val npm = rootProject.extra.get("npm")
 val npx = rootProject.extra.get("npx")
 
 task<Exec>("npmInstall") {
-    dependsOn(":src:echo-app:npmInstall")
     commandLine(npm, "install")
 }
 
@@ -19,6 +18,7 @@ task<Exec>("npmBuild") {
     commandLine(npm, "run", "build")
     dependsOn(":src:ts-ratchet:npmBuild")
     dependsOn(":src:ggg-api:npmBuild")
+    dependsOn(":src:sage-common:npmBuild")
 }
 
 task<Exec>("npmFormat") {

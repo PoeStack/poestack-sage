@@ -1,10 +1,12 @@
 {
   "name": "ts-ratchet",
   "version": "1.0.3",
+  "type": "commonjs",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
   "files": [
     "dist/"
   ],
-  "type": "commonjs",
   "exports": {
     "development": {
       "import": "./src/index.ts",
@@ -22,8 +24,7 @@
     "lint": "eslint ./src --fix --resolve-plugins-relative-to ../eslint-config-sage"
   },
   "peerDependencies": {
-    "rxjs": "file:../echo-app/node_modules/rxjs",
-    "axios": "^1.6.0"
+    "rxjs": "file:../echo-common/node_modules/rxjs"
   },
   "devDependencies": {
     "@types/node": "^20.9.0",

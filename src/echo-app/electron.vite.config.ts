@@ -1,9 +1,10 @@
 import path from 'path'
-import { defineConfig, externalizeDepsPlugin, defineViteConfig } from 'electron-vite'
+import { defineConfig, defineViteConfig } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 import commonjsExternals from 'vite-plugin-commonjs-externals'
 // @ts-ignore
 import externalNodePackages from './external-packages'
+import { externalizeDepsAndPeerPlugin } from './plugins/externalizeDeps'
 
 // All this modules are now accessible via 'import fs from 'fs'' instead of require which always works but cause problems in libs which use this node modules via import
 const commonjsPackages = Array.from(
@@ -44,12 +45,12 @@ const commonjsPackages = Array.from(
 export default defineConfig({
   main: defineViteConfig((config) => {
     return {
-      plugins: [externalizeDepsPlugin()]
+      plugins: [externalizeDepsAndPeerPlugin()]
     }
   }),
   preload: defineViteConfig((config) => {
     return {
-      plugins: [externalizeDepsPlugin()]
+      plugins: [externalizeDepsAndPeerPlugin()]
     }
   }),
   renderer: defineViteConfig((config) => {
@@ -80,7 +81,7 @@ export default defineConfig({
         react(),
         commonjsExternals({ externals: commonjsPackages }),
         // Do not bundle any dependencies in production
-        config.mode === 'production' && externalizeDepsPlugin()
+        config.mode === 'production' && externalizeDepsAndPeerPlugin()
       ]
     }
   })

@@ -2,6 +2,8 @@
   "name": "echo-common",
   "version": "1.0.3",
   "type": "commonjs",
+  "main": "./dist/esm/index.js",
+  "module": "./dist/cjs/index.js",
   "files": [
     "dist/"
   ],
@@ -22,22 +24,23 @@
     "format": "prettier --write ./src",
     "lint": "eslint ./src --fix --resolve-plugins-relative-to ../eslint-config-sage"
   },
-  "peerDependencies": {
-    "@react-rxjs/core": "file:../echo-app/node_modules/@react-rxjs/core",
-    "@react-rxjs/utils": "file:../echo-app/node_modules/@react-rxjs/utils",
-    "axios": "^1.6.0",
+  "dependencies": {
+    "@react-rxjs/core": "^0.10.7",
+    "@react-rxjs/utils": "^0.9.7",
+    "@heroicons/react": "^2.0.18",
+    "object-hash": "^3.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rxjs": "^7.8.1",
+    "tail": "^2.2.6",
     "ggg-api": "file:../ggg-api",
-    "react": "file:../echo-app/node_modules/react",
-    "react-dom": "file:../echo-app/node_modules/react-dom",
-    "rxjs": "file:../echo-app/node_modules/rxjs",
     "sage-common": "file:../sage-common",
-    "tail": "file:../echo-app/node_modules/tail",
     "ts-ratchet": "file:../ts-ratchet"
   },
   "devDependencies": {
     "@types/node": "^20.9.0",
     "@types/react": "file:../echo-app/node_modules/@types/react",
-    "@types/tail": "file:../echo-app/node_modules/@types/tail",
+    "@types/tail": "^2.2.3",
     "typescript": "^5.2.2",
     "prettier": "^3.0.3",
     "eslint": "^8.53.0",
