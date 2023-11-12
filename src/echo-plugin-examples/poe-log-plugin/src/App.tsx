@@ -4,11 +4,7 @@ import { POE_LOG_SERVICE } from 'echo-common'
 import { BehaviorSubject, combineLatestWith, filter, interval, map } from 'rxjs'
 
 const lastZone$ = new BehaviorSubject(null)
-POE_LOG_SERVICE.logEvents$
-  .pipe(
-    filter((e) => e.type == "ZoneEntranceEvent"),
-  )
-  .subscribe(lastZone$)
+POE_LOG_SERVICE.logEvents$.pipe(filter((e) => e.type == 'ZoneEntranceEvent')).subscribe(lastZone$)
 
 export const [useCurrentZone] = bind(
   interval(100).pipe(
