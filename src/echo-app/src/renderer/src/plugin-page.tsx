@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react'
-
-import { ECHO_ROUTER, EchoPluginHook } from 'echo-common'
-import fs from 'fs'
-import * as path from 'path'
-import { HomeIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import { QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
-import { EchoRoute } from 'echo-common/dist/cjs/echo-router'
+import { HomeIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import { bind } from '@react-rxjs/core'
+import { ECHO_ROUTER, EchoPluginHook } from 'echo-common'
+import { EchoRoute } from 'echo-common/dist/cjs/echo-router'
+import fs from 'fs'
+import os from 'os'
+import * as path from 'path'
+import React, { useEffect } from 'react'
 import { ProfilePage } from './profile-page'
-import { PluginPageHeader } from './plugin-page-header'
-import { PluginPageFooter } from './plugin-page-footer'
+import { getDevPlugins } from './dev-plugins'
 
 const [useCurrentRoute] = bind(ECHO_ROUTER.currentRoute$)
 const [useCurrentRoutes] = bind(ECHO_ROUTER.routes$)
@@ -48,37 +47,40 @@ export const PluginPage: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    function loadPlugins(baseDir: string) {
-      fs.readdir(baseDir, (err, files) => {
-        if (err) {
-          return console.log('Unable to scan directory: ' + err)
-        }
-        files.forEach(function (file) {
-          if (file.endsWith('.js')) {
-            const p = path.resolve(baseDir, file)
-            console.log('loading', p)
-            const entry = module.require(p)
-            console.log('entry', entry)
-            const plugin: EchoPluginHook = entry()
-            plugin.start()
-          }
+    if (import.meta.env.MODE === 'development') {
+      const imports = getDevPlugins()
+      imports.forEach((prom) => {
+        prom.then((entry) => {
+          const plugin: EchoPluginHook = entry.default()
+          plugin.start()
         })
       })
+    } else {
+      function loadPlugins(baseDir: string) {
+        fs.readdir(baseDir, (err, files) => {
+          if (err) {
+            return console.log('Unable to scan directory: ' + err)
+          }
+          files.forEach(function (file) {
+            if (file.endsWith('.js')) {
+              const p = path.resolve(baseDir, file)
+              const entry = module.require(p)
+              const plugin: EchoPluginHook = entry?.()
+              plugin?.start()
+            }
+          })
+        })
+      }
+      let pluginDir = path.resolve(os.homedir(), 'poestack-sage', 'plugins')
+      if (import.meta.env.RENDERER_VITE_PLUGIN_PATH) {
+        pluginDir = path.resolve('..', '..', import.meta.env.RENDERER_VITE_PLUGIN_PATH)
+      }
+      loadPlugins(pluginDir)
     }
-
-    loadPlugins(path.resolve('..', '..', 'dist_plugins'))
-    //loadPlugins("/Users/zach/workplace/poestack-sage/dist_plugins")
   }, [])
 
-  const themes = ['root']
-  const [selectedTheme, setSelectedTheme] = useState(themes[0])
-
   return (
-    <div
-      className="h-screen w-screen bg-primary-surface text-primary-text"
-      data-theme={selectedTheme}
-    >
-      <PluginPageHeader />
+    <>
       <div className="w-12 drop-shadow-md h-full top-7 fixed flex flex-col bg-secondary-surface items-center px-2 pt-2 pb-9 justify-center gap-2">
         <RouterIconNavigator location="l-sidebar-m" />
         <div className="flex-1 border-gray-500 w-full border-b-2"></div>
@@ -87,8 +89,7 @@ export const PluginPage: React.FC = () => {
       <div className="ml-12 pb-7 pt-7 h-full">
         <PluginBody />
       </div>
-      <PluginPageFooter />
-    </div>
+    </>
   )
 }
 

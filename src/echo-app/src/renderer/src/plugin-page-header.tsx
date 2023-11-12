@@ -1,15 +1,15 @@
-import React from 'react'
+import React, { CSSProperties } from 'react'
 
 import { getCurrentWindow } from '@electron/remote'
 
 export function PluginPageHeader() {
   return (
     <div
-      style={{ '-webkit-app-region': 'drag' } as unknown}
+      style={{ WebkitAppRegion: 'drag' } as CSSProperties}
       className="bg-secondary-surface fixed top-0 h-7 w-full flex"
     >
       <div
-        style={{ '-webkit-app-region': 'no-drag' } as unknown}
+        style={{ WebkitAppRegion: 'no-drag' } as CSSProperties}
         className="flex items-center space-x-2 h-full pl-2 flex-0"
       >
         <div

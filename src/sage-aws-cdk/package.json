@@ -10,7 +10,7 @@
     "lint": "eslint ./lib --fix --resolve-plugins-relative-to ../eslint-config-sage"
   },
   "devDependencies": {
-    "@types/node": "20.7.1",
+    "@types/node": "^20.9.0",
     "aws-cdk": "2.100.0",
     "ts-node": "^10.9.1",
     "typescript": "~5.2.2",

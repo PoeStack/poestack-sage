@@ -1,5 +1,5 @@
 {
-  "name": "poestack-sage",
+  "name": "eslint-config-sage",
   "version": "1.0.3",
   "private": "true",
   "scripts": {

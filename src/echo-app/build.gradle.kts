@@ -7,7 +7,8 @@ task<Exec>("npmInstall") {
 }
 
 task<Exec>("npmClean") {
-    commandLine(npx, "rimraf", "build/index.js")
+    commandLine(npx, "rimraf", "out")
+    commandLine(npx, "rimraf", "dist")
 }
 
 task<Exec>("npmCleanModules") {

@@ -1,47 +1,44 @@
 {
-  "name": "echo-app",
+  "name": "poestack-sage",
   "description": "poestack v2",
   "version": "1.0.0",
-  "main": "build/main/index.js",
+  "main": "./out/main/index.js",
   "scripts": {
-    "clean": "rimraf build/index.js dist",
-    "build": "rollup -c --environment STAGE:dev --configPlugin typescript && tsc -p src/main --outDir build",
-    "release": "rollup -c --environment STAGE:prod --configPlugin typescript && tsc -p src/main --outDir build",
-    "start": "npm run build && electron .",
+    "clean": "rimraf build/index.js out && rimraf build/index.js dist",
+    "dev": "electron-vite dev",
+    "start": "dotenv -v PRELOAD_VITE_PLUGIN_PATH=dist_plugins -v RENDERER_VITE_PLUGIN_PATH=dist_plugins electron-vite preview",
+    "start:prod": "electron-vite preview",
+    "build": "electron-vite build",
+    "build:plugins": "cd ../../ && gradlew buildPlugins",
+    "postinstall": "electron-builder install-app-deps",
+    "build:win": "electron-vite build && rimraf dist && electron-builder --win --config",
+    "build:mac": "electron-vite build && rimraf dist && electron-builder --mac --config",
+    "build:linux": "electron-vite build && rimraf dist && electron-builder --linux --config",
     "make": "npm run release && rimraf dist && electron-builder",
     "bump-version": "node bump-version.js",
     "format": "prettier --write ./src",
     "lint": "eslint ./src --fix --resolve-plugins-relative-to ../eslint-config-sage"
   },
-  "build": {
-    "appId": "poestack.sage",
-    "files": [
-      "**/*",
-      "./build/**/*"
-    ],
-    "extraMetadata": {
-      "main": "build/main/index.js"
-    },
-    "mac": {
-      "category": "tool"
-    }
-  },
   "dependencies": {
+    "@electron-toolkit/preload": "^2.0.0",
+    "@electron-toolkit/utils": "^2.0.0",
     "@electron/remote": "^2.0.12",
     "@heroicons/react": "^2.0.18",
     "@react-rxjs/core": "^0.10.7",
     "@react-rxjs/utils": "^0.9.7",
-    "axios": "^1.6.0",
+    "axios": "^1.6.1",
+    "character-plugin": "file:../echo-plugin-examples/character-plugin",
     "echo-common": "file:../echo-common",
-    "electron-squirrel-startup": "^1.0.0",
     "ggg-api": "file:../ggg-api",
     "jsonwebtoken": "^9.0.2",
     "object-hash": "^3.0.0",
+    "poe-log-plugin": "file:../echo-plugin-examples/poe-log-plugin",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "rollup-plugin-postcss": "^4.0.2",
     "rxjs": "^7.8.1",
     "sage-common": "file:../sage-common",
+    "stash-plugin": "file:../echo-plugin-examples/stash-plugin",
     "tail": "^2.2.6",
     "ts-ratchet": "file:../ts-ratchet",
     "typescript": "^5.2.2"
@@ -51,22 +48,31 @@
     "dmg-license": "^1.0.11"
   },
   "devDependencies": {
+    "@electron-toolkit/eslint-config-prettier": "^1.0.1",
+    "@electron-toolkit/eslint-config-ts": "^1.0.0",
+    "@electron-toolkit/tsconfig": "^1.0.1",
     "@rollup/plugin-typescript": "^11.1.5",
-    "@types/jsonwebtoken": "^9.0.4",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.14",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@typescript-eslint/parser": "^6.10.0",
+    "@vitejs/plugin-react": "^4.0.4",
     "autoprefixer": "^10.4.16",
-    "electron": "^27.0.0",
-    "electron-builder": "^24.6.4",
+    "dotenv-cli": "^7.3.0",
+    "electron": "^25.6.0",
+    "electron-builder": "^24.6.3",
+    "electron-vite": "^1.0.27",
+    "eslint": "^8.53.0",
+    "lodash": "^4.17.21",
     "next-build-id": "^3.0.0",
     "postcss": "^8.4.31",
     "postcss-loader": "^7.3.3",
+    "prettier": "^3.0.3",
     "rimraf": "^5.0.5",
     "rollup": "^4.2.0",
-    "rollup-plugin-copy": "^3.5.0",
     "tailwindcss": "^3.3.5",
-    "prettier": "^3.0.3",
-    "eslint": "^8.53.0",
-    "@typescript-eslint/parser": "^6.10.0"
+    "vite": "^4.4.9",
+    "vite-plugin-commonjs-externals": "^0.1.3",
+    "vite-plugin-node-polyfills": "^0.16.0"
   }
 }

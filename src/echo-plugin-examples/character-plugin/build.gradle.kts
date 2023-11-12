@@ -3,6 +3,7 @@ val npx = rootProject.extra.get("npx")
 
 task<Exec>("npmInstall") {
     commandLine(npm, "install")
+    dependsOn(":src:echo-app:npmInstall")
 }
 
 task<Exec>("npmClean") {

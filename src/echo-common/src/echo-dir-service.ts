@@ -8,6 +8,8 @@ export class EchoDirService {
   constructor() {
     if (!fs.existsSync(this.homeDirPath)) {
       fs.mkdirSync(this.homeDirPath)
+      const resolvedPluginPath = path.resolve(this.homeDirPath, 'plugins')
+      fs.mkdirSync(resolvedPluginPath)
     }
   }
 

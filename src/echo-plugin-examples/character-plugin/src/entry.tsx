@@ -26,3 +26,5 @@ export default function (): EchoPluginHook {
     destroy: destroy
   }
 }
+
+// export { App }

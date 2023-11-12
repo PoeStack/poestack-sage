@@ -1,37 +1,46 @@
 {
-  "name": "echo-common",
+  "name": "ggg-api",
   "version": "1.0.3",
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
+  "type": "commonjs",
   "files": [
     "dist/"
   ],
+  "exports": {
+    "development": {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts"
+    },
+    "default": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
   "scripts": {
-    "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+    "build": "tsc -p tsconfig-esm.json && tsc -p tsconfig.json",
     "test": "npm run build && node dist/cjs/poe-api-test.js",
     "prepublishOnly": "npm run build",
     "format": "prettier --write ./src",
     "lint": "eslint ./src --fix --resolve-plugins-relative-to ../eslint-config-sage"
   },
-  "devDependencies": {
-    "@types/node": "^20.8.6",
-    "@types/react": "^18.2.31",
-    "@types/tail": "^2.2.2",
-    "typescript": "^5.2.2",
-    "prettier": "^3.0.3",
-    "eslint": "^8.53.0",
-    "@typescript-eslint/parser": "^6.10.0"
-  },
   "peerDependencies": {
-    "@react-rxjs/core": "^0.10.7",
-    "@react-rxjs/utils": "^0.9.7",
+    "@react-rxjs/core": "file:../echo-app/node_modules/@react-rxjs/core",
+    "@react-rxjs/utils": "file:../echo-app/node_modules/@react-rxjs/utils",
     "axios": "^1.6.0",
     "ggg-api": "file:../ggg-api",
     "react": "file:../echo-app/node_modules/react",
     "react-dom": "file:../echo-app/node_modules/react-dom",
-    "rxjs": "^7.8.1",
+    "rxjs": "file:../echo-app/node_modules/rxjs",
     "sage-common": "file:../sage-common",
     "tail": "^2.2.6",
     "ts-ratchet": "file:../ts-ratchet"
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "@types/react": "file:../echo-app/node_modules/@types/react",
+    "@types/tail": "^2.2.3",
+    "typescript": "^5.2.2",
+    "prettier": "^3.0.3",
+    "eslint": "^8.53.0",
+    "@typescript-eslint/parser": "^6.10.0"
   }
 }

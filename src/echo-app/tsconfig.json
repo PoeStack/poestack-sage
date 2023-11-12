@@ -1,13 +1,4 @@
 {
-  "compilerOptions": {
-    "target": "ES2021",
-    "lib": ["ES2021", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "skipLibCheck": true,
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "jsx": "react-jsx",
-    "outDir": "build"
-  },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "rollup.config.ts"]
+  "files": [],
+  "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.web.json" }]
 }

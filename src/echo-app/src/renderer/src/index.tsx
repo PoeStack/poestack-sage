@@ -1,41 +1,34 @@
-import { Module } from 'module'
-
-const localModulesPath = path.resolve(__dirname, '..', '..', 'node_modules')
-const orgResolvePath = Module['_resolveLookupPaths']
-Module['_resolveLookupPaths'] = function (request, parent) {
-  const res = [
-    localModulesPath,
-    '/Applications/echo-app.app/Contents/Resources/app.asar/node_modules',
-    '/Applications/echo-app.app/Contents/Resources/node_modules'
-  ]
-  console.log('resolved lookup path', request, parent, res)
-  return res
-}
-
-import React from 'react'
+import React, { useState } from 'react'
+import ReactDOM from 'react-dom/client'
 import { PluginPage } from './plugin-page'
 import './app.css'
 import { Subscribe } from '@react-rxjs/core'
 import { AuthGuard } from './auth-page'
-import { POE_LOG_SERVICE } from 'echo-common'
-import { createRoot } from 'react-dom/client'
-import * as path from 'path'
-import fs from 'fs'
+import { PluginPageHeader } from './plugin-page-header'
+import { PluginPageFooter } from './plugin-page-footer'
 
-POE_LOG_SERVICE.logRaw$.subscribe((e) => console.log('GGG LOG', e))
+const App = () => {
+  const themes = ['root']
+  const [selectedTheme, setSelectedTheme] = useState(themes[0])
 
-const App: React.FC = () => {
   return (
-    <>
-      <Subscribe>
-        <AuthGuard>
-          <PluginPage />
-        </AuthGuard>
-      </Subscribe>
-    </>
+    <div
+      className="h-screen w-screen bg-primary-surface text-primary-text"
+      data-theme={selectedTheme}
+    >
+      <PluginPageHeader />
+      <AuthGuard>
+        <PluginPage />
+      </AuthGuard>
+      <PluginPageFooter />
+    </div>
   )
 }
 
-const container = document.getElementById('root')
-const root = createRoot(container)
-root.render(<App />)
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+  <React.StrictMode>
+    <Subscribe>
+      <App />
+    </Subscribe>
+  </React.StrictMode>
+)

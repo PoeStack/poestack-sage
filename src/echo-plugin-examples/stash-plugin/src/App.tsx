@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import { usePoeStashes, usePoeStashItems } from 'echo-common'
-import { POE_STASH_SERVICE } from 'echo-common/dist/cjs/poe-stash-service'
+import { usePoeStashes, usePoeStashItems, POE_STASH_SERVICE } from 'echo-common'
 
 const App = () => {
   const league = 'Ancestor'
