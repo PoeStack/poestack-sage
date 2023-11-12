@@ -11,6 +11,7 @@ include(
   "src:sage-aws-cdk",
   "src:sage-docs",
   "src:sage-common",
+  "src:tactics-image-gen",
   "src:eslint-config-sage"
 )
 

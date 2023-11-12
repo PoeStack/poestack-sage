@@ -15,8 +15,8 @@ import {
   usePoeCharacterList
 } from './poe-characters-service'
 import {
-  PoeStashService,
   POE_STASH_SERVICE,
+  PoeStashService,
   usePoeStashItems,
   usePoeStashes
 } from './poe-stash-service'

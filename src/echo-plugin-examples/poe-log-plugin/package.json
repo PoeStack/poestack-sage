@@ -25,6 +25,9 @@
     "@react-rxjs/utils": "file:../../echo-app/node_modules/@react-rxjs/utils",
     "rxjs": "^file:../../echo-app/node_modules/rxjs"
   },
+  "optionalDependencies": {
+    "@rollup/rollup-darwin-x64": "^4.3.0"
+  },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.5",
     "@types/node": "^20.9.0",

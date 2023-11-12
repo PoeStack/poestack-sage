@@ -34,3 +34,64 @@ Debugging:
 
 
 ### Creating Your First Plugin
+
+This section will go over creating a simple plugin from scratch. We'll be creating a "hideout is lava" plugin that will show stopwatch whenever we enter our hideout to remind us to get back to mapping.
+For this section some file management commands might not work on all systems if they don't just make the directory/copy files manually.
+
+
+The first step is to create a new directory for our plugin in `/src/echo-plugins`. `mkdir src/echo-plugins/hideout-is-lava`
+
+Lets `cd` into the new directory so our working directory is our new plugins home. `cd src/echo-plugins/hideout-is-lava
+
+Now that we have a directory to work in we'll need some base files. Lets copy these from an example plugin to give us a starting point. `rsync -av --exclude=node_modules ../../echo-plugin-examples/poe-log-plugin/ .`
+(Copy everything from the echo-plugin-examples/poe-log-plugin into the current directory except for node_modules)
+
+We should now have a `package.json` with some deps, a `src` directory containing the example plugin, and some supporting files.
+
+To start lets rename our plugin. Open `package.json` in your edtior and change `"name": "example-poe-log-plugin"` to `"name": "hideout-is-lava-plugin"`
+
+Now run `npm install` to install the plugin's deps
+
+Next lets make some changes to the plugins `src/entry.tsx` file. Open it in an editor and change
+`plugin: 'example-log-plugin-stash'` to `plugin: 'hideout-is-lava-plugin'`
+
+Lets also change the icon in the side bar
+Change `DocumentTextIcon` to `FireIcon` and change the import to `import { FireIcon } from '@heroicons/react/24/outline'`
+
+Now lets update the app change the contents of `src/App.tsx` to
+
+```
+const App = () => {
+  return <>Hello from our new plugin</>
+}
+
+export default App
+```
+
+Now run `npm run build` to build our new plugin
+
+Next open a termninal in `src/echo-app` run `npm run start` to launch the Electron app. In the side bar you should now see the fire icon. Click it and you should see our test message.
+
+Leave the Electron app open and change our test message to `<>Wow our plugin is cool</>`. Run `npm run build` in the plugin directory and in the Electron app press `cmd + r` or F5 on Windows to refresh the page.
+Go back to the fire icon and you should see the new next without having recompiled/restarted the Electron app.
+
+Okay we've now got all the basics out of the way lets start building our actual plugin.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
