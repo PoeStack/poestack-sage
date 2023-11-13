@@ -2,6 +2,7 @@ import { app, BrowserWindow, shell } from 'electron'
 import path from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { initialize, enable } from '@electron/remote/main'
+import { server } from '../local-server/server'
 
 let mainWindow: BrowserWindow | null
 
@@ -60,6 +61,8 @@ app.whenReady().then(() => {
 
   createWindow()
 
+  server.listen(8000)
+
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
@@ -68,6 +71,7 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', () => {
+  server.close()
   if (process.platform !== 'darwin') {
     app.quit()
   }
