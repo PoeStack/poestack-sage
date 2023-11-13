@@ -10,9 +10,9 @@ import * as path from 'path'
 import { importDevPlugin } from './dev-plugins'
 
 function filterPluginsByEnv(pluginConfigs: EchoPluginConfigs) {
-  return import.meta.env.MODE === 'development'
-    ? Object.values(pluginConfigs).filter((config) => config.name.endsWith('-dev'))
-    : Object.values(pluginConfigs).filter((config) => !config.name.endsWith('-dev'))
+  return Object.values(pluginConfigs).filter(
+    (config) => (import.meta.env.MODE === 'development') === config.name.endsWith('-dev')
+  )
 }
 
 async function getPlugin(pluginConfig: EchoPluginConfig): Promise<EchoPluginHook> {

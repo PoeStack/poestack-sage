@@ -24,8 +24,10 @@ export class EchoRouter {
     }
   }
 
-  public removeRoute(plugin: string) {
-    this.routes$.next(this.routes$.value.filter((r) => r.plugin !== plugin))
+  public unregisterRoute(route: EchoRoute) {
+    this.routes$.next(
+      this.routes$.value.filter((r) => r.plugin !== route.plugin && r.path !== route.page)
+    )
   }
 
   public push(next: { plugin: string; path: string }) {

@@ -1,4 +1,4 @@
-import { ECHO_ROUTER } from './echo-router'
+import { ECHO_ROUTER, EchoRoute } from './echo-router'
 import { CachedTask, CachedTaskEvent } from './cached-task'
 import { ECHO_DIR } from './echo-dir-service'
 import { EchoPluginHook } from './echo-plugin-hook'
@@ -44,4 +44,4 @@ export {
   POE_LOG_SERVICE
 }
 
-export type { EchoPluginHook, CachedTaskEvent, EchoPluginConfigs, EchoPluginConfig }
+export type { EchoPluginHook, CachedTaskEvent, EchoPluginConfigs, EchoPluginConfig, EchoRoute }
