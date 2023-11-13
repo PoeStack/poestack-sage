@@ -19,7 +19,9 @@ export class EchoRouter {
   currentRoute$ = new BehaviorSubject<EchoRoute | null>(null)
 
   public registerRoute(route: EchoRoute) {
-    this.routes$.next([...this.routes$.value, route])
+    if (!this.routes$.value.some((r) => r.plugin === route.plugin && r.path === route.path)) {
+      this.routes$.next([...this.routes$.value, route])
+    }
   }
 
   public removeRoute(next: { plugin: string; path: string }) {}
@@ -28,7 +30,10 @@ export class EchoRouter {
     const nextRoute = this.routes$.value.find(
       (e) => e.plugin === next.plugin && e.path === next.path
     )
-    this.currentRoute$.next(nextRoute ?? null)
+
+    if (this.currentRoute$.value !== nextRoute) {
+      this.currentRoute$.next(nextRoute ?? null)
+    }
   }
 }
 

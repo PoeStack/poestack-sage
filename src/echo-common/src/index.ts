@@ -1,5 +1,5 @@
-import { CachedTask, CachedTaskEvent } from './cached-task'
 import { ECHO_ROUTER } from './echo-router'
+import { CachedTask, CachedTaskEvent } from './cached-task'
 import { ECHO_DIR } from './echo-dir-service'
 import { EchoPluginHook } from './echo-plugin-hook'
 import {
@@ -24,13 +24,11 @@ import { POE_LOG_SERVICE, PoeLogService } from './poe-log-service'
 
 export {
   PoeStashService,
-  EchoPluginHook,
   POE_STASH_SERVICE,
   usePoeStashes,
   usePoeStashItems,
   ECHO_DIR,
   CachedTask,
-  CachedTaskEvent,
   ECHO_ROUTER,
   PoeAccountService,
   POE_ACCOUNT_SERVICE,
@@ -43,3 +41,5 @@ export {
   PoeLogService,
   POE_LOG_SERVICE
 }
+
+export type { EchoPluginHook, CachedTaskEvent }

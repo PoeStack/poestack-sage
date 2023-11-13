@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { CSSProperties } from 'react'
 import { useEffect, useState } from 'react'
 import { bind } from '@react-rxjs/core'
 import jwt from 'jsonwebtoken'
@@ -23,9 +23,7 @@ export function LoginPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   function handleSet(input: string) {
-    console.log('setting', input)
     const decoded = jwt.decode(input)
-    console.log('decoding', decoded)
     const oAuthCode = decoded?.['oAuthToken']
     if (oAuthCode) {
       ECHO_DIR.writeJson(['auth'], { jwt: input })
@@ -45,11 +43,11 @@ export function LoginPage() {
 
   return (
     <div
-      style={{ '-webkit-app-region': 'drag' } as unknown}
+      style={{ WebkitAppRegion: 'drag' } as CSSProperties}
       className="min-h-screen flex items-center justify-center text-primary-text"
     >
       <div
-        style={{ '-webkit-app-region': 'no-drag' } as unknown}
+        style={{ WebkitAppRegion: 'no-drag' } as CSSProperties}
         className="flex flex-col gap-2"
         draggable={false}
       >

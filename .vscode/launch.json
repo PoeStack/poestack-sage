@@ -9,13 +9,13 @@
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}/src/echo-app",
-      "runtimeExecutable": "${workspaceFolder}/src/echo-app/node_modules/.bin/electron",
+      "runtimeExecutable": "${workspaceFolder}/src/echo-app/node_modules/.bin/electron-vite",
       "windows": {
-        "runtimeExecutable": "${workspaceFolder}/src/echo-app/node_modules/.bin/electron.cmd"
+        "runtimeExecutable": "${workspaceFolder}/src/echo-app/node_modules/.bin/electron-vite.cmd"
       },
-      "runtimeArgs": [
-        "--remote-debugging-port=9223" //open debugging port for renderer process
-      ],
+      "env": {
+        "REMOTE_DEBUGGING_PORT": "9223" //open debugging port for renderer process
+      },
       "args": ["."],
       "outputCapture": "std",
       "sourceMaps": true,
@@ -29,9 +29,20 @@
       "type": "chrome", //use the Chrome debugger that comes with VS Code
       "request": "attach",
       "port": 9223, //use debug port opened in Electron: Main configuration
-      "webRoot": "${workspaceFolder}/src/echo-app",
-      "sourceMap": true,
-      "timeout": 30000
+      "webRoot": "${workspaceFolder}/src",
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/src/echo-app/**", //use source maps for files in workspace folder
+        "${workspaceFolder}/src/echo-common/**",
+        "${workspaceFolder}/src/sage-common/**",
+        "${workspaceFolder}/src/ts-ratchet/**",
+        "${workspaceFolder}/src/echo-plugin-examples/**",
+        "${workspaceFolder}/src/echo-plugins/**",
+        "!**/node_modules/**" //but ignore everything in the node_modules folder
+      ],
+      "timeout": 30000,
+      "presentation": {
+        "hidden": true
+      }
     }
   ],
   "compounds": [

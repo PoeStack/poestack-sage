@@ -11,5 +11,5 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "typescript.tsdk": "src\\echo-app\\node_modules\\typescript\\lib"
+  "typescript.tsdk": "src\\eslint-config-sage\\node_modules\\typescript\\lib"
 }

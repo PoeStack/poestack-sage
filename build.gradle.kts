@@ -9,6 +9,14 @@ buildscript {
   }
 }
 
+val buildPlugins = task("buildPlugins")
+gradle.projectsEvaluated {
+  subprojects.filter {
+    it.path.contains("echo-plugin-examples:") ||
+    it.path.contains("echo-plugins:")
+  }.forEach { buildPlugins.dependsOn(it.tasks.named("npmBuild")) }
+}
+
 task("dockerBuildAndPublish") {
 
   val packageName = "poestack-insightsx"

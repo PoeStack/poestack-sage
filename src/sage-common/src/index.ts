@@ -30,9 +30,10 @@ import {
 import { ItemGroupingService, SageItemGroup } from './item-groups/item-grouping-service'
 import { HttpUtil } from './utils/http-util'
 
-export {
+export { ItemGroupingService, HttpUtil }
+
+export type {
   SageItemGroup,
-  ItemGroupingService,
   PoeCharacter,
   PoeCharacterPassive,
   PoeFlavourTextInfo,
@@ -58,6 +59,5 @@ export {
   PoeStashTabMetadata,
   PoePartialStashTab,
   PoeLeague,
-  PoeTokenExchangeResponse,
-  HttpUtil
+  PoeTokenExchangeResponse
 }
