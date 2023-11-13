@@ -13,7 +13,9 @@ function start() {
   })
 }
 
-function destroy() {}
+function destroy() {
+  'example-stash'
+}
 
 export default function (): EchoPluginHook {
   return {

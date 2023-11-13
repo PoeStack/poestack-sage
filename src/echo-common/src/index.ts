@@ -21,6 +21,7 @@ import {
   usePoeStashes
 } from './poe-stash-service'
 import { POE_LOG_SERVICE, PoeLogService } from './poe-log-service'
+import { ECHO_PLUGIN_CONFIG, EchoPluginConfigs, EchoPluginConfig } from './echo-plugin-config'
 
 export {
   PoeStashService,
@@ -28,6 +29,9 @@ export {
   usePoeStashes,
   usePoeStashItems,
   ECHO_DIR,
+  ECHO_PLUGIN_CONFIG,
+  EchoPluginConfigs,
+  EchoPluginConfig,
   CachedTask,
   ECHO_ROUTER,
   PoeAccountService,

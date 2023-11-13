@@ -39,6 +39,7 @@ export class EchoDirService {
     const resolvedPath = path.resolve(this.homeDirPath, ...jsonPath)
     fs.mkdirSync(path.dirname(resolvedPath), { recursive: true })
     fs.writeFileSync(resolvedPath + '.json', JSON.stringify(value))
+    return value
   }
 }
 

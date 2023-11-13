@@ -24,7 +24,9 @@ export class EchoRouter {
     }
   }
 
-  public removeRoute(next: { plugin: string; path: string }) {}
+  public removeRoute(plugin: string) {
+    this.routes$.next(this.routes$.value.filter((r) => r.plugin !== plugin))
+  }
 
   public push(next: { plugin: string; path: string }) {
     const nextRoute = this.routes$.value.find(

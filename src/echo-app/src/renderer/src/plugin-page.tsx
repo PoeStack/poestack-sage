@@ -14,38 +14,6 @@ const [useCurrentRoute] = bind(ECHO_ROUTER.currentRoute$)
 const [useCurrentRoutes] = bind(ECHO_ROUTER.routes$)
 
 export const PluginPage: React.FC = () => {
-  const currentRoute = useCurrentRoute()
-
-  const PluginBody = currentRoute?.page ?? DefaultPage
-
-  useEffect(() => {
-    const homeRoute: EchoRoute = {
-      navItems: [
-        {
-          location: 'l-sidebar-m',
-          icon: HomeIcon
-        }
-      ],
-      page: DefaultPage,
-      path: 'home',
-      plugin: 'sage'
-    }
-    ECHO_ROUTER.registerRoute(homeRoute)
-    ECHO_ROUTER.push(homeRoute)
-
-    ECHO_ROUTER.registerRoute({
-      navItems: [
-        {
-          location: 'l-sidebar-b',
-          icon: UserCircleIcon
-        }
-      ],
-      page: ProfilePage,
-      path: 'profile',
-      plugin: 'sage'
-    })
-  }, [])
-
   useEffect(() => {
     if (import.meta.env.MODE === 'development') {
       const imports = getDevPlugins()
@@ -93,35 +61,37 @@ export const PluginPage: React.FC = () => {
   )
 }
 
-const RouterIconNavigator = ({ location }: { location: string }) => {
-  const currentRoutes = useCurrentRoutes()
-  const currentRoute = useCurrentRoute()
+  const [availablePlugins, setAvailablePlugins] = useState<EchoPluginConfig[]>([])
 
   return (
     <>
-      {currentRoutes.flatMap((echoRoute) => {
-        return (echoRoute.navItems ?? [])
-          .filter((e) => e.location === location)
-          .map((navItem, idx) => {
-            const Icon = navItem.icon ?? QuestionMarkCircleIcon
-            return (
-              <Icon
-                key={echoRoute.plugin + echoRoute.path + navItem.location + idx}
-                className={
-                  'h-7 w-7 cursor-pointer ' +
-                  (currentRoute === echoRoute ? 'text-primary-accent' : '')
-                }
-                onClick={() => {
-                  ECHO_ROUTER.push(echoRoute)
-                }}
-              ></Icon>
-            )
-          })
-      })}
+      <div className="w-full h-full overflow-y-scroll flex flex-row">
+        <div className="basis-1/4"></div>
+        <div className="flex flex-row">
+          <div className="flex flex-col">
+            <div>Plugins</div>
+          </div>
+        </div>
+        <div className="flex flex-row">
+          <div className="flex flex-col">
+            {availablePlugins?.length > 0 &&
+              availablePlugins.map((plugin) => (
+                <div key={plugin.name} className="flex flex-row">
+                  <div className="flex flex-col">{plugin.name}</div>
+                  <div className="flex flex-col">{plugin.version}</div>
+                  <div className="flex flex-col">{plugin.enabled}</div>
+                  {plugin.enabled && (
+                    <button onClick={() => handleDisablePlugin(plugin)}>Disable</button>
+                  )}
+                  {!plugin.enabled && (
+                    <button onClick={() => handleEnablePlugin(plugin)}>Enable</button>
+                  )}
+                </div>
+              ))}
+          </div>
+        </div>
+        <div className="basis-1/4"></div>
+      </div>
     </>
   )
-}
-
-const DefaultPage = () => {
-  return <>Welcome to PoeStack - Sage</>
 }

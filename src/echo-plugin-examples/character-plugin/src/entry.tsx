@@ -18,7 +18,9 @@ function start() {
   })
 }
 
-function destroy() {}
+function destroy() {
+  ECHO_ROUTER.removeRoute('example-characters')
+}
 
 export default function (): EchoPluginHook {
   return {

@@ -2,7 +2,7 @@ import React, { CSSProperties } from 'react'
 
 import { getCurrentWindow } from '@electron/remote'
 
-export function PluginPageHeader() {
+export function HomePageHeader() {
   return (
     <div
       style={{ WebkitAppRegion: 'drag' } as CSSProperties}
