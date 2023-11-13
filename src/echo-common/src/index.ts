@@ -30,8 +30,6 @@ export {
   usePoeStashItems,
   ECHO_DIR,
   ECHO_PLUGIN_CONFIG,
-  EchoPluginConfigs,
-  EchoPluginConfig,
   CachedTask,
   ECHO_ROUTER,
   PoeAccountService,
@@ -46,4 +44,4 @@ export {
   POE_LOG_SERVICE
 }
 
-export type { EchoPluginHook, CachedTaskEvent }
+export type { EchoPluginHook, CachedTaskEvent, EchoPluginConfigs, EchoPluginConfig }

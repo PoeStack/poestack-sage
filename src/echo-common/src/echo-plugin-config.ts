@@ -10,7 +10,7 @@ export type EchoPluginConfig = {
 export type EchoPluginConfigs = Record<string, EchoPluginConfig>
 
 export class EchoPluginConfigService {
-  public loadPluginConfigs() {
+  public loadPluginConfigs(): EchoPluginConfigs {
     if (ECHO_DIR.existsJson('plugin-config')) {
       const loadedPluginConfig: EchoPluginConfigs | null = ECHO_DIR.loadJson('plugin-config')
       if (loadedPluginConfig) {
@@ -20,7 +20,7 @@ export class EchoPluginConfigService {
     return this.writePluginConfigs({})
   }
 
-  public writePluginConfigs(pluginConfigObject: EchoPluginConfigs) {
+  public writePluginConfigs(pluginConfigObject: EchoPluginConfigs): EchoPluginConfigs {
     return ECHO_DIR.writeJson(['plugin-config'], pluginConfigObject)
   }
 }

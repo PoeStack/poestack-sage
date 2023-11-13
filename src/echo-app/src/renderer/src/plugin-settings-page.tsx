@@ -1,34 +1,54 @@
 import React, { useEffect, useState } from 'react'
 
-import { ECHO_PLUGIN_CONFIG, EchoPluginConfig, EchoPluginHook } from 'echo-common'
+import {
+  ECHO_PLUGIN_CONFIG,
+  EchoPluginConfig,
+  EchoPluginConfigs,
+  EchoPluginHook
+} from 'echo-common'
 import * as path from 'path'
+import { importDevPlugin } from './dev-plugins'
 
-export const PluginPage: React.FC = () => {
+function filterPluginsByEnv(pluginConfigs: EchoPluginConfigs) {
+  return import.meta.env.MODE === 'development'
+    ? Object.values(pluginConfigs).filter((config) => config.name.endsWith('-dev'))
+    : Object.values(pluginConfigs).filter((config) => !config.name.endsWith('-dev'))
+}
+
+async function getPlugin(pluginConfig: EchoPluginConfig): Promise<EchoPluginHook> {
+  if (import.meta.env.MODE === 'development') {
+    const entry = await importDevPlugin(pluginConfig.name)
+    console.log(JSON.stringify(entry))
+    return entry.default()
+  } else {
+    const p = path.resolve(pluginConfig.path)
+    const entry = module.require(p)
+    const plugin: EchoPluginHook = entry()
+    return plugin
+  }
+}
+
+export const PluginSettingsPage: React.FC = () => {
   useEffect(() => {
-    setAvailablePlugins(Object.values(ECHO_PLUGIN_CONFIG.loadPluginConfig()))
+    setAvailablePlugins(filterPluginsByEnv(ECHO_PLUGIN_CONFIG.loadPluginConfigs()))
   }, [])
 
-  function handleEnablePlugin(pluginConfig: EchoPluginConfig) {
-    const pluginConfigs = ECHO_PLUGIN_CONFIG.loadPluginConfig()
+  async function handleEnablePlugin(pluginConfig: EchoPluginConfig) {
+    const pluginConfigs = ECHO_PLUGIN_CONFIG.loadPluginConfigs()
     pluginConfigs[pluginConfig.name].enabled = true
-    const p = path.resolve(pluginConfig.path)
-    const entry = module.require(p)
-    const plugin: EchoPluginHook = entry()
+    const plugin = await getPlugin(pluginConfig)
     plugin.start()
-    const updatedConfigs = ECHO_PLUGIN_CONFIG.writePluginConfig(pluginConfigs)
-    setAvailablePlugins(Object.values(updatedConfigs))
+    const updatedConfigs = ECHO_PLUGIN_CONFIG.writePluginConfigs(pluginConfigs)
+    setAvailablePlugins(filterPluginsByEnv(updatedConfigs))
   }
 
-  function handleDisablePlugin(pluginConfig: EchoPluginConfig) {
-    const pluginConfigs = ECHO_PLUGIN_CONFIG.loadPluginConfig()
+  async function handleDisablePlugin(pluginConfig: EchoPluginConfig) {
+    const pluginConfigs = ECHO_PLUGIN_CONFIG.loadPluginConfigs()
     pluginConfigs[pluginConfig.name].enabled = false
-    const p = path.resolve(pluginConfig.path)
-    const entry = module.require(p)
-    console.log('entry', entry)
-    const plugin: EchoPluginHook = entry()
+    const plugin = await getPlugin(pluginConfig)
     plugin.destroy()
-    const updatedConfigs = ECHO_PLUGIN_CONFIG.writePluginConfig(pluginConfigs)
-    setAvailablePlugins(Object.values(updatedConfigs))
+    const updatedConfigs = ECHO_PLUGIN_CONFIG.writePluginConfigs(pluginConfigs)
+    setAvailablePlugins(filterPluginsByEnv(updatedConfigs))
   }
 
   const [availablePlugins, setAvailablePlugins] = useState<EchoPluginConfig[]>([])
