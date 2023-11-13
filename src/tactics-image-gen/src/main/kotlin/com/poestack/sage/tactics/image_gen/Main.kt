@@ -1,46 +1,43 @@
 package com.poestack.sage.tactics.image_gen
 
-import io.github.cdimascio.dotenv.Dotenv
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import io.ktor.util.*
-import io.ktor.http.ContentType
 import java.awt.image.BufferedImage
-import java.io.ByteArrayOutputStream
-import kotlinx.serialization.json.Json
+import java.io.File
 import javax.imageio.ImageIO
+import com.poestack.sage.tactics.image_gen.parseLine
+import kotlin.math.floor
+import kotlin.math.round
+import kotlin.math.roundToInt
 
-fun main(args: Array<String>) {
-  embeddedServer(Netty, port = 8081) { extracted() }.start(wait = true)
+data class ParsedLine(val img: String, val display: String, val quantity: String, val valuation: String)
+
+fun parseLine(line: String): ParsedLine {
+  val splitLine = line.split(",")
+  return ParsedLine(
+    splitLine[0],
+    splitLine[1],
+    splitLine[2],
+    splitLine[3]
+  )
 }
 
-private fun Application.extracted() {
-  install(ContentNegotiation) {
-    json(
-        Json {
-          prettyPrint = true
-          isLenient = true
-        }
-    )
+fun main(args: Array<String>) {
+  val inputFile = args[0]
+  val outputFile = args[1]
+
+  val lines = File(inputFile).readLines().map { parseLine(it) }
+
+  val img = BufferedImage(500, 150 + (lines.size / 2 * 60), BufferedImage.TYPE_INT_ARGB)
+  val g = img.createGraphics()
+
+  var i = 0
+  for(line in lines) {
+    val baseY = (floor(i / 2.0) * 60).roundToInt()
+    val baseX = if(i % 2 == 0) 0 else 250
+
+    g.drawString(line.display, baseX, baseY)
+
+    i++
   }
 
-  routing {
-    get("/api/tactics/v1/image-gen") {
-      val img = BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB)
-      val g = img.createGraphics()
-      g.drawString("heloooooo", 50, 50)
-
-      val byteArrayOutputStream = ByteArrayOutputStream()
-      ImageIO.write(img, "png", byteArrayOutputStream)
-      val byteArray = byteArrayOutputStream.toByteArray()
-
-      call.respond(byteArray)
-    }
-  }
+  ImageIO.write(img, "png", File(outputFile))
 }
