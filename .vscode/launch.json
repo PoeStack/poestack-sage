@@ -32,6 +32,7 @@
       "webRoot": "${workspaceFolder}/src",
       "resolveSourceMapLocations": [
         "${workspaceFolder}/src/echo-app/**", //use source maps for files in workspace folder
+        "${workspaceFolder}/src/ggg-api/**",
         "${workspaceFolder}/src/echo-common/**",
         "${workspaceFolder}/src/sage-common/**",
         "${workspaceFolder}/src/ts-ratchet/**",
