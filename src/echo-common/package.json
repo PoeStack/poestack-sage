@@ -39,7 +39,8 @@
   },
   "devDependencies": {
     "@types/node": "^20.9.0",
-    "@types/react": "file:../echo-app/node_modules/@types/react",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
     "@types/tail": "^2.2.3",
     "typescript": "^5.2.2",
     "prettier": "^3.0.3",
