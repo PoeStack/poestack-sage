@@ -18,7 +18,6 @@ function filterPluginsByEnv(pluginConfigs: EchoPluginConfigs) {
 async function getPlugin(pluginConfig: EchoPluginConfig): Promise<EchoPluginHook> {
   if (import.meta.env.MODE === 'development') {
     const entry = await importDevPlugin(pluginConfig.name)
-    console.log(JSON.stringify(entry))
     return entry.default()
   } else {
     const p = path.resolve(pluginConfig.path)
@@ -33,20 +32,16 @@ export const PluginSettingsPage: React.FC = () => {
     setAvailablePlugins(filterPluginsByEnv(ECHO_PLUGIN_CONFIG.loadPluginConfigs()))
   }, [])
 
-  async function handleEnablePlugin(pluginConfig: EchoPluginConfig) {
+  async function handleTogglePlugin(pluginConfig: EchoPluginConfig) {
     const pluginConfigs = ECHO_PLUGIN_CONFIG.loadPluginConfigs()
-    pluginConfigs[pluginConfig.name].enabled = true
+    const pluginEnabled = pluginConfigs[pluginConfig.name].enabled
     const plugin = await getPlugin(pluginConfig)
-    plugin.start()
-    const updatedConfigs = ECHO_PLUGIN_CONFIG.writePluginConfigs(pluginConfigs)
-    setAvailablePlugins(filterPluginsByEnv(updatedConfigs))
-  }
-
-  async function handleDisablePlugin(pluginConfig: EchoPluginConfig) {
-    const pluginConfigs = ECHO_PLUGIN_CONFIG.loadPluginConfigs()
-    pluginConfigs[pluginConfig.name].enabled = false
-    const plugin = await getPlugin(pluginConfig)
-    plugin.destroy()
+    if (!pluginEnabled) {
+      plugin.start()
+    } else {
+      plugin.destroy()
+    }
+    pluginConfigs[pluginConfig.name].enabled = !pluginEnabled
     const updatedConfigs = ECHO_PLUGIN_CONFIG.writePluginConfigs(pluginConfigs)
     setAvailablePlugins(filterPluginsByEnv(updatedConfigs))
   }
@@ -55,30 +50,41 @@ export const PluginSettingsPage: React.FC = () => {
 
   return (
     <>
-      <div className="w-full h-full overflow-y-scroll flex flex-row">
-        <div className="basis-1/4"></div>
+      <div className="p-4 w-full h-full overflow-y-scroll">
         <div className="flex flex-row">
           <div className="flex flex-col">
-            <div>Plugins</div>
+            <h1 className="font-semibold text-primary-accent">Plugins</h1>
           </div>
         </div>
-        <div className="flex flex-row">
-          <div className="flex flex-col">
+        <div className="pt-4 flex-row flex w-full">
+          <table className="bg-secondary-surface table-auto border-separate border-spacing-3 text-left">
+            <tr className="">
+              <th>Plugin Name</th>
+              <th>Version</th>
+              <th>Enabled</th>
+            </tr>
             {availablePlugins?.length > 0 &&
               availablePlugins.map((plugin) => (
-                <div key={plugin.name} className="flex flex-row">
-                  <div className="flex flex-col">{plugin.name}</div>
-                  <div className="flex flex-col">{plugin.version}</div>
-                  <div className="flex flex-col">{plugin.enabled}</div>
-                  {plugin.enabled && (
-                    <button onClick={() => handleDisablePlugin(plugin)}>Disable</button>
-                  )}
-                  {!plugin.enabled && (
-                    <button onClick={() => handleEnablePlugin(plugin)}>Enable</button>
-                  )}
-                </div>
+                <tr key={plugin.name}>
+                  <td>{plugin.name}</td>
+                  <td>{plugin.version}</td>
+                  <td className="text-center">
+                    <input
+                      type="checkbox"
+                      id={`${plugin.name}-enabled`}
+                      name="enabled"
+                      checked={plugin.enabled}
+                      onChange={() => handleTogglePlugin(plugin)}
+                    />
+                  </td>
+                </tr>
               ))}
-          </div>
+            {!availablePlugins?.length && (
+              <tr>
+                <td>No Plugins installed</td>
+              </tr>
+            )}
+          </table>
         </div>
         <div className="basis-1/4"></div>
       </div>

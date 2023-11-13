@@ -14,7 +14,7 @@ function start() {
 }
 
 function destroy() {
-  'example-stash'
+  ECHO_ROUTER.removeRoute('example-stash')
 }
 
 export default function (): EchoPluginHook {
