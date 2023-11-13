@@ -8,8 +8,8 @@ import { QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
 import { EchoRoute } from 'echo-common/dist/cjs/echo-router'
 import { bind } from '@react-rxjs/core'
 import { ProfilePage } from './profile-page'
-import { HomePageHeader } from './home-page-header'
-import { HomePageFooter } from './home-page-footer'
+import { PluginPageHeader } from './plugin-page-header'
+import { PluginPageFooter } from './plugin-page-footer'
 import { PluginPage } from './plugin-page'
 
 const [useCurrentRoute] = bind(ECHO_ROUTER.currentRoute$)
@@ -102,7 +102,7 @@ export const HomePage: React.FC = () => {
       className="h-screen w-screen bg-primary-surface text-primary-text"
       data-theme={selectedTheme}
     >
-      <HomePageHeader />
+      <PluginPageHeader />
       <div className="w-12 drop-shadow-md h-full top-7 fixed flex flex-col bg-secondary-surface items-center px-2 pt-2 pb-9 justify-center gap-2">
         <RouterIconNavigator location="l-sidebar-m" />
         <div className="flex-1 border-gray-500 w-full border-b-2"></div>
@@ -111,7 +111,7 @@ export const HomePage: React.FC = () => {
       <div className="ml-12 pb-7 pt-7 h-full">
         <HomeBody />
       </div>
-      <HomePageFooter />
+      <PluginPageFooter />
     </div>
   )
 }
