@@ -1,11 +1,3 @@
-
-import { Module } from 'module'
-const orgResolvePath = Module['_resolveLookupPaths']
-Module['_resolveLookupPaths'] = function (request, parent) {
-  console.log('mreq', request, parent)
-  return orgResolvePath(request, parent)
-}
-
 import { app, BrowserWindow, shell } from 'electron'
 import path from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
