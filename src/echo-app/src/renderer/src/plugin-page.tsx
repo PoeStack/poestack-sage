@@ -1,15 +1,12 @@
 import { QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
 import { CpuChipIcon, HomeIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import { bind } from '@react-rxjs/core'
-import { ECHO_PLUGIN_CONFIG, ECHO_ROUTER, EchoPluginHook } from 'echo-common'
+import { ECHO_PLUGIN_CONFIG, ECHO_PLUGIN_SERVICE, ECHO_ROUTER, EchoPluginHook } from 'echo-common'
 import { EchoRoute } from 'echo-common/dist/cjs/echo-router'
-import fs from 'fs'
-import os from 'os'
-import * as path from 'path'
 import React, { useEffect } from 'react'
 import { ProfilePage } from './profile-page'
-import { getDevPluginNames, importDevPlugin } from './dev-plugins'
 import { PluginSettingsPage } from './plugin-settings-page'
+import { DEV_PLUGINS } from './dev-plugins'
 
 const [useCurrentRoute] = bind(ECHO_ROUTER.currentRoute$)
 const [useCurrentRoutes] = bind(ECHO_ROUTER.routes$)
@@ -60,65 +57,16 @@ export const PluginPage: React.FC = () => {
 
   useEffect(() => {
     if (import.meta.env.MODE === 'development') {
-      const pluginNames = getDevPluginNames()
-      const pluginConfigs = ECHO_PLUGIN_CONFIG.loadPluginConfigs()
-      pluginNames.forEach((pluginName) => {
-        const pluginConfig = pluginConfigs && pluginConfigs[pluginName]
-        if (pluginConfig) {
-          if (pluginConfig.enabled) {
-            const pluginImportPromise = importDevPlugin(pluginName)
-            pluginImportPromise?.then((entry) => {
-              const plugin: EchoPluginHook = entry.default()
-              plugin.start()
-            })
-          }
-        } else {
-          pluginConfigs[pluginName] = {
-            name: pluginName,
-            version: 'LOCAL',
-            enabled: false,
-            path: ''
-          }
-        }
-      })
-      ECHO_PLUGIN_CONFIG.writePluginConfigs(pluginConfigs)
-    } else {
-      function loadPlugins(baseDir: string) {
-        fs.readdir(baseDir, (err, files) => {
-          if (err) {
-            return console.log('Unable to scan directory: ' + err)
-          }
-          const pluginConfigs = ECHO_PLUGIN_CONFIG.loadPluginConfigs()
-          files.forEach(function (file) {
-            if (file.endsWith('.js')) {
-              const p = path.resolve(baseDir, file)
-              const fileName = path.basename(p).replace(/\.[^/.]+$/, '')
-              const pluginConfig = fileName && pluginConfigs[fileName]
-              if (pluginConfig) {
-                if (pluginConfig.enabled) {
-                  const entry = module.require(p)
-                  const plugin: EchoPluginHook = entry()
-                  plugin.start()
-                }
-              } else {
-                pluginConfigs[fileName] = {
-                  name: fileName,
-                  version: 'LOCAL',
-                  enabled: false,
-                  path: p
-                }
-              }
-            }
-          })
-          ECHO_PLUGIN_CONFIG.writePluginConfigs(pluginConfigs)
+      DEV_PLUGINS.forEach((e) => {
+        e.then((entry) => {
+
+          const plugin: EchoPluginHook = entry.default()
+          plugin.start()
         })
-      }
-      let pluginDir = path.resolve(os.homedir(), 'poestack-sage', 'plugins')
-      if (import.meta.env.RENDERER_VITE_PLUGIN_PATH) {
-        pluginDir = path.resolve('..', '..', import.meta.env.RENDERER_VITE_PLUGIN_PATH)
-      }
-      loadPlugins(pluginDir)
+      })
     }
+
+    ECHO_PLUGIN_SERVICE.loadPlugins()
   }, [])
 
   return (

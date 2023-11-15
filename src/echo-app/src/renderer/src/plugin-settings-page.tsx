@@ -1,52 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import { bind } from '@react-rxjs/core'
+import { ECHO_PLUGIN_SERVICE } from 'echo-common'
+import React from 'react'
 
-import {
-  ECHO_PLUGIN_CONFIG,
-  EchoPluginConfig,
-  EchoPluginConfigs,
-  EchoPluginHook
-} from 'echo-common'
-import * as path from 'path'
-import { importDevPlugin } from './dev-plugins'
 
-function filterPluginsByEnv(pluginConfigs: EchoPluginConfigs) {
-  return Object.values(pluginConfigs).filter(
-    (config) => (import.meta.env.MODE === 'development') === config.name.endsWith('-dev')
-  )
-}
+const [usePlugins] = bind(ECHO_PLUGIN_SERVICE.currentPlugins$, {})
 
-async function getPlugin(pluginConfig: EchoPluginConfig): Promise<EchoPluginHook> {
-  if (import.meta.env.MODE === 'development') {
-    const entry = await importDevPlugin(pluginConfig.name)
-    return entry.default()
-  } else {
-    const p = path.resolve(pluginConfig.path)
-    const entry = module.require(p)
-    const plugin: EchoPluginHook = entry()
-    return plugin
-  }
-}
 
 export const PluginSettingsPage: React.FC = () => {
-  useEffect(() => {
-    setAvailablePlugins(filterPluginsByEnv(ECHO_PLUGIN_CONFIG.loadPluginConfigs()))
-  }, [])
-
-  async function handleTogglePlugin(pluginConfig: EchoPluginConfig) {
-    const pluginConfigs = ECHO_PLUGIN_CONFIG.loadPluginConfigs()
-    const pluginEnabled = pluginConfigs[pluginConfig.name].enabled
-    const plugin = await getPlugin(pluginConfig)
-    if (!pluginEnabled) {
-      plugin.start()
-    } else {
-      plugin.destroy()
-    }
-    pluginConfigs[pluginConfig.name].enabled = !pluginEnabled
-    const updatedConfigs = ECHO_PLUGIN_CONFIG.writePluginConfigs(pluginConfigs)
-    setAvailablePlugins(filterPluginsByEnv(updatedConfigs))
-  }
-
-  const [availablePlugins, setAvailablePlugins] = useState<EchoPluginConfig[]>([])
+  const pluginMap = usePlugins()
+  const plugins = Object.values(pluginMap)
 
   return (
     <>
@@ -63,23 +25,24 @@ export const PluginSettingsPage: React.FC = () => {
               <th>Version</th>
               <th>Enabled</th>
             </tr>
-            {availablePlugins?.length > 0 &&
-              availablePlugins.map((plugin) => (
-                <tr key={plugin.name}>
-                  <td>{plugin.name}</td>
-                  <td>{plugin.version}</td>
+            {plugins?.length &&
+              plugins.map((plugin) => (
+                <tr key={plugin.manifest.name}>
+                  <td>{plugin.manifest.name}</td>
+                  <td>{plugin.manifest.version}</td>
+                  {!plugin.path && <td onClick={() => ECHO_PLUGIN_SERVICE.installPlugin(plugin)}>Install</td>}
                   <td className="text-center">
                     <input
                       type="checkbox"
-                      id={`${plugin.name}-enabled`}
+                      id={`${plugin.manifest.name}-enabled`}
                       name="enabled"
-                      checked={plugin.enabled}
-                      onChange={() => handleTogglePlugin(plugin)}
+                      checked={!!plugin.enabled}
+                      onChange={() => ECHO_PLUGIN_SERVICE.togglePlugin(plugin)}
                     />
                   </td>
                 </tr>
               ))}
-            {!availablePlugins?.length && (
+            {!plugins?.length && (
               <tr>
                 <td>No Plugins installed</td>
               </tr>
