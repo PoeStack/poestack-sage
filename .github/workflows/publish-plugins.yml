@@ -33,4 +33,4 @@ jobs:
           git add public/** -f
           git add dist_plugins/** -f
           git commit -m "update plugins"
-          git push -f
+          git push -f --set-upstream origin published-plugins
