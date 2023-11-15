@@ -12,4 +12,4 @@ Requirements - At-least one of the following:
 
 Once your application is approved you will be given a role that will grant you access to the discussion channels.
 
-If you meet any of the above and would like to talk about development feel free to join: (https://discord.gg/Fnx9amNq)[https://discord.gg/Fnx9amNq]
+If you meet any of the above and would like to talk about development feel free to join: [https://discord.gg/Fnx9amNq](https://discord.gg/Fnx9amNq)
