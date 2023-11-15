@@ -1,9 +1,8 @@
-
 name: Publish Plugins
 
 on:
   push:
-    branches: ['echo_tools']
+    branches: ['main']
 
 jobs:
   build:
