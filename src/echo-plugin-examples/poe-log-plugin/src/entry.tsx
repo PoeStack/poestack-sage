@@ -2,18 +2,22 @@
 
 import App from './App'
 import { DocumentTextIcon } from '@heroicons/react/24/outline'
-import { ECHO_ROUTER, EchoPluginHook } from 'echo-common'
+import { ECHO_ROUTER, EchoPluginHook, EchoRoute } from 'echo-common'
 
-function start() {
-  ECHO_ROUTER.registerRoute({
-    plugin: 'example-log-plugin-stash',
-    path: 'main',
-    page: App,
-    navItems: [{ location: 'l-sidebar-m', icon: DocumentTextIcon }]
-  })
+const pluginRoute: EchoRoute = {
+  plugin: 'example-log-plugin-stash',
+  path: 'main',
+  page: App,
+  navItems: [{ location: 'l-sidebar-m', icon: DocumentTextIcon }]
 }
 
-function destroy() {}
+function start() {
+  ECHO_ROUTER.registerRoute(pluginRoute)
+}
+
+function destroy() {
+  ECHO_ROUTER.unregisterRoute(pluginRoute)
+}
 
 export default function (): EchoPluginHook {
   return {

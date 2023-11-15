@@ -3,6 +3,4 @@
  * All of these plugins have HMR enabled, regardless of whether you only have the plugins folder open
  */
 
-export const getDevPlugins = () => {
-  return [import('character-plugin'), import('stash-plugin'), import('poe-log-plugin')]
-}
+export const DEV_PLUGINS = [import('character-plugin')]

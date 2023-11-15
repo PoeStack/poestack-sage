@@ -1,0 +1,35 @@
+name: Publish Plugins
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  build:
+    name: publish plugins
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'latest'
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "corretto"
+          java-version: "17"
+      - uses: actions/checkout@v3
+      - name: update plugins.json
+        working-directory: src/echo-tools
+        run: node src/build-plugins-json.mjs
+      - name: npm install
+        run: ./gradlew npmInstall
+      - name: build plugins
+        run: ./gradlew buildPlugins
+      - name: push
+        run: |
+          git config --global user.name 'zach-herridge'
+          git config --global user.email 'zach-herridge@users.noreply.github.com'
+          git checkout -b "published-plugins"
+          git add public/** -f
+          git add dist_plugins/** -f
+          git commit -m "update plugins"
+          git push -f --set-upstream origin published-plugins

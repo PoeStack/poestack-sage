@@ -1,4 +1,3 @@
-# Stage 1: Copy Gradle files
 FROM alpine AS copy-gradle-files
 WORKDIR /app
 COPY build.gradle.kts .
@@ -31,7 +30,7 @@ ARG BUILD_COMMAND="npmBuild"
 
 RUN ./gradlew $PROJECT:$INSTALL_COMMAND
 
-copy ./src ./src
+COPY ./src ./src
 
 RUN ./gradlew $PROJECT:$BUILD_COMMAND
 

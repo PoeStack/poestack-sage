@@ -18,7 +18,6 @@ export function AuthGuard({ children }) {
 }
 
 export function LoginPage() {
-  const currentJwt = useJwt()
   const [inputValue, setInputValue] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -33,6 +32,12 @@ export function LoginPage() {
       setErrorMessage('Failed to decode jwt.')
     }
   }
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on('AUTH_TOKEN_RECEIVED', (_, value) => {
+      handleSet(value.TOKEN_RECEIVED)
+    })
+  }, [])
 
   useEffect(() => {
     if (ECHO_DIR.existsJson('auth')) {
@@ -51,7 +56,15 @@ export function LoginPage() {
         className="flex flex-col gap-2"
         draggable={false}
       >
-        <div className="text-lg font-semibold">PoeStack - Sage</div>
+        <h1 className="text-lg font-semibold">PoeStack - Sage</h1>
+        <h2 className="text-sm font-semibold">Sync auth with PoEStack</h2>
+        <a
+          className="text-center no-underline rounded-lg bg-primary-accent px-1 py-0.5"
+          href="https://poestack.com/poe-stack/sage-development"
+        >
+          Sync Auth
+        </a>
+        <h2 className="text-sm font-semibold pt-2">Manual auth with PoEStack</h2>
         <div className="text-sm">
           Enter your PoeStack token.{' '}
           <a

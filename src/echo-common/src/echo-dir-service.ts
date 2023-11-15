@@ -6,10 +6,14 @@ export class EchoDirService {
   homeDirPath = path.resolve(os.homedir(), 'poestack-sage')
 
   constructor() {
-    if (!fs.existsSync(this.homeDirPath)) {
-      fs.mkdirSync(this.homeDirPath)
-      const resolvedPluginPath = path.resolve(this.homeDirPath, 'plugins')
-      fs.mkdirSync(resolvedPluginPath)
+    this.ensureDirExists("plugins")
+    this.ensureDirExists("cache")
+  }
+
+  public ensureDirExists(...dirPathFragment: string[]) {
+    const resolved = path.resolve(this.homeDirPath, ...dirPathFragment)
+    if (!fs.existsSync(resolved)) {
+      fs.mkdirSync(resolved, { recursive: true })
     }
   }
 
@@ -39,6 +43,7 @@ export class EchoDirService {
     const resolvedPath = path.resolve(this.homeDirPath, ...jsonPath)
     fs.mkdirSync(path.dirname(resolvedPath), { recursive: true })
     fs.writeFileSync(resolvedPath + '.json', JSON.stringify(value))
+    return value
   }
 }
 
