@@ -1,10 +1,12 @@
 import { app, BrowserWindow, shell } from 'electron'
 import path from 'path'
+import { Server } from 'http'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { initialize, enable } from '@electron/remote/main'
-import { server } from '../local-server/server'
+import { createLocalServer } from '../local-server/server'
 
 let mainWindow: BrowserWindow | null
+let server: Server | null
 
 initialize()
 
@@ -61,7 +63,14 @@ app.whenReady().then(() => {
 
   createWindow()
 
-  server.listen(8000)
+  if (is.dev) {
+    function notifyOfRemoteAuth(token: string) {
+      mainWindow?.webContents.send('AUTH_TOKEN_RECEIVED', { TOKEN_RECEIVED: token })
+    }
+    // ipcRenderer.invoke
+    server = createLocalServer(notifyOfRemoteAuth)
+    server.listen(8000)
+  }
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -71,7 +80,7 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', () => {
-  server.close()
+  server?.close()
   if (process.platform !== 'darwin') {
     app.quit()
   }
