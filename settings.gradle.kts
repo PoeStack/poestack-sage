@@ -5,6 +5,7 @@ include(
   "src:ggg-api",
   "src:echo-common",
   "src:echo-app",
+  "src:echo-app",
   "src:insights",
   "src:insights-cache-updater",
   "src:ggg-test-env",
