@@ -27,8 +27,8 @@ jobs:
         run: ./gradlew buildPlugins
       - name: push
         run: |
-          git config --global user.name 'gha'
-          git config --global user.email 'gha@users.noreply.github.com'
+          git config --global user.name 'zach-herridge'
+          git config --global user.email 'zach-herridge@users.noreply.github.com'
           git checkout -b "published-plugins"
           git add public/** -f
           git add dist_plugins/** -f
