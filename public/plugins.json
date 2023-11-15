@@ -1,0 +1,17 @@
+{
+  "example-character-plugin": {
+    "name": "example-character-plugin",
+    "version": "0.0.0",
+    "echoCommonVersion": "1.0.3"
+  },
+  "example-poe-log-plugin": {
+    "name": "example-poe-log-plugin",
+    "version": "0.0.0",
+    "echoCommonVersion": "1.0.3"
+  },
+  "example-stash-plugin": {
+    "name": "example-stash-plugin",
+    "version": "0.0.0",
+    "echoCommonVersion": "1.0.3"
+  }
+}
