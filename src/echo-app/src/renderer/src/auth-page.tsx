@@ -18,7 +18,6 @@ export function AuthGuard({ children }) {
 }
 
 export function LoginPage() {
-  const currentJwt = useJwt()
   const [inputValue, setInputValue] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -33,6 +32,12 @@ export function LoginPage() {
       setErrorMessage('Failed to decode jwt.')
     }
   }
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on('AUTH_TOKEN_RECEIVED', (_, value) => {
+      handleSet(value.TOKEN_RECEIVED)
+    })
+  }, [])
 
   useEffect(() => {
     if (ECHO_DIR.existsJson('auth')) {

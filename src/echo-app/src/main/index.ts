@@ -1,9 +1,12 @@
 import { app, BrowserWindow, shell } from 'electron'
 import path from 'path'
+import { Server } from 'http'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { initialize, enable } from '@electron/remote/main'
+import { createLocalServer } from '../local-server/server'
 
 let mainWindow: BrowserWindow | null
+let server: Server | null
 
 initialize()
 
@@ -60,11 +63,29 @@ app.whenReady().then(() => {
 
   createWindow()
 
+  if (is.dev) {
+    function notifyOfRemoteAuth(token: string) {
+      mainWindow?.webContents.send('AUTH_TOKEN_RECEIVED', { TOKEN_RECEIVED: token })
+    }
+    if (!server || !server.listening) {
+      server = createLocalServer(notifyOfRemoteAuth)
+    }
+  }
+
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
+})
+
+app.on('will-quit', function (e) {
+  if (server && server.listening) {
+    e.preventDefault()
+    server?.close(() => {
+      app.quit()
+    })
+  }
 })
 
 app.on('window-all-closed', () => {
