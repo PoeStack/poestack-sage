@@ -22,6 +22,7 @@ import {
 } from './poe-stash-service'
 import { POE_LOG_SERVICE, PoeLogService } from './poe-log-service'
 import { ECHO_PLUGIN_CONFIG, EchoPluginConfigs, EchoPluginConfig } from './echo-plugin-config'
+import { ECHO_PLUGIN_SERVICE } from './echo-plugin-service'
 
 export {
   PoeStashService,
@@ -39,6 +40,7 @@ export {
   PoeCharactersService,
   POE_CHARACTER_SERVICE,
   usePoeCharacterList,
+  ECHO_PLUGIN_SERVICE,
   usePoeCharacter,
   PoeLogService,
   POE_LOG_SERVICE
