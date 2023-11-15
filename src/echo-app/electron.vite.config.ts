@@ -38,10 +38,6 @@ const commonjsPackages = Array.from(
   ])
 )
 
-// console.log(commonjsPackages)
-
-// TODO: Suppress sourcemap not found warnings
-
 export default defineConfig({
   main: defineViteConfig((config) => {
     return {

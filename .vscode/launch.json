@@ -20,7 +20,8 @@
       "outputCapture": "std",
       "sourceMaps": true,
       "resolveSourceMapLocations": [
-        "${workspaceFolder}/src/echo-app/**", //use source maps for files in workspace folder
+        "${workspaceFolder}/src/echo-app/src/main/**", //use source maps for files in workspace folder
+        "${workspaceFolder}/src/echo-app/src/preload/**",
         "!**/node_modules/**" //but ignore everything in the node_modules folder
       ]
     },
@@ -31,7 +32,7 @@
       "port": 9223, //use debug port opened in Electron: Main configuration
       "webRoot": "${workspaceFolder}/src",
       "resolveSourceMapLocations": [
-        "${workspaceFolder}/src/echo-app/**", //use source maps for files in workspace folder
+        "${workspaceFolder}/src/echo-app/src/renderer**", //use source maps for files in workspace folder
         "${workspaceFolder}/src/ggg-api/**",
         "${workspaceFolder}/src/echo-common/**",
         "${workspaceFolder}/src/sage-common/**",
