@@ -67,7 +67,6 @@ app.whenReady().then(() => {
     function notifyOfRemoteAuth(token: string) {
       mainWindow?.webContents.send('AUTH_TOKEN_RECEIVED', { TOKEN_RECEIVED: token })
     }
-    // ipcRenderer.invoke
     server = createLocalServer(notifyOfRemoteAuth)
     server.listen(8000)
   }
