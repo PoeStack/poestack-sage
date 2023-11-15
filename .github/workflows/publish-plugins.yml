@@ -28,7 +28,7 @@ jobs:
       - name: push
         run: |
           git checkout -b "published-plugins"
-          git add public/**
-          git add dist_plugins/**
+          git add public/** -f
+          git add dist_plugins/** -f
           git commit -m "update plugins"
           git push -f
