@@ -1,0 +1,22 @@
+
+name: Publish Plugins
+
+on:
+  push:
+    branches: ['echo_tools']
+
+jobs:
+  build:
+    name: publish plugins
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'latest'
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "corretto"
+          java-version: "17"
+      - uses: actions/checkout@v3
+      - name: npm install
+        run: ./gradlew npmInstall
