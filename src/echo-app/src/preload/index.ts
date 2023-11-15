@@ -1,39 +1,38 @@
-import { contextBridge } from 'electron'
-import { electronAPI } from '@electron-toolkit/preload'
 import path from 'path'
-import os from 'os'
-
 import { Module } from 'module'
 
-let sourceDir = path.resolve(os.homedir(), 'poestack-sage', 'plugins')
-if (import.meta.env.PRELOAD_VITE_PLUGIN_PATH) {
-  sourceDir = path.resolve('..', '..', import.meta.env.PRELOAD_VITE_PLUGIN_PATH)
+
+const echoAppNodeModules: string = path.resolve(__dirname, '..', '..', 'node_modules')
+const echoCommonNodeModules: string = path.resolve(__dirname, '..', '..', '..', "echo-common", 'node_modules')
+console.log("echo-app-node-modules", echoAppNodeModules)
+console.log("echo-common-node-modules", echoCommonNodeModules)
+
+const orgResolvePath: unknown = Module['_resolveLookupPaths']
+Module['_resolveLookupPaths'] = function(request, parent) {
+
+  const orgResults: string[] = []
+  try {
+    orgResults.push(...orgResolvePath(request, parent))
+  } catch (error) {
+  }
+
+  const mappedResults = orgResults.map((e) => e
+    .split("node_modules"))
+    .filter((e) => e.length == 2)
+    .flatMap((e) => [`${echoAppNodeModules}${e[1]}`, `${echoCommonNodeModules}${e[1]}`])
+
+  const results: string[] = []
+  results.push(...mappedResults)
+  results.push(...orgResults)
+  results.push(...[echoAppNodeModules, echoCommonNodeModules])
+
+
+  //console.log("req", request, parent, results)
+  return results
 }
 
-const replaceResolvePath = (distPath: string) => {
-  if (distPath.endsWith('node_modules')) {
-    return distPath.replace(sourceDir, path.join(__dirname, '..', '..'))
-  }
-  return distPath.replace(sourceDir, path.join(__dirname, '..', '..', 'out', 'renderer'))
-}
-const orgResolvePath = Module['_resolveLookupPaths']
-Module['_resolveLookupPaths'] = function (request, parent) {
-  if (parent.filename?.startsWith(sourceDir)) {
-    // console.log('resolved lookup path', request, parent)
-    parent.filename = replaceResolvePath(parent.filename)
-    if (parent?.paths) {
-      parent.paths = parent.paths.map((p) => replaceResolvePath(p))
-    }
-    const res = orgResolvePath(request, parent)
-    // console.log('resolved lookup path', request, parent, res)
-    return res
-  } else {
-    const res = orgResolvePath(request, parent)
-    // console.log('resolved lookup path', request, parent, res)
-    return res
-  }
-}
-
+import { contextBridge } from 'electron'
+import { electronAPI } from '@electron-toolkit/preload'
 // Custom APIs for renderer
 const api = {}
 
