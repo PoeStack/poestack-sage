@@ -6,6 +6,7 @@ import { EchoRoute } from 'echo-common/dist/cjs/echo-router'
 import React, { useEffect } from 'react'
 import { ProfilePage } from './profile-page'
 import { PluginSettingsPage } from './plugin-settings-page'
+// @ts-ignore
 import { DEV_PLUGINS } from './dev-plugins'
 
 const [useCurrentRoute] = bind(ECHO_ROUTER.currentRoute$)
@@ -59,7 +60,6 @@ export const PluginPage: React.FC = () => {
     if (import.meta.env.MODE === 'development') {
       DEV_PLUGINS.forEach((e) => {
         e.then((entry) => {
-
           const plugin: EchoPluginHook = entry.default()
           plugin.start()
         })
@@ -77,7 +77,7 @@ export const PluginPage: React.FC = () => {
         <RouterIconNavigator location="l-sidebar-b" />
       </div>
       <div className="ml-12 pb-7 pt-7 h-full">
-        <PluginBody />
+        {typeof PluginBody === 'function' ? <PluginBody /> : PluginBody}
       </div>
     </>
   )

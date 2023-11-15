@@ -1,9 +1,10 @@
+import React, { ReactElement } from 'react'
 import { BehaviorSubject } from 'rxjs'
 
 export type EchoRoute = {
   plugin: string
   path: string
-  page: any
+  page: ReactElement
   navItems?: EchoRouterNavItem[] | null
 }
 
@@ -26,7 +27,7 @@ export class EchoRouter {
 
   public unregisterRoute(route: EchoRoute) {
     this.routes$.next(
-      this.routes$.value.filter((r) => r.plugin !== route.plugin && r.path !== route.page)
+      this.routes$.value.filter((r) => r.plugin !== route.plugin && r.path !== route.path)
     )
   }
 
