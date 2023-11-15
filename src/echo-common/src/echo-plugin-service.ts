@@ -5,76 +5,88 @@ import { EchoPluginHook } from "./echo-plugin-hook"
 import { ECHO_DIR } from "./echo-dir-service"
 import path from "path"
 
+
 export type EchoPluginManifest = { name: string, version: string, echoCommonVersion: string }
 
-export type EchoPlugin = { manifest: EchoPluginManifest, path?: string | undefined, enabled?: boolean | undefined, hook?: EchoPluginHook | undefined }
+export type EchoPlugin = { key: string, manifest?: EchoPluginManifest | undefined, path?: string | undefined, enabled?: boolean | undefined, hook?: EchoPluginHook | undefined }
 
 export class EchoPluginService {
 
+  private installedPluginsPath = path.resolve(ECHO_DIR.homeDirPath, "plugins")
   private httpUtil = new HttpUtil()
 
   public plugins$ = new Subject<EchoPlugin>()
   public currentPlugins$ = new BehaviorSubject<{ [key: string]: EchoPlugin }>({})
 
   constructor() {
-    this.plugins$.subscribe((p) => {
-      if (p.enabled && !p.hook) {
-        console.log("loading", p.path)
-        const pluginEntry = module.require(p.path!!)
-        console.log("loaded", pluginEntry)
-        const hook: EchoPluginHook = pluginEntry()
-        p.hook = hook
-        p.hook.start()
-        this.plugins$.next(p)
-      }
-
-      if (!p.enabled && p.hook) {
-        p.hook.destroy()
-        p.hook = undefined
-        p.enabled = false
-        this.plugins$.next(p)
-      }
-    })
-
     this.plugins$.pipe(
       tap((e) => console.log("plugin-event", e)),
       scan((acc, v) => {
-        return {...acc, [v.manifest.name]: v}
+        return { ...acc, [v.key]: { ...acc[v.key], ...v } }
       }, this.currentPlugins$.value)
     ).subscribe(this.currentPlugins$)
-  }
 
-  public togglePlugin(plugin: EchoPlugin) {
-    this.plugins$.next({...plugin, enabled: !plugin.enabled})
-  }
+    this.currentPlugins$.subscribe((e) => {
+      Object.values(e).forEach((p) => {
+        if (p.enabled && p.path && !p.hook) {
+          this.persistEnabledPlugins()
+          const pluginEntry = module.require(p.path)
+          const hook: EchoPluginHook = pluginEntry()
+          hook.start()
+          this.plugins$.next({ key: p.key, hook: hook })
+        }
 
-  public installPlugin(plugin: EchoPlugin) {
-    return this.httpUtil.get<string>(`https://raw.githubusercontent.com/PoeStack/poestack-sage/published-plugins/dist_plugins/${plugin.manifest.name}.js`)
-      .subscribe((resp) => {
-        fs.writeFileSync(path.resolve(ECHO_DIR.homeDirPath, "plugins", `${plugin.manifest.name}.js`), resp)
-        this.loadInstalledPlugins()
-      })
-  }
-
-  public loadInstalledPlugins() {
-    fs.readdir(path.resolve(ECHO_DIR.homeDirPath, "plugins"), (err, files) => {
-      files.forEach((file) => {
-        const pluginName = file.slice(0, -3)
-        const plugin = this.currentPlugins$.value[pluginName]
-        console.log("file", file, pluginName, plugin)
-        if (plugin) {
-          plugin.path = path.resolve(ECHO_DIR.homeDirPath, "plugins", file)
-          this.plugins$.next(plugin)
+        if (!p.enabled && p.hook) {
+          this.persistEnabledPlugins()
+          p.hook.destroy()
+          this.plugins$.next({ key: p.key, hook: undefined })
         }
       })
     })
   }
 
+  public persistEnabledPlugins() {
+    const enabledPluginKeys = Object.values(this.currentPlugins$.value)
+      .filter((e) => e.enabled)
+      .map((e) => e.key)
+    ECHO_DIR.writeJson(['enabled_plugins'], enabledPluginKeys)
+  }
+
+  public loadEnabledPlugins() {
+    const enabledPluginKeys: string[] = ECHO_DIR.loadJson("enabled_plugins") ?? []
+    enabledPluginKeys.forEach(e => {
+      this.plugins$.next({ key: e, enabled: true })
+    })
+  }
+
+  public togglePlugin(plugin: EchoPlugin) {
+    this.plugins$.next({ key: plugin.key, enabled: !plugin.enabled })
+  }
+
+  public installPlugin(plugin: EchoPlugin) {
+    return this.httpUtil.get<string>(`https://raw.githubusercontent.com/PoeStack/poestack-sage/published-plugins/dist_plugins/${plugin.manifest!!.name}.js`)
+      .subscribe((resp) => {
+        fs.writeFileSync(path.resolve(this.installedPluginsPath, `${plugin.key}.js`), resp)
+        this.loadInstalledPlugins()
+      })
+  }
+
+  public loadInstalledPlugins() {
+    fs.readdir(this.installedPluginsPath, (err, files) => {
+      files.forEach((file) => {
+        const pluginKey = file.slice(0, -3)
+        const pluginPath = path.resolve(this.installedPluginsPath, file)
+        this.plugins$.next({ key: pluginKey, path: pluginPath })
+      })
+    })
+  }
+
   public loadPlugins() {
+    this.loadEnabledPlugins()
     this.httpUtil.get<{ [key: string]: EchoPluginManifest }>("https://raw.githubusercontent.com/PoeStack/poestack-sage/published-plugins/public/plugins.json")
       .subscribe((resp) => {
         Object.values(resp).forEach((e) => {
-          this.plugins$.next({ manifest: e })
+          this.plugins$.next({ key: e.name, manifest: e })
         })
         this.loadInstalledPlugins()
       })

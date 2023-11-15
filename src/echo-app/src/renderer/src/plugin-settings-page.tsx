@@ -27,14 +27,14 @@ export const PluginSettingsPage: React.FC = () => {
             </tr>
             {plugins?.length &&
               plugins.map((plugin) => (
-                <tr key={plugin.manifest.name}>
-                  <td>{plugin.manifest.name}</td>
-                  <td>{plugin.manifest.version}</td>
+                <tr key={plugin.key}>
+                  <td>{plugin.manifest?.name}</td>
+                  <td>{plugin.manifest?.version}</td>
                   {!plugin.path && <td onClick={() => ECHO_PLUGIN_SERVICE.installPlugin(plugin)}>Install</td>}
                   <td className="text-center">
                     <input
                       type="checkbox"
-                      id={`${plugin.manifest.name}-enabled`}
+                      id={`${plugin.manifest?.name}-enabled`}
                       name="enabled"
                       checked={!!plugin.enabled}
                       onChange={() => ECHO_PLUGIN_SERVICE.togglePlugin(plugin)}
