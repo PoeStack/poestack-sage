@@ -1,4 +1,4 @@
-import { ECHO_ROUTER } from './echo-router'
+import { ECHO_ROUTER, EchoRoute } from './echo-router'
 import { CachedTask, CachedTaskEvent } from './cached-task'
 import { ECHO_DIR } from './echo-dir-service'
 import { EchoPluginHook } from './echo-plugin-hook'
@@ -21,6 +21,7 @@ import {
   usePoeStashes
 } from './poe-stash-service'
 import { POE_LOG_SERVICE, PoeLogService } from './poe-log-service'
+import { ECHO_PLUGIN_CONFIG, EchoPluginConfigs, EchoPluginConfig } from './echo-plugin-config'
 
 export {
   PoeStashService,
@@ -28,6 +29,7 @@ export {
   usePoeStashes,
   usePoeStashItems,
   ECHO_DIR,
+  ECHO_PLUGIN_CONFIG,
   CachedTask,
   ECHO_ROUTER,
   PoeAccountService,
@@ -42,4 +44,4 @@ export {
   POE_LOG_SERVICE
 }
 
-export type { EchoPluginHook, CachedTaskEvent }
+export type { EchoPluginHook, CachedTaskEvent, EchoPluginConfigs, EchoPluginConfig, EchoRoute }
