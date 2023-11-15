@@ -19,7 +19,7 @@ jobs:
           java-version: "17"
       - uses: actions/checkout@v3
       - name: update plugins.json
-        working-directory: ./src/echo_tools
+        working-directory: src/echo_tools
         run: node src/build-plugins-json.mjs
       - name: npm install
         run: ./gradlew npmInstall
