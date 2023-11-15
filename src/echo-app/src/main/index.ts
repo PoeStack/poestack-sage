@@ -67,8 +67,9 @@ app.whenReady().then(() => {
     function notifyOfRemoteAuth(token: string) {
       mainWindow?.webContents.send('AUTH_TOKEN_RECEIVED', { TOKEN_RECEIVED: token })
     }
-    server = createLocalServer(notifyOfRemoteAuth)
-    server.listen(8000)
+    if (!server || !server.listening) {
+      server = createLocalServer(notifyOfRemoteAuth)
+    }
   }
 
   app.on('activate', function () {
@@ -78,8 +79,16 @@ app.whenReady().then(() => {
   })
 })
 
+app.on('will-quit', function (e) {
+  if (server && server.listening) {
+    e.preventDefault()
+    server?.close(() => {
+      app.quit()
+    })
+  }
+})
+
 app.on('window-all-closed', () => {
-  server?.close()
   if (process.platform !== 'darwin') {
     app.quit()
   }
