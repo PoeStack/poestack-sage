@@ -1,10 +1,10 @@
 import { map, Observable, tap } from 'rxjs'
 import { PoeCharacter, PoeLeague, PoePartialStashTab, PoeProfile, PoeStashTab } from 'sage-common'
 import { PoeLeagueAccount } from 'sage-common/dist/cjs/ggg/poe-api-models'
-import { HttpUtil } from './http-util'
+import { GggHttpUtil } from './ggg-http-util'
 export class GggApi {
 
-  private httpUtil = new HttpUtil()
+  constructor(private httpUtil: GggHttpUtil) {}
 
   public getProfile(): Observable<PoeProfile> {
     return this.httpUtil.get<PoeProfile>(`/profile`)

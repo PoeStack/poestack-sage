@@ -1,5 +1,5 @@
 import { EchoDirService } from './echo-dir-service'
-import { EchoPluginConfigs } from './echo-plugin-config'
+import { EchoPluginService } from './echo-plugin-service'
 import { EchoRouter } from './echo-router'
 import { PoeAccountService } from './poe-account-service'
 import { PoeCharactersService } from './poe-characters-service'
@@ -8,12 +8,13 @@ import { PoeStashService } from './poe-stash-service'
 import { SageValuationService } from './sage-valuation-service'
 
 export type EchoContext = {
+  source: string,
   dir: EchoDirService
-  pluginService: EchoPluginConfigs
+  plugins: EchoPluginService,
   router: EchoRouter
-  poeAccountService: PoeAccountService
-  poeCharactersService: PoeCharactersService
-  poeLogService: PoeLogService
-  poeStashService: PoeStashService
-  sageValuationService: SageValuationService
+  poeAccounts: PoeAccountService
+  poeCharacters: PoeCharactersService
+  poeLog: PoeLogService
+  poeStash: PoeStashService
+  poeValuations: SageValuationService
 }

@@ -1,10 +1,9 @@
-import { ReactElement } from 'react'
 import { BehaviorSubject } from 'rxjs'
 
 export type EchoRoute = {
   plugin: string
   path: string
-  page: ReactElement
+  page: () => JSX.Element
   navItems?: EchoRouterNavItem[] | null
 }
 

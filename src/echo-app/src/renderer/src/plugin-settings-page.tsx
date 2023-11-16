@@ -1,12 +1,9 @@
 import { bind } from '@react-rxjs/core'
-import { ECHO_PLUGIN_SERVICE } from 'echo-common'
-import React from 'react'
+import { APP_CONTEXT } from './echo-context-factory'
 
+const [usePlugins] = bind(APP_CONTEXT.plugins.currentPlugins$, {})
 
-const [usePlugins] = bind(ECHO_PLUGIN_SERVICE.currentPlugins$, {})
-
-
-export const PluginSettingsPage: React.FC = () => {
+export const PluginSettingsPage = () => {
   const pluginMap = usePlugins()
   const plugins = Object.values(pluginMap)
 
@@ -30,14 +27,14 @@ export const PluginSettingsPage: React.FC = () => {
                 <tr key={plugin.key}>
                   <td>{plugin.manifest?.name}</td>
                   <td>{plugin.manifest?.version}</td>
-                  {!plugin.path && <td onClick={() => ECHO_PLUGIN_SERVICE.installPlugin(plugin)}>Install</td>}
+                  {!plugin.path && <td onClick={() => APP_CONTEXT.plugins.installPlugin(plugin)}>Install</td>}
                   <td className="text-center">
                     <input
                       type="checkbox"
                       id={`${plugin.manifest?.name}-enabled`}
                       name="enabled"
                       checked={!!plugin.enabled}
-                      onChange={() => ECHO_PLUGIN_SERVICE.togglePlugin(plugin)}
+                      onChange={() => APP_CONTEXT.plugins.togglePlugin(plugin)}
                     />
                   </td>
                 </tr>
