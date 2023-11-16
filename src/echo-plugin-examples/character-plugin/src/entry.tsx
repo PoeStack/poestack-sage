@@ -1,29 +1,30 @@
+import { ECHO_CONTEXT_SERVICE, EchoPluginHook, EchoRoute } from 'echo-common'
+export function context(){
+  return ECHO_CONTEXT_SERVICE.context("plugin")
+}
+
 // noinspection JSUnusedGlobalSymbols
-import { lazy } from 'react';
-const App = lazy(() => import("./App"))
 import { UsersIcon } from '@heroicons/react/24/outline'
-import { EchoContext, EchoPluginHook, EchoRoute } from 'echo-common'
+import App from './App';
 
+const pluginRoute: EchoRoute = {
+  plugin: 'example-characters',
+  path: 'main',
+  page: App,
+  navItems: [
+    {
+      location: 'l-sidebar-m',
+      icon: UsersIcon
+    }
+  ]
+}
 
-export var CONTEXT: EchoContext
-
-function start(context: EchoContext) {
-  CONTEXT = context
-  const pluginRoute: EchoRoute = {
-    plugin: 'example-characters',
-    path: 'main',
-    page: App,
-    navItems: [
-      {
-        location: 'l-sidebar-m',
-        icon: UsersIcon
-      }
-    ]
-  }
-  CONTEXT.router.registerRoute(pluginRoute)
+function start() {
+  context().router.registerRoute(pluginRoute)
 }
 
 function destroy() {
+  context().router.unregisterRoute(pluginRoute)
 }
 
 export default function(): EchoPluginHook {
@@ -32,5 +33,3 @@ export default function(): EchoPluginHook {
     destroy: destroy
   }
 }
-
-// export { App }

@@ -1,7 +1,7 @@
 import { QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
 import { CpuChipIcon, HomeIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import { bind } from '@react-rxjs/core'
-import { EchoPluginHook } from 'echo-common'
+import { ECHO_CONTEXT_SERVICE, EchoPluginHook } from 'echo-common'
 import { EchoRoute } from 'echo-common/dist/cjs/echo-router'
 import React, { Suspense, useEffect } from 'react'
 import { ProfilePage } from './profile-page'
@@ -62,10 +62,12 @@ export const PluginPage: React.FC = () => {
   useEffect(() => {
     if (import.meta.env.MODE === 'development') {
       DEV_PLUGINS.forEach((e: Promise<{ default: () => EchoPluginHook }>) => {
+        const context = buildContext("plugin")
+        ECHO_CONTEXT_SERVICE.contexts['plugin'] = context
+
         e.then((entry: { default: () => EchoPluginHook }) => {
           const plugin: EchoPluginHook = entry.default()
-          const context = buildContext("dev-plugin")
-          plugin.start(context)
+          plugin.start()
         })
       })
     } else {

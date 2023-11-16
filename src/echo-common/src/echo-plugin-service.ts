@@ -5,6 +5,7 @@ import { EchoPluginHook } from './echo-plugin-hook'
 import path from 'path'
 import { EchoDirService } from './echo-dir-service'
 import { EchoContext } from './echo-context'
+import { ECHO_CONTEXT_SERVICE } from './echo-context-service'
 
 export type EchoPluginManifest = { name: string; version: string; echoCommonVersion: string }
 
@@ -37,10 +38,12 @@ export class EchoPluginService {
       Object.values(e).forEach((p) => {
         if (p.enabled && p.path && !p.hook) {
           this.persistEnabledPlugins()
+          const context = buildContext("plugin")
+          ECHO_CONTEXT_SERVICE.contexts['plugin'] = context
+
           const pluginEntry = module.require(p.path)
           const hook: EchoPluginHook = pluginEntry()
-          const context = buildContext("todo add plugin name")
-          hook.start(context)
+          hook.start()
           this.plugins$.next({ key: p.key, hook: hook })
         }
 

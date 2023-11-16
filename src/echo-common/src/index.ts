@@ -10,6 +10,7 @@ import { EchoDirService } from './echo-dir-service'
 import { EchoContext } from './echo-context'
 import { EchoPluginService } from './echo-plugin-service'
 import { SageValuationService } from './sage-valuation-service'
+import { ECHO_CONTEXT_SERVICE, EchoContextService } from './echo-context-service'
 
 export {
   PoeStashService,
@@ -20,7 +21,9 @@ export {
   PoeCharactersService,
   PoeLogService,
   EchoRouter,
-  EchoDirService
+  EchoDirService,
+  EchoContextService,
+  ECHO_CONTEXT_SERVICE
 }
 
 export type {
