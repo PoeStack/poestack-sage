@@ -1,18 +1,21 @@
 import { QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
 import { CpuChipIcon, HomeIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import { bind } from '@react-rxjs/core'
-import { ECHO_PLUGIN_CONFIG, ECHO_PLUGIN_SERVICE, ECHO_ROUTER, EchoPluginHook } from 'echo-common'
+import { ECHO_CONTEXT_SERVICE, EchoPluginHook } from 'echo-common'
 import { EchoRoute } from 'echo-common/dist/cjs/echo-router'
-import React, { useEffect } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import { ProfilePage } from './profile-page'
 import { PluginSettingsPage } from './plugin-settings-page'
 // @ts-ignore
 import { DEV_PLUGINS } from './dev-plugins'
+import { APP_CONTEXT, buildContext } from './echo-context-factory'
 
-const [useCurrentRoute] = bind(ECHO_ROUTER.currentRoute$)
-const [useCurrentRoutes] = bind(ECHO_ROUTER.routes$)
+const [useCurrentRoute] = bind(APP_CONTEXT.router.currentRoute$)
+const [useCurrentRoutes] = bind(APP_CONTEXT.router.routes$)
 
 export const PluginPage: React.FC = () => {
+  const { router, plugins } = APP_CONTEXT
+
   const currentRoute = useCurrentRoute()
 
   const PluginBody = currentRoute?.page ?? DefaultPage
@@ -29,10 +32,10 @@ export const PluginPage: React.FC = () => {
       path: 'home',
       plugin: 'sage'
     }
-    ECHO_ROUTER.registerRoute(homeRoute)
-    ECHO_ROUTER.push(homeRoute)
+    router.registerRoute(homeRoute)
+    router.push(homeRoute)
 
-    ECHO_ROUTER.registerRoute({
+    router.registerRoute({
       navItems: [
         {
           location: 'l-sidebar-b',
@@ -43,7 +46,7 @@ export const PluginPage: React.FC = () => {
       path: 'profile',
       plugin: 'sage'
     })
-    ECHO_ROUTER.registerRoute({
+    router.registerRoute({
       navItems: [
         {
           location: 'l-sidebar-b',
@@ -58,15 +61,18 @@ export const PluginPage: React.FC = () => {
 
   useEffect(() => {
     if (import.meta.env.MODE === 'development') {
-      DEV_PLUGINS.forEach((e) => {
-        e.then((entry) => {
+      DEV_PLUGINS.forEach((e: Promise<{ default: () => EchoPluginHook }>) => {
+        const context = buildContext('plugin')
+        ECHO_CONTEXT_SERVICE.contexts['plugin'] = context
+
+        e.then((entry: { default: () => EchoPluginHook }) => {
           const plugin: EchoPluginHook = entry.default()
           plugin.start()
         })
       })
+    } else {
+      plugins.loadPlugins()
     }
-
-    ECHO_PLUGIN_SERVICE.loadPlugins()
   }, [])
 
   return (
@@ -77,7 +83,9 @@ export const PluginPage: React.FC = () => {
         <RouterIconNavigator location="l-sidebar-b" />
       </div>
       <div className="ml-12 pb-7 pt-7 h-full">
-        {typeof PluginBody === 'function' ? <PluginBody /> : PluginBody}
+        <Suspense fallback={<DefaultPage />}>
+          <PluginBody />
+        </Suspense>
       </div>
     </>
   )
@@ -102,7 +110,7 @@ const RouterIconNavigator = ({ location }: { location: string }) => {
                   (currentRoute === echoRoute ? 'text-primary-accent' : '')
                 }
                 onClick={() => {
-                  ECHO_ROUTER.push(echoRoute)
+                  APP_CONTEXT.router.push(echoRoute)
                 }}
               ></Icon>
             )

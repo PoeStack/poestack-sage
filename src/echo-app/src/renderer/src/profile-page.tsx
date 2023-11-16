@@ -1,11 +1,12 @@
-import React from 'react'
-import { ECHO_DIR, POE_ACCOUNT_SERVICE, usePoeProfile } from 'echo-common'
-import { GGG_API_UTIL } from 'ggg-api'
+import { bind } from '@react-rxjs/core'
+import { APP_CONTEXT, GGG_HTTP_UTIL } from './echo-context-factory'
+
+const [usePoeProfile] = bind(APP_CONTEXT.poeAccounts.poeProfile(), null)
 
 export function ProfilePage() {
   const profile = usePoeProfile()
 
-  POE_ACCOUNT_SERVICE.profile.load('profile').subscribe()
+  APP_CONTEXT.poeAccounts.profile.load('profile').subscribe()
 
   return (
     <>
@@ -15,8 +16,8 @@ export function ProfilePage() {
           <div>Welcome {profile?.name} to your profile</div>
           <button
             onClick={() => {
-              ECHO_DIR.deleteJson('auth')
-              GGG_API_UTIL.tokenSubject$.next(undefined)
+              APP_CONTEXT.dir.deleteJson('auth')
+              GGG_HTTP_UTIL.tokenSubject$.next(undefined)
             }}
           >
             Logout

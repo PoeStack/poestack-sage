@@ -6,8 +6,8 @@ export class EchoDirService {
   homeDirPath = path.resolve(os.homedir(), 'poestack-sage')
 
   constructor() {
-    this.ensureDirExists("plugins")
-    this.ensureDirExists("cache")
+    this.ensureDirExists('plugins')
+    this.ensureDirExists('cache')
   }
 
   public ensureDirExists(...dirPathFragment: string[]) {
@@ -46,5 +46,3 @@ export class EchoDirService {
     return value
   }
 }
-
-export const ECHO_DIR = new EchoDirService()

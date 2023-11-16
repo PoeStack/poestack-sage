@@ -1,8 +1,11 @@
-// noinspection JSUnusedGlobalSymbols
+import { ECHO_CONTEXT_SERVICE, EchoPluginHook, EchoRoute } from 'echo-common'
+export function context() {
+  return ECHO_CONTEXT_SERVICE.context('plugin')
+}
 
-import App from './App'
+// noinspection JSUnusedGlobalSymbols
 import { UsersIcon } from '@heroicons/react/24/outline'
-import { ECHO_ROUTER, EchoPluginHook, EchoRoute } from 'echo-common'
+import App from './App'
 
 const pluginRoute: EchoRoute = {
   plugin: 'example-characters',
@@ -17,11 +20,11 @@ const pluginRoute: EchoRoute = {
 }
 
 function start() {
-  ECHO_ROUTER.registerRoute(pluginRoute)
+  context().router.registerRoute(pluginRoute)
 }
 
 function destroy() {
-  ECHO_ROUTER.unregisterRoute(pluginRoute)
+  context().router.unregisterRoute(pluginRoute)
 }
 
 export default function (): EchoPluginHook {
@@ -30,5 +33,3 @@ export default function (): EchoPluginHook {
     destroy: destroy
   }
 }
-
-// export { App }

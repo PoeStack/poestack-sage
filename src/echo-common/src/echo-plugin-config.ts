@@ -1,4 +1,4 @@
-import { ECHO_DIR } from './echo-dir-service'
+import { EchoDirService } from './echo-dir-service'
 
 export type EchoPluginConfig = {
   name: string
@@ -10,9 +10,11 @@ export type EchoPluginConfig = {
 export type EchoPluginConfigs = Record<string, EchoPluginConfig>
 
 export class EchoPluginConfigService {
+  constructor(private echoDir: EchoDirService) {}
+
   public loadPluginConfigs(): EchoPluginConfigs {
-    if (ECHO_DIR.existsJson('plugin-config')) {
-      const loadedPluginConfig: EchoPluginConfigs | null = ECHO_DIR.loadJson('plugin-config')
+    if (this.echoDir.existsJson('plugin-config')) {
+      const loadedPluginConfig: EchoPluginConfigs | null = this.echoDir.loadJson('plugin-config')
       if (loadedPluginConfig) {
         return loadedPluginConfig
       }
@@ -21,8 +23,6 @@ export class EchoPluginConfigService {
   }
 
   public writePluginConfigs(pluginConfigObject: EchoPluginConfigs): EchoPluginConfigs {
-    return ECHO_DIR.writeJson(['plugin-config'], pluginConfigObject)
+    return this.echoDir.writeJson(['plugin-config'], pluginConfigObject)
   }
 }
-
-export const ECHO_PLUGIN_CONFIG = new EchoPluginConfigService()

@@ -1,5 +1,9 @@
 import { useState } from 'react'
-import { POE_STASH_SERVICE, usePoeStashes, usePoeStashItems } from 'echo-common'
+import { context } from './entry'
+import { bind } from '@react-rxjs/core'
+
+const [usePoeStashItems] = bind((league: string) => context().poeStash.stashItems(league), [])
+const [usePoeStashes] = bind((league: string) => context().poeStash.stashTabs(league), [])
 
 const App = () => {
   const league = 'Ancestor'
@@ -17,7 +21,7 @@ const App = () => {
         new Date(a.stash.loadedAtTimestamp).getTime()
     )
 
-  POE_STASH_SERVICE.currentStashes.load(league).subscribe()
+  context().poeStash.currentStashes.load(league).subscribe()
 
   return (
     <>
@@ -29,7 +33,7 @@ const App = () => {
               style={{ backgroundColor: `#${e.metadata.colour}` }}
               className="flex-shrink-0 cursor-pointer py-2 px-4 shadow-md no-underline rounded-full  text-white text-sm hover:text-white hover:bg-blue-light focus:outline-none active:shadow-none mr-2"
               onClick={() =>
-                POE_STASH_SERVICE.currentStashContents.load(`${e.league}_${e.id}`).subscribe()
+                context().poeStash.currentStashContents.load(`${e.league}_${e.id}`).subscribe()
               }
             >
               {e.name}
