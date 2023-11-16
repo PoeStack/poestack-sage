@@ -4,6 +4,7 @@ import fs from 'fs'
 import { EchoPluginHook } from './echo-plugin-hook'
 import path from 'path'
 import { EchoDirService } from './echo-dir-service'
+import { EchoContext } from './echo-context'
 
 export type EchoPluginManifest = { name: string; version: string; echoCommonVersion: string }
 
@@ -22,7 +23,7 @@ export class EchoPluginService {
   public plugins$ = new Subject<EchoPlugin>()
   public currentPlugins$ = new BehaviorSubject<{ [key: string]: EchoPlugin }>({})
 
-  constructor(private echoDir: EchoDirService) {
+  constructor(private echoDir: EchoDirService, private buildContext: (source: string) => EchoContext) {
     this.plugins$
       .pipe(
         tap((e) => console.log('plugin-event', e)),
@@ -38,7 +39,8 @@ export class EchoPluginService {
           this.persistEnabledPlugins()
           const pluginEntry = module.require(p.path)
           const hook: EchoPluginHook = pluginEntry()
-          hook.start()
+          const context = buildContext("todo add plugin name")
+          hook.start(context)
           this.plugins$.next({ key: p.key, hook: hook })
         }
 

@@ -2,7 +2,7 @@ import { EchoContext, EchoDirService, EchoPluginService, EchoRouter, PoeAccountS
 import { GggApi, GggHttpUtil } from "ggg-api";
 
 const ECHO_DIR = new EchoDirService()
-const ECHO_PLUGIN_SERVICE = new EchoPluginService(ECHO_DIR)
+const ECHO_PLUGIN_SERVICE = new EchoPluginService(ECHO_DIR, buildContext)
 const ECHO_ROUTER = new EchoRouter()
 
 export const GGG_HTTP_UTIL = new GggHttpUtil()
@@ -14,7 +14,7 @@ const POE_STASH_SERVICE = new PoeStashService(ECHO_DIR, GGG_API, SAGE_VALUATION_
 const POE_CHARCTERS_SERVICE = new PoeCharactersService(ECHO_DIR, GGG_API)
 
 
-function buildContext(contextSource: string): EchoContext {
+export function buildContext(contextSource: string): EchoContext {
   return {
     source: contextSource,
     dir: ECHO_DIR,

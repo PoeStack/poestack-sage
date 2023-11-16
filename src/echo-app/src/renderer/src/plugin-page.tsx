@@ -3,18 +3,18 @@ import { CpuChipIcon, HomeIcon, UserCircleIcon } from '@heroicons/react/24/outli
 import { bind } from '@react-rxjs/core'
 import { EchoPluginHook } from 'echo-common'
 import { EchoRoute } from 'echo-common/dist/cjs/echo-router'
-import React, { useEffect } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import { ProfilePage } from './profile-page'
 import { PluginSettingsPage } from './plugin-settings-page'
 // @ts-ignore
 import { DEV_PLUGINS } from './dev-plugins'
-import { APP_CONTEXT } from './echo-context-factory'
+import { APP_CONTEXT, buildContext } from './echo-context-factory'
 
 const [useCurrentRoute] = bind(APP_CONTEXT.router.currentRoute$)
 const [useCurrentRoutes] = bind(APP_CONTEXT.router.routes$)
 
 export const PluginPage: React.FC = () => {
-  const {router, plugins} = APP_CONTEXT
+  const { router, plugins } = APP_CONTEXT
 
   const currentRoute = useCurrentRoute()
 
@@ -64,12 +64,13 @@ export const PluginPage: React.FC = () => {
       DEV_PLUGINS.forEach((e: Promise<{ default: () => EchoPluginHook }>) => {
         e.then((entry: { default: () => EchoPluginHook }) => {
           const plugin: EchoPluginHook = entry.default()
-          plugin.start()
+          const context = buildContext("dev-plugin")
+          plugin.start(context)
         })
       })
+    } else {
+      plugins.loadPlugins()
     }
-
-    plugins.loadPlugins()
   }, [])
 
   return (
@@ -80,7 +81,9 @@ export const PluginPage: React.FC = () => {
         <RouterIconNavigator location="l-sidebar-b" />
       </div>
       <div className="ml-12 pb-7 pt-7 h-full">
-        {typeof PluginBody === 'function' ? <PluginBody /> : PluginBody}
+        <Suspense fallback={<DefaultPage />}>
+          <PluginBody />
+        </Suspense>
       </div>
     </>
   )

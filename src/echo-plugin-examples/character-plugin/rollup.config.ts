@@ -11,6 +11,7 @@ const config: RollupOptions = {
   input: 'src/entry.tsx',
   external: ['fs'],
   output: {
+    inlineDynamicImports: true,
     file: `./dist/${packageJson.name}.js`,
     format: 'cjs'
   },

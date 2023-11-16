@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs'
 export type EchoRoute = {
   plugin: string
   path: string
-  page: () => JSX.Element
+  page: any
   navItems?: EchoRouterNavItem[] | null
 }
 

@@ -1,5 +1,9 @@
-import React, { useState } from 'react'
-import { POE_CHARACTER_SERVICE, usePoeCharacter, usePoeCharacterList } from 'echo-common'
+import { useState } from 'react'
+import { bind } from '@react-rxjs/core'
+import { CONTEXT } from './entry'
+
+const [usePoeCharacterList] = bind(CONTEXT.poeCharacters.characterList(), [])
+const [usePoeCharacter] = bind((name: string) => CONTEXT.poeCharacters.character(name), null)
 
 const App = () => {
   const [selectedName, setSelectedName] = useState<string | null>(null)
@@ -7,7 +11,7 @@ const App = () => {
   const characterList = usePoeCharacterList()
   const selectedCharacter = usePoeCharacter(selectedName)
 
-  POE_CHARACTER_SERVICE.characterList.load('character_list').subscribe()
+  CONTEXT.poeCharacters.characterListCache.load('character_list').subscribe()
 
   return (
     <>
@@ -17,7 +21,7 @@ const App = () => {
             <div
               key={c.id}
               onClick={() => {
-                POE_CHARACTER_SERVICE.characters.load(c.name).subscribe()
+                CONTEXT.poeCharacters.characterCache.load(c.name).subscribe()
                 setSelectedName(c.name)
               }}
               className="cursor-pointer bg-input-surface rounded-lg p-2 flex flex-col"
