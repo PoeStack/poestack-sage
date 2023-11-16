@@ -47,4 +47,3 @@ export class EchoDirService {
   }
 }
 
-export const ECHO_DIR = new EchoDirService()

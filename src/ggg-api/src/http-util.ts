@@ -29,4 +29,3 @@ export class HttpUtil {
   }
 }
 
-export const GGG_API_UTIL = new HttpUtil()
