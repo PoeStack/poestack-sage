@@ -32,6 +32,7 @@
     "jsonwebtoken": "^9.0.2",
     "poe-log-plugin": "file:../echo-plugin-examples/poe-log-plugin",
     "stash-plugin": "file:../echo-plugin-examples/stash-plugin",
+    "hideout-is-lava-plugin": "file:../echo-plugins/hideout-is-lava-plugin",
     "typescript": "^5.2.2"
   },
   "optionalDependencies": {

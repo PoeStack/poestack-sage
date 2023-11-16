@@ -1,0 +1,49 @@
+{
+  "name": "hideout-is-lava-plugin",
+  "private": true,
+  "version": "0.0.0",
+  "type": "commonjs",
+  "main": "./dist/hideout-is-lava-plugin.js",
+  "module": "./dist/hideout-is-lava-plugin.js",
+  "exports": {
+    "development": "./src/entry.tsx",
+    "default": "./dist/hideout-is-lava-plugin.js"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "start": "npm run build && cd ../../echo-app && npm start",
+    "dev": "cd ../../echo-app && npm run dev",
+    "build": "npm run clean && rollup -c --configPlugin typescript",
+    "format": "prettier --write ./src",
+    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../../eslint-config-sage"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "@heroicons/react": "^2.0.18",
+    "react-dom": "^18.2.0",
+    "ggg-api": "file:../../ggg-api",
+    "@react-rxjs/core": "^0.10.7",
+    "@react-rxjs/utils": "^0.9.7",
+    "rxjs": "^7.8.1",
+    "echo-common": "file:../../echo-common"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-darwin-x64": "^4.3.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/node": "^20.8.7",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "rimraf": "^5.0.5",
+    "rollup": "^4.2.0",
+    "rollup-plugin-peer-deps-external": "^2.2.3",
+    "rollup-plugin-copy": "^3.5.0",
+    "tslib": "^2.6.2",
+    "typescript": "^5.2.2",
+    "prettier": "^3.0.3",
+    "eslint": "^8.53.0",
+    "@typescript-eslint/parser": "^6.10.0"
+  }
+}
