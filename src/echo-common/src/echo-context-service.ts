@@ -1,8 +1,7 @@
-import { EchoContext } from "./echo-context";
+import { EchoContext } from './echo-context'
 
 export class EchoContextService {
-
-  public contexts: {[source: string]: EchoContext} = {}
+  public contexts: { [source: string]: EchoContext } = {}
 
   public context(source: string): EchoContext {
     return this.contexts[source]

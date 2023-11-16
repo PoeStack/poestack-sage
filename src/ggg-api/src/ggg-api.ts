@@ -3,7 +3,6 @@ import { PoeCharacter, PoeLeague, PoePartialStashTab, PoeProfile, PoeStashTab } 
 import { PoeLeagueAccount } from 'sage-common/dist/cjs/ggg/poe-api-models'
 import { GggHttpUtil } from './ggg-http-util'
 export class GggApi {
-
   constructor(private httpUtil: GggHttpUtil) {}
 
   public getProfile(): Observable<PoeProfile> {
@@ -11,27 +10,27 @@ export class GggApi {
   }
 
   public getLeagues(): Observable<PoeLeague[]> {
-    return this.httpUtil.get<{ leagues: PoeLeague[] }>('/account/leagues').pipe(
-      map((e) => e?.leagues)
-    )
+    return this.httpUtil
+      .get<{ leagues: PoeLeague[] }>('/account/leagues')
+      .pipe(map((e) => e?.leagues))
   }
 
   public getCharacters(): Observable<PoeCharacter[]> {
-    return this.httpUtil.get<{ characters: PoeCharacter[] }>(`/character`).pipe(
-      map((e) => e?.characters)
-    )
+    return this.httpUtil
+      .get<{ characters: PoeCharacter[] }>(`/character`)
+      .pipe(map((e) => e?.characters))
   }
 
   public getCharacter(name: string): Observable<PoeCharacter> {
-    return this.httpUtil.get<{ character: PoeCharacter }>(`/character/${name}`).pipe(
-      map((e) => e?.character)
-    )
+    return this.httpUtil
+      .get<{ character: PoeCharacter }>(`/character/${name}`)
+      .pipe(map((e) => e?.character))
   }
 
   public getLeagueAccount(league: string): Observable<PoeLeagueAccount> {
-    return this.httpUtil.get<{ league_account: PoeLeagueAccount }>(`/league-account/${league}`).pipe(
-      map((e) => e.league_account)
-    )
+    return this.httpUtil
+      .get<{ league_account: PoeLeagueAccount }>(`/league-account/${league}`)
+      .pipe(map((e) => e.league_account))
   }
 
   public getStashes(league: string): Observable<PoePartialStashTab[]> {

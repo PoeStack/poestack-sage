@@ -62,7 +62,7 @@ export const PluginPage: React.FC = () => {
   useEffect(() => {
     if (import.meta.env.MODE === 'development') {
       DEV_PLUGINS.forEach((e: Promise<{ default: () => EchoPluginHook }>) => {
-        const context = buildContext("plugin")
+        const context = buildContext('plugin')
         ECHO_CONTEXT_SERVICE.contexts['plugin'] = context
 
         e.then((entry: { default: () => EchoPluginHook }) => {

@@ -5,7 +5,6 @@ import { bind } from '@react-rxjs/core'
 const [usePoeStashItems] = bind((league: string) => context().poeStash.stashItems(league), [])
 const [usePoeStashes] = bind((league: string) => context().poeStash.stashTabs(league), [])
 
-
 const App = () => {
   const league = 'Ancestor'
 

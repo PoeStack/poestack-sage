@@ -27,7 +27,9 @@ export const PluginSettingsPage = () => {
                 <tr key={plugin.key}>
                   <td>{plugin.manifest?.name}</td>
                   <td>{plugin.manifest?.version}</td>
-                  {!plugin.path && <td onClick={() => APP_CONTEXT.plugins.installPlugin(plugin)}>Install</td>}
+                  {!plugin.path && (
+                    <td onClick={() => APP_CONTEXT.plugins.installPlugin(plugin)}>Install</td>
+                  )}
                   <td className="text-center">
                     <input
                       type="checkbox"

@@ -3,7 +3,9 @@ import { BehaviorSubject, combineLatestWith, filter, interval, map } from 'rxjs'
 import { context } from './entry'
 
 const lastZone$ = new BehaviorSubject(null)
-context().poeLog.logEvents$.pipe(filter((e) => e.type == 'ZoneEntranceEvent')).subscribe(lastZone$)
+context()
+  .poeLog.logEvents$.pipe(filter((e) => e.type == 'ZoneEntranceEvent'))
+  .subscribe(lastZone$)
 
 export const [useCurrentZone] = bind(
   interval(100).pipe(

@@ -1,6 +1,6 @@
 import { ECHO_CONTEXT_SERVICE, EchoPluginHook, EchoRoute } from 'echo-common'
-export function context(){
-  return ECHO_CONTEXT_SERVICE.context("plugin")
+export function context() {
+  return ECHO_CONTEXT_SERVICE.context('plugin')
 }
 
 // noinspection JSUnusedGlobalSymbols

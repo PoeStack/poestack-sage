@@ -24,7 +24,10 @@ export class EchoPluginService {
   public plugins$ = new Subject<EchoPlugin>()
   public currentPlugins$ = new BehaviorSubject<{ [key: string]: EchoPlugin }>({})
 
-  constructor(private echoDir: EchoDirService, private buildContext: (source: string) => EchoContext) {
+  constructor(
+    private echoDir: EchoDirService,
+    private buildContext: (source: string) => EchoContext
+  ) {
     this.plugins$
       .pipe(
         tap((e) => console.log('plugin-event', e)),
@@ -38,7 +41,7 @@ export class EchoPluginService {
       Object.values(e).forEach((p) => {
         if (p.enabled && p.path && !p.hook) {
           this.persistEnabledPlugins()
-          const context = buildContext("plugin")
+          const context = buildContext('plugin')
           ECHO_CONTEXT_SERVICE.contexts['plugin'] = context
 
           const pluginEntry = module.require(p.path)

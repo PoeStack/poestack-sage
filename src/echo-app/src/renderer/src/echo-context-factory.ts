@@ -1,5 +1,15 @@
-import { EchoContext, EchoDirService, EchoPluginService, EchoRouter, PoeAccountService, PoeCharactersService, PoeLogService, PoeStashService, SageValuationService } from "echo-common";
-import { GggApi, GggHttpUtil } from "ggg-api";
+import {
+  EchoContext,
+  EchoDirService,
+  EchoPluginService,
+  EchoRouter,
+  PoeAccountService,
+  PoeCharactersService,
+  PoeLogService,
+  PoeStashService,
+  SageValuationService
+} from 'echo-common'
+import { GggApi, GggHttpUtil } from 'ggg-api'
 
 const ECHO_DIR = new EchoDirService()
 const ECHO_PLUGIN_SERVICE = new EchoPluginService(ECHO_DIR, buildContext)
@@ -12,7 +22,6 @@ const POE_LOG_SERVICE = new PoeLogService()
 const SAGE_VALUATION_SERVICE = new SageValuationService(ECHO_DIR)
 const POE_STASH_SERVICE = new PoeStashService(ECHO_DIR, GGG_API, SAGE_VALUATION_SERVICE)
 const POE_CHARCTERS_SERVICE = new PoeCharactersService(ECHO_DIR, GGG_API)
-
 
 export function buildContext(contextSource: string): EchoContext {
   return {
@@ -28,5 +37,4 @@ export function buildContext(contextSource: string): EchoContext {
   }
 }
 
-export const APP_CONTEXT = buildContext("echo-app")
-
+export const APP_CONTEXT = buildContext('echo-app')

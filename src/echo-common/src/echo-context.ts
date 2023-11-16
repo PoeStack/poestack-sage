@@ -8,9 +8,9 @@ import { PoeStashService } from './poe-stash-service'
 import { SageValuationService } from './sage-valuation-service'
 
 export type EchoContext = {
-  source: string,
+  source: string
   dir: EchoDirService
-  plugins: EchoPluginService,
+  plugins: EchoPluginService
   router: EchoRouter
   poeAccounts: PoeAccountService
   poeCharacters: PoeCharactersService
