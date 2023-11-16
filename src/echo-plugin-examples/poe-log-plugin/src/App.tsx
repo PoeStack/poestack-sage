@@ -1,10 +1,9 @@
-import React from 'react'
 import { bind } from '@react-rxjs/core'
-import { POE_LOG_SERVICE } from 'echo-common'
 import { BehaviorSubject, combineLatestWith, filter, interval, map } from 'rxjs'
+import { context } from './entry'
 
 const lastZone$ = new BehaviorSubject(null)
-POE_LOG_SERVICE.logEvents$.pipe(filter((e) => e.type == 'ZoneEntranceEvent')).subscribe(lastZone$)
+context().poeLog.logEvents$.pipe(filter((e) => e.type == 'ZoneEntranceEvent')).subscribe(lastZone$)
 
 export const [useCurrentZone] = bind(
   interval(100).pipe(

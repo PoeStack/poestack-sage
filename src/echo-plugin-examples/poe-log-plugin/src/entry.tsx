@@ -1,8 +1,12 @@
+import { ECHO_CONTEXT_SERVICE, EchoPluginHook, EchoRoute } from 'echo-common'
+export function context(){
+  return ECHO_CONTEXT_SERVICE.context("plugin")
+}
+
 // noinspection JSUnusedGlobalSymbols
 
 import App from './App'
 import { DocumentTextIcon } from '@heroicons/react/24/outline'
-import { ECHO_ROUTER, EchoPluginHook, EchoRoute } from 'echo-common'
 
 const pluginRoute: EchoRoute = {
   plugin: 'example-log-plugin-stash',
@@ -12,11 +16,11 @@ const pluginRoute: EchoRoute = {
 }
 
 function start() {
-  ECHO_ROUTER.registerRoute(pluginRoute)
+  context().router.registerRoute(pluginRoute)
 }
 
 function destroy() {
-  ECHO_ROUTER.unregisterRoute(pluginRoute)
+  context().router.unregisterRoute(pluginRoute)
 }
 
 export default function (): EchoPluginHook {
