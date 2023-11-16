@@ -1,20 +1,16 @@
 import {
   BehaviorSubject,
-  concatMap,
   filter,
   groupBy,
   map,
   mergeMap,
   Observable,
-  of,
   Subject,
-  switchMap,
   take,
-  timer
 } from 'rxjs'
 import { throttleTime } from 'rxjs/operators'
 import { filterNullish } from 'ts-ratchet'
-import { ECHO_DIR } from './echo-dir-service'
+import { EchoDirService } from './echo-dir-service'
 
 export type CachedTaskEvent<T> = {
   key: string
@@ -29,7 +25,7 @@ export class CachedTask<T> {
   public events$ = new Subject<CachedTaskEvent<T>>()
   public cache$ = new BehaviorSubject<{ [key: string]: CachedTaskEvent<T> }>({})
 
-  constructor(loadFun: (key: string) => Observable<T | null>) {
+  constructor(private dir: EchoDirService, loadFun: (key: string) => Observable<T | null>) {
     this.tasks$
       .pipe(
         filter(({ key }) => !this.isValid(this.cache$.value[key])),
@@ -59,8 +55,8 @@ export class CachedTask<T> {
       return false
     }
 
-    if (ECHO_DIR.existsJson('cache', key)) {
-      const localCachedValue = ECHO_DIR.loadJson<CachedTaskEvent<T>>('cache', key)
+    if (this.dir.existsJson('cache', key)) {
+      const localCachedValue = this.dir.loadJson<CachedTaskEvent<T>>('cache', key)
       if (this.isValid(localCachedValue)) {
         this.cache$.next({ ...this.cache$.value, [key]: localCachedValue!! })
         return true
@@ -71,7 +67,7 @@ export class CachedTask<T> {
   }
 
   private addToCache(event: CachedTaskEvent<T>) {
-    ECHO_DIR.writeJson(['cache', event.key], event)
+    this.dir.writeJson(['cache', event.key], event)
     this.cache$.next({ ...this.cache$.value, [event.key]: event })
   }
 

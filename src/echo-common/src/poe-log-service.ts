@@ -1,5 +1,5 @@
 import { Tail } from 'tail'
-import { from, map, Subject } from 'rxjs'
+import { map, Subject } from 'rxjs'
 import { filterNullish } from 'ts-ratchet'
 import path from 'path'
 import * as os from 'os'
@@ -101,4 +101,3 @@ export class PoeLogService {
   }
 }
 
-export const POE_LOG_SERVICE = new PoeLogService()

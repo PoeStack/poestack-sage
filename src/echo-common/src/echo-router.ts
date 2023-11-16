@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react'
+import { ReactElement } from 'react'
 import { BehaviorSubject } from 'rxjs'
 
 export type EchoRoute = {
@@ -42,4 +42,3 @@ export class EchoRouter {
   }
 }
 
-export const ECHO_ROUTER = new EchoRouter()

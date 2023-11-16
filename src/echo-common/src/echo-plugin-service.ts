@@ -2,9 +2,8 @@ import { BehaviorSubject, Subject, scan, tap } from "rxjs"
 import { HttpUtil } from "sage-common"
 import fs from "fs"
 import { EchoPluginHook } from "./echo-plugin-hook"
-import { ECHO_DIR } from "./echo-dir-service"
 import path from "path"
-
+import { EchoDirService } from "./echo-dir-service"
 
 export type EchoPluginManifest = { name: string, version: string, echoCommonVersion: string }
 
@@ -12,13 +11,13 @@ export type EchoPlugin = { key: string, manifest?: EchoPluginManifest | undefine
 
 export class EchoPluginService {
 
-  private installedPluginsPath = path.resolve(ECHO_DIR.homeDirPath, "plugins")
+  private installedPluginsPath = path.resolve(this.echoDir.homeDirPath, "plugins")
   private httpUtil = new HttpUtil()
 
   public plugins$ = new Subject<EchoPlugin>()
   public currentPlugins$ = new BehaviorSubject<{ [key: string]: EchoPlugin }>({})
 
-  constructor() {
+  constructor(private echoDir: EchoDirService) {
     this.plugins$.pipe(
       tap((e) => console.log("plugin-event", e)),
       scan((acc, v) => {
@@ -49,11 +48,11 @@ export class EchoPluginService {
     const enabledPluginKeys = Object.values(this.currentPlugins$.value)
       .filter((e) => e.enabled)
       .map((e) => e.key)
-    ECHO_DIR.writeJson(['enabled_plugins'], enabledPluginKeys)
+    this.echoDir.writeJson(['enabled_plugins'], enabledPluginKeys)
   }
 
   public loadEnabledPlugins() {
-    const enabledPluginKeys: string[] = ECHO_DIR.loadJson("enabled_plugins") ?? []
+    const enabledPluginKeys: string[] = this.echoDir.loadJson("enabled_plugins") ?? []
     enabledPluginKeys.forEach(e => {
       this.plugins$.next({ key: e, enabled: true })
     })
@@ -92,6 +91,4 @@ export class EchoPluginService {
       })
   }
 }
-
-export const ECHO_PLUGIN_SERVICE = new EchoPluginService()
 

@@ -1,7 +1,6 @@
 import { GggApi } from 'ggg-api'
 import { CachedTask } from './cached-task'
-import { bind } from '@react-rxjs/core'
-import { combineLatestWith, filter, from, map, mergeMap, tap, toArray } from 'rxjs'
+import { Observable, combineLatestWith, filter, from, map, mergeMap, tap, toArray } from 'rxjs'
 import { filterNullish } from 'ts-ratchet'
 import {
   ItemGroupingService,
@@ -10,58 +9,43 @@ import {
   PoeStashTab,
   SageItemGroup
 } from 'sage-common'
-import { SAGE_VALUATION_SERVICE, SageValuation } from './sage-valuation-service'
+import { SageValuation, SageValuationService } from './sage-valuation-service'
+import { EchoDirService } from './echo-dir-service'
 
 export class PoeStashService {
-  public gggApi: GggApi
-
-  public currentStashes = new CachedTask<PoePartialStashTab[]>((key) => this.gggApi.getStashes(key))
-  public currentStashContents = new CachedTask<PoeStashTab>((key) =>
+  private groupingService = new ItemGroupingService()
+  public currentStashes = new CachedTask<PoePartialStashTab[]>(this.echoDir, (key) => this.gggApi.getStashes(key))
+  public currentStashContents = new CachedTask<PoeStashTab>(this.echoDir, (key) =>
     this.gggApi.getStashContent(key.split('_')[0], key.split('_')[1])
   )
 
-  constructor(stashApi: GggApi) {
-    this.gggApi = stashApi
+  constructor(private echoDir: EchoDirService, private gggApi: GggApi, private valuationApi: SageValuationService) {
   }
-}
 
-export const POE_STASH_SERVICE = new PoeStashService(new GggApi())
-
-export type EchoPoeItem = {
-  stash: PoePartialStashTab & { items?: PoeItem[] | undefined; loadedAtTimestamp: string }
-  data: PoeItem
-  group: SageItemGroup | null
-  valuation: SageValuation | null
-}
-
-export const [usePoeStashes] = bind(
-  (league: string) =>
-    POE_STASH_SERVICE.currentStashes.cache$.pipe(
+  public stashTabs(league: string): Observable<PoePartialStashTab[]> {
+    const result = this.currentStashes.cache$.pipe(
       map((e) => e[league]),
       map((e) => (e?.result ?? []).flatMap((t) => t.children ?? [t]))
-    ),
-  []
-)
+    )
+    return result
+  }
 
-const groupingService = new ItemGroupingService()
-
-export const [usePoeStashItems] = bind(
-  (league: string) =>
-    POE_STASH_SERVICE.currentStashContents.cache$.pipe(
-      combineLatestWith(SAGE_VALUATION_SERVICE.currentStashes.cache$),
+  public stashItems(league: string): Observable<EchoPoeItem[]> {
+    const result = this.currentStashContents.cache$.pipe(
+      combineLatestWith(this.valuationApi.currentStashes.cache$),
       mergeMap(([tabs, valuationCache]) =>
         from(Object.values(tabs).map((e) => e.result)).pipe(
           filterNullish(),
           filter((e) => e.league === league),
           mergeMap((stash) =>
             (stash?.items ?? []).map((item) => {
-              const group = groupingService.group(item)
+              const group = this.groupingService.group(item)
 
               if (group) {
                 const valuationKey = `${group.tag}_${group.shard}_${league}`
                 const valuation =
                   valuationCache[valuationKey]?.result?.valuations[group.hash] ?? null
-                SAGE_VALUATION_SERVICE.load(group.tag, group.shard, league)
+                this.valuationApi.load(group.tag, group.shard, league)
                 return { stash, data: item, group, valuation }
               }
 
@@ -72,6 +56,15 @@ export const [usePoeStashItems] = bind(
           tap((e) => console.log('aa', e))
         )
       )
-    ),
-  []
-)
+    )
+    return result
+  }
+}
+
+export type EchoPoeItem = {
+  stash: PoePartialStashTab & { items?: PoeItem[] | undefined; loadedAtTimestamp: string }
+  data: PoeItem
+  group: SageItemGroup | null
+  valuation: SageValuation | null
+}
+
