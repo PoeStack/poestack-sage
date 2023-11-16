@@ -5,7 +5,7 @@
   "main": "./out/main/index.js",
   "scripts": {
     "clean": "rimraf build/index.js out && rimraf build/index.js dist",
-    "dev": "electron-vite dev",
+    "dev": "npm run bump-dev-plugins && electron-vite dev",
     "start": "dotenv -v PRELOAD_VITE_PLUGIN_PATH=dist_plugins -v RENDERER_VITE_PLUGIN_PATH=dist_plugins electron-vite preview",
     "start:prod": "electron-vite preview",
     "build": "electron-vite build",
@@ -15,7 +15,8 @@
     "build:mac": "electron-vite build && electron-builder --mac --config",
     "build:linux": "electron-vite build && electron-builder --linux --config",
     "release": "npm run build:win && npm run build:mac && npm run build:linux",
-    "bump-version": "node bump-version.js",
+    "bump-version": "node internal/bump-version.js",
+    "bump-dev-plugins": "node internal/bump-dev-plugins.js",
     "format": "prettier --write ./src",
     "lint": "eslint ./src --fix --resolve-plugins-relative-to ../eslint-config-sage"
   },
