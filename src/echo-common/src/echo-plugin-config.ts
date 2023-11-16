@@ -1,4 +1,4 @@
-import { EchoDirService } from "./echo-dir-service"
+import { EchoDirService } from './echo-dir-service'
 
 export type EchoPluginConfig = {
   name: string
@@ -10,9 +10,7 @@ export type EchoPluginConfig = {
 export type EchoPluginConfigs = Record<string, EchoPluginConfig>
 
 export class EchoPluginConfigService {
-
-  constructor(private echoDir: EchoDirService){
-  }
+  constructor(private echoDir: EchoDirService) {}
 
   public loadPluginConfigs(): EchoPluginConfigs {
     if (this.echoDir.existsJson('plugin-config')) {
@@ -28,4 +26,3 @@ export class EchoPluginConfigService {
     return this.echoDir.writeJson(['plugin-config'], pluginConfigObject)
   }
 }
-

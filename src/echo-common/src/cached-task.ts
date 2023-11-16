@@ -1,13 +1,4 @@
-import {
-  BehaviorSubject,
-  filter,
-  groupBy,
-  map,
-  mergeMap,
-  Observable,
-  Subject,
-  take,
-} from 'rxjs'
+import { BehaviorSubject, filter, groupBy, map, mergeMap, Observable, Subject, take } from 'rxjs'
 import { throttleTime } from 'rxjs/operators'
 import { filterNullish } from 'ts-ratchet'
 import { EchoDirService } from './echo-dir-service'
@@ -25,7 +16,10 @@ export class CachedTask<T> {
   public events$ = new Subject<CachedTaskEvent<T>>()
   public cache$ = new BehaviorSubject<{ [key: string]: CachedTaskEvent<T> }>({})
 
-  constructor(private dir: EchoDirService, loadFun: (key: string) => Observable<T | null>) {
+  constructor(
+    private dir: EchoDirService,
+    loadFun: (key: string) => Observable<T | null>
+  ) {
     this.tasks$
       .pipe(
         filter(({ key }) => !this.isValid(this.cache$.value[key])),

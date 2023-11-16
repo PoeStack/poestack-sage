@@ -1,29 +1,36 @@
-import { BehaviorSubject, Subject, scan, tap } from "rxjs"
-import { HttpUtil } from "sage-common"
-import fs from "fs"
-import { EchoPluginHook } from "./echo-plugin-hook"
-import path from "path"
-import { EchoDirService } from "./echo-dir-service"
+import { BehaviorSubject, Subject, scan, tap } from 'rxjs'
+import { HttpUtil } from 'sage-common'
+import fs from 'fs'
+import { EchoPluginHook } from './echo-plugin-hook'
+import path from 'path'
+import { EchoDirService } from './echo-dir-service'
 
-export type EchoPluginManifest = { name: string, version: string, echoCommonVersion: string }
+export type EchoPluginManifest = { name: string; version: string; echoCommonVersion: string }
 
-export type EchoPlugin = { key: string, manifest?: EchoPluginManifest | undefined, path?: string | undefined, enabled?: boolean | undefined, hook?: EchoPluginHook | undefined }
+export type EchoPlugin = {
+  key: string
+  manifest?: EchoPluginManifest | undefined
+  path?: string | undefined
+  enabled?: boolean | undefined
+  hook?: EchoPluginHook | undefined
+}
 
 export class EchoPluginService {
-
-  private installedPluginsPath = path.resolve(this.echoDir.homeDirPath, "plugins")
+  private installedPluginsPath = path.resolve(this.echoDir.homeDirPath, 'plugins')
   private httpUtil = new HttpUtil()
 
   public plugins$ = new Subject<EchoPlugin>()
   public currentPlugins$ = new BehaviorSubject<{ [key: string]: EchoPlugin }>({})
 
   constructor(private echoDir: EchoDirService) {
-    this.plugins$.pipe(
-      tap((e) => console.log("plugin-event", e)),
-      scan((acc, v) => {
-        return { ...acc, [v.key]: { ...acc[v.key], ...v } }
-      }, this.currentPlugins$.value)
-    ).subscribe(this.currentPlugins$)
+    this.plugins$
+      .pipe(
+        tap((e) => console.log('plugin-event', e)),
+        scan((acc, v) => {
+          return { ...acc, [v.key]: { ...acc[v.key], ...v } }
+        }, this.currentPlugins$.value)
+      )
+      .subscribe(this.currentPlugins$)
 
     this.currentPlugins$.subscribe((e) => {
       Object.values(e).forEach((p) => {
@@ -52,8 +59,8 @@ export class EchoPluginService {
   }
 
   public loadEnabledPlugins() {
-    const enabledPluginKeys: string[] = this.echoDir.loadJson("enabled_plugins") ?? []
-    enabledPluginKeys.forEach(e => {
+    const enabledPluginKeys: string[] = this.echoDir.loadJson('enabled_plugins') ?? []
+    enabledPluginKeys.forEach((e) => {
       this.plugins$.next({ key: e, enabled: true })
     })
   }
@@ -63,7 +70,12 @@ export class EchoPluginService {
   }
 
   public installPlugin(plugin: EchoPlugin) {
-    return this.httpUtil.get<string>(`https://raw.githubusercontent.com/PoeStack/poestack-sage/published-plugins/dist_plugins/${plugin.manifest!!.name}.js`)
+    return this.httpUtil
+      .get<string>(
+        `https://raw.githubusercontent.com/PoeStack/poestack-sage/published-plugins/dist_plugins/${
+          plugin.manifest!!.name
+        }.js`
+      )
       .subscribe((resp) => {
         fs.writeFileSync(path.resolve(this.installedPluginsPath, `${plugin.key}.js`), resp)
         this.loadInstalledPlugins()
@@ -82,7 +94,10 @@ export class EchoPluginService {
 
   public loadPlugins() {
     this.loadEnabledPlugins()
-    this.httpUtil.get<{ [key: string]: EchoPluginManifest }>("https://raw.githubusercontent.com/PoeStack/poestack-sage/published-plugins/public/plugins.json")
+    this.httpUtil
+      .get<{ [key: string]: EchoPluginManifest }>(
+        'https://raw.githubusercontent.com/PoeStack/poestack-sage/published-plugins/public/plugins.json'
+      )
       .subscribe((resp) => {
         Object.values(resp).forEach((e) => {
           this.plugins$.next({ key: e.name, manifest: e })
@@ -91,4 +106,3 @@ export class EchoPluginService {
       })
   }
 }
-

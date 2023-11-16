@@ -14,13 +14,18 @@ import { EchoDirService } from './echo-dir-service'
 
 export class PoeStashService {
   private groupingService = new ItemGroupingService()
-  public currentStashes = new CachedTask<PoePartialStashTab[]>(this.echoDir, (key) => this.gggApi.getStashes(key))
+  public currentStashes = new CachedTask<PoePartialStashTab[]>(this.echoDir, (key) =>
+    this.gggApi.getStashes(key)
+  )
   public currentStashContents = new CachedTask<PoeStashTab>(this.echoDir, (key) =>
     this.gggApi.getStashContent(key.split('_')[0], key.split('_')[1])
   )
 
-  constructor(private echoDir: EchoDirService, private gggApi: GggApi, private valuationApi: SageValuationService) {
-  }
+  constructor(
+    private echoDir: EchoDirService,
+    private gggApi: GggApi,
+    private valuationApi: SageValuationService
+  ) {}
 
   public stashTabs(league: string): Observable<PoePartialStashTab[]> {
     const result = this.currentStashes.cache$.pipe(
@@ -67,4 +72,3 @@ export type EchoPoeItem = {
   group: SageItemGroup | null
   valuation: SageValuation | null
 }
-
