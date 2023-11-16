@@ -32,6 +32,7 @@
     "jsonwebtoken": "^9.0.2",
     "poe-log-plugin": "file:../echo-plugin-examples/poe-log-plugin",
     "stash-plugin": "file:../echo-plugin-examples/stash-plugin",
+    "exilence-next-plugin": "file:../echo-plugins/exilence-next-plugin",
     "typescript": "^5.2.2"
   },
   "optionalDependencies": {
