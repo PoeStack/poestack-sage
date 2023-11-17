@@ -1,5 +1,5 @@
 import { BehaviorSubject, filter, groupBy, map, mergeMap, Observable, Subject, take } from 'rxjs'
-import { throttleTime } from 'rxjs/operators'
+import { concatMap, throttleTime } from 'rxjs/operators'
 import { filterNullish } from 'ts-ratchet'
 import { EchoDirService } from './echo-dir-service'
 
@@ -92,10 +92,12 @@ export class SmartCache<T> {
         map((job) => this.loadFromLocalIfValid(job)),
         filterNullish(),
         groupBy((job) => job.config.key),
-        mergeMap((group) => group.pipe(throttleTime(60000))), //can this be concat map, need some sort of switchmap interally to allow throttle bypass
+        concatMap((group) => group.pipe(throttleTime(10_000))),
+        // The throttleTime is for depuing multiple requests made while requests are firing
+        // Really the bypass needs to 99% of the time be in the isValid
         map((job) => this.loadFromLocalIfValid(job)),
         filterNullish()
-        //if that is concat add rate limit here
+        // Add rate limiter here per cache not per key
       )
       .subscribe((job) => {
         console.log("firing", job.config.key)

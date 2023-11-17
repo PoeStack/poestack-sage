@@ -53,7 +53,6 @@ export class PoeCharactersService {
       };
     }, [subject, config]);
 
-
     return {
       value: value,
       load: load,
