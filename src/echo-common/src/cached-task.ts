@@ -20,52 +20,75 @@ export type SmartCacheResultEvent<T> = {
 
 export type SmartCacheEvent<T> = SmartCacheResultEvent<T>
 
-export type SmartCacheLoadEvent = {
-  key: string
+export type SmartCacheStore<T> = {
+  lastResultEvent: SmartCacheEvent<T> | undefined,
+  lastEvent: SmartCacheEvent<T> | undefined,
+}
+
+export type SmartCacheHookType<T> = SmartCacheStore<T> & {
+  key: () => string,
+
+  result: () => T | null | undefined,
+  resultTimestamp: () => number | undefined,
+  resultAge: () => number | undefined,
+
+  load: (config: SmartCacheLoadConfig) => Observable<SmartCacheEvent<T>>,
+  loadSimple: () => void,
+}
+
+export type SmartCacheJob = {
+  config: SmartCacheLoadConfig
 }
 
 export class SmartCache<T> {
-  private taskQueue$ = new Subject<SmartCacheLoadEvent>()
+  private jobQueue$ = new Subject<SmartCacheJob>()
   private events$ = new Subject<SmartCacheEvent<T>>()
 
-  //What if there was on BehaviorSubject per key that contained the state {loading, error, data}
-
-  private cache$ = new BehaviorSubject<{ [key: string]: SmartCacheEvent<T> }>({})
+  private memoryCache$ = new BehaviorSubject<{ [key: string]: SmartCacheStore<T> }>({})
   private localCacheChecked: { [key: string]: boolean } = {}
 
   constructor(
     private dir: EchoDirService,
     loadFun: (key: string) => Observable<T | null>
   ) {
-    this.taskQueue$
+    this.events$.subscribe((event) => {
+      const currentStore = this.memoryCache$.value[event.key]
+      const nextStore = { ...currentStore, lastEvent: event }
+      if (event.type === "result") {
+        nextStore.lastResultEvent = event
+      }
+      this.memoryCache$.next({ ...this.memoryCache$.value, [event.key]: nextStore })
+    })
+
+    this.jobQueue$
       .pipe(
-        map((event) => this.loadFromLocalIfValid(event)),
+        map((job) => this.loadFromLocalIfValid(job)),
         filterNullish(),
-        groupBy((item) => item.key),
+        groupBy((job) => job.config.key),
         mergeMap((group) => group.pipe(throttleTime(60000))), //can this be concat map, need some sort of switchmap interally to allow throttle bypass
-        map((event) => this.loadFromLocalIfValid(event)),
+        map((job) => this.loadFromLocalIfValid(job)),
         filterNullish()
         //if that is concat add rate limit here
       )
-      .subscribe((e) => {
-        loadFun(e.key)
+      .subscribe((job) => {
+        loadFun(job.config.key)
           .pipe(take(1))
-          .subscribe((r) => {
-            const finalEvent: SmartCacheEvent<T> = {
+          .subscribe((result) => {
+            const resultEvent: SmartCacheEvent<T> = {
               type: "result",
-              key: e.key,
-              result: r,
+              key: job.config.key,
+              result: result,
               timestampMs: Date.now()
             }
-            this.addToCache(finalEvent)
-            this.events$.next(finalEvent)
+            this.persist(resultEvent)
+            this.events$.next(resultEvent)
           })
       })
   }
 
-  private loadFromLocalIfValid(event: SmartCacheLoadEvent): SmartCacheLoadEvent | null {
-    const key = event.key
-    const memoryCachedResult = this.cache$.value[key]
+  private loadFromLocalIfValid(job: SmartCacheJob): SmartCacheJob | null {
+    const key = job.config.key
+    const memoryCachedResult = this.memoryCache$.value[key]?.lastResultEvent
     if (memoryCachedResult && this.isValid(memoryCachedResult)) {
       this.events$.next(memoryCachedResult)
       return null
@@ -74,24 +97,22 @@ export class SmartCache<T> {
     if (!this.localCacheChecked[key]) {
       this.localCacheChecked[key] = true
       if (this.dir.existsJson('cache', key)) {
-        const localCachedValue = this.dir.loadJson<SmartCacheEvent<T>>('cache', key)
+        const localCachedValue = this.dir.loadJson<SmartCacheResultEvent<T>>('cache', key)
         if (localCachedValue && this.isValid(localCachedValue)) {
-          this.cache$.next({ ...this.cache$.value, [key]: localCachedValue })
           this.events$.next(localCachedValue)
           return null
         }
       }
     }
 
-    return event
+    return job
   }
 
-  private addToCache(event: SmartCacheEvent<T>) {
+  private persist(event: SmartCacheResultEvent<T>) {
     this.dir.writeJson(['cache', event.key], event)
-    this.cache$.next({ ...this.cache$.value, [event.key]: event })
   }
 
-  private isValid(value: SmartCacheEvent<T> | null): boolean {
+  private isValid(value: SmartCacheResultEvent<T> | undefined | null): boolean {
     return Date.now() - (value?.timestampMs ?? 0) < 120_000
   }
 
@@ -106,7 +127,7 @@ export class SmartCache<T> {
         }
       })
 
-      this.taskQueue$.next({ key: config.key })
+      this.jobQueue$.next({ config: config })
     })
   }
 }
