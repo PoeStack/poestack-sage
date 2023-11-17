@@ -42,11 +42,10 @@ export class SmartCache<T> {
         map((event) => this.loadFromLocalIfValid(event)),
         filterNullish(),
         groupBy((item) => item.key),
-        mergeMap((group) => group.pipe(throttleTime(60000))), //can this be concat map
+        mergeMap((group) => group.pipe(throttleTime(60000))), //can this be concat map, need some sort of switchmap interally to allow throttle bypass
         map((event) => this.loadFromLocalIfValid(event)),
         filterNullish()
-        //if that is concat add rate limit here, maybe put it at the start of a seperate subject for exeuction, so some events can jump the line
-        //not sure if that works for throttle bypass tho actually
+        //if that is concat add rate limit here
       )
       .subscribe((e) => {
         loadFun(e.key)
