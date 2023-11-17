@@ -1,12 +1,12 @@
 import { map } from 'rxjs'
-import { CachedTask } from './cached-task'
+import { SharedCache } from './cached-task'
 import { PoeLeague, PoeProfile } from 'sage-common'
 import { GggApi } from 'ggg-api'
 import { EchoDirService } from './echo-dir-service'
 
 export class PoeAccountService {
-  public profile = new CachedTask<PoeProfile>(this.echoDir, () => this.gggApi.getProfile())
-  public leagues = new CachedTask<PoeLeague[]>(this.echoDir, () => this.gggApi.getLeagues())
+  public profile = new SharedCache<PoeProfile>(this.echoDir, () => this.gggApi.getProfile())
+  public leagues = new SharedCache<PoeLeague[]>(this.echoDir, () => this.gggApi.getLeagues())
 
   constructor(
     private echoDir: EchoDirService,

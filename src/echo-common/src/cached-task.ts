@@ -3,18 +3,33 @@ import { throttleTime } from 'rxjs/operators'
 import { filterNullish } from 'ts-ratchet'
 import { EchoDirService } from './echo-dir-service'
 
-export type CachedTaskEvent<T> = {
-  key: string
-  state?: string
-  status?: string
-  result?: T | null | undefined
-  timestampMs?: number
+export type SharedCacheLoadMode = "Default" | "CacheOnly" | "NoCache"
+
+export type SharedCacheLoadConfig = {
+  key: string,
+  source: string,
+  mode?: SharedCacheLoadMode
 }
 
-export class CachedTask<T> {
-  private tasks$ = new Subject<CachedTaskEvent<T>>()
-  public events$ = new Subject<CachedTaskEvent<T>>()
-  public cache$ = new BehaviorSubject<{ [key: string]: CachedTaskEvent<T> }>({})
+export type SharedCacheResultEvent<T> = {
+  type: "result",
+  key: string,
+  result: T | null | undefined,
+  timestampMs: number
+}
+
+export type SharedCacheEvent<T> = SharedCacheResultEvent<T>
+
+export type SharedCacheLoadEvent = {
+  key: string
+}
+
+export class SharedCache<T> {
+  private tasks$ = new Subject<SharedCacheLoadEvent>()
+  private events$ = new Subject<SharedCacheEvent<T>>()
+
+  private cache$ = new BehaviorSubject<{ [key: string]: SharedCacheEvent<T> }>({})
+  private localCache: { [key: string]: boolean } = {}
 
   constructor(
     private dir: EchoDirService,
@@ -22,65 +37,73 @@ export class CachedTask<T> {
   ) {
     this.tasks$
       .pipe(
-        filter(({ key }) => !this.isValid(this.cache$.value[key])),
+        map((event) => this.loadFromLocalIfValid(event)),
+        filterNullish(),
         groupBy((item) => item.key),
         mergeMap((group) => group.pipe(throttleTime(60000))),
-        map((e) => (this.loadFromLocal(e.key) ? null : e)),
+        map((event) => this.loadFromLocalIfValid(event)),
         filterNullish()
       )
       .subscribe((e) => {
         loadFun(e.key)
           .pipe(take(1))
           .subscribe((r) => {
-            const finalEvent: CachedTaskEvent<T> = {
+            const finalEvent: SharedCacheEvent<T> = {
+              type: "result",
               key: e.key,
-              state: 'complete',
               result: r,
               timestampMs: Date.now()
             }
-            this.events$.next(finalEvent)
             this.addToCache(finalEvent)
+            this.events$.next(finalEvent)
           })
       })
   }
 
-  private loadFromLocal(key: string): boolean {
-    if (this.cache$.value[key]) {
-      return false
+  private loadFromLocalIfValid(event: SharedCacheLoadEvent): SharedCacheLoadEvent | null {
+    const key = event.key
+    const memoryCachedResult = this.cache$.value[key]
+    if (memoryCachedResult && this.isValid(memoryCachedResult)) {
+      this.events$.next(memoryCachedResult)
+      return null
     }
 
-    if (this.dir.existsJson('cache', key)) {
-      const localCachedValue = this.dir.loadJson<CachedTaskEvent<T>>('cache', key)
-      if (this.isValid(localCachedValue)) {
-        this.cache$.next({ ...this.cache$.value, [key]: localCachedValue!! })
-        return true
+    if (!this.localCache[key]) {
+      this.localCache[key] = true
+      if (this.dir.existsJson('cache', key)) {
+        const localCachedValue = this.dir.loadJson<SharedCacheEvent<T>>('cache', key)
+        if (localCachedValue && this.isValid(localCachedValue)) {
+          this.cache$.next({ ...this.cache$.value, [key]: localCachedValue })
+          this.events$.next(localCachedValue)
+          return null
+        }
       }
     }
 
-    return false
+    return event
   }
 
-  private addToCache(event: CachedTaskEvent<T>) {
+  private addToCache(event: SharedCacheEvent<T>) {
     this.dir.writeJson(['cache', event.key], event)
     this.cache$.next({ ...this.cache$.value, [event.key]: event })
   }
 
-  private isValid(value: CachedTaskEvent<T> | null): boolean {
+  private isValid(value: SharedCacheEvent<T> | null): boolean {
     return Date.now() - (value?.timestampMs ?? 0) < 120_000
   }
 
-  public load(key: string): Observable<CachedTaskEvent<T>> {
-    return new Observable<CachedTaskEvent<T>>((sub) => {
-      const eventSub = this.events$.pipe(filter((e) => e.key === key)).subscribe((e) => {
+  public load(config: SharedCacheLoadConfig): Observable<SharedCacheEvent<T>> {
+    return new Observable<SharedCacheEvent<T>>((sub) => {
+      const eventSub = this.events$.pipe(filter((e) => e.key === config.key)).subscribe((e) => {
         sub.next(e)
 
-        if (e.state === 'complete') {
+        if (e.type === "result") {
           sub.complete()
           eventSub.unsubscribe()
         }
       })
 
-      this.tasks$.next({ key: key })
+      this.tasks$.next({ key: config.key })
     })
   }
 }

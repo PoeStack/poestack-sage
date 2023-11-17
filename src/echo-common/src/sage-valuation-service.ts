@@ -1,4 +1,4 @@
-import { CachedTask } from './cached-task'
+import { SharedCache } from './cached-task'
 import { HttpUtil } from 'sage-common'
 import { EchoDirService } from './echo-dir-service'
 
@@ -7,7 +7,7 @@ export class SageValuationService {
 
   constructor(private echoDir: EchoDirService) {}
 
-  public currentStashes = new CachedTask<SageValuationShard>(this.echoDir, (key) =>
+  public currentStashes = new SharedCache<SageValuationShard>(this.echoDir, (key) =>
     this.loadInternal(key)
   )
 
