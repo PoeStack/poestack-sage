@@ -1,5 +1,5 @@
 import { GggApi } from 'ggg-api'
-import { SmartCache } from './smart-cache'
+import { SmartCache, SmartCacheLoadConfig } from './smart-cache'
 import { PoeCharacter } from 'sage-common'
 import { EchoDirService } from './echo-dir-service'
 import { useEffect, useState } from 'react'
@@ -20,16 +20,22 @@ export class PoeCharactersService {
   ) { }
 
   public useCharacterList() {
-    return this.useCache(this.characterListCache, "*")
+    return this.useCache(this.characterListCache)
   }
 
-  public useCache<T>(cache: SmartCache<T>, key: string) {
+  public useCharacter() {
+    return this.useCache(this.characterCache)
+  }
+
+  public useCache<T>(cache: SmartCache<T>) {
     const subject = cache.memoryCache$
-    const [value, setValue] = useState(subject.getValue()?.[key]);
+    const [key, setKey] = useState("")
+    const initalValue = subject.getValue()?.[key] ?? {};
+    const [value, setValue] = useState(initalValue);
 
     useEffect(() => {
       const subscription = subject.pipe(
-        tap((e) => console.log('s', e)),
+        tap((e) => console.log('s', key, e)),
         map((e) => e[key]),
         filterNullish()
       ).subscribe((newValue) => {
@@ -38,8 +44,13 @@ export class PoeCharactersService {
       return () => {
         subscription.unsubscribe();
       };
-    }, [subject]);
+    }, [subject, key]);
 
-    return { value: value, load: () => { cache.load({ key: key, source: "test" }).subscribe() } }
+    return { value: value, load: (config: SmartCacheLoadConfig) => {
+      if(key !== config.key) {
+        setKey(config.key)
+      }
+      cache.load(config).subscribe()
+    } }
   }
 }
