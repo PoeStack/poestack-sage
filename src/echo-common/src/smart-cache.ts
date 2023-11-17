@@ -98,6 +98,7 @@ export class SmartCache<T> {
         map((job) => this.loadFromLocalIfValid(job)),
         filterNullish()
         // Add rate limiter here per cache not per key
+        // Maybe the load function should be in here
       )
       .subscribe((job) => {
         console.log("firing", job.config.key)
