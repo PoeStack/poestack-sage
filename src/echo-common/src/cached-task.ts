@@ -14,15 +14,38 @@ export type SmartCacheLoadConfig = {
 export type SmartCacheResultEvent<T> = {
   type: "result",
   key: string,
+  source: "cache-local" | "cache-memory" | "live",
   result: T | null | undefined,
   timestampMs: number
 }
 
-export type SmartCacheEvent<T> = SmartCacheResultEvent<T>
+export type SmartCacheLoadingEvent = {
+  type: "loading",
+  timestampMs: number,
+  key: string
+}
+
+export type SmartCacheErrorEvent = {
+  type: "error",
+  key: string,
+  timestampMs: number,
+  error: any
+}
+
+export type SmartCacheRateLimitEvent = {
+  type: "rate-limit",
+  key: string,
+  timestampMs: number,
+  limitExpiresMs: number
+}
+
+export type SmartCacheStatusEvent = SmartCacheLoadingEvent | SmartCacheErrorEvent | SmartCacheRateLimitEvent
+
+export type SmartCacheEvent<T> = SmartCacheStatusEvent | SmartCacheResultEvent<T>
 
 export type SmartCacheStore<T> = {
-  lastResultEvent: SmartCacheEvent<T> | undefined,
-  lastEvent: SmartCacheEvent<T> | undefined,
+  lastResultEvent: SmartCacheResultEvent<T> | undefined,
+  lastStatusEvent: SmartCacheRateLimitEvent | undefined,
 }
 
 export type SmartCacheHookType<T> = SmartCacheStore<T> & {
@@ -53,9 +76,13 @@ export class SmartCache<T> {
   ) {
     this.events$.subscribe((event) => {
       const currentStore = this.memoryCache$.value[event.key]
-      const nextStore = { ...currentStore, lastEvent: event }
+      const nextStore = { ...currentStore }
       if (event.type === "result") {
         nextStore.lastResultEvent = event
+
+        if (event.source === "live" && event.timestampMs > (currentStore.lastStatusEvent?.timestampMs ?? 0)) {
+          delete nextStore.lastStatusEvent
+        }
       }
       this.memoryCache$.next({ ...this.memoryCache$.value, [event.key]: nextStore })
     })
