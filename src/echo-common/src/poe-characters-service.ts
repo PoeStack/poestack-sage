@@ -1,14 +1,14 @@
 import { GggApi } from 'ggg-api'
-import { SharedCache, SharedCacheLoadConfig } from './cached-task'
+import { SmartCache, SmartCacheLoadConfig } from './cached-task'
 import { Observable, map } from 'rxjs'
 import { PoeCharacter } from 'sage-common'
 import { EchoDirService } from './echo-dir-service'
 
 export class PoeCharactersService {
-  private characterListCache = new SharedCache<PoeCharacter[]>(this.echoDir, () =>
+  private characterListCache = new SmartCache<PoeCharacter[]>(this.echoDir, () =>
     this.gggApi.getCharacters()
   )
-  private characterCache = new SharedCache<PoeCharacter>(this.echoDir, (key) =>
+  private characterCache = new SmartCache<PoeCharacter>(this.echoDir, (key) =>
     this.gggApi.getCharacter(key)
   )
 
@@ -17,7 +17,7 @@ export class PoeCharactersService {
     private gggApi: GggApi
   ) {}
 
-  public character(config: SharedCacheLoadConfig): Observable<PoeCharacter | null | undefined> {
+  public character(config: SmartCacheLoadConfig): Observable<PoeCharacter | null | undefined> {
     const result = this.characterCache.cache$.pipe(map((e) => e[name]?.result))
     return result
   }

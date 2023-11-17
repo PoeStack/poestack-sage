@@ -1,5 +1,5 @@
 import { GggApi } from 'ggg-api'
-import { SharedCache } from './cached-task'
+import { SmartCache } from './cached-task'
 import { Observable, combineLatestWith, filter, from, map, mergeMap, tap, toArray } from 'rxjs'
 import { filterNullish } from 'ts-ratchet'
 import {
@@ -14,10 +14,10 @@ import { EchoDirService } from './echo-dir-service'
 
 export class PoeStashService {
   private groupingService = new ItemGroupingService()
-  public currentStashes = new SharedCache<PoePartialStashTab[]>(this.echoDir, (key) =>
+  public currentStashes = new SmartCache<PoePartialStashTab[]>(this.echoDir, (key) =>
     this.gggApi.getStashes(key)
   )
-  public currentStashContents = new SharedCache<PoeStashTab>(this.echoDir, (key) =>
+  public currentStashContents = new SmartCache<PoeStashTab>(this.echoDir, (key) =>
     this.gggApi.getStashContent(key.split('_')[0], key.split('_')[1])
   )
 

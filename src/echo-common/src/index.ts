@@ -1,5 +1,5 @@
 import { EchoRoute, EchoRouter } from './echo-router'
-import { SharedCache, SharedCacheEvent } from './cached-task'
+import { SmartCache, SmartCacheEvent } from './cached-task'
 import { EchoPluginHook } from './echo-plugin-hook'
 import { PoeAccountService } from './poe-account-service'
 import { PoeCharactersService } from './poe-characters-service'
@@ -15,7 +15,7 @@ import { ECHO_CONTEXT_SERVICE, EchoContextService } from './echo-context-service
 export {
   PoeStashService,
   SageValuationService,
-  SharedCache as CachedTask,
+  SmartCache as CachedTask,
   EchoPluginService,
   PoeAccountService,
   PoeCharactersService,
@@ -28,7 +28,7 @@ export {
 
 export type {
   EchoPluginHook,
-  SharedCacheEvent as CachedTaskEvent,
+  SmartCacheEvent as CachedTaskEvent,
   EchoPluginConfigs,
   EchoPluginConfig,
   EchoRoute,

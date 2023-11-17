@@ -3,32 +3,32 @@ import { throttleTime } from 'rxjs/operators'
 import { filterNullish } from 'ts-ratchet'
 import { EchoDirService } from './echo-dir-service'
 
-export type SharedCacheLoadMode = "Default" | "CacheOnly" | "NoCache"
+export type SmartCacheLoadMode = "Default" | "CacheOnly" | "NoCache"
 
-export type SharedCacheLoadConfig = {
+export type SmartCacheLoadConfig = {
   key: string,
   source: string,
-  mode?: SharedCacheLoadMode
+  mode?: SmartCacheLoadMode
 }
 
-export type SharedCacheResultEvent<T> = {
+export type SmartCacheResultEvent<T> = {
   type: "result",
   key: string,
   result: T | null | undefined,
   timestampMs: number
 }
 
-export type SharedCacheEvent<T> = SharedCacheResultEvent<T>
+export type SmartCacheEvent<T> = SmartCacheResultEvent<T>
 
-export type SharedCacheLoadEvent = {
+export type SmartCacheLoadEvent = {
   key: string
 }
 
-export class SharedCache<T> {
-  private tasks$ = new Subject<SharedCacheLoadEvent>()
-  private events$ = new Subject<SharedCacheEvent<T>>()
+export class SmartCache<T> {
+  private tasks$ = new Subject<SmartCacheLoadEvent>()
+  private events$ = new Subject<SmartCacheEvent<T>>()
 
-  private cache$ = new BehaviorSubject<{ [key: string]: SharedCacheEvent<T> }>({})
+  private cache$ = new BehaviorSubject<{ [key: string]: SmartCacheEvent<T> }>({})
   private localCache: { [key: string]: boolean } = {}
 
   constructor(
@@ -48,7 +48,7 @@ export class SharedCache<T> {
         loadFun(e.key)
           .pipe(take(1))
           .subscribe((r) => {
-            const finalEvent: SharedCacheEvent<T> = {
+            const finalEvent: SmartCacheEvent<T> = {
               type: "result",
               key: e.key,
               result: r,
@@ -60,7 +60,7 @@ export class SharedCache<T> {
       })
   }
 
-  private loadFromLocalIfValid(event: SharedCacheLoadEvent): SharedCacheLoadEvent | null {
+  private loadFromLocalIfValid(event: SmartCacheLoadEvent): SmartCacheLoadEvent | null {
     const key = event.key
     const memoryCachedResult = this.cache$.value[key]
     if (memoryCachedResult && this.isValid(memoryCachedResult)) {
@@ -71,7 +71,7 @@ export class SharedCache<T> {
     if (!this.localCache[key]) {
       this.localCache[key] = true
       if (this.dir.existsJson('cache', key)) {
-        const localCachedValue = this.dir.loadJson<SharedCacheEvent<T>>('cache', key)
+        const localCachedValue = this.dir.loadJson<SmartCacheEvent<T>>('cache', key)
         if (localCachedValue && this.isValid(localCachedValue)) {
           this.cache$.next({ ...this.cache$.value, [key]: localCachedValue })
           this.events$.next(localCachedValue)
@@ -83,17 +83,17 @@ export class SharedCache<T> {
     return event
   }
 
-  private addToCache(event: SharedCacheEvent<T>) {
+  private addToCache(event: SmartCacheEvent<T>) {
     this.dir.writeJson(['cache', event.key], event)
     this.cache$.next({ ...this.cache$.value, [event.key]: event })
   }
 
-  private isValid(value: SharedCacheEvent<T> | null): boolean {
+  private isValid(value: SmartCacheEvent<T> | null): boolean {
     return Date.now() - (value?.timestampMs ?? 0) < 120_000
   }
 
-  public load(config: SharedCacheLoadConfig): Observable<SharedCacheEvent<T>> {
-    return new Observable<SharedCacheEvent<T>>((sub) => {
+  public load(config: SmartCacheLoadConfig): Observable<SmartCacheEvent<T>> {
+    return new Observable<SmartCacheEvent<T>>((sub) => {
       const eventSub = this.events$.pipe(filter((e) => e.key === config.key)).subscribe((e) => {
         sub.next(e)
 
