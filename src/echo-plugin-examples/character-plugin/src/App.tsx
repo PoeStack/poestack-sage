@@ -2,13 +2,12 @@ import { useState } from 'react'
 import { context } from './entry'
 
 const App = () => {
-  const [selectedName, setSelectedName] = useState<string | null>(null)
-
   const { value: characterList, load: loadCharacterList } = context().poeCharacters.useCharacterList()
-  loadCharacterList({ key: "*", source: "test" })
+  loadCharacterList()
 
-  const { value: character, load: loadCharacter } = context().poeCharacters.useCharacter()
-
+  const [characterName, setCharacterName] = useState("dasd")
+  const { value: character, load: loadCharacter } = context().poeCharacters.useCharacter(characterName)
+  loadCharacter()
 
   return (
     <>
@@ -18,8 +17,8 @@ const App = () => {
             <div
               key={c.id}
               onClick={() => {
-                setSelectedName(c.name)
-                loadCharacter({ key: c.name, source: "test" })
+                setCharacterName(c.name)
+                loadCharacter()
               }}
               className="cursor-pointer bg-input-surface rounded-lg p-2 flex flex-col"
             >
@@ -32,7 +31,7 @@ const App = () => {
           ))}
         </div>
         <div className="flex-1 flex flex-col h-full">
-          <div className="font-semibold">{selectedName}</div>
+          <div className="font-semibold">{character?.lastResultEvent?.result?.name}</div>
           <div className="flex flex-col h-full overflow-y-scroll">
             {character?.lastResultEvent &&
               [

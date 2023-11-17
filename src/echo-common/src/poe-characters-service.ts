@@ -2,8 +2,8 @@ import { GggApi } from 'ggg-api'
 import { SmartCache, SmartCacheLoadConfig } from './smart-cache'
 import { PoeCharacter } from 'sage-common'
 import { EchoDirService } from './echo-dir-service'
-import { useEffect, useState } from 'react'
-import { filter, map, tap } from 'rxjs'
+import { useEffect, useRef, useState } from 'react'
+import { map, tap } from 'rxjs'
 import { filterNullish } from 'ts-ratchet'
 
 export class PoeCharactersService {
@@ -20,37 +20,38 @@ export class PoeCharactersService {
   ) { }
 
   public useCharacterList() {
-    return this.useCache(this.characterListCache)
+    return this.useCache(this.characterListCache, { key: "*" })
   }
 
-  public useCharacter() {
-    return this.useCache(this.characterCache)
+  public useCharacter(name: string) {
+    return this.useCache(this.characterCache, { key: name })
   }
 
-  public useCache<T>(cache: SmartCache<T>) {
+  public useCache<T>(cache: SmartCache<T>, config: SmartCacheLoadConfig) {
     const subject = cache.memoryCache$
-    const [key, setKey] = useState("")
-    const initalValue = subject.getValue()?.[key] ?? {};
+    const initalValue = subject.getValue()?.[config.key] ?? {};
     const [value, setValue] = useState(initalValue);
 
+    const configRef = useRef(config)
+
     useEffect(() => {
+      configRef.current = config
       const subscription = subject.pipe(
-        tap((e) => console.log('s', key, e)),
-        map((e) => e[key]),
+        tap((e) => console.log('event', config.key, e)),
+        map((e) => e[config.key]),
         filterNullish()
       ).subscribe((newValue) => {
         setValue(newValue);
       });
+
       return () => {
         subscription.unsubscribe();
       };
-    }, [subject, key]);
+    }, [subject, config]);
 
-    return { value: value, load: (config: SmartCacheLoadConfig) => {
-      if(key !== config.key) {
-        setKey(config.key)
-      }
-      cache.load(config).subscribe()
-    } }
+    return {
+      value: value,
+      load: () => { cache.load(configRef.current).subscribe() }
+    }
   }
 }

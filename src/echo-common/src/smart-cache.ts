@@ -7,7 +7,6 @@ export type SmartCacheLoadMode = "Default" | "CacheOnly" | "NoCache"
 
 export type SmartCacheLoadConfig = {
   key: string,
-  source: string,
   mode?: SmartCacheLoadMode
 }
 
@@ -99,6 +98,7 @@ export class SmartCache<T> {
         //if that is concat add rate limit here
       )
       .subscribe((job) => {
+        console.log("firing", job.config.key)
         loadFun(job.config.key)
           .pipe(take(1))
           .subscribe((result) => {

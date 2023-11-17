@@ -13,7 +13,7 @@ export class SageValuationService {
 
   public load(tag: string, shard: number | string, league: string) {
     this.currentStashes.
-      load({ key: `${tag}_${shard}_${league}`.replaceAll(' ', '_'), source: "test" })
+      load({ key: `${tag}_${shard}_${league}`.replaceAll(' ', '_') })
       .subscribe()
   }
 
