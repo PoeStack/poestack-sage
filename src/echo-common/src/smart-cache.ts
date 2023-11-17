@@ -153,7 +153,9 @@ export class SmartCache<T> {
 
   public load(config: SmartCacheLoadConfig): Observable<SmartCacheEvent<T>> {
     return new Observable<SmartCacheEvent<T>>((sub) => {
-      const eventSub = this.events$.pipe(filter((e) => e.key === config.key)).subscribe((e) => {
+      const eventSub = this.events$.pipe(
+        filter((e) => e.key === config.key)
+      ).subscribe((e) => {
         sub.next(e)
 
         if (e.type === "result") {

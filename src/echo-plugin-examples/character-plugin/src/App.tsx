@@ -2,12 +2,10 @@ import { useState } from 'react'
 import { context } from './entry'
 
 const App = () => {
-  const { value: characterList, load: loadCharacterList } = context().poeCharacters.useCharacterList()
-  loadCharacterList()
+  const { value: characterList } = context().poeCharacters.useCharacterList()
 
   const [characterName, setCharacterName] = useState("dasd")
-  const { value: character, load: loadCharacter } = context().poeCharacters.useCharacter(characterName)
-  loadCharacter()
+  const { value: character } = context().poeCharacters.useCharacter(characterName)
 
   return (
     <>
@@ -18,7 +16,6 @@ const App = () => {
               key={c.id}
               onClick={() => {
                 setCharacterName(c.name)
-                loadCharacter()
               }}
               className="cursor-pointer bg-input-surface rounded-lg p-2 flex flex-col"
             >

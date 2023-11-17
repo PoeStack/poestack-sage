@@ -2,7 +2,7 @@ import { GggApi } from 'ggg-api'
 import { SmartCache, SmartCacheLoadConfig } from './smart-cache'
 import { PoeCharacter } from 'sage-common'
 import { EchoDirService } from './echo-dir-service'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { map, tap } from 'rxjs'
 import { filterNullish } from 'ts-ratchet'
 
@@ -32,10 +32,11 @@ export class PoeCharactersService {
     const initalValue = subject.getValue()?.[config.key] ?? {};
     const [value, setValue] = useState(initalValue);
 
-    const configRef = useRef(config)
+    const load = useCallback(() => {
+      cache.load(config).subscribe();
+    }, [cache, config]);
 
     useEffect(() => {
-      configRef.current = config
       const subscription = subject.pipe(
         tap((e) => console.log('event', config.key, e)),
         map((e) => e[config.key]),
@@ -44,14 +45,16 @@ export class PoeCharactersService {
         setValue(newValue);
       });
 
+      load()
       return () => {
         subscription.unsubscribe();
       };
     }, [subject, config]);
 
+
     return {
       value: value,
-      load: () => { cache.load(configRef.current).subscribe() }
+      load: load
     }
   }
 }
