@@ -1,5 +1,5 @@
 import { map } from 'rxjs'
-import { SmartCache } from './cached-task'
+import { SmartCache } from './smart-cache'
 import { PoeLeague, PoeProfile } from 'sage-common'
 import { GggApi } from 'ggg-api'
 import { EchoDirService } from './echo-dir-service'
@@ -14,12 +14,12 @@ export class PoeAccountService {
   ) {}
 
   public poeProfile() {
-    const result = this.profile.cache$.pipe(map((e) => Object.values(e)?.[0]?.result))
+    const result = this.profile.memoryCache$.pipe(map((e) => Object.values(e)?.[0]?.lastResultEvent?.result))
     return result
   }
 
   public poeLeagues() {
-    const result = this.leagues.cache$.pipe(map((e) => Object.values(e)?.[0]?.result))
+    const result = this.leagues.memoryCache$.pipe(map((e) => Object.values(e)?.[0]?.lastResultEvent?.result))
     return result
   }
 }

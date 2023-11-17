@@ -11,31 +11,28 @@ export type SmartCacheLoadConfig = {
   mode?: SmartCacheLoadMode
 }
 
-export type SmartCacheResultEvent<T> = {
-  type: "result",
+export type SmartCacheBaseEvent = {
   key: string,
+  timestampMs: number,
+}
+
+export type SmartCacheResultEvent<T> = SmartCacheBaseEvent & {
+  type: "result",
   source: "cache-local" | "cache-memory" | "live",
   result: T | null | undefined,
-  timestampMs: number
 }
 
-export type SmartCacheLoadingEvent = {
+export type SmartCacheLoadingEvent = SmartCacheBaseEvent & {
   type: "loading",
-  timestampMs: number,
-  key: string
 }
 
-export type SmartCacheErrorEvent = {
+export type SmartCacheErrorEvent = SmartCacheBaseEvent & {
   type: "error",
-  key: string,
-  timestampMs: number,
   error: any
 }
 
-export type SmartCacheRateLimitEvent = {
+export type SmartCacheRateLimitEvent = SmartCacheBaseEvent & {
   type: "rate-limit",
-  key: string,
-  timestampMs: number,
   limitExpiresMs: number
 }
 
@@ -45,14 +42,13 @@ export type SmartCacheEvent<T> = SmartCacheStatusEvent | SmartCacheResultEvent<T
 
 export type SmartCacheStore<T> = {
   lastResultEvent: SmartCacheResultEvent<T> | undefined,
-  lastStatusEvent: SmartCacheRateLimitEvent | undefined,
+  lastStatusEvent: SmartCacheStatusEvent | undefined,
 }
 
 export type SmartCacheHookType<T> = SmartCacheStore<T> & {
   key: () => string,
 
   result: () => T | null | undefined,
-  resultTimestamp: () => number | undefined,
   resultAge: () => number | undefined,
 
   load: (config: SmartCacheLoadConfig) => Observable<SmartCacheEvent<T>>,
@@ -67,7 +63,7 @@ export class SmartCache<T> {
   private jobQueue$ = new Subject<SmartCacheJob>()
   private events$ = new Subject<SmartCacheEvent<T>>()
 
-  private memoryCache$ = new BehaviorSubject<{ [key: string]: SmartCacheStore<T> }>({})
+  public memoryCache$ = new BehaviorSubject<{ [key: string]: SmartCacheStore<T> }>({})
   private localCacheChecked: { [key: string]: boolean } = {}
 
   constructor(
@@ -75,16 +71,21 @@ export class SmartCache<T> {
     loadFun: (key: string) => Observable<T | null>
   ) {
     this.events$.subscribe((event) => {
-      const currentStore = this.memoryCache$.value[event.key]
-      const nextStore = { ...currentStore }
-      if (event.type === "result") {
-        nextStore.lastResultEvent = event
+      if (!(event.type === "result" && event.source === "cache-memory")) {
+        const currentStore = this.memoryCache$.value[event.key] ?? {}
+        const nextStore = { ...currentStore }
 
-        if (event.source === "live" && event.timestampMs > (currentStore.lastStatusEvent?.timestampMs ?? 0)) {
-          delete nextStore.lastStatusEvent
+        if (event.type === "result") {
+          nextStore.lastResultEvent = { ...event, source: "cache-memory" }
+          if (event.source === "live" && event.timestampMs > (currentStore.lastStatusEvent?.timestampMs ?? 0)) {
+            delete nextStore.lastStatusEvent
+          }
+        } else {
+          nextStore.lastStatusEvent = event
         }
+
+        this.memoryCache$.next({ ...this.memoryCache$.value, [event.key]: nextStore })
       }
-      this.memoryCache$.next({ ...this.memoryCache$.value, [event.key]: nextStore })
     })
 
     this.jobQueue$
@@ -103,6 +104,7 @@ export class SmartCache<T> {
           .subscribe((result) => {
             const resultEvent: SmartCacheEvent<T> = {
               type: "result",
+              source: "live",
               key: job.config.key,
               result: result,
               timestampMs: Date.now()
@@ -136,11 +138,17 @@ export class SmartCache<T> {
   }
 
   private persist(event: SmartCacheResultEvent<T>) {
-    this.dir.writeJson(['cache', event.key], event)
+    this.dir.writeJson(['cache', event.key], { ...event, source: "cache-local" })
   }
 
   private isValid(value: SmartCacheResultEvent<T> | undefined | null): boolean {
     return Date.now() - (value?.timestampMs ?? 0) < 120_000
+  }
+
+  public fromCache(key: string): Observable<SmartCacheStore<T> | null | undefined> {
+    return this.memoryCache$.pipe(
+      map((e) => e[key])
+    )
   }
 
   public load(config: SmartCacheLoadConfig): Observable<SmartCacheEvent<T>> {

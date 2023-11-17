@@ -1,5 +1,5 @@
 import { EchoRoute, EchoRouter } from './echo-router'
-import { SmartCache, SmartCacheEvent } from './cached-task'
+import { SmartCache, SmartCacheEvent } from './smart-cache'
 import { EchoPluginHook } from './echo-plugin-hook'
 import { PoeAccountService } from './poe-account-service'
 import { PoeCharactersService } from './poe-characters-service'
