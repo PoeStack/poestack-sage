@@ -33,7 +33,9 @@ export class PoeCharactersService {
     const [value, setValue] = useState(initalValue);
 
     const load = useCallback(() => {
-      cache.load(config).subscribe();
+      if (config.key) {
+        cache.load(config).subscribe();
+      }
     }, [cache, config]);
 
     useEffect(() => {
@@ -54,7 +56,8 @@ export class PoeCharactersService {
 
     return {
       value: value,
-      load: load
+      load: load,
+      age: () => { return Date.now() - (value.lastResultEvent?.timestampMs ?? 0) }
     }
   }
 }

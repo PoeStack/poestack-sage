@@ -4,8 +4,8 @@ import { context } from './entry'
 const App = () => {
   const { value: characterList } = context().poeCharacters.useCharacterList()
 
-  const [characterName, setCharacterName] = useState("dasd")
-  const { value: character } = context().poeCharacters.useCharacter(characterName)
+  const [characterName, setCharacterName] = useState(null)
+  const { value: character, age} = context().poeCharacters.useCharacter(characterName)
 
   return (
     <>
@@ -29,6 +29,7 @@ const App = () => {
         </div>
         <div className="flex-1 flex flex-col h-full">
           <div className="font-semibold">{character?.lastResultEvent?.result?.name}</div>
+          <div className="font-semibold">{age()}</div>
           <div className="flex flex-col h-full overflow-y-scroll">
             {character?.lastResultEvent &&
               [
