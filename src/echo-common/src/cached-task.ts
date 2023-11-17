@@ -25,17 +25,19 @@ export type SmartCacheLoadEvent = {
 }
 
 export class SmartCache<T> {
-  private tasks$ = new Subject<SmartCacheLoadEvent>()
+  private taskQueue$ = new Subject<SmartCacheLoadEvent>()
   private events$ = new Subject<SmartCacheEvent<T>>()
 
+  //What if there was on BehaviorSubject per key that contained the state {loading, error, data}
+
   private cache$ = new BehaviorSubject<{ [key: string]: SmartCacheEvent<T> }>({})
-  private localCache: { [key: string]: boolean } = {}
+  private localCacheChecked: { [key: string]: boolean } = {}
 
   constructor(
     private dir: EchoDirService,
     loadFun: (key: string) => Observable<T | null>
   ) {
-    this.tasks$
+    this.taskQueue$
       .pipe(
         map((event) => this.loadFromLocalIfValid(event)),
         filterNullish(),
@@ -68,8 +70,8 @@ export class SmartCache<T> {
       return null
     }
 
-    if (!this.localCache[key]) {
-      this.localCache[key] = true
+    if (!this.localCacheChecked[key]) {
+      this.localCacheChecked[key] = true
       if (this.dir.existsJson('cache', key)) {
         const localCachedValue = this.dir.loadJson<SmartCacheEvent<T>>('cache', key)
         if (localCachedValue && this.isValid(localCachedValue)) {
@@ -103,7 +105,7 @@ export class SmartCache<T> {
         }
       })
 
-      this.tasks$.next({ key: config.key })
+      this.taskQueue$.next({ key: config.key })
     })
   }
 }
