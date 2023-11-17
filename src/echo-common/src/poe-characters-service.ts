@@ -3,6 +3,8 @@ import { SmartCache } from './smart-cache'
 import { PoeCharacter } from 'sage-common'
 import { EchoDirService } from './echo-dir-service'
 import { useEffect, useState } from 'react'
+import { filter, map, tap } from 'rxjs'
+import { filterNullish } from 'ts-ratchet'
 
 export class PoeCharactersService {
   public characterListCache = new SmartCache<PoeCharacter[]>(this.echoDir, () =>
@@ -18,11 +20,19 @@ export class PoeCharactersService {
   ) { }
 
   public useCharacterList() {
-    const subject = this.characterListCache.memoryCache$
-    const [value, setValue] = useState(subject.getValue());
+    return this.useCache(this.characterListCache, "*")
+  }
+
+  public useCache<T>(cache: SmartCache<T>, key: string) {
+    const subject = cache.memoryCache$
+    const [value, setValue] = useState(subject.getValue()?.[key]);
 
     useEffect(() => {
-      const subscription = subject.subscribe((newValue) => {
+      const subscription = subject.pipe(
+        tap((e) => console.log('s', e)),
+        map((e) => e[key]),
+        filterNullish()
+      ).subscribe((newValue) => {
         setValue(newValue);
       });
       return () => {
@@ -30,6 +40,6 @@ export class PoeCharactersService {
       };
     }, [subject]);
 
-    return { value: value, load: () => { this.characterListCache.load({ key: "*", source: "test" }).subscribe() } }
+    return { value: value, load: () => { cache.load({ key: key, source: "test" }).subscribe() } }
   }
 }
