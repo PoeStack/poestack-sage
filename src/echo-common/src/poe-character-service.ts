@@ -4,11 +4,11 @@ import { PoeCharacter } from 'sage-common'
 import { EchoDirService } from './echo-dir-service'
 import { useCache } from './smart-cache-hooks'
 
-export class PoeCharactersService {
-  public characterListCache = new SmartCache<PoeCharacter[]>(this.echoDir, () =>
+export class PoeCharacterService {
+  public cacheCharacterList = new SmartCache<PoeCharacter[]>(this.echoDir, () =>
     this.gggApi.getCharacters()
   )
-  public characterCache = new SmartCache<PoeCharacter>(this.echoDir, (key) =>
+  public cacheCharacter = new SmartCache<PoeCharacter>(this.echoDir, (key) =>
     this.gggApi.getCharacter(key)
   )
 
@@ -18,10 +18,10 @@ export class PoeCharactersService {
   ) { }
 
   public useCharacterList(config: SmartCacheLoadConfig = { key: "poe_character_list" }) {
-    return useCache(this.characterListCache, config)
+    return useCache(this.cacheCharacterList, config)
   }
 
   public useCharacter(name: string, config: SmartCacheLoadConfig = { key: name }) {
-    return useCache(this.characterCache, config)
+    return useCache(this.cacheCharacter, config)
   }
 }

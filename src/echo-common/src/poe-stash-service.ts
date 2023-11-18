@@ -16,10 +16,11 @@ import { bind } from '@react-rxjs/core'
 
 export class PoeStashService {
   private groupingService = new ItemGroupingService()
-  public currentStashes = new SmartCache<PoePartialStashTab[]>(this.echoDir, (key) =>
+
+  public cacheStashes = new SmartCache<PoePartialStashTab[]>(this.echoDir, (key) =>
     this.gggApi.getStashes(key)
   )
-  public currentStashContents = new SmartCache<PoeStashTab>(this.echoDir, (key) =>
+  public cacheStashContent = new SmartCache<PoeStashTab>(this.echoDir, (key) =>
     this.gggApi.getStashContent(key.split('_')[0], key.split('_')[1])
   )
 
@@ -32,12 +33,12 @@ export class PoeStashService {
   ) { }
 
   public useStashes(league: string): SmartCacheHookType<PoePartialStashTab[]> {
-    return useCache(this.currentStashes, { key: league })
+    return useCache(this.cacheStashes, { key: league })
   }
 
   public stashItems(league: string): Observable<EchoPoeItem[]> {
-    const result = this.currentStashContents.memoryCache$.pipe(
-      combineLatestWith(this.valuationApi.currentStashes.memoryCache$),
+    const result = this.cacheStashContent.memoryCache$.pipe(
+      combineLatestWith(this.valuationApi.cacheValuationShards.memoryCache$),
       mergeMap(([tabs, valuationCache]) =>
         from(Object.values(tabs).map((e) => e.lastResultEvent?.result)).pipe(
           filterNullish(),
@@ -67,7 +68,7 @@ export class PoeStashService {
 }
 
 export type EchoPoeItem = {
-  stash: PoePartialStashTab & { items?: PoeItem[] | undefined; loadedAtTimestamp: string }
+  stash: PoeStashTab,
   data: PoeItem
   group: SageItemGroup | null
   valuation: SageValuation | null

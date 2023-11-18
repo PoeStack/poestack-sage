@@ -4,7 +4,7 @@ import {
   EchoPluginService,
   EchoRouter,
   PoeAccountService,
-  PoeCharactersService,
+  PoeCharacterService,
   PoeLogService,
   PoeStashService,
   SageValuationService
@@ -21,7 +21,7 @@ const POE_ACCOUNT_SERVICE = new PoeAccountService(ECHO_DIR, GGG_API)
 const POE_LOG_SERVICE = new PoeLogService()
 const SAGE_VALUATION_SERVICE = new SageValuationService(ECHO_DIR)
 const POE_STASH_SERVICE = new PoeStashService(ECHO_DIR, GGG_API, SAGE_VALUATION_SERVICE)
-const POE_CHARCTERS_SERVICE = new PoeCharactersService(ECHO_DIR, GGG_API)
+const POE_CHARCTERS_SERVICE = new PoeCharacterService(ECHO_DIR, GGG_API)
 
 export function buildContext(contextSource: string): EchoContext {
   return {

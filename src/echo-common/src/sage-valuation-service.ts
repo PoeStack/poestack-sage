@@ -7,12 +7,12 @@ export class SageValuationService {
 
   constructor(private echoDir: EchoDirService) { }
 
-  public currentStashes = new SmartCache<SageValuationShard>(this.echoDir, (key) =>
+  public cacheValuationShards = new SmartCache<SageValuationShard>(this.echoDir, (key) =>
     this.loadInternal(key)
   )
 
   public load(tag: string, shard: number | string, league: string) {
-    this.currentStashes.
+    this.cacheValuationShards.
       load({ key: `${tag}_${shard}_${league}`.replaceAll(' ', '_') })
       .subscribe()
   }
