@@ -60,7 +60,6 @@ export type SmartCacheJob = {
 
 export class SmartCache<T> {
   private jobQueue$ = new Subject<SmartCacheJob>()
-  private fireQueue$ = new Subject<SmartCacheJob>()
   private events$ = new Subject<SmartCacheEvent<T>>()
 
   public memoryCache$ = new BehaviorSubject<{ [key: string]: SmartCacheStore<T> }>({})
@@ -89,30 +88,6 @@ export class SmartCache<T> {
       }
     })
 
-    this.fireQueue$.pipe(
-      concatMap((e) => of(e.config.key)
-        .pipe(
-          delay(this.calulateRatelimitDelay()),
-          concatMap((key) => {
-            console.log("firing", key)
-            this.lastFireTimestampMs = Date.now()
-            return loadFun(key)
-          }),
-          take(1),
-          map((result) => ({ job: e, result: result }))
-        ))
-    ).subscribe((out) => {
-      const resultEvent: SmartCacheEvent<T> = {
-        type: "result",
-        source: "live",
-        key: out.job.config.key,
-        result: out.result,
-        timestampMs: Date.now()
-      }
-      this.persist(resultEvent)
-      this.events$.next(resultEvent)
-    })
-
     this.jobQueue$
       .pipe(
         map((job) => this.loadFromLocalIfValid(job)),
@@ -123,9 +98,29 @@ export class SmartCache<T> {
         // Really the bypass needs to 99% of the time be in the isValid
         map((job) => this.loadFromLocalIfValid(job)),
         filterNullish(),
+        concatMap((job) => of(job)
+          .pipe(
+            delay(this.calulateRatelimitDelay()),
+            concatMap((job) => {
+              console.log("firing", job)
+              this.lastFireTimestampMs = Date.now()
+              return loadFun(job.config.key)
+            }),
+            take(1),
+            map((result) => ({ job: job, result: result }))
+          )
+        )
       )
-      .subscribe((job) => {
-        this.fireQueue$.next(job)
+      .subscribe((out) => {
+        const resultEvent: SmartCacheEvent<T> = {
+          type: "result",
+          source: "live",
+          key: out.job.config.key,
+          result: out.result,
+          timestampMs: Date.now()
+        }
+        this.persist(resultEvent)
+        this.events$.next(resultEvent)
       })
   }
 

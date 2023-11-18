@@ -39,6 +39,9 @@ export class PoeCharactersService {
     }, [cache, config]);
 
     useEffect(() => {
+      if (value?.lastResultEvent?.key && value?.lastResultEvent?.key !== config.key) {
+        setValue(subject.getValue()?.[config.key] ?? {})
+      }
       const subscription = subject.pipe(
         tap((e) => console.log('event', config.key, e)),
         map((e) => e[config.key]),
