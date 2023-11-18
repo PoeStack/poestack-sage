@@ -2,9 +2,7 @@ import { GggApi } from 'ggg-api'
 import { SmartCache, SmartCacheLoadConfig } from './smart-cache'
 import { PoeCharacter } from 'sage-common'
 import { EchoDirService } from './echo-dir-service'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { map, tap } from 'rxjs'
-import { filterNullish } from 'ts-ratchet'
+import { useCache } from './smart-cache-hooks'
 
 export class PoeCharactersService {
   public characterListCache = new SmartCache<PoeCharacter[]>(this.echoDir, () =>
@@ -19,47 +17,11 @@ export class PoeCharactersService {
     private gggApi: GggApi
   ) { }
 
-  public useCharacterList() {
-    return this.useCache(this.characterListCache, { key: "*" })
+  public useCharacterList(config: SmartCacheLoadConfig = { key: "poe_character_list" }) {
+    return useCache(this.characterListCache, config)
   }
 
-  public useCharacter(name: string) {
-    return this.useCache(this.characterCache, { key: name })
-  }
-
-  public useCache<T>(cache: SmartCache<T>, config: SmartCacheLoadConfig) {
-    const subject = cache.memoryCache$
-    const initalValue = subject.getValue()?.[config.key] ?? {};
-    const [value, setValue] = useState(initalValue);
-
-    const load = useCallback(() => {
-      if (config.key) {
-        cache.load(config).subscribe();
-      }
-    }, [cache, config]);
-
-    useEffect(() => {
-      if (value?.lastResultEvent?.key && value?.lastResultEvent?.key !== config.key) {
-        setValue(subject.getValue()?.[config.key] ?? {})
-      }
-      const subscription = subject.pipe(
-        tap((e) => console.log('event', config.key, e)),
-        map((e) => e[config.key]),
-        filterNullish()
-      ).subscribe((newValue) => {
-        setValue(newValue);
-      });
-
-      load()
-      return () => {
-        subscription.unsubscribe();
-      };
-    }, [subject, config]);
-
-    return {
-      value: value,
-      load: load,
-      age: () => { return Date.now() - (value.lastResultEvent?.timestampMs ?? 0) }
-    }
+  public useCharacter(name: string, config: SmartCacheLoadConfig = { key: name }) {
+    return useCache(this.characterCache, config)
   }
 }

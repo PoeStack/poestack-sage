@@ -5,13 +5,13 @@ const App = () => {
   const { value: characterList } = context().poeCharacters.useCharacterList()
 
   const [characterName, setCharacterName] = useState(null)
-  const { value: character, age} = context().poeCharacters.useCharacter(characterName)
+  const { value: character, valueAge } = context().poeCharacters.useCharacter(characterName)
 
   return (
     <>
       <div className="flex h-full w-full pt-2 pl-2 pr-2">
         <div className="flex-shrink-0 flex flex-col gap-2 h-full overflow-y-scroll pr-4">
-          {characterList.lastResultEvent?.result?.map((c) => (
+          {characterList?.map((c) => (
             <div
               key={c.id}
               onClick={() => {
@@ -28,14 +28,14 @@ const App = () => {
           ))}
         </div>
         <div className="flex-1 flex flex-col h-full">
-          <div className="font-semibold">{character?.lastResultEvent?.result?.name}</div>
-          <div className="font-semibold">{age()}</div>
+          <div className="font-semibold">{character?.name}</div>
+          <div className="font-semibold">{valueAge()}</div>
           <div className="flex flex-col h-full overflow-y-scroll">
-            {character?.lastResultEvent &&
+            {character &&
               [
-                ...character.lastResultEvent.result.inventory,
-                ...character.lastResultEvent.result.equipment,
-                ...character.lastResultEvent.result.jewels
+                ...character.inventory,
+                ...character.equipment,
+                ...character.jewels
               ].map((item) => <div key={item.id}>{item.typeLine}</div>)}
           </div>
         </div>

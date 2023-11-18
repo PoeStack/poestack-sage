@@ -44,16 +44,6 @@ export type SmartCacheStore<T> = {
   lastStatusEvent: SmartCacheStatusEvent | undefined,
 }
 
-export type SmartCacheHookType<T> = SmartCacheStore<T> & {
-  key: () => string,
-
-  result: () => T | null | undefined,
-  resultAge: () => number | undefined,
-
-  load: (config: SmartCacheLoadConfig) => Observable<SmartCacheEvent<T>>,
-  loadSimple: () => void,
-}
-
 export type SmartCacheJob = {
   config: SmartCacheLoadConfig
 }
