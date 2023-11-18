@@ -17,35 +17,39 @@ export const PluginSettingsPage = () => {
         </div>
         <div className="pt-4 flex-row flex w-full">
           <table className="bg-secondary-surface table-auto border-separate border-spacing-3 text-left">
-            <tr className="">
-              <th>Plugin Name</th>
-              <th>Version</th>
-              <th>Enabled</th>
-            </tr>
-            {(plugins || []).length > 0 &&
-              plugins.map((plugin) => (
-                <tr key={plugin.key}>
-                  <td>{plugin.manifest?.name}</td>
-                  <td>{plugin.manifest?.version}</td>
-                  {!plugin.path && (
-                    <td onClick={() => APP_CONTEXT.plugins.installPlugin(plugin)}>Install</td>
-                  )}
-                  <td className="text-center">
-                    <input
-                      type="checkbox"
-                      id={`${plugin.manifest?.name}-enabled`}
-                      name="enabled"
-                      checked={!!plugin.enabled}
-                      onChange={() => APP_CONTEXT.plugins.togglePlugin(plugin)}
-                    />
-                  </td>
-                </tr>
-              ))}
-            {!plugins?.length && (
-              <tr>
-                <td>No Plugins installed</td>
+            <thead>
+              <tr className="">
+                <th>Plugin Name</th>
+                <th>Version</th>
+                <th>Enabled</th>
               </tr>
-            )}
+            </thead>
+            <tbody>
+              {(plugins || []).length > 0 &&
+                plugins.map((plugin) => (
+                  <tr key={plugin.key}>
+                    <td>{plugin.manifest?.name}</td>
+                    <td>{plugin.manifest?.version}</td>
+                    {!plugin.path && (
+                      <td onClick={() => APP_CONTEXT.plugins.installPlugin(plugin)}>Install</td>
+                    )}
+                    <td className="text-center">
+                      <input
+                        type="checkbox"
+                        id={`${plugin.manifest?.name}-enabled`}
+                        name="enabled"
+                        checked={!!plugin.enabled}
+                        onChange={() => APP_CONTEXT.plugins.togglePlugin(plugin)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              {!plugins?.length && (
+                <tr>
+                  <td>No Plugins installed</td>
+                </tr>
+              )}
+            </tbody>
           </table>
         </div>
         <div className="basis-1/4"></div>
