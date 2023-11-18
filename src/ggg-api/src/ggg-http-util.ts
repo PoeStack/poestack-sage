@@ -1,7 +1,7 @@
 import { BehaviorSubject, Observable } from 'rxjs'
 import axios from 'axios'
 
-export class HttpUtil {
+export class GggHttpUtil {
   public tokenSubject$ = new BehaviorSubject(process.env['GGG_TOKEN'])
   public gggApiEndpoint = process.env['GGG_API_ENDPOINT'] ?? 'https://api.pathofexile.com'
 
@@ -28,5 +28,3 @@ export class HttpUtil {
     })
   }
 }
-
-export const GGG_API_UTIL = new HttpUtil()

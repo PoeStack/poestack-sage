@@ -1,4 +1,4 @@
 import { GggApi } from './ggg-api'
-import { GGG_API_UTIL } from './http-util'
+import { GggHttpUtil } from './ggg-http-util'
 
-export { GggApi, GGG_API_UTIL }
+export { GggApi, GggHttpUtil }

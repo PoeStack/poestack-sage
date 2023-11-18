@@ -1,23 +1,27 @@
 import path from 'path'
 import { Module } from 'module'
 
-
 const echoAppNodeModules: string = path.resolve(__dirname, '..', '..', 'node_modules')
-const echoCommonNodeModules: string = path.resolve(__dirname, '..', '..', '..', "echo-common", 'node_modules')
-console.log("echo-app-node-modules", echoAppNodeModules)
-console.log("echo-common-node-modules", echoCommonNodeModules)
+const echoCommonNodeModules: string = path.resolve(
+  __dirname,
+  '..',
+  '..',
+  '..',
+  'echo-common',
+  'node_modules'
+)
+console.log('echo-app-node-modules', echoAppNodeModules)
+console.log('echo-common-node-modules', echoCommonNodeModules)
 
 const orgResolvePath: unknown = Module['_resolveLookupPaths']
-Module['_resolveLookupPaths'] = function(request, parent) {
-
+Module['_resolveLookupPaths'] = function (request, parent) {
   const orgResults: string[] = []
   try {
     orgResults.push(...orgResolvePath(request, parent))
-  } catch (error) {
-  }
+  } catch (error) {}
 
-  const mappedResults = orgResults.map((e) => e
-    .split("node_modules"))
+  const mappedResults = orgResults
+    .map((e) => e.split('node_modules'))
     .filter((e) => e.length == 2)
     .flatMap((e) => [`${echoAppNodeModules}${e[1]}`, `${echoCommonNodeModules}${e[1]}`])
 
@@ -25,7 +29,6 @@ Module['_resolveLookupPaths'] = function(request, parent) {
   results.push(...mappedResults)
   results.push(...orgResults)
   results.push(...[echoAppNodeModules, echoCommonNodeModules])
-
 
   //console.log("req", request, parent, results)
   return results
