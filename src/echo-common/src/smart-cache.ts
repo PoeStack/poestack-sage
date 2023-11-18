@@ -164,6 +164,10 @@ export class SmartCache<T> {
   }
 
   public load(config: SmartCacheLoadConfig): Observable<SmartCacheEvent<T>> {
+    if (config.key === null || config.key === undefined) {
+      throw new Error("Config key cannot be null or undefined")
+    }
+
     return new Observable<SmartCacheEvent<T>>((sub) => {
       const eventSub = this.events$.pipe(
         filter((e) => e.key === config.key)
