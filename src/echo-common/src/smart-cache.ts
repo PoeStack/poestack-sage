@@ -1,5 +1,5 @@
-import { BehaviorSubject, filter, groupBy, map, mergeMap, Observable, Subject, take } from 'rxjs'
-import { concatMap, throttleTime } from 'rxjs/operators'
+import { BehaviorSubject, filter, groupBy, map, mergeMap, Observable, of, Subject, take } from 'rxjs'
+import { concatMap, delay, mergeAll, throttleTime } from 'rxjs/operators'
 import { filterNullish } from 'ts-ratchet'
 import { EchoDirService } from './echo-dir-service'
 
@@ -60,10 +60,12 @@ export type SmartCacheJob = {
 
 export class SmartCache<T> {
   private jobQueue$ = new Subject<SmartCacheJob>()
+  private fireQueue$ = new Subject<SmartCacheJob>()
   private events$ = new Subject<SmartCacheEvent<T>>()
 
   public memoryCache$ = new BehaviorSubject<{ [key: string]: SmartCacheStore<T> }>({})
   private localCacheChecked: { [key: string]: boolean } = {}
+  private lastFireTimestampMs: number = 0
 
   constructor(
     private dir: EchoDirService,
@@ -87,35 +89,57 @@ export class SmartCache<T> {
       }
     })
 
+    this.fireQueue$.pipe(
+      concatMap((e) => of(e.config.key)
+        .pipe(
+          delay(this.calulateRatelimitDelay()),
+          concatMap((key) => {
+            console.log("firing", key)
+            this.lastFireTimestampMs = Date.now()
+            return loadFun(key)
+          }),
+          take(1),
+          map((result) => ({ job: e, result: result }))
+        ))
+    ).subscribe((out) => {
+      const resultEvent: SmartCacheEvent<T> = {
+        type: "result",
+        source: "live",
+        key: out.job.config.key,
+        result: out.result,
+        timestampMs: Date.now()
+      }
+      this.persist(resultEvent)
+      this.events$.next(resultEvent)
+    })
+
     this.jobQueue$
       .pipe(
         map((job) => this.loadFromLocalIfValid(job)),
         filterNullish(),
         groupBy((job) => job.config.key),
-        concatMap((group) => group.pipe(throttleTime(10_000))),
-        // The throttleTime is for depuing multiple requests made while requests are firing
+        mergeMap((group) => group.pipe(throttleTime(10_000))),
+        // The throttleTime is for dedupuing multiple requests made while requests are firing
         // Really the bypass needs to 99% of the time be in the isValid
         map((job) => this.loadFromLocalIfValid(job)),
-        filterNullish()
-        // Add rate limiter here per cache not per key
-        // Maybe the load function should be in here
+        filterNullish(),
       )
       .subscribe((job) => {
-        console.log("firing", job.config.key)
-        loadFun(job.config.key)
-          .pipe(take(1))
-          .subscribe((result) => {
-            const resultEvent: SmartCacheEvent<T> = {
-              type: "result",
-              source: "live",
-              key: job.config.key,
-              result: result,
-              timestampMs: Date.now()
-            }
-            this.persist(resultEvent)
-            this.events$.next(resultEvent)
-          })
+        this.fireQueue$.next(job)
       })
+  }
+
+  private calulateRatelimitDelay(): number {
+    const msSinceLastFire = this.msSinceLastFire()
+    console.log("calculated limit delaying using", msSinceLastFire)
+    if (msSinceLastFire < 5000) {
+      return 1500
+    }
+    return 100
+  }
+
+  private msSinceLastFire(): number {
+    return Date.now() - this.lastFireTimestampMs
   }
 
   private loadFromLocalIfValid(job: SmartCacheJob): SmartCacheJob | null {
