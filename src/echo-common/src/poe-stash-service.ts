@@ -11,6 +11,8 @@ import {
 } from 'sage-common'
 import { SageValuation, SageValuationService } from './sage-valuation-service'
 import { EchoDirService } from './echo-dir-service'
+import { SmartCacheHookType, useCache } from './smart-cache-hooks'
+import { bind } from '@react-rxjs/core'
 
 export class PoeStashService {
   private groupingService = new ItemGroupingService()
@@ -21,18 +23,16 @@ export class PoeStashService {
     this.gggApi.getStashContent(key.split('_')[0], key.split('_')[1])
   )
 
+  public usePoeStashItems = bind((league: string) => this.stashItems(league), [])[0]
+
   constructor(
     private echoDir: EchoDirService,
     private gggApi: GggApi,
     private valuationApi: SageValuationService
-  ) {}
+  ) { }
 
-  public stashTabs(league: string): Observable<PoePartialStashTab[]> {
-    const result = this.currentStashes.memoryCache$.pipe(
-      map((e) => e[league]),
-      map((e) => (e?.lastResultEvent?.result ?? []).flatMap((t) => t.children ?? [t]))
-    )
-    return result
+  public useStashes(league: string): SmartCacheHookType<PoePartialStashTab[]> {
+    return useCache(this.currentStashes, { key: league })
   }
 
   public stashItems(league: string): Observable<EchoPoeItem[]> {

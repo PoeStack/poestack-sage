@@ -1,16 +1,14 @@
 import { useState } from 'react'
 import { context } from './entry'
-import { bind } from '@react-rxjs/core'
-
-const [usePoeStashItems] = bind((league: string) => context().poeStash.stashItems(league), [])
-const [usePoeStashes] = bind((league: string) => context().poeStash.stashTabs(league), [])
 
 const App = () => {
   const league = 'Ancestor'
 
   const [searchString, setSearchString] = useState('')
-  const stashes = usePoeStashes(league)
-  const stashItems = usePoeStashItems(league)
+
+  const { value: stashes } = context().poeStash.useStashes(league)
+
+  const stashItems = context().poeStash.usePoeStashItems(league)
     .filter(
       (e) =>
         !searchString.length || e.data.typeLine.toLowerCase().includes(searchString.toLowerCase())
@@ -21,19 +19,17 @@ const App = () => {
         new Date(a.stash.loadedAtTimestamp).getTime()
     )
 
-  context().poeStash.currentStashes.load(league).subscribe()
-
   return (
     <>
       <div className="flex flex-col h-full w-full pt-2 pl-2 pr-2">
         <div className="flex-shrink-0 flex flex-row gap-2 overflow-x-scroll pb-5 pt-2">
-          {stashes.map((e) => (
+          {(stashes ?? []).map((e) => (
             <div
               key={e.id}
               style={{ backgroundColor: `#${e.metadata.colour}` }}
               className="flex-shrink-0 cursor-pointer py-2 px-4 shadow-md no-underline rounded-full  text-white text-sm hover:text-white hover:bg-blue-light focus:outline-none active:shadow-none mr-2"
               onClick={() =>
-                context().poeStash.currentStashContents.load(`${e.league}_${e.id}`).subscribe()
+                context().poeStash.currentStashContents.load({ key: `${e.league}_${e.id}` }).subscribe()
               }
             >
               {e.name}
@@ -50,7 +46,7 @@ const App = () => {
           />
         </div>
         <div className="overflow-y-scroll flex-1 mt-2">
-          {stashItems.map((e) => (
+          {(stashItems ?? []).map((e) => (
             <div key={e.data.id}>
               <div>
                 <span style={{ color: `#${e.stash.metadata.colour}` }}>{e.stash.name}</span>:{' '}
