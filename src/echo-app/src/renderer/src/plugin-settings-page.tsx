@@ -22,7 +22,7 @@ export const PluginSettingsPage = () => {
               <th>Version</th>
               <th>Enabled</th>
             </tr>
-            {plugins?.length &&
+            {(plugins || []).length > 0 &&
               plugins.map((plugin) => (
                 <tr key={plugin.key}>
                   <td>{plugin.manifest?.name}</td>
