@@ -7,7 +7,6 @@
     "clean": "rimraf build/index.js out && rimraf build/index.js dist",
     "dev": "npm run bump-dev-plugins && electron-vite dev",
     "start": "npm run bump-dev-plugins && electron-vite preview",
-    "start:prod": "npm run bump-dev-plugins && electron-vite preview",
     "build": "npm run bump-dev-plugins && electron-vite build",
     "build:plugins": "cd ../../ && gradlew buildPlugins",
     "postinstall": "electron-builder install-app-deps",
