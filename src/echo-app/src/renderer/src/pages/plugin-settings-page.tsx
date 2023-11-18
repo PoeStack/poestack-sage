@@ -1,5 +1,5 @@
 import { bind } from '@react-rxjs/core'
-import { APP_CONTEXT } from './echo-context-factory'
+import { APP_CONTEXT } from '../echo-context-factory'
 
 const [usePlugins] = bind(APP_CONTEXT.plugins.currentPlugins$, {})
 
