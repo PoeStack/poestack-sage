@@ -44,7 +44,7 @@ export const PluginSettingsPage = () => {
                     </td>
                   </tr>
                 ))}
-              {!plugins?.length && (
+              {(plugins || []).length === 0 && (
                 <tr>
                   <td>No Plugins installed</td>
                 </tr>
