@@ -1,5 +1,5 @@
 import { bind } from '@react-rxjs/core'
-import { APP_CONTEXT, GGG_HTTP_UTIL } from './echo-context-factory'
+import { APP_CONTEXT, GGG_HTTP_UTIL } from '../echo-context-factory'
 
 const [usePoeProfile] = bind(APP_CONTEXT.poeAccounts.poeProfile(), null)
 

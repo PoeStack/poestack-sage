@@ -2,7 +2,7 @@ import { CSSProperties } from 'react'
 import { useEffect, useState } from 'react'
 import { bind } from '@react-rxjs/core'
 import jwt from 'jsonwebtoken'
-import { APP_CONTEXT, GGG_HTTP_UTIL } from './echo-context-factory'
+import { APP_CONTEXT, GGG_HTTP_UTIL } from '../echo-context-factory'
 
 const [useJwt] = bind(GGG_HTTP_UTIL.tokenSubject$, null)
 

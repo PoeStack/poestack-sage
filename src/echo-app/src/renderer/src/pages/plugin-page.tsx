@@ -7,8 +7,8 @@ import React, { Suspense, useEffect } from 'react'
 import { ProfilePage } from './profile-page'
 import { PluginSettingsPage } from './plugin-settings-page'
 // @ts-ignore
-import { DEV_PLUGINS } from './dev-plugins'
-import { APP_CONTEXT, buildContext } from './echo-context-factory'
+import { DEV_PLUGINS } from '../dev-plugins'
+import { APP_CONTEXT, buildContext } from '../echo-context-factory'
 
 const [useCurrentRoute] = bind(APP_CONTEXT.router.currentRoute$)
 const [useCurrentRoutes] = bind(APP_CONTEXT.router.routes$)
