@@ -39,12 +39,12 @@ const commonjsPackages = Array.from(
 )
 
 export default defineConfig({
-  main: defineViteConfig((config) => {
+  main: defineViteConfig(() => {
     return {
       plugins: [externalizeDepsAndPeerPlugin()]
     }
   }),
-  preload: defineViteConfig((config) => {
+  preload: defineViteConfig(() => {
     return {
       plugins: [externalizeDepsAndPeerPlugin()]
     }

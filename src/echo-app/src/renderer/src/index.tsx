@@ -9,7 +9,7 @@ import { PluginPageFooter } from './components/plugin-page-footer'
 
 const App = () => {
   const themes = ['root']
-  const [selectedTheme, setSelectedTheme] = useState(themes[0])
+  const [selectedTheme] = useState(themes[0])
 
   return (
     <div

@@ -13,7 +13,7 @@ const echoCommonNodeModules: string = path.resolve(
 console.log('echo-app-node-modules', echoAppNodeModules)
 console.log('echo-common-node-modules', echoCommonNodeModules)
 
-const orgResolvePath: unknown = Module['_resolveLookupPaths']
+const orgResolvePath = Module['_resolveLookupPaths']
 Module['_resolveLookupPaths'] = function (request, parent) {
   const orgResults: string[] = []
   try {
