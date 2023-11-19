@@ -1,47 +1,50 @@
 import React from 'react'
 import localForage from 'localforage'
-import { RootStore } from './store/rootStore'
 import { ArchiveBoxIcon, Cog8ToothIcon } from '@heroicons/react/24/outline'
-import { ECHO_ROUTER } from 'echo-common'
+import { ECHO_CONTEXT_SERVICE, EchoPluginHook, EchoRoute } from 'echo-common'
 import NetWorth from './routes/net-worth/NetWorth'
 import { create } from 'mobx-persist'
-import { configure } from 'mobx'
+import { configure, observable } from 'mobx'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import { RootStore } from './mst-store/rootStore'
+import { Provider } from 'mobx-react'
+import { getSnapshot, onAction, onPatch, onSnapshot } from 'mobx-state-tree'
 dayjs.extend(utc)
+dayjs.extend(relativeTime)
+
+export function context() {
+  return ECHO_CONTEXT_SERVICE.context('plugin')
+}
 
 const configureMobx = () => {
   configure({ enforceActions: 'observed' })
 }
 
-export let rootStore = new RootStore()
+type IRootStore = ReturnType<typeof RootStore.create>
+let rootStore: IRootStore
 
-const RootStoreContext = React.createContext<RootStore>({} as RootStore)
-
-export function useStores() {
-  return React.useContext(RootStoreContext)
+const history = {
+  snapshots: observable.array([], { deep: false }),
+  actions: observable.array([], { deep: false }),
+  patches: observable.array([], { deep: false })
 }
 
-type Props = {
-  error?: Error
-}
-
-const App = ({ error }: Props) => {
+const App = () => {
   return (
-    <RootStoreContext.Provider value={rootStore}>
+    <Provider value={rootStore} history={history}>
       <NetWorth />
-    </RootStoreContext.Provider>
+    </Provider>
   )
 }
 
-function registerRoute(error?: Error) {
-  ECHO_ROUTER.registerRoute({
-    plugin: 'exilence-next',
-    path: 'networth',
-    page: <App error={error} />,
-    navItems: [{ location: 'l-sidebar-m', icon: ArchiveBoxIcon }]
-  })
-}
+const pluginRoute = (): EchoRoute => ({
+  plugin: 'exilence-next',
+  path: 'networth',
+  page: App,
+  navItems: [{ location: 'l-sidebar-m', icon: ArchiveBoxIcon }]
+})
 
 export const start = () => {
   // Init all stuff
@@ -52,44 +55,78 @@ export const start = () => {
     driver: localForage.INDEXEDDB
   })
 
-  localForage.setItem
-  localForage.getItem
-  localForage.removeItem
+  rootStore = RootStore.create(
+    {},
+    {
+      alert: (m) => console.log(m) // Noop for demo: window.alert(m)
+    }
+  )
 
-  // TODO: Write to sqlite
-  const hydrate = create({
-    storage: {
-      setItem<T>(
-        key: string,
-        value: T,
-        callback?: ((err: any, value: T) => void) | undefined
-      ): Promise<T> {
-        console.log('SetItem: ', key, value)
-        return localForage.setItem(key, value, callback)
-      },
-      getItem<T>(
-        key: string,
-        callback?: ((err: any, value: T | null) => void) | undefined
-      ): Promise<T | null> {
-        console.log('GetItem: ', key)
-        return localForage.getItem(key, callback)
-      },
-      removeItem(key: string, callback?: ((err: any) => void) | undefined): Promise<void> {
-        console.log('RemoveItem: ', key)
-        return localForage.removeItem(key, callback)
-      }
-    },
-    jsonify: true
-  })
+  context().router.registerRoute(pluginRoute())
 
-  Promise.all([hydrate('account', rootStore.accountStore)])
-    .then(() => {
-      rootStore.accountStore.initSession()
-      registerRoute()
-    })
-    .catch((err: Error) => {
-      registerRoute(err)
-    })
+  // ---------------
+
+  // @ts-ignore
+  window.rootStore = rootStore // for playing around with the console
+
+  /**
+   * Poor man's effort of "DevTools" to demonstrate the api:
+   */
+
+  let recording = true // supress recording history when replaying
+
+  onSnapshot(
+    rootStore,
+    (s) =>
+      recording &&
+      history.snapshots.unshift({
+        data: s,
+        replay() {
+          recording = false
+          applySnapshot(shop, this.data)
+          recording = true
+        }
+      })
+  )
+  onPatch(
+    rootStore,
+    (s) =>
+      recording &&
+      history.patches.unshift({
+        data: s,
+        replay() {
+          recording = false
+          applyPatch(shop, this.data)
+          recording = true
+        }
+      })
+  )
+  onAction(
+    rootStore,
+    (s) =>
+      recording &&
+      history.actions.unshift({
+        data: s,
+        replay() {
+          recording = false
+          applyAction(shop, this.data)
+          recording = true
+        }
+      })
+  )
+
+  // // add initial snapshot
+  // history.snapshots.push({
+  //   data: getSnapshot(shop),
+  //   replay() {
+  //     // TODO: DRY
+  //     recording = false
+  //     applySnapshot(shop, this.data)
+  //     recording = true
+  //   }
+  // })
 }
 
-export function destroy() {}
+export function destroy() {
+  context().router.unregisterRoute(pluginRoute())
+}

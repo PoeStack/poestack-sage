@@ -1,30 +1,27 @@
+import { SettingStore } from './settingStore'
 import { AccountStore } from './accountStore'
-// import { LeagueStore } from './leagueStore';
-// import { NotificationStore } from './notificationStore';
-// import { OverlayStore } from './overlayStore';
-// import { PriceStore } from './priceStore';
+import { LeagueStore } from './leagueStore'
+import { UiStateStore } from './uiStateStore'
 // import { RouteStore } from './routeStore';
-// import { SettingStore } from './settingStore';
-// import { UiStateStore } from './uiStateStore';
+import { PriceStore } from './priceStore'
+import { NotificationStore } from './notificationStore'
 
 export class RootStore {
+  settingStore: SettingStore
   accountStore: AccountStore
-  //   uiStateStore: UiStateStore;
-  //   settingStore: SettingStore;
+  leagueStore: LeagueStore
+  uiStateStore: UiStateStore
   //   routeStore: RouteStore;
-  //   leagueStore: LeagueStore;
-  //   notificationStore: NotificationStore;
-  //   priceStore: PriceStore;
-  //   overlayStore: OverlayStore;
+  priceStore: PriceStore
+  notificationStore: NotificationStore
 
   constructor() {
-    // this.uiStateStore = new UiStateStore(this);
+    this.settingStore = new SettingStore(this)
     this.accountStore = new AccountStore(this)
-    // this.settingStore = new SettingStore(this);
+    this.leagueStore = new LeagueStore(this)
+    this.uiStateStore = new UiStateStore(this)
     // this.routeStore = new RouteStore(this);
-    // this.leagueStore = new LeagueStore(this);
-    // this.notificationStore = new NotificationStore(this);
-    // this.priceStore = new PriceStore(this);
-    // this.overlayStore = new OverlayStore(this);
+    this.priceStore = new PriceStore(this)
+    this.notificationStore = new NotificationStore(this)
   }
 }

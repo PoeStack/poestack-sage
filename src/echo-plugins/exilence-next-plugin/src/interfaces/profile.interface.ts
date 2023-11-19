@@ -5,10 +5,14 @@ export interface IProfile {
   name: string
   activeLeagueId?: string
   activePriceLeagueId?: string
-  activeCurrency?: ICurrency
-  activeStashTabIds?: string[]
   activeCharacterName?: string
+  activeStashTabIds?: string[]
   active?: boolean
   includeEquipment?: boolean
   includeInventory?: boolean
+  incomeResetAt?: number
+}
+
+export interface IProfileEntity extends IProfile {
+  snapshotsIds: string[]
 }

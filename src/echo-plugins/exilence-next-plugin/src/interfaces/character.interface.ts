@@ -15,3 +15,5 @@ export interface ICharacter {
   inventory?: IItem[]
   jewels?: IItem[]
 }
+
+export interface ICharacterEntity extends ICharacter {}

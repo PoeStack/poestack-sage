@@ -5,6 +5,7 @@ import { ILeague } from '../interfaces/league.interface'
 import { League } from './domains/league'
 import { RootStore } from './rootStore'
 
+// MIGRATED - TODO: Update on load / subscribe and listen
 export class LeagueStore {
   @persist('list', League) @observable leagues: League[] = []
   @persist('list', League) @observable priceLeagues: League[] = []

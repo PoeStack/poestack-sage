@@ -2,7 +2,7 @@ import { action, autorun, computed, makeObservable, observable, runInAction } fr
 import { RootStore } from './rootStore'
 import { Account } from './domains/account'
 import { persist } from 'mobx-persist'
-import { POE_ACCOUNT_SERVICE } from 'echo-common'
+import { context } from '..'
 
 export class AccountStore {
   @persist('list', Account) @observable accounts: Account[] = []
@@ -19,12 +19,12 @@ export class AccountStore {
   }
 
   @action
-  selectAccount(uuid: string) {
+  setActiveAccount(uuid: string) {
     this.selectedAccount = uuid
   }
 
   @action
-  selectAccountByName(name: string) {
+  setActiveAccountByName(name: string) {
     this.selectedAccount = ''
     const account = this.accounts.find((a) => a.name === name)
     if (!account) return
@@ -46,12 +46,12 @@ export class AccountStore {
 
   @action
   initSession() {
-    const subscription = POE_ACCOUNT_SERVICE.profile.load('profile').subscribe((poeProfile) => {
-      if (poeProfile.result?.name) {
-        const account = this.addOrUpdateAccount(poeProfile.result.name)
-        this.selectAccountByName(account.name)
-        subscription.unsubscribe()
-      }
-    })
+    // const subscription = POE_ACCOUNT_SERVICE.profile.load('profile').subscribe((poeProfile) => {
+    //   if (poeProfile.result?.name) {
+    //     const account = this.addOrUpdateAccount(poeProfile.result.name)
+    //     this.selectAccountByName(account.name)
+    //     subscription.unsubscribe()
+    //   }
+    // })
   }
 }

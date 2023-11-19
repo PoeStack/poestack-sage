@@ -20,3 +20,7 @@ File("src/echo-plugin-examples").listFiles()?.forEach {
   include("src:echo-plugin-examples:${it.name}")
 }
 
+File("src/echo-plugins").listFiles()?.forEach {
+  include("src:echo-plugins:${it.name}")
+}
+

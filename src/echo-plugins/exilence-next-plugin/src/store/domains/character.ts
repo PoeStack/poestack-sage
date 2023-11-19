@@ -14,8 +14,8 @@ export class Character implements ICharacter {
   @persist experience: number = -1
   @persist league?: string
   @persist expired?: boolean
-  @persist current?: boolean
   @persist deleted?: boolean
+  @persist current?: boolean
   @persist('list') @observable inventory: IItem[] = []
   @persist('list') @observable equipment: IItem[] = []
   @persist('list') @observable jewels: IItem[] = []

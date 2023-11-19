@@ -1,4 +1,7 @@
-export interface IExternalPrice {}
+export interface IExternalPrice {
+  name: string
+  calculated: number
+}
 
 export interface ISparkLineDetails {
   data: number[]
