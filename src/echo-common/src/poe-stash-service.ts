@@ -30,7 +30,7 @@ export class PoeStashService {
     private echoDir: EchoDirService,
     private gggApi: GggApi,
     private valuationApi: SageValuationService
-  ) { }
+  ) {}
 
   public useStashes(league: string): SmartCacheHookType<PoePartialStashTab[]> {
     return useCache(this.cacheStashes, { key: league })
@@ -50,7 +50,8 @@ export class PoeStashService {
               if (group) {
                 const valuationKey = `${group.tag}_${group.shard}_${league}`
                 const valuation =
-                  valuationCache[valuationKey]?.lastResultEvent?.result?.valuations[group.hash] ?? null
+                  valuationCache[valuationKey]?.lastResultEvent?.result?.valuations[group.hash] ??
+                  null
                 this.valuationApi.load(group.tag, group.shard, league)
                 return { stash, data: item, group, valuation }
               }
@@ -68,7 +69,7 @@ export class PoeStashService {
 }
 
 export type EchoPoeItem = {
-  stash: PoeStashTab,
+  stash: PoeStashTab
   data: PoeItem
   group: SageItemGroup | null
   valuation: SageValuation | null

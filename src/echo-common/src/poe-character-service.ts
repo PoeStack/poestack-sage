@@ -15,9 +15,9 @@ export class PoeCharacterService {
   constructor(
     private echoDir: EchoDirService,
     private gggApi: GggApi
-  ) { }
+  ) {}
 
-  public useCharacterList(config: SmartCacheLoadConfig = { key: "poe_character_list" }) {
+  public useCharacterList(config: SmartCacheLoadConfig = { key: 'poe_character_list' }) {
     return useCache(this.cacheCharacterList, config)
   }
 

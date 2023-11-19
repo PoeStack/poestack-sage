@@ -3,46 +3,50 @@ import { concatMap, delay, tap } from 'rxjs/operators'
 import { EchoDirService } from './echo-dir-service'
 
 export type SmartCacheLoadConfig = {
-  key: string,
+  key: string
   maxCacheAgeMs?: number
 }
 
 export type SmartCacheBaseEvent = {
-  key: string,
-  timestampMs: number,
+  key: string
+  timestampMs: number
 }
 
 export type SmartCacheResultEvent<T> = SmartCacheBaseEvent & {
-  type: "result",
-  result: T | null | undefined,
+  type: 'result'
+  result: T | null | undefined
 }
 
 export type SmartCacheQueuedEvent = SmartCacheBaseEvent & {
-  type: "queued",
+  type: 'queued'
 }
 
 export type SmartCacheLoadingEvent = SmartCacheBaseEvent & {
-  type: "loading",
+  type: 'loading'
 }
 
 export type SmartCacheErrorEvent = SmartCacheBaseEvent & {
-  type: "error",
+  type: 'error'
   error: any
 }
 
 export type SmartCacheRateLimitEvent = SmartCacheBaseEvent & {
-  type: "rate-limit",
+  type: 'rate-limit'
   limitExpiresMs: number
 }
 
-export type SmartCacheStatusEvent = SmartCacheLoadingEvent | SmartCacheErrorEvent | SmartCacheRateLimitEvent | SmartCacheQueuedEvent
+export type SmartCacheStatusEvent =
+  | SmartCacheLoadingEvent
+  | SmartCacheErrorEvent
+  | SmartCacheRateLimitEvent
+  | SmartCacheQueuedEvent
 
 export type SmartCacheEvent<T> = SmartCacheStatusEvent | SmartCacheResultEvent<T>
 
 export type SmartCacheStore<T> = {
-  lastResultEvent: SmartCacheResultEvent<T> | undefined,
-  lastErorrEvent: SmartCacheErrorEvent | undefined,
-  lastRequestEvent: SmartCacheEvent<T> | undefined,
+  lastResultEvent: SmartCacheResultEvent<T> | undefined
+  lastErorrEvent: SmartCacheErrorEvent | undefined
+  lastRequestEvent: SmartCacheEvent<T> | undefined
 }
 
 export type SmartCacheJob = {
@@ -64,36 +68,42 @@ export class SmartCache<T> {
       const currentStore = this.memoryCache$.value[e.key] ?? {}
       const nextStore = { ...currentStore, lastRequestEvent: e!! }
 
-      if (e.type === "error") {
+      if (e.type === 'error') {
         nextStore.lastErorrEvent = e
-      }
-
-      if (e.type === "result") {
+      } else if (e.type === 'result') {
         nextStore.lastResultEvent = e
         nextStore.lastErorrEvent = undefined
         this.persist(e)
       }
 
-      this.memoryCache$.next({ ...this.memoryCache$.value, [e.key]: nextStore })
+      if (e.type !== 'queued') {
+        this.memoryCache$.next({ ...this.memoryCache$.value, [e.key]: nextStore })
+      }
     })
 
-    this.workQueue$.pipe(
-      concatMap((e) => {
-        const ratelimitDelayMs = 1000 //calculate rate limit here
-        console.log("pre-ratelimit", e, ratelimitDelayMs)
-        this.events$.next({ type: "rate-limit", key: e.key, timestampMs: Date.now(), limitExpiresMs: ratelimitDelayMs })
-        return of(e).pipe(
-          delay(ratelimitDelayMs),
-          tap((e) => console.log("post-ratelimit", e)),
-          concatMap((e) => {
-            return loadFun(e.key).pipe(map((r) => ({ e, r })))
-          }
+    this.workQueue$
+      .pipe(
+        concatMap((e) => {
+          const ratelimitDelayMs = 1000 //calculate rate limit here
+          console.log('pre-ratelimit', e, ratelimitDelayMs)
+          this.events$.next({
+            type: 'rate-limit',
+            key: e.key,
+            timestampMs: Date.now(),
+            limitExpiresMs: ratelimitDelayMs
+          })
+          return of(e).pipe(
+            delay(ratelimitDelayMs),
+            tap((e) => console.log('post-ratelimit', e)),
+            concatMap((e) => {
+              return loadFun(e.key).pipe(map((r) => ({ e, r })))
+            })
           )
-        )
+        })
+      )
+      .subscribe(({ e, r }) => {
+        this.events$.next({ type: 'result', result: r, key: e.key, timestampMs: Date.now() })
       })
-    ).subscribe(({ e, r }) => {
-      this.events$.next({ type: "result", result: r, key: e.key, timestampMs: Date.now() })
-    })
   }
 
   private loadFromLocalIfValid(config: SmartCacheLoadConfig): SmartCacheResultEvent<T> | null {
@@ -117,23 +127,24 @@ export class SmartCache<T> {
   }
 
   private persist(event: SmartCacheResultEvent<T>) {
-    this.dir.writeJson(['cache', event.key], { ...event, source: "cache-local" })
+    this.dir.writeJson(['cache', event.key], { ...event, source: 'cache-local' })
   }
 
-  private isValid(config: SmartCacheLoadConfig, value: SmartCacheResultEvent<T> | undefined | null): boolean {
+  private isValid(
+    config: SmartCacheLoadConfig,
+    value: SmartCacheResultEvent<T> | undefined | null
+  ): boolean {
     const maxCacheAgeMs = config.maxCacheAgeMs === undefined ? 120_000 : config.maxCacheAgeMs
     return Date.now() - (value?.timestampMs ?? 0) < maxCacheAgeMs
   }
 
   public fromCache(key: string): Observable<SmartCacheStore<T> | null | undefined> {
-    return this.memoryCache$.pipe(
-      map((e) => e[key])
-    )
+    return this.memoryCache$.pipe(map((e) => e[key]))
   }
 
   public load(config: SmartCacheLoadConfig): Observable<SmartCacheEvent<T>> {
     if (config.key === null || config.key === undefined) {
-      throw new Error("Config key cannot be null or undefined")
+      throw new Error('Config key cannot be null or undefined')
     }
 
     return new Observable<SmartCacheEvent<T>>((sub) => {
@@ -142,27 +153,34 @@ export class SmartCache<T> {
         sub.next(localResult)
         sub.complete()
       } else {
-        const eventSub = this.events$.pipe(
-          filter((e) => e.key === config.key)
-        ).subscribe((e) => {
+        const eventSub = this.events$.pipe(filter((e) => e.key === config.key)).subscribe((e) => {
           sub.next(e)
 
-          if (e.type === "error") {
+          if (e.type === 'error') {
             sub.error(e.error)
-            sub.complete()
             eventSub.unsubscribe()
-          }
-
-          if (e.type === "result") {
             sub.complete()
+          } else if (e.type === 'result') {
             eventSub.unsubscribe()
+            sub.complete()
           }
         })
 
         const currentStore = this.memoryCache$.value[config.key] ?? {}
-        if (!currentStore.lastRequestEvent?.type || currentStore.lastRequestEvent?.type === "result") {
-          const nextEvent: SmartCacheQueuedEvent = { type: "queued", key: config.key, timestampMs: Date.now() }
-          this.memoryCache$.next({ ...this.memoryCache$.value, [config.key]: { ...currentStore, lastRequestEvent: nextEvent!! } })
+        if (
+          !currentStore.lastRequestEvent?.type ||
+          currentStore.lastRequestEvent?.type === 'result' ||
+          currentStore.lastRequestEvent?.type === 'error'
+        ) {
+          const nextEvent: SmartCacheQueuedEvent = {
+            type: 'queued',
+            key: config.key,
+            timestampMs: Date.now()
+          }
+          this.memoryCache$.next({
+            ...this.memoryCache$.value,
+            [config.key]: { ...currentStore, lastRequestEvent: nextEvent!! }
+          })
           this.events$.next(nextEvent)
           this.workQueue$.next(nextEvent)
         }

@@ -5,15 +5,15 @@ import { EchoDirService } from './echo-dir-service'
 export class SageValuationService {
   private httpUtil = new HttpUtil()
 
-  constructor(private echoDir: EchoDirService) { }
+  constructor(private echoDir: EchoDirService) {}
 
   public cacheValuationShards = new SmartCache<SageValuationShard>(this.echoDir, (key) =>
     this.loadInternal(key)
   )
 
   public load(tag: string, shard: number | string, league: string) {
-    this.cacheValuationShards.
-      load({ key: `${tag}_${shard}_${league}`.replaceAll(' ', '_') })
+    this.cacheValuationShards
+      .load({ key: `${tag}_${shard}_${league}`.replaceAll(' ', '_') })
       .subscribe()
   }
 

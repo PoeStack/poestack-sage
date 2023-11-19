@@ -32,11 +32,9 @@ const App = () => {
           <div className="font-semibold">{valueAge()}</div>
           <div className="flex flex-col h-full overflow-y-scroll">
             {character &&
-              [
-                ...character.inventory,
-                ...character.equipment,
-                ...character.jewels
-              ].map((item) => <div key={item.id}>{item.typeLine}</div>)}
+              [...character.inventory, ...character.equipment, ...character.jewels].map((item) => (
+                <div key={item.id}>{item.typeLine}</div>
+              ))}
           </div>
         </div>
       </div>

@@ -8,7 +8,8 @@ const App = () => {
 
   const { value: stashes } = context().poeStash.useStashes(league)
 
-  const stashItems = context().poeStash.usePoeStashItems(league)
+  const stashItems = context()
+    .poeStash.usePoeStashItems(league)
     .filter(
       (e) =>
         !searchString.length || e.data.typeLine.toLowerCase().includes(searchString.toLowerCase())
@@ -29,7 +30,9 @@ const App = () => {
               style={{ backgroundColor: `#${e.metadata.colour}` }}
               className="flex-shrink-0 cursor-pointer py-2 px-4 shadow-md no-underline rounded-full  text-white text-sm hover:text-white hover:bg-blue-light focus:outline-none active:shadow-none mr-2"
               onClick={() =>
-                context().poeStash.cacheStashContent.load({ key: `${e.league}_${e.id}` }).subscribe()
+                context()
+                  .poeStash.cacheStashContent.load({ key: `${e.league}_${e.id}` })
+                  .subscribe()
               }
             >
               {e.name}

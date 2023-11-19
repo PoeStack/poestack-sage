@@ -14,12 +14,16 @@ export class PoeAccountService {
   ) {}
 
   public poeProfile() {
-    const result = this.profile.memoryCache$.pipe(map((e) => Object.values(e)?.[0]?.lastResultEvent?.result))
+    const result = this.profile.memoryCache$.pipe(
+      map((e) => Object.values(e)?.[0]?.lastResultEvent?.result)
+    )
     return result
   }
 
   public poeLeagues() {
-    const result = this.leagues.memoryCache$.pipe(map((e) => Object.values(e)?.[0]?.lastResultEvent?.result))
+    const result = this.leagues.memoryCache$.pipe(
+      map((e) => Object.values(e)?.[0]?.lastResultEvent?.result)
+    )
     return result
   }
 }
