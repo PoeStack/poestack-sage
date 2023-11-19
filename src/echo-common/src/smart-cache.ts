@@ -1,13 +1,10 @@
-import { BehaviorSubject, filter, groupBy, map, mergeMap, Observable, of, Subject, take } from 'rxjs'
-import { concatMap, delay, mergeAll, throttleTime } from 'rxjs/operators'
-import { filterNullish } from 'ts-ratchet'
+import { BehaviorSubject, filter, map, Observable, of, Subject } from 'rxjs'
+import { concatMap, delay, tap } from 'rxjs/operators'
 import { EchoDirService } from './echo-dir-service'
-
-export type SmartCacheLoadMode = "Default" | "CacheOnly" | "NoCache"
 
 export type SmartCacheLoadConfig = {
   key: string,
-  mode?: SmartCacheLoadMode
+  maxCacheAgeMs?: number
 }
 
 export type SmartCacheBaseEvent = {
@@ -17,8 +14,11 @@ export type SmartCacheBaseEvent = {
 
 export type SmartCacheResultEvent<T> = SmartCacheBaseEvent & {
   type: "result",
-  source: "cache-local" | "cache-memory" | "live",
   result: T | null | undefined,
+}
+
+export type SmartCacheQueuedEvent = SmartCacheBaseEvent & {
+  type: "queued",
 }
 
 export type SmartCacheLoadingEvent = SmartCacheBaseEvent & {
@@ -35,13 +35,14 @@ export type SmartCacheRateLimitEvent = SmartCacheBaseEvent & {
   limitExpiresMs: number
 }
 
-export type SmartCacheStatusEvent = SmartCacheLoadingEvent | SmartCacheErrorEvent | SmartCacheRateLimitEvent
+export type SmartCacheStatusEvent = SmartCacheLoadingEvent | SmartCacheErrorEvent | SmartCacheRateLimitEvent | SmartCacheQueuedEvent
 
 export type SmartCacheEvent<T> = SmartCacheStatusEvent | SmartCacheResultEvent<T>
 
 export type SmartCacheStore<T> = {
   lastResultEvent: SmartCacheResultEvent<T> | undefined,
-  lastStatusEvent: SmartCacheStatusEvent | undefined,
+  lastErorrEvent: SmartCacheErrorEvent | undefined,
+  lastRequestEvent: SmartCacheEvent<T> | undefined,
 }
 
 export type SmartCacheJob = {
@@ -49,112 +50,78 @@ export type SmartCacheJob = {
 }
 
 export class SmartCache<T> {
-  private jobQueue$ = new Subject<SmartCacheJob>()
   private events$ = new Subject<SmartCacheEvent<T>>()
+  private workQueue$ = new Subject<SmartCacheQueuedEvent>()
 
   public memoryCache$ = new BehaviorSubject<{ [key: string]: SmartCacheStore<T> }>({})
   private localCacheChecked: { [key: string]: boolean } = {}
-  private lastFireTimestampMs: number = 0
 
   constructor(
     private dir: EchoDirService,
     loadFun: (key: string) => Observable<T | null>
   ) {
-    this.events$.subscribe((event) => {
-      if (!(event.type === "result" && event.source === "cache-memory")) {
-        const currentStore = this.memoryCache$.value[event.key] ?? {}
-        const nextStore = { ...currentStore }
+    this.events$.subscribe((e) => {
+      const currentStore = this.memoryCache$.value[e.key] ?? {}
+      const nextStore = { ...currentStore, lastRequestEvent: e!! }
 
-        if (event.type === "result") {
-          nextStore.lastResultEvent = { ...event, source: "cache-memory" }
-          if (event.source === "live" && event.timestampMs > (currentStore.lastStatusEvent?.timestampMs ?? 0)) {
-            delete nextStore.lastStatusEvent
-          }
-        } else {
-          nextStore.lastStatusEvent = event
-        }
-
-        this.memoryCache$.next({ ...this.memoryCache$.value, [event.key]: nextStore })
+      if (e.type === "error") {
+        nextStore.lastErorrEvent = e
       }
+
+      if (e.type === "result") {
+        nextStore.lastResultEvent = e
+        nextStore.lastErorrEvent = undefined
+        this.persist(e)
+      }
+
+      this.memoryCache$.next({ ...this.memoryCache$.value, [e.key]: nextStore })
     })
 
-    this.jobQueue$
-      .pipe(
-        map((job) => this.loadFromLocalIfValid(job)),
-        filterNullish(),
-        groupBy((job) => job.config.key),
-        mergeMap((group) => group.pipe(throttleTime(10_000))),
-        // The throttleTime is for dedupuing multiple requests made while requests are firing
-        // Really the bypass needs to 99% of the time be in the isValid
-        map((job) => this.loadFromLocalIfValid(job)),
-        filterNullish(),
-        concatMap((job) => of(job)
-          .pipe(
-            delay(this.calulateRatelimitDelay()),
-            concatMap((job) => {
-              console.log("firing", job)
-              this.lastFireTimestampMs = Date.now()
-              return loadFun(job.config.key)
-            }),
-            take(1),
-            map((result) => ({ job: job, result: result }))
+    this.workQueue$.pipe(
+      concatMap((e) => {
+        const ratelimit = 1000 //calculate rate limit here
+        console.log("pre-ratelimit", e, ratelimit)
+        return of(e).pipe(
+          delay(ratelimit), //rate limit here
+          tap((e) => console.log("post-ratelimit", e)),
+          concatMap((e) => {
+            return loadFun(e.key).pipe(map((r) => ({ e, r })))
+          }
           )
         )
-      )
-      .subscribe((out) => {
-        const resultEvent: SmartCacheEvent<T> = {
-          type: "result",
-          source: "live",
-          key: out.job.config.key,
-          result: out.result,
-          timestampMs: Date.now()
-        }
-        this.persist(resultEvent)
-        this.events$.next(resultEvent)
       })
+    ).subscribe(({ e, r }) => {
+      this.events$.next({ type: "result", result: r, key: e.key, timestampMs: Date.now() })
+    })
   }
 
-  private calulateRatelimitDelay(): number {
-    const msSinceLastFire = this.msSinceLastFire()
-    console.log("calculated limit delaying using", msSinceLastFire)
-    if (msSinceLastFire < 5000) {
-      return 1500
-    }
-    return 100
-  }
-
-  private msSinceLastFire(): number {
-    return Date.now() - this.lastFireTimestampMs
-  }
-
-  private loadFromLocalIfValid(job: SmartCacheJob): SmartCacheJob | null {
-    const key = job.config.key
+  private loadFromLocalIfValid(config: SmartCacheLoadConfig): SmartCacheResultEvent<T> | null {
+    const key = config.key
     const memoryCachedResult = this.memoryCache$.value[key]?.lastResultEvent
-    if (memoryCachedResult && this.isValid(memoryCachedResult)) {
-      this.events$.next(memoryCachedResult)
-      return null
+    if (memoryCachedResult && this.isValid(config, memoryCachedResult)) {
+      return memoryCachedResult
     }
 
     if (!this.localCacheChecked[key]) {
       this.localCacheChecked[key] = true
       if (this.dir.existsJson('cache', key)) {
         const localCachedValue = this.dir.loadJson<SmartCacheResultEvent<T>>('cache', key)
-        if (localCachedValue && this.isValid(localCachedValue)) {
-          this.events$.next(localCachedValue)
-          return null
+        if (localCachedValue && this.isValid(config, localCachedValue)) {
+          return localCachedValue
         }
       }
     }
 
-    return job
+    return null
   }
 
   private persist(event: SmartCacheResultEvent<T>) {
     this.dir.writeJson(['cache', event.key], { ...event, source: "cache-local" })
   }
 
-  private isValid(value: SmartCacheResultEvent<T> | undefined | null): boolean {
-    return Date.now() - (value?.timestampMs ?? 0) < 120_000
+  private isValid(config: SmartCacheLoadConfig, value: SmartCacheResultEvent<T> | undefined | null): boolean {
+    const maxCacheAgeMs = config.maxCacheAgeMs === undefined ? 120_000 : config.maxCacheAgeMs
+    return Date.now() - (value?.timestampMs ?? 0) < maxCacheAgeMs
   }
 
   public fromCache(key: string): Observable<SmartCacheStore<T> | null | undefined> {
@@ -166,6 +133,11 @@ export class SmartCache<T> {
   public load(config: SmartCacheLoadConfig): Observable<SmartCacheEvent<T>> {
     if (config.key === null || config.key === undefined) {
       throw new Error("Config key cannot be null or undefined")
+    }
+
+    const localResult = this.loadFromLocalIfValid(config)
+    if (localResult) {
+      return of(localResult)
     }
 
     return new Observable<SmartCacheEvent<T>>((sub) => {
@@ -180,7 +152,13 @@ export class SmartCache<T> {
         }
       })
 
-      this.jobQueue$.next({ config: config })
+      const currentStore = this.memoryCache$.value[config.key] ?? {}
+      if (!currentStore.lastRequestEvent?.type || currentStore.lastRequestEvent?.type === "result") {
+        const nextEvent: SmartCacheQueuedEvent = { type: "queued", key: config.key, timestampMs: Date.now() }
+        this.memoryCache$.next({ ...this.memoryCache$.value, [config.key]: { ...currentStore, lastRequestEvent: nextEvent!! } })
+        this.events$.next(nextEvent)
+        this.workQueue$.next(nextEvent)
+      }
     })
   }
 }

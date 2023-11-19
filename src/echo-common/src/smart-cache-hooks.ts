@@ -17,10 +17,7 @@ export function useCache<T>(cache: SmartCache<T>, config: SmartCacheLoadConfig):
   const [value, setValue] = useState(initalValue);
 
   const load = useCallback(() => {
-    if (config.key) {
-      return cache.load(config)
-    }
-    return of()
+    return cache.load(config)
   }, [cache, config]);
 
   useEffect(() => {
@@ -35,7 +32,9 @@ export function useCache<T>(cache: SmartCache<T>, config: SmartCacheLoadConfig):
       setValue(newValue);
     });
 
-    load().subscribe()
+    if (config.key !== null && config.key !== undefined) {
+      load().subscribe()
+    }
     return () => {
       subscription.unsubscribe();
     };
@@ -43,7 +42,8 @@ export function useCache<T>(cache: SmartCache<T>, config: SmartCacheLoadConfig):
 
   const result: SmartCacheHookType<T> = {
     lastResultEvent: value.lastResultEvent,
-    lastStatusEvent: value.lastStatusEvent,
+    lastRequestEvent: value.lastRequestEvent,
+    lastErorrEvent: value.lastErorrEvent,
     value: value?.lastResultEvent?.result,
     valueAge: () => value.lastResultEvent ? (Date.now() - value.lastResultEvent.timestampMs) : NaN,
     load: () => load(),
