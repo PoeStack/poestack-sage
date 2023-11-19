@@ -136,29 +136,30 @@ export class SmartCache<T> {
       throw new Error("Config key cannot be null or undefined")
     }
 
-    const localResult = this.loadFromLocalIfValid(config)
-    if (localResult) {
-      return of(localResult)
-    }
-
     return new Observable<SmartCacheEvent<T>>((sub) => {
-      const eventSub = this.events$.pipe(
-        filter((e) => e.key === config.key)
-      ).subscribe((e) => {
-        sub.next(e)
+      const localResult = this.loadFromLocalIfValid(config)
+      if (localResult) {
+        sub.next(localResult)
+        sub.complete()
+      } else {
+        const eventSub = this.events$.pipe(
+          filter((e) => e.key === config.key)
+        ).subscribe((e) => {
+          sub.next(e)
 
-        if (e.type === "result") {
-          sub.complete()
-          eventSub.unsubscribe()
+          if (e.type === "result") {
+            sub.complete()
+            eventSub.unsubscribe()
+          }
+        })
+
+        const currentStore = this.memoryCache$.value[config.key] ?? {}
+        if (!currentStore.lastRequestEvent?.type || currentStore.lastRequestEvent?.type === "result") {
+          const nextEvent: SmartCacheQueuedEvent = { type: "queued", key: config.key, timestampMs: Date.now() }
+          this.memoryCache$.next({ ...this.memoryCache$.value, [config.key]: { ...currentStore, lastRequestEvent: nextEvent!! } })
+          this.events$.next(nextEvent)
+          this.workQueue$.next(nextEvent)
         }
-      })
-
-      const currentStore = this.memoryCache$.value[config.key] ?? {}
-      if (!currentStore.lastRequestEvent?.type || currentStore.lastRequestEvent?.type === "result") {
-        const nextEvent: SmartCacheQueuedEvent = { type: "queued", key: config.key, timestampMs: Date.now() }
-        this.memoryCache$.next({ ...this.memoryCache$.value, [config.key]: { ...currentStore, lastRequestEvent: nextEvent!! } })
-        this.events$.next(nextEvent)
-        this.workQueue$.next(nextEvent)
       }
     })
   }
