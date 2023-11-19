@@ -147,6 +147,12 @@ export class SmartCache<T> {
         ).subscribe((e) => {
           sub.next(e)
 
+          if (e.type === "error") {
+            sub.error(e.error)
+            sub.complete()
+            eventSub.unsubscribe()
+          }
+
           if (e.type === "result") {
             sub.complete()
             eventSub.unsubscribe()
