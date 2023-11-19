@@ -112,7 +112,7 @@ class CharacterSlainEventParser implements PoeLogEventParser {
         type: 'CharacterSlainEvent',
         raw: raw,
         character: character,
-        isMyCharacter: character === settingsService.currentCharacter ? true : false,
+        isMyCharacter: false, // character === settingsService.currentCharacter ? true : false,
         systemUptime: Number(raw.split(' ')[2]),
         time: new Date()
       }

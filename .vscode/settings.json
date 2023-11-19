@@ -1,6 +1,6 @@
 {
   "files.eol": "\n",
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": false,
   "eslint.codeActionsOnSave.mode": "all",
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
