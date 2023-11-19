@@ -20,7 +20,7 @@ import {
   usePoeStashItems,
   usePoeStashes
 } from './poe-stash-service'
-import { POE_LOG_SERVICE, PoeLogService } from './poe-log-service'
+import { POE_LOG_SERVICE, PoeLogService, PoeZoneEntranceEvent } from './poe-log-service'
 import { ECHO_PLUGIN_CONFIG, EchoPluginConfigs, EchoPluginConfig } from './echo-plugin-config'
 import { ECHO_PLUGIN_SERVICE } from './echo-plugin-service'
 
@@ -46,4 +46,11 @@ export {
   POE_LOG_SERVICE
 }
 
-export type { EchoPluginHook, CachedTaskEvent, EchoPluginConfigs, EchoPluginConfig, EchoRoute }
+export type {
+  EchoPluginHook,
+  CachedTaskEvent,
+  EchoPluginConfigs,
+  EchoPluginConfig,
+  EchoRoute,
+  PoeZoneEntranceEvent
+}
