@@ -5,14 +5,18 @@ import { ECHO_CONTEXT_SERVICE, EchoPluginHook, EchoRoute } from 'echo-common'
 import NetWorth from './routes/net-worth/NetWorth'
 import { create } from 'mobx-persist'
 import { configure, observable } from 'mobx'
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
-import relativeTime from 'dayjs/plugin/relativeTime'
-import { RootStore } from './mst-store/rootStore'
+
+import { Store, IStore } from './mst-store/rootStore'
 import { Provider } from 'mobx-react'
-import { getSnapshot, onAction, onPatch, onSnapshot } from 'mobx-state-tree'
-dayjs.extend(utc)
-dayjs.extend(relativeTime)
+import {
+  applyAction,
+  applyPatch,
+  applySnapshot,
+  getSnapshot,
+  onAction,
+  onPatch,
+  onSnapshot
+} from 'mobx-state-tree'
 
 export function context() {
   return ECHO_CONTEXT_SERVICE.context('plugin')
@@ -22,20 +26,18 @@ const configureMobx = () => {
   configure({ enforceActions: 'observed' })
 }
 
-type IRootStore = ReturnType<typeof RootStore.create>
-let rootStore: IRootStore
+let store: IStore
+const StoreContext = React.createContext<IStore>({} as IStore)
 
-const history = {
-  snapshots: observable.array([], { deep: false }),
-  actions: observable.array([], { deep: false }),
-  patches: observable.array([], { deep: false })
+export function useStore() {
+  return React.useContext(StoreContext)
 }
 
 const App = () => {
   return (
-    <Provider value={rootStore} history={history}>
+    <StoreContext.Provider value={store}>
       <NetWorth />
-    </Provider>
+    </StoreContext.Provider>
   )
 }
 
@@ -55,65 +57,69 @@ export const start = () => {
     driver: localForage.INDEXEDDB
   })
 
-  rootStore = RootStore.create(
-    {},
-    {
-      alert: (m) => console.log(m) // Noop for demo: window.alert(m)
-    }
-  )
+  store = Store.create({})
+
+  // applySnapshot(rootStore, {})
 
   context().router.registerRoute(pluginRoute())
 
   // ---------------
 
   // @ts-ignore
-  window.rootStore = rootStore // for playing around with the console
+  window.rootStore = store // for playing around with the console
 
   /**
    * Poor man's effort of "DevTools" to demonstrate the api:
    */
 
-  let recording = true // supress recording history when replaying
+  // let recording = true // supress recording history when replaying
 
-  onSnapshot(
-    rootStore,
-    (s) =>
-      recording &&
-      history.snapshots.unshift({
-        data: s,
-        replay() {
-          recording = false
-          applySnapshot(shop, this.data)
-          recording = true
-        }
-      })
-  )
-  onPatch(
-    rootStore,
-    (s) =>
-      recording &&
-      history.patches.unshift({
-        data: s,
-        replay() {
-          recording = false
-          applyPatch(shop, this.data)
-          recording = true
-        }
-      })
-  )
-  onAction(
-    rootStore,
-    (s) =>
-      recording &&
-      history.actions.unshift({
-        data: s,
-        replay() {
-          recording = false
-          applyAction(shop, this.data)
-          recording = true
-        }
-      })
-  )
+  // onSnapshot(
+  //   rootStore,
+  //   (s) => {
+
+  //   }
+  //     // @ts-ignore
+  //     // history.snapshots.unshift({
+  //     //   data: s,
+  //     //   replay() {
+  //     //     recording = false
+  //     //     // @ts-ignore
+  //     //     applySnapshot(rootStore, this.data)
+  //     //     recording = true
+  //     //   }
+  //     // })
+  // )
+  // onPatch(
+  //   rootStore,
+  //   (s) =>
+  //     recording &&
+  //     // @ts-ignore
+  //     history.patches.unshift({
+  //       data: s,
+  //       replay() {
+  //         recording = false
+  //         // @ts-ignore
+  //         applyPatch(rootStore, this.data)
+  //         recording = true
+  //       }
+  //     })
+  // )
+  // onAction(
+  //   rootStore,
+  //   (s) =>
+  //     recording &&
+  //     // @ts-ignore
+  //     history.actions.unshift({
+  //       data: s,
+  //       replay() {
+  //         recording = false
+  //         // @ts-ignore
+  //         applyAction(rootStore, this.data)
+  //         recording = true
+  //       }
+  //     })
+  // )
 
   // // add initial snapshot
   // history.snapshots.push({

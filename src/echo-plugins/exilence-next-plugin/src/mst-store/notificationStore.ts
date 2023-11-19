@@ -3,8 +3,8 @@ import { NotificationEntry } from './domains/notification'
 
 export const NotificationStore = types
   .model('NotificationStore', {
-    notifications: types.array(NotificationEntry),
-    displayed: types.array(types.string)
+    notifications: types.optional(types.array(NotificationEntry), []),
+    displayed: types.optional(types.array(types.string), [])
   })
   .views((self) => ({}))
   .actions((self) => ({}))

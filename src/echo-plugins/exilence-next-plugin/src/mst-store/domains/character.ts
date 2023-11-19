@@ -1,6 +1,8 @@
-import { types } from 'mobx-state-tree'
+import { Instance, types } from 'mobx-state-tree'
 import { LeagueEntry } from './league'
 import { IItem } from '../../interfaces/item.interface'
+
+export interface ICharacterEntry extends Instance<typeof CharacterEntry> {}
 
 export const CharacterEntry = types
   .model('CharacterEntry', {
@@ -10,7 +12,7 @@ export const CharacterEntry = types
     class: types.string,
     level: types.number,
     experience: types.number,
-    // league: types.reference(LeagueEntry),
+    league: types.safeReference(LeagueEntry),
     expired: types.maybe(types.boolean),
     current: types.maybe(types.boolean),
     deleted: types.maybe(types.boolean),
