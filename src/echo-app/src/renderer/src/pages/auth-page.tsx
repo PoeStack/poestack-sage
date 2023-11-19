@@ -1,11 +1,10 @@
-import React, { CSSProperties } from 'react'
+import { CSSProperties } from 'react'
 import { useEffect, useState } from 'react'
 import { bind } from '@react-rxjs/core'
 import jwt from 'jsonwebtoken'
-import { GGG_API_UTIL } from 'ggg-api'
-import { ECHO_DIR } from 'echo-common'
+import { APP_CONTEXT, GGG_HTTP_UTIL } from '../echo-context-factory'
 
-const [useJwt] = bind(GGG_API_UTIL.tokenSubject$, null)
+const [useJwt] = bind(GGG_HTTP_UTIL.tokenSubject$, null)
 
 export function AuthGuard({ children }) {
   const jwt = useJwt()
@@ -18,6 +17,7 @@ export function AuthGuard({ children }) {
 }
 
 export function LoginPage() {
+  const { dir } = APP_CONTEXT
   const [inputValue, setInputValue] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -25,9 +25,9 @@ export function LoginPage() {
     const decoded = jwt.decode(input)
     const oAuthCode = decoded?.['oAuthToken']
     if (oAuthCode) {
-      ECHO_DIR.writeJson(['auth'], { jwt: input })
+      dir.writeJson(['auth'], { jwt: input })
       setErrorMessage(null)
-      GGG_API_UTIL.tokenSubject$.next(oAuthCode)
+      GGG_HTTP_UTIL.tokenSubject$.next(oAuthCode)
     } else {
       setErrorMessage('Failed to decode jwt.')
     }
@@ -40,8 +40,8 @@ export function LoginPage() {
   }, [])
 
   useEffect(() => {
-    if (ECHO_DIR.existsJson('auth')) {
-      const loadedAuth = ECHO_DIR.loadJson('auth')
+    if (dir.existsJson('auth')) {
+      const loadedAuth = dir.loadJson('auth')
       handleSet(loadedAuth?.['jwt'])
     }
   }, [])

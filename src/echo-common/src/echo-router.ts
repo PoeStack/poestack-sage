@@ -1,10 +1,9 @@
-import React, { ReactElement } from 'react'
 import { BehaviorSubject } from 'rxjs'
 
 export type EchoRoute = {
   plugin: string
   path: string
-  page: ReactElement
+  page: any
   navItems?: EchoRouterNavItem[] | null
 }
 
@@ -41,5 +40,3 @@ export class EchoRouter {
     }
   }
 }
-
-export const ECHO_ROUTER = new EchoRouter()

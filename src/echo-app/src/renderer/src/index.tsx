@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom/client'
-import { PluginPage } from './plugin-page'
-import './app.css'
+import { PluginPage } from './pages/plugin-page'
+import './assets/app.css'
 import { Subscribe } from '@react-rxjs/core'
-import { AuthGuard } from './auth-page'
-import { PluginPageHeader } from './plugin-page-header'
-import { PluginPageFooter } from './plugin-page-footer'
+import { AuthGuard } from './pages/auth-page'
+import { PluginPageHeader } from './components/plugin-page-header'
+import { PluginPageFooter } from './components/plugin-page-footer'
 
 const App = () => {
   const themes = ['root']
-  const [selectedTheme, setSelectedTheme] = useState(themes[0])
+  const [selectedTheme] = useState(themes[0])
 
   return (
     <div

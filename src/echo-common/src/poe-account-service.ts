@@ -1,22 +1,25 @@
 import { map } from 'rxjs'
 import { CachedTask } from './cached-task'
-import { bind } from '@react-rxjs/core'
-import { GGG_API } from './echo-context'
 import { PoeLeague, PoeProfile } from 'sage-common'
+import { GggApi } from 'ggg-api'
+import { EchoDirService } from './echo-dir-service'
 
 export class PoeAccountService {
-  public profile = new CachedTask<PoeProfile>((key) => GGG_API.getProfile())
+  public profile = new CachedTask<PoeProfile>(this.echoDir, () => this.gggApi.getProfile())
+  public leagues = new CachedTask<PoeLeague[]>(this.echoDir, () => this.gggApi.getLeagues())
 
-  public leagues = new CachedTask<PoeLeague[]>((key) => GGG_API.getLeagues())
+  constructor(
+    private echoDir: EchoDirService,
+    private gggApi: GggApi
+  ) {}
+
+  public poeProfile() {
+    const result = this.profile.cache$.pipe(map((e) => Object.values(e)?.[0]?.result))
+    return result
+  }
+
+  public poeLeagues() {
+    const result = this.leagues.cache$.pipe(map((e) => Object.values(e)?.[0]?.result))
+    return result
+  }
 }
-
-export const POE_ACCOUNT_SERVICE = new PoeAccountService()
-
-export const [usePoeProfile] = bind(
-  POE_ACCOUNT_SERVICE.profile.cache$.pipe(map((e) => Object.values(e)?.[0]?.result)),
-  null
-)
-export const [usePoeLeagues] = bind(
-  POE_ACCOUNT_SERVICE.leagues.cache$.pipe(map((e) => Object.values(e)?.[0]?.result)),
-  null
-)
