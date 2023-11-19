@@ -79,10 +79,11 @@ export class SmartCache<T> {
 
     this.workQueue$.pipe(
       concatMap((e) => {
-        const ratelimit = 1000 //calculate rate limit here
-        console.log("pre-ratelimit", e, ratelimit)
+        const ratelimitDelayMs = 1000 //calculate rate limit here
+        console.log("pre-ratelimit", e, ratelimitDelayMs)
+        this.events$.next({ type: "rate-limit", key: e.key, timestampMs: Date.now(), limitExpiresMs: ratelimitDelayMs })
         return of(e).pipe(
-          delay(ratelimit), //rate limit here
+          delay(ratelimitDelayMs),
           tap((e) => console.log("post-ratelimit", e)),
           concatMap((e) => {
             return loadFun(e.key).pipe(map((r) => ({ e, r })))
