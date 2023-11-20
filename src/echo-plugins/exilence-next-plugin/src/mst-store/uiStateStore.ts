@@ -5,8 +5,11 @@ import { Store, IStore } from './rootStore'
 import { v4 as uuidv4 } from 'uuid'
 import { ProfileEntry } from './domains/profile'
 import { AccountEntry } from './domains/account'
+import { IAccountStore } from './accountStore'
+import { ISettingStore } from './settingsStore'
 
-interface IUiStateStore extends Instance<typeof UiStateStore> {}
+export interface IStatusMessage extends Instance<typeof StatusMessage> {}
+export interface IUiStateStore extends Instance<typeof UiStateStore> {}
 
 export const StatusMessage = types.model('StatusMessage', {
   message: types.string,
@@ -33,6 +36,59 @@ export const UiStateStore = types
     data: new Subject<number>()
   }))
   .views((self) => ({}))
+  .actions((self) => ({
+    setCancelSnapshot(cancel: boolean) {
+      self.cancelSnapshot.next(cancel)
+      if (cancel) {
+        this.resetStatusMessage()
+        const store = getParent<IStore>(self)
+        const accountStore = store.accountStore as IAccountStore
+        const settingStore = store.settingStore as ISettingStore
+        if (settingStore.autoSnapshotting) {
+          accountStore.activeAccount?.dequeueSnapshot()
+          accountStore.activeAccount?.queueSnapshot()
+        }
+        this.setIsSnapshotting(false)
+        self.cancelSnapshot.next(!cancel)
+      }
+    },
+
+    resetStatusMessage() {
+      self.statusMessage = undefined
+    },
+
+    setValidated(validated: boolean) {
+      self.validated = validated
+    },
+
+    setValidating(validating: boolean) {
+      self.isValidating = validating
+    },
+
+    setSubmitting(submitting: boolean) {
+      self.isSubmitting = submitting
+    },
+
+    setInitiated(init: boolean) {
+      self.initiated = init
+    },
+
+    setIsInitiating(initiating: boolean) {
+      self.isInitiating = initiating
+    },
+
+    setIsSnapshotting(snapshotting: boolean = true) {
+      self.isSnapshotting = snapshotting
+    },
+
+    changeItemTablePage(index: number) {
+      self.itemTablePageIndex = index
+    },
+
+    setChangingProfile(changing: boolean) {
+      self.changingProfile = changing
+    }
+  }))
   .actions((self) => ({
     afterAttach() {
       self.data.subscribe((x) => {

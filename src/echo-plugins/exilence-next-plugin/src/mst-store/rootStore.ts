@@ -6,6 +6,8 @@ import { SettingStore } from './settingsStore'
 import { UiStateStore } from './uiStateStore'
 import { PriceStore } from './priceStore'
 
+export interface IStore extends Instance<typeof Store> {}
+
 export const Store = types
   .model('Store', {
     accountStore: types.optional(AccountStore, {
@@ -25,5 +27,3 @@ export const Store = types
       })
     }
   }))
-
-export interface IStore extends Instance<typeof Store> {}

@@ -1,6 +1,34 @@
-import React from 'react'
-import { EchoPluginHook } from 'echo-common'
-import { destroy, start } from '.'
+import { ECHO_CONTEXT_SERVICE, EchoPluginHook, EchoRoute } from 'echo-common'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import App from '.'
+import { ArchiveBoxIcon } from '@heroicons/react/24/outline'
+// Top level extend usable in all modules
+dayjs.extend(utc)
+dayjs.extend(relativeTime)
+
+export function context() {
+  return ECHO_CONTEXT_SERVICE.context('plugin')
+}
+
+const pluginRoute = (): EchoRoute => ({
+  plugin: 'exilence-next',
+  path: 'networth',
+  page: App,
+  navItems: [{ location: 'l-sidebar-m', icon: ArchiveBoxIcon }]
+})
+
+const start = () => {
+  // TODO: hydrate all from sqlite tables
+  // applySnapshot(rootStore, {})
+
+  context().router.registerRoute(pluginRoute())
+}
+
+const destroy = () => {
+  context().router.unregisterRoute(pluginRoute())
+}
 
 export default function (): EchoPluginHook {
   return {

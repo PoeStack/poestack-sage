@@ -1,11 +1,14 @@
-import { types } from 'mobx-state-tree'
+import { Instance, types } from 'mobx-state-tree'
 import { NotificationType } from '../../interfaces/notification.interface'
+import dayjs from 'dayjs'
+
+export interface INotificationEntry extends Instance<typeof NotificationEntry> {}
 
 export const NotificationEntry = types
   .model('NotificationEntry', {
     uuid: types.identifier,
     title: types.string,
-    timestamp: types.number,
+    timestamp: types.optional(types.number, () => dayjs.utc().valueOf()),
     description: types.string,
     read: false,
     type: types.literal<NotificationType>('info'),
@@ -14,4 +17,8 @@ export const NotificationEntry = types
     translateParam: types.maybe(types.string)
   })
   .views((self) => ({}))
-  .actions((self) => ({}))
+  .actions((self) => ({
+    setRead(read: boolean) {
+      self.read = read
+    }
+  }))

@@ -1,5 +1,7 @@
-import { types } from 'mobx-state-tree'
+import { Instance, types } from 'mobx-state-tree'
 import { IPricedItem } from '../../interfaces/priced-item.interface'
+
+export interface IStashTabSnapshotEntry extends Instance<typeof StashTabSnapshotEntry> {}
 
 export const StashTabSnapshotEntry = types
   .model('StashTabSnapshotEntry', {
@@ -9,4 +11,8 @@ export const StashTabSnapshotEntry = types
     pricedItems: types.frozen<IPricedItem[]>([]) // Immutable!
   })
   .views((self) => ({}))
-  .actions((self) => ({}))
+  .actions((self) => ({
+    setPricedItems(pricedItems: IPricedItem[]) {
+      self.pricedItems = pricedItems
+    }
+  }))

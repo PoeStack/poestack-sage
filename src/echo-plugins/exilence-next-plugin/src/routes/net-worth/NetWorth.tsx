@@ -1,6 +1,6 @@
 import React from 'react'
 import { observer } from 'mobx-react'
-import { useStore } from '../..'
+import { useStore } from '../../hooks/useStore'
 
 const NetWorth = () => {
   const store = useStore()
@@ -46,7 +46,7 @@ const NetWorth = () => {
       <button
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-1"
         onClick={() => {
-          store?.accountStore.removeAll()
+          // store?.accountStore.removeAll()
         }}
       >
         removeAll

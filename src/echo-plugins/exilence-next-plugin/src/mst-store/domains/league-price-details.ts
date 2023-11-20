@@ -1,6 +1,8 @@
-import { types } from 'mobx-state-tree'
-import { LeaguePriceSourceEntry } from './league-price-source'
-import { LeagueEntry } from './league'
+import { Instance, types } from 'mobx-state-tree'
+import { LeaguePriceSourceEntry, ILeaguePriceSourceEntry } from './league-price-source'
+import { LeagueEntry, ILeagueEntry } from './league'
+
+export interface ILeaguePriceDetailsEntry extends Instance<typeof LeaguePriceDetailsEntry> {}
 
 export const LeaguePriceDetailsEntry = types
   .model('LeaguePriceDetailsEntry', {
@@ -9,4 +11,17 @@ export const LeaguePriceDetailsEntry = types
     leaguePriceSources: types.optional(types.array(LeaguePriceSourceEntry), [])
   })
   .views((self) => ({}))
-  .actions((self) => ({}))
+  .actions((self) => ({
+    setLeague(league: ILeagueEntry) {
+      self.league = league
+    },
+    addLeaguePriceSource(leaguePriceSource: ILeaguePriceSourceEntry) {
+      self.leaguePriceSources.push(leaguePriceSource)
+    },
+    removeLeaguePriceSource(leaguePriceSource: ILeaguePriceSourceEntry) {
+      self.leaguePriceSources.remove(leaguePriceSource)
+    },
+    setLeaguePriceSources(leaguePriceSources: ILeaguePriceSourceEntry[]) {
+      self.leaguePriceSources.replace(leaguePriceSources)
+    }
+  }))

@@ -21,4 +21,14 @@ export const CharacterEntry = types
     jewels: types.frozen<IItem[]>([])
   })
   .views((self) => ({}))
-  .actions((self) => ({}))
+  .actions((self) => ({
+    setInventory(inventory: IItem[]) {
+      self.inventory = inventory
+    },
+    setEquipment(equipment: IItem[]) {
+      self.equipment = equipment
+    },
+    setJewels(jewels: IItem[]) {
+      self.jewels = jewels
+    }
+  }))

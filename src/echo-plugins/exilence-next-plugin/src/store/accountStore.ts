@@ -2,7 +2,6 @@ import { action, autorun, computed, makeObservable, observable, runInAction } fr
 import { RootStore } from './rootStore'
 import { Account } from './domains/account'
 import { persist } from 'mobx-persist'
-import { context } from '..'
 
 export class AccountStore {
   @persist('list', Account) @observable accounts: Account[] = []

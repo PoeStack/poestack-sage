@@ -1,17 +1,24 @@
-import { types } from 'mobx-state-tree'
-import { StashTabSnapshotEntry } from './stashtab-snapshot'
+import { Instance, types } from 'mobx-state-tree'
+import { StashTabSnapshotEntry, IStashTabSnapshotEntry } from './stashtab-snapshot'
 import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
-import relativeTime from 'dayjs/plugin/relativeTime'
-// Top level extend does not work corretly
-dayjs.extend(utc)
-dayjs.extend(relativeTime)
+
+export interface ISnapshotEntry extends Instance<typeof SnapshotEntry> {}
 
 export const SnapshotEntry = types
   .model('SnapshotEntry', {
     uuid: types.identifier,
-    created: dayjs.utc().valueOf(),
+    created: types.optional(types.number, () => dayjs.utc().valueOf()),
     stashTabSnapshots: types.optional(types.array(StashTabSnapshotEntry), [])
   })
   .views((self) => ({}))
-  .actions((self) => ({}))
+  .actions((self) => ({
+    addStashTabSnapshot(stashTabSnapshot: IStashTabSnapshotEntry) {
+      self.stashTabSnapshots.push(stashTabSnapshot)
+    },
+    removeStashTabSnapshot(stashTabSnapshot: IStashTabSnapshotEntry) {
+      self.stashTabSnapshots.remove(stashTabSnapshot)
+    },
+    setStashTabSnapshots(stashTabSnapshots: IStashTabSnapshotEntry[]) {
+      self.stashTabSnapshots.replace(stashTabSnapshots)
+    }
+  }))
