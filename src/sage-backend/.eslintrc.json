@@ -1,0 +1,5 @@
+{
+  "root": true,
+  "extends": "../eslint-config-sage/.eslintrc.json",
+  "parser": "@typescript-eslint/parser"
+}

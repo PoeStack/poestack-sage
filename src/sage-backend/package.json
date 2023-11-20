@@ -1,0 +1,46 @@
+{
+  "name": "sage-backend",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "main": "./dist/index.js",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node dist/cjs/poe-api-test.js",
+    "prepublishOnly": "npm run build",
+    "format": "prettier --write ./src",
+    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../eslint-config-sage",
+    "start": "node dist/index.js",
+    "dev": "concurrently \"tsc -p tsconfig.json --watch\" \"nodemon -q dist/index.js\""
+  },
+  "dependencies": {
+    "@discordjs/core": "^1.1.1",
+    "@fastify/cors": "^8.4.1",
+    "@fastify/helmet": "^11.1.1",
+    "@react-rxjs/core": "^0.10.7",
+    "@react-rxjs/utils": "^0.9.7",
+    "axios": "^1.6.1",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "fastify": "^4.24.3",
+    "jsonwebtoken": "^9.0.2",
+    "rxjs": "^7.8.1",
+    "tail": "^2.2.6"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/node": "^20.9.0",
+    "@typescript-eslint/parser": "^6.10.0",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.53.0",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2"
+  }
+}
