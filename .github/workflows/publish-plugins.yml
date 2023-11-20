@@ -12,7 +12,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
+          cache-dependency-path: 'src/echo-app/package-lock.json'
           node-version: 'latest'
       - uses: actions/setup-java@v3
         with:
