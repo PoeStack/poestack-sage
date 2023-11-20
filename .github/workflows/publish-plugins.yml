@@ -9,17 +9,17 @@ jobs:
     name: publish plugins
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v4
         with:
           cache: 'npm'
-          cache-dependency-path: 'src/echo-app/package-lock.json'
+          cache-dependency-path: '**/package-lock.json'
           node-version: 'latest'
       - uses: actions/setup-java@v3
         with:
           distribution: "corretto"
           java-version: "17"
           cache: 'gradle'
-      - uses: actions/checkout@v3
       - name: update plugins.json
         working-directory: src/echo-tools
         run: node src/build-plugins-json.mjs
