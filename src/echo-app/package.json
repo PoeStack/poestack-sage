@@ -7,7 +7,7 @@
     "clean": "rimraf build/index.js out && rimraf build/index.js dist",
     "dev": "npm run bump-dev-plugins && electron-vite dev",
     "start": "npm run bump-dev-plugins && electron-vite preview",
-    "build": "npm run bump-dev-plugins && electron-vite build",
+    "build": "npm run bump-dev-plugins && npm run typecheck && electron-vite build",
     "build:plugins": "cd ../../ && gradlew buildPlugins",
     "postinstall": "electron-builder install-app-deps",
     "build:win": "npm run build && electron-builder --win --config",
@@ -15,6 +15,9 @@
     "build:linux": "npm run build build && electron-builder --linux --config",
     "bump-version": "node internal/bump-version.js",
     "bump-dev-plugins": "node internal/bump-dev-plugins.js",
+    "typecheck": "npm run typecheck:node && npm run typecheck:web",
+    "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
+    "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
     "format": "prettier --write ./src",
     "lint": "eslint ./src --fix --resolve-plugins-relative-to ../eslint-config-sage"
   },

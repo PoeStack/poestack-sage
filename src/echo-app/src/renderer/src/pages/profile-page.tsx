@@ -6,7 +6,7 @@ const [usePoeProfile] = bind(APP_CONTEXT.poeAccounts.poeProfile(), null)
 export function ProfilePage() {
   const profile = usePoeProfile()
 
-  APP_CONTEXT.poeAccounts.profile.load('profile').subscribe()
+  APP_CONTEXT.poeAccounts.profile.load({ key: "profile" }).subscribe()
 
   return (
     <>

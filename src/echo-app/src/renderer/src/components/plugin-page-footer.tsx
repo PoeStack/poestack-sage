@@ -1,4 +1,3 @@
-import React from 'react'
 import { SAGE_VERSION } from '../version'
 
 export function PluginPageFooter() {
