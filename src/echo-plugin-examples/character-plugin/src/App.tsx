@@ -1,17 +1,11 @@
 import { useState } from 'react'
-import { bind } from '@react-rxjs/core'
 import { context } from './entry'
 
-const [usePoeCharacterList] = bind(context().poeCharacters.characterList(), [])
-const [usePoeCharacter] = bind((name: string) => context().poeCharacters.character(name), null)
-
 const App = () => {
-  const [selectedName, setSelectedName] = useState<string | null>(null)
+  const { value: characterList } = context().poeCharacters.useCharacterList()
 
-  const characterList = usePoeCharacterList()
-  const selectedCharacter = usePoeCharacter(selectedName)
-
-  context().poeCharacters.characterListCache.load('character_list').subscribe()
+  const [characterName, setCharacterName] = useState(null)
+  const { value: character, valueAge } = context().poeCharacters.useCharacter(characterName)
 
   return (
     <>
@@ -21,8 +15,7 @@ const App = () => {
             <div
               key={c.id}
               onClick={() => {
-                context().poeCharacters.characterCache.load(c.name).subscribe()
-                setSelectedName(c.name)
+                setCharacterName(c.name)
               }}
               className="cursor-pointer bg-input-surface rounded-lg p-2 flex flex-col"
             >
@@ -35,14 +28,13 @@ const App = () => {
           ))}
         </div>
         <div className="flex-1 flex flex-col h-full">
-          <div className="font-semibold">{selectedName}</div>
+          <div className="font-semibold">{character?.name}</div>
+          <div className="font-semibold">{valueAge()}</div>
           <div className="flex flex-col h-full overflow-y-scroll">
-            {selectedCharacter &&
-              [
-                ...selectedCharacter.inventory,
-                ...selectedCharacter.equipment,
-                ...selectedCharacter.jewels
-              ].map((item) => <div key={item.id}>{item.typeLine}</div>)}
+            {character &&
+              [...character.inventory, ...character.equipment, ...character.jewels].map((item) => (
+                <div key={item.id}>{item.typeLine}</div>
+              ))}
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { CachedTask } from './cached-task'
+import { SmartCache } from './smart-cache'
 import { HttpUtil } from 'sage-common'
 import { EchoDirService } from './echo-dir-service'
 
@@ -7,12 +7,14 @@ export class SageValuationService {
 
   constructor(private echoDir: EchoDirService) {}
 
-  public currentStashes = new CachedTask<SageValuationShard>(this.echoDir, (key) =>
+  public cacheValuationShards = new SmartCache<SageValuationShard>(this.echoDir, (key) =>
     this.loadInternal(key)
   )
 
   public load(tag: string, shard: number | string, league: string) {
-    this.currentStashes.load(`${tag}_${shard}_${league}`.replaceAll(' ', '_')).subscribe()
+    this.cacheValuationShards
+      .load({ key: `${tag}_${shard}_${league}`.replaceAll(' ', '_') })
+      .subscribe()
   }
 
   private loadInternal(key: string) {
