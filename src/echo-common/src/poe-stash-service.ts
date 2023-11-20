@@ -17,10 +17,10 @@ import { bind } from '@react-rxjs/core'
 export class PoeStashService {
   private groupingService = new ItemGroupingService()
 
-  public cacheStashes = new SmartCache<PoePartialStashTab[]>(this.echoDir, (key) =>
+  public cacheStashes = new SmartCache<PoePartialStashTab[]>(this.echoDir, "poe-stashes", (key) =>
     this.gggApi.getStashes(key)
   )
-  public cacheStashContent = new SmartCache<PoeStashTab>(this.echoDir, (key) =>
+  public cacheStashContent = new SmartCache<PoeStashTab>(this.echoDir, "poe-stash-contents", (key) =>
     this.gggApi.getStashContent(key.split('_')[0], key.split('_')[1])
   )
 
@@ -30,7 +30,7 @@ export class PoeStashService {
     private echoDir: EchoDirService,
     private gggApi: GggApi,
     private valuationApi: SageValuationService
-  ) {}
+  ) { }
 
   public useStashes(league: string): SmartCacheHookType<PoePartialStashTab[]> {
     return useCache(this.cacheStashes, { key: league })

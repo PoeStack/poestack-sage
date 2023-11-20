@@ -5,17 +5,17 @@ import { EchoDirService } from './echo-dir-service'
 import { useCache } from './smart-cache-hooks'
 
 export class PoeCharacterService {
-  public cacheCharacterList = new SmartCache<PoeCharacter[]>(this.echoDir, () =>
+  public cacheCharacterList = new SmartCache<PoeCharacter[]>(this.echoDir, "poe-character-list", () =>
     this.gggApi.getCharacters()
   )
-  public cacheCharacter = new SmartCache<PoeCharacter>(this.echoDir, (key) =>
+  public cacheCharacter = new SmartCache<PoeCharacter>(this.echoDir, "poe-character", (key) =>
     this.gggApi.getCharacter(key)
   )
 
   constructor(
     private echoDir: EchoDirService,
     private gggApi: GggApi
-  ) {}
+  ) { }
 
   public useCharacterList(config: SmartCacheLoadConfig = { key: 'poe_character_list' }) {
     return useCache(this.cacheCharacterList, config)

@@ -58,6 +58,7 @@ export class SmartCache<T> {
 
   constructor(
     private dir: EchoDirService,
+    private type: string,
     loadFun: (key: string) => Observable<T | null>
   ) {
     this.events$.subscribe((e) => {
@@ -69,7 +70,7 @@ export class SmartCache<T> {
       } else if (e.type === 'result') {
         nextStore.lastResultEvent = e
         nextStore.lastErorrEvent = undefined
-        this.persist(e)
+        this.dir.writeJson(['cache', "smart-cache", this.type, e.key], e)
       }
 
       if (e.type !== 'queued') {
@@ -120,10 +121,6 @@ export class SmartCache<T> {
     }
 
     return null
-  }
-
-  private persist(event: SmartCacheResultEvent<T>) {
-    this.dir.writeJson(['cache', event.key], { ...event, source: 'cache-local' })
   }
 
   private isValid(

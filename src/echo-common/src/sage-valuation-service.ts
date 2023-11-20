@@ -5,9 +5,9 @@ import { EchoDirService } from './echo-dir-service'
 export class SageValuationService {
   private httpUtil = new HttpUtil()
 
-  constructor(private echoDir: EchoDirService) {}
+  constructor(private echoDir: EchoDirService) { }
 
-  public cacheValuationShards = new SmartCache<SageValuationShard>(this.echoDir, (key) =>
+  public cacheValuationShards = new SmartCache<SageValuationShard>(this.echoDir, "sage-valuations", (key) =>
     this.loadInternal(key)
   )
 
