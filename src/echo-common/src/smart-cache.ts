@@ -49,10 +49,6 @@ export type SmartCacheStore<T> = {
   lastRequestEvent: SmartCacheEvent<T> | undefined
 }
 
-export type SmartCacheJob = {
-  config: SmartCacheLoadConfig
-}
-
 export class SmartCache<T> {
   private events$ = new Subject<SmartCacheEvent<T>>()
   private workQueue$ = new Subject<SmartCacheQueuedEvent>()
