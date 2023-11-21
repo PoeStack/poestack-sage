@@ -24,6 +24,8 @@
     "@tanstack/react-table": "^8.10.7",
     "dayjs": "1.11.10",
     "echo-common": "file:../../echo-common",
+    "sage-common": "file:../../sage-common",
+    "ts-ratchet": "file:../../ts-ratchet",
     "@electron/remote": "^2.0.12",
     "ggg-api": "file:../../ggg-api",
     "jsonwebtoken": "^9.0.2",

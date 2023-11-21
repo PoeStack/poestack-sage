@@ -46,14 +46,14 @@ const NetWorth = () => {
       <button
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-1"
         onClick={() => {
-          // store?.accountStore.removeAll()
+          store?.accountStore.initSession()
         }}
       >
-        removeAll
+        InitSession
       </button>
       <br />
       Accounts:
-      {store?.accountStore.accountRefs.map((acccount) => {
+      {store?.accountStore.accounts.map((acccount) => {
         return (
           <ul>
             <li key={acccount.name}>{acccount!.name}</li>

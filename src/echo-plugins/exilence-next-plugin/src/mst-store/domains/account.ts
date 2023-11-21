@@ -99,24 +99,23 @@ export const AccountEntry = types
     }
   }))
   .actions((self) => ({
-    queueSnapshot(milliseconds?: number) {
-      const store = getParent<IStore>(self, 2)
-      // fromStream(
-      timer(milliseconds ? milliseconds : store.settingStore.autoSnapshotInterval).pipe(
-        map(() => {
-          if (self.activeProfile && self.activeProfile.readyToSnapshot) {
-            self.activeProfile.snapshot()
-          } else {
-            this.dequeueSnapshot()
-            this.queueSnapshot(10 * 1000)
-          }
-        }),
-        takeUntil(self.cancelled)
-      )
-      // )
-    },
-
-    dequeueSnapshot() {
-      self.cancelled.next(true)
-    }
+    // queueSnapshot(milliseconds?: number) {
+    //   const store = getParent<IStore>(self, 2)
+    //   // fromStream(
+    //   timer(milliseconds ? milliseconds : store.settingStore.autoSnapshotInterval).pipe(
+    //     map(() => {
+    //       if (self.activeProfile && self.activeProfile.readyToSnapshot) {
+    //         self.activeProfile.snapshot()
+    //       } else {
+    //         this.dequeueSnapshot()
+    //         this.queueSnapshot(10 * 1000)
+    //       }
+    //     }),
+    //     takeUntil(self.cancelled)
+    //   )
+    //   // )
+    // },
+    // dequeueSnapshot() {
+    //   self.cancelled.next(true)
+    // }
   }))
