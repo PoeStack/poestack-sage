@@ -14,7 +14,7 @@ include(
   "src:sage-common",
   "src:tactics-image-gen",
   "src:eslint-config-sage",
-  "src:tactics-gateway"
+  "src:tactics-api"
 )
 
 File("src/echo-plugin-examples").listFiles()?.forEach {
