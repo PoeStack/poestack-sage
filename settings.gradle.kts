@@ -13,7 +13,8 @@ include(
   "src:sage-docs",
   "src:sage-common",
   "src:tactics-image-gen",
-  "src:eslint-config-sage"
+  "src:eslint-config-sage",
+  "src:sage-backend"
 )
 
 File("src/echo-plugin-examples").listFiles()?.forEach {

@@ -1,5 +1,5 @@
 import { DiscordService } from '../services/discord-service'
-import { PoeStackUser } from './poeStackuser'
+import { PoeStackUser } from './poeStackUser'
 
 declare module 'fastify' {
   interface FastifyRequest {

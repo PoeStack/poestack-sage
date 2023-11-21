@@ -18,7 +18,7 @@ export class DiscordService {
   }
 
   public async sendMessageToCurrentUser(userId: string, messageContent: string) {
-    const messageChannel = await this.discordApi.users.createDM('389499793799512064')
+    const messageChannel = await this.discordApi.users.createDM(userId)
     const createMessageResponse = await this.discordApi.channels.createMessage(messageChannel.id, {
       content: messageContent
     })

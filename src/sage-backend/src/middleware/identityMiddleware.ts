@@ -1,6 +1,6 @@
-import { FastifyReply, FastifyRequest } from 'fastify'
+import { FastifyRequest } from 'fastify'
 import jwt from 'jsonwebtoken'
-import { PoeStackUser } from '../types/poeStackuser'
+import { PoeStackUser } from '../types/poeStackUser'
 
 function getJwtFromAuthHeader(header?: string) {
   if (!header) {
