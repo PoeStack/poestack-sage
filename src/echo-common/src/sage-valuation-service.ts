@@ -1,5 +1,5 @@
 import { SmartCache } from './smart-cache'
-import { HttpUtil } from 'sage-common'
+import { HttpUtil, SageItemGroup } from 'sage-common'
 import { EchoDirService } from './echo-dir-service'
 
 export class SageValuationService {
@@ -10,6 +10,11 @@ export class SageValuationService {
   public cacheValuationShards = new SmartCache<SageValuationShard>(this.echoDir, "sage-valuations", (key) =>
     this.loadInternal(key)
   )
+
+  public valuation(league: string, group: SageItemGroup) {
+    return this.cacheValuationShards
+      .load({ key: `${group.tag}_${group.shard}_${league}`.replaceAll(' ', '_') })
+  }
 
   public load(tag: string, shard: number | string, league: string) {
     this.cacheValuationShards

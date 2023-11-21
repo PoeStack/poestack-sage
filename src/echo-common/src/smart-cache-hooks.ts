@@ -1,7 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
-import { SmartCache, SmartCacheEvent, SmartCacheLoadConfig, SmartCacheStore } from './smart-cache'
+import { SmartCache, SmartCacheEvent, SmartCacheLoadConfig, SmartCacheResultEvent, SmartCacheStore } from './smart-cache'
 import { filterNullish } from 'ts-ratchet'
-import { Observable, map, of, tap } from 'rxjs'
+import { Observable, UnaryFunction, map, filter, pipe,  OperatorFunction, tap } from 'rxjs'
+
+export function validResults<T>(): UnaryFunction<Observable<SmartCacheEvent<T>>, Observable<T>> {
+  return pipe(
+    filter((x) => x.type === "result") as OperatorFunction<SmartCacheEvent<T>, SmartCacheResultEvent<T>>,
+    map((e) => e.result),
+    filterNullish()
+  )
+}
 
 export type SmartCacheHookType<T> = SmartCacheStore<T> & {
   value: T | null | undefined
