@@ -45,7 +45,21 @@
       "presentation": {
         "hidden": true
       }
-    }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Echo-common Jest Tests",
+      "cwd": "${workspaceFolder}/src/echo-common",
+      "program": "${workspaceFolder}/src/echo-common/node_modules/jest/bin/jest.js",
+      "args": [
+          "./test/*"
+      ],
+      "internalConsoleOptions": "openOnSessionStart",
+      "outFiles": [
+          "${workspaceFolder}/src/echo-common/dist/**/*"
+      ]
+  }
   ],
   "compounds": [
     //launch multiple configurations concurrently

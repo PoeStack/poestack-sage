@@ -14,12 +14,12 @@ export type PoeLogTextEvent = {
   type: string
 }
 
-export type PoeZoneGenerationEvent = PoeLogTextEvent & {
+export type PoEZoneGenerationEvent = PoeLogTextEvent & {
   type: 'ZoneGenerationEvent'
   area: string
 }
 
-export type PoeZoneEntranceEvent = PoeLogTextEvent & {
+export type PoEZoneEntranceEvent = PoeLogTextEvent & {
   type: 'ZoneEntranceEvent'
   location: string
 }
@@ -29,7 +29,10 @@ export type PoEInstanceConnectionEvent = PoeLogTextEvent & {
   server: string
 }
 
-export type PoeNPCEncounterEvent = PoeLogTextEvent
+export type PoENPCEncounterEvent = PoeLogTextEvent & {
+  type: 'NPCEncounterEvent'
+  subtype: string
+}
 
 export type PoECharacterSlainEvent = PoeLogTextEvent & {
   type: 'CharacterSlainEvent'
@@ -38,10 +41,10 @@ export type PoECharacterSlainEvent = PoeLogTextEvent & {
 }
 
 export type PoeLogEvent =
-  | PoeZoneGenerationEvent
-  | PoeZoneEntranceEvent
+  | PoEZoneGenerationEvent
+  | PoEZoneEntranceEvent
   | PoEInstanceConnectionEvent
-  | PoeNPCEncounterEvent
+  | PoENPCEncounterEvent
   | PoECharacterSlainEvent
 
 interface PoeLogEventParser {
@@ -49,7 +52,7 @@ interface PoeLogEventParser {
 }
 
 class ZoneEnteranceEventParser implements PoeLogEventParser {
-  parse(raw: string): PoeZoneEntranceEvent | undefined {
+  parse(raw: string): PoEZoneEntranceEvent | undefined {
     if (raw.includes('] : You have entered')) {
       return {
         type: 'ZoneEntranceEvent',
@@ -70,7 +73,7 @@ class InstanceConnectionEventParser implements PoeLogEventParser {
         type: 'InstanceConnectionEvent',
         raw: raw,
         systemUptime: Number(raw.split(' ')[2]),
-        server: raw.slice(raw.indexOf('at ') + 'at '.length, -1),
+        server: raw.slice(raw.indexOf('at ') + 'at '.length, raw.length),
         time: new Date()
       }
     }
@@ -78,34 +81,35 @@ class InstanceConnectionEventParser implements PoeLogEventParser {
   }
 }
 
-const NPCEncounterMap = new Map<string, string>([
+let NPCEncounterMap = new Map<string, string>([
   ['Einhar, Beastmaster', 'EinharEncounterEvent'],
   ['Alva --TODO', 'AlvaEncounterEvent'] //TODO ADD ALL MASTERS HERE, AND ALSO IMPLEMENT LOGIC FOR SPECIFICS THINGS, LIKE EINHAR COMPLETE,
 ])
 
 class NPCEncounterEventParser implements PoeLogEventParser {
-  parse(raw: string): PoeNPCEncounterEvent | undefined {
-    NPCEncounterMap.forEach((key, val) => {
+  parse(raw: string): PoENPCEncounterEvent | undefined {
+    for (let [key, value] of NPCEncounterMap) {
       if (raw.includes(key)) {
         return {
-          type: val,
+          type: 'NPCEncounterEvent',
+          subtype: value,
           raw: raw,
           systemUptime: Number(raw.split(' ')[2]),
           time: new Date()
         }
       }
-    })
+    }
 
     return undefined
   }
 }
 
-const characterSlainRegex = new RegExp(' : [S]* has been slain.')
+const characterSlainRegex = new RegExp('\\d{4}/\\d{2}/\\d{2} \\d{2}:\\d{2}:\\d{2} \\d+ [a-f0-9]+ \\[INFO Client \\d+\\] : (\\S+?) has been slain.')
 
 class CharacterSlainEventParser implements PoeLogEventParser {
   parse(raw: string): PoECharacterSlainEvent | undefined {
     const match = characterSlainRegex.exec(raw)
-    const character = match == null ? null : match[0]
+    const character = match == null ? null : match[1]
 
     if (character) {
       return {
@@ -133,13 +137,19 @@ export class PoeLogService {
   public parsers: PoeLogEventParser[] = [
     new ZoneEnteranceEventParser(),
     new InstanceConnectionEventParser(),
-    new NPCEncounterEventParser()
+    new NPCEncounterEventParser(),
+    new CharacterSlainEventParser()
   ]
 
-  constructor() {
-    const path = this.getLogFilePath()
-    if (path) {
-      this.logTail = new Tail(path, { useWatchFile: true, fsWatchOptions: { interval: 1000 } })
+  constructor(tail: Tail|null=null) {
+    if (!tail) {
+      const path = this.getLogFilePath()
+      if (path) {
+        this.logTail = new Tail(path, { useWatchFile: true, fsWatchOptions: { interval: 1000 } })
+        this.logTail.on('line', (line) => this.logRaw$.next(line))
+      }
+    } else {
+      this.logTail = tail
       this.logTail.on('line', (line) => this.logRaw$.next(line))
     }
 

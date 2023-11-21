@@ -4,7 +4,7 @@ import { EchoPluginHook } from './echo-plugin-hook'
 import { PoeAccountService } from './poe-account-service'
 import { PoeCharacterService } from './poe-character-service'
 import { PoeStashService } from './poe-stash-service'
-import { PoeLogService, PoeZoneEntranceEvent } from './poe-log-service'
+import { PoeLogService, PoEZoneEntranceEvent } from './poe-log-service'
 import { EchoPluginConfigs, EchoPluginConfig } from './echo-plugin-config'
 import { EchoDirService } from './echo-dir-service'
 import { EchoContext } from './echo-context'
@@ -33,5 +33,5 @@ export type {
   EchoPluginConfig,
   EchoRoute,
   EchoContext,
-  PoeZoneEntranceEvent
+  PoEZoneEntranceEvent as PoeZoneEntranceEvent
 }
