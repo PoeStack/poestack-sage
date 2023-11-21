@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { context } from './entry'
+import { filter, scan, tap, toArray } from 'rxjs'
+import { EchoPoeItem } from 'echo-common'
 
 const App = () => {
   const league = 'Ancestor'
@@ -24,27 +26,40 @@ const App = () => {
     <>
       <div className="flex flex-col h-full w-full pt-2 pl-2 pr-2">
         <div className="flex-shrink-0 flex flex-row gap-2 overflow-x-scroll pb-5 pt-2">
-          {(stashes ?? []).map((e) => (
+          {(stashes ?? []).map((partialTab) => (
             <div
-              key={e.id}
-              style={{ backgroundColor: `#${e.metadata.colour}` }}
+              key={partialTab.id}
+              style={{ backgroundColor: `#${partialTab.metadata.colour}` }}
               className="flex-shrink-0 cursor-pointer py-2 px-4 shadow-md no-underline rounded-full  text-white text-sm hover:text-white hover:bg-blue-light focus:outline-none active:shadow-none mr-2"
               onClick={() =>
 
                 context().poeStash.snapshot(
                   league,
-                  [e.id]
-                ).subscribe({complete: () => {
-                  console.log("COMPLETE")
-                }})
+                  [partialTab.id!!]
+                ).pipe(
+                  tap(((e) => console.log("snapshot status", e)))
+                  scan((a: EchoPoeItem[], e) => {
+                    if (e.type === "result" && e.result) {
+                      a.push(e.result)
+                    }
+                    return a
+                  }, [])
+                ).subscribe({
+                  next: (e) => {
+                    console.log("items", e)
+                  },
+                  complete: () => {
+                    console.log("COMPLETE")
+                  }
+                })
 
 
- //               context()
-//                  .poeStash.cacheStashContent.load({ key: `${e.league}_${e.id}` })
-  //                .subscribe()
+                //               context()
+                //                  .poeStash.cacheStashContent.load({ key: `${e.league}_${e.id}` })
+                //                .subscribe()
               }
             >
-              {e.name}
+              {partialTab.name}
             </div>
           ))}
         </div>

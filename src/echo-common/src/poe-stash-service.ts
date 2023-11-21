@@ -1,5 +1,5 @@
 import { GggApi } from 'ggg-api'
-import { SmartCache } from './smart-cache'
+import { SmartCache, SmartCacheEvent } from './smart-cache'
 import { Observable, combineLatestWith, filter, from, mergeMap, of, tap, toArray } from 'rxjs'
 import { filterNullish } from 'ts-ratchet'
 import {
@@ -36,8 +36,8 @@ export class PoeStashService {
     return useCache(this.cacheStashes, { key: league })
   }
 
-  private snapshotStashTab(league: string, tabId: string) {
-    return this.cacheStashContent.load({ key: `${league}_${tabId}` }).pipe(
+  private snapshotStashTab(league: string, stashId: string): Observable<SmartCacheEvent<EchoPoeItem>> {
+    return this.cacheStashContent.load({ key: `${league}_${stashId}` }).pipe(
       mergeMap((e) => {
         if (e.type === 'result') {
           return from(e.result?.items ?? []).pipe(
@@ -48,7 +48,13 @@ export class PoeStashService {
                   mergeMap((vEvent) => {
                     if (vEvent.type === "result") {
                       const itemValuation = vEvent?.result?.valuations?.[group.hash]
-                      return of({ ...vEvent, result: { league, tabId, item: item, valuation: itemValuation, group: group } })
+                      const eItem: EchoPoeItem = {
+                        stash: e?.result!!,
+                        data: item,
+                        valuation: itemValuation,
+                        group: group
+                      }
+                      return of({ ...vEvent, result: eItem })
                     }
                     return of(vEvent)
                   })
@@ -66,7 +72,7 @@ export class PoeStashService {
     )
   }
 
-  public snapshot(league: string, stashes: string[]) {
+  public snapshot(league: string, stashes: string[]): Observable<SmartCacheEvent<EchoPoeItem>> {
     return from(stashes).pipe(
       mergeMap((e) => this.snapshotStashTab(league, e)),
       tap((e) => {
@@ -111,6 +117,6 @@ export class PoeStashService {
 export type EchoPoeItem = {
   stash: PoeStashTab
   data: PoeItem
-  group: SageItemGroup | null
-  valuation: SageValuation | null
+  group: SageItemGroup | null | undefined
+  valuation: SageValuation | null | undefined
 }

@@ -3,7 +3,7 @@ import { SmartCache, SmartCacheEvent } from './smart-cache'
 import { EchoPluginHook } from './echo-plugin-hook'
 import { PoeAccountService } from './poe-account-service'
 import { PoeCharacterService } from './poe-character-service'
-import { PoeStashService } from './poe-stash-service'
+import { EchoPoeItem, PoeStashService } from './poe-stash-service'
 import { PoeLogService } from './poe-log-service'
 import { EchoPluginConfigs, EchoPluginConfig } from './echo-plugin-config'
 import { EchoDirService } from './echo-dir-service'
@@ -29,6 +29,7 @@ export {
 export type {
   EchoPluginHook,
   SmartCacheEvent,
+  EchoPoeItem,
   EchoPluginConfigs,
   EchoPluginConfig,
   EchoRoute,
