@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { context } from './entry'
 import { delay, filter, last, scan, tap, toArray } from 'rxjs'
-import { EchoPoeItem } from 'echo-common'
+import { EchoPoeItem, validResults } from 'echo-common'
 
 const App = () => {
   const league = 'Ancestor'
@@ -34,19 +34,13 @@ const App = () => {
               style={{ backgroundColor: `#${partialTab.metadata.colour}` }}
               className="flex-shrink-0 cursor-pointer py-2 px-4 shadow-md no-underline rounded-full  text-white text-sm hover:text-white hover:bg-blue-light focus:outline-none active:shadow-none mr-2"
               onClick={() =>
-
                 context().poeStash.snapshot(
                   league,
                   [partialTab.id!!]
                 ).pipe(
                   tap(((e) => setStatus(e.type))),
-                  scan((a: EchoPoeItem[], e) => {
-                    if (e.type === "result" && e.result) {
-                      a.push(e.result)
-                    }
-                    return a
-                  }, []),
-                  last(),
+                  validResults(),
+                  toArray()
                 ).subscribe((items) => {
                   setStatus(`loaded ${items.length}`)
                   console.log("final items", items)
