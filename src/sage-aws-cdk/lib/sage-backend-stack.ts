@@ -19,11 +19,11 @@ export class SageBackendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: cdk.StackProps, sageStack: SageStack) {
     super(scope, id, props)
 
-    const domainName = 'poestack-sage.dev'
+    const domainName = 'poe.zone'
     const siteDomain = 'www' + '.' + domainName
 
-    const hostedZone = new aws_route53.PublicHostedZone(this, 'MyHostedZone', {
-      zoneName: domainName
+    const hostedZone = aws_route53.HostedZone.fromLookup(this, 'SageBackendZone', {
+      domainName: domainName
     })
 
     new CfnOutput(this, 'Site', { value: 'https://' + siteDomain })
