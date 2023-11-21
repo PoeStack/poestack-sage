@@ -1,5 +1,5 @@
 {
-  "name": "sage-backend",
+  "name": "tactics-gateway",
   "version": "1.0.0",
   "type": "commonjs",
   "main": "./dist/index.js",

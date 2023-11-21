@@ -15,19 +15,19 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2'
 import { SubnetType } from 'aws-cdk-lib/aws-ec2'
 import { UpdatePolicy } from 'aws-cdk-lib/aws-autoscaling'
 
-export class SageBackendStack extends cdk.Stack {
+export class TacticsGatewayStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: cdk.StackProps, sageStack: SageStack) {
     super(scope, id, props)
 
     const domainName = 'poe.zone'
     const siteDomain = 'www' + '.' + domainName
 
-    const hostedZone = aws_route53.HostedZone.fromLookup(this, 'SageBackendZone', {
+    const hostedZone = aws_route53.HostedZone.fromLookup(this, 'TacticsGatewayZone', {
       domainName: domainName
     })
 
     new CfnOutput(this, 'Site', { value: 'https://' + siteDomain })
-    const certificate = new aws_certificatemanager.Certificate(this, 'SageBackendCertificate', {
+    const certificate = new aws_certificatemanager.Certificate(this, 'TacticsGatewayCertificate', {
       domainName: domainName,
       subjectAlternativeNames: ['*.' + domainName],
       validation: aws_certificatemanager.CertificateValidation.fromDns(hostedZone)
@@ -36,8 +36,8 @@ export class SageBackendStack extends cdk.Stack {
     certificate.applyRemovalPolicy(RemovalPolicy.DESTROY)
     new CfnOutput(this, 'Certificate', { value: certificate.certificateArn })
 
-    const ecsCluster = new aws_ecs.Cluster(this, 'SageBackendCluster', {
-      clusterName: 'sage-backend-cluster',
+    const ecsCluster = new aws_ecs.Cluster(this, 'TacticsGatewayCluster', {
+      clusterName: 'tactics-gateway-cluster',
       vpc: sageStack.vpc
     })
     ecsCluster.addCapacity('DefaultAutoScalingGroupCapacity', {
@@ -50,20 +50,20 @@ export class SageBackendStack extends cdk.Stack {
       updatePolicy: UpdatePolicy.rollingUpdate()
     })
 
-    const ecr = new aws_ecr.Repository(this, 'SageBackendRepoX', {
-      repositoryName: 'poestack-sage-backendx'
+    const ecr = new aws_ecr.Repository(this, 'TacticsGatewayRepoX', {
+      repositoryName: 'poestack-tactics-gatewayx'
     })
 
-    const sageBackendTask = new aws_ecs.Ec2TaskDefinition(this, 'SageBackendTask')
-    sageBackendTask.addContainer('SageBackend', {
+    const TacticsGatewayTask = new aws_ecs.Ec2TaskDefinition(this, 'TacticsGatewayTask')
+    TacticsGatewayTask.addContainer('TacticsGateway', {
       image: aws_ecs.ContainerImage.fromEcrRepository(ecr),
       memoryLimitMiB: 512,
       logging: LogDriver.awsLogs({
-        streamPrefix: 'sage-backend-container',
+        streamPrefix: 'tactics-gateway-container',
         logRetention: RetentionDays.THREE_DAYS
       }),
-      command: ['node', 'src/sage-backend/dist/index.js'],
-      environmentFiles: [EnvironmentFile.fromBucket(sageStack.configBucket, 'sage-backend.env')],
+      command: ['node', 'src/tactics-gateway/dist/index.js'],
+      environmentFiles: [EnvironmentFile.fromBucket(sageStack.configBucket, 'tactics-gateway.env')],
       portMappings: [
         {
           containerPort: 9000,
@@ -71,35 +71,35 @@ export class SageBackendStack extends cdk.Stack {
         }
       ]
     })
-    sageStack.configBucket.grantRead(sageBackendTask.executionRole!!)
-    const sageBackendService = new aws_ecs.Ec2Service(this, 'SageBackendSvc', {
+    sageStack.configBucket.grantRead(TacticsGatewayTask.executionRole!!)
+    const TacticsGatewayService = new aws_ecs.Ec2Service(this, 'TacticsGatewaySvc', {
       cluster: ecsCluster,
-      taskDefinition: sageBackendTask,
+      taskDefinition: TacticsGatewayTask,
       deploymentController: {
         type: DeploymentControllerType.ECS
       },
       circuitBreaker: undefined
     })
 
-    const sageBackendAlb = new cdk.aws_elasticloadbalancingv2.ApplicationLoadBalancer(
+    const TacticsGatewayAlb = new cdk.aws_elasticloadbalancingv2.ApplicationLoadBalancer(
       this,
-      'SageBackendAlb',
+      'TacticsGatewayAlb',
       {
         vpc: sageStack.vpc,
         internetFacing: true
       }
     )
 
-    const albListener = sageBackendAlb.addListener('SageBackendALBHttpsListener', {
+    const albListener = TacticsGatewayAlb.addListener('TacticsGatewayALBHttpsListener', {
       port: 443,
       certificates: [certificate]
     })
 
-    albListener.addTargets('SageBackendServiceTarget', {
+    albListener.addTargets('TacticsGatewayServiceTarget', {
       port: 443,
       targets: [
-        sageBackendService.loadBalancerTarget({
-          containerName: 'SageBackend',
+        TacticsGatewayService.loadBalancerTarget({
+          containerName: 'TacticsGateway',
           containerPort: 9000
         })
       ]
@@ -109,7 +109,7 @@ export class SageBackendStack extends cdk.Stack {
       zone: hostedZone,
       recordName: siteDomain,
       target: aws_route53.RecordTarget.fromAlias(
-        new cdk.aws_route53_targets.LoadBalancerTarget(sageBackendAlb)
+        new cdk.aws_route53_targets.LoadBalancerTarget(TacticsGatewayAlb)
       )
     })
   }
