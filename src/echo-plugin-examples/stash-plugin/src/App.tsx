@@ -37,7 +37,7 @@ const App = () => {
                   league,
                   [partialTab.id!!]
                 ).pipe(
-                  tap(((e) => console.log("snapshot status", e)))
+                  tap(((e) => console.log("snapshot status", e))),
                   scan((a: EchoPoeItem[], e) => {
                     if (e.type === "result" && e.result) {
                       a.push(e.result)
