@@ -1,6 +1,6 @@
 import { GggApi } from 'ggg-api'
 import { SmartCache } from './smart-cache'
-import { Observable, combineLatestWith, filter, from, map, mergeMap, tap, toArray } from 'rxjs'
+import { Observable, combineLatestWith, filter, from, mergeMap, of, tap, toArray } from 'rxjs'
 import { filterNullish } from 'ts-ratchet'
 import {
   ItemGroupingService,
@@ -24,7 +24,7 @@ export class PoeStashService {
     this.gggApi.getStashContent(key.split('_')[0], key.split('_')[1])
   )
 
-  public usePoeStashItems = bind((league: string) => this.stashItems(league), [])[0]
+  public usePoeStashItems = bind((league: string) => this.useEchoItemCache(league), [])[0]
 
   constructor(
     private echoDir: EchoDirService,
@@ -36,7 +36,48 @@ export class PoeStashService {
     return useCache(this.cacheStashes, { key: league })
   }
 
-  public stashItems(league: string): Observable<EchoPoeItem[]> {
+  private snapshotStashTab(league: string, tabId: string) {
+    return this.cacheStashContent.load({ key: `${league}_${tabId}` }).pipe(
+      mergeMap((e) => {
+        if (e.type === 'result') {
+          return from(e.result?.items ?? []).pipe(
+            mergeMap((item) => {
+              const group = this.groupingService.group(item)
+              if (group) {
+                return this.valuationApi.valuation(league, group).pipe(
+                  mergeMap((vEvent) => {
+                    if (vEvent.type === "result") {
+                      const itemValuation = vEvent?.result?.valuations?.[group.hash]
+                      return of({ ...vEvent, result: { league, tabId, item: item, valuation: itemValuation, group: group } })
+                    }
+                    return of(vEvent)
+                  })
+                )
+              }
+              return of(null)
+            }),
+            filterNullish()
+          )
+        }
+        else {
+          return of(e)
+        }
+      })
+    )
+  }
+
+  public snapshot(league: string, stashes: string[]) {
+    return from(stashes).pipe(
+      mergeMap((e) => this.snapshotStashTab(league, e)),
+      tap((e) => {
+        if (e.type === "result") {
+          console.log("snapshot result", e.result)
+        }
+      })
+    )
+  }
+
+  public useEchoItemCache(league: string): Observable<EchoPoeItem[]> {
     const result = this.cacheStashContent.memoryCache$.pipe(
       combineLatestWith(this.valuationApi.cacheValuationShards.memoryCache$),
       mergeMap(([tabs, valuationCache]) =>
@@ -60,7 +101,6 @@ export class PoeStashService {
             })
           ),
           toArray<EchoPoeItem>(),
-          tap((e) => console.log('aa', e))
         )
       )
     )
