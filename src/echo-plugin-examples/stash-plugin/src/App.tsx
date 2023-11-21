@@ -38,7 +38,13 @@ const App = () => {
                   league,
                   [partialTab.id!!]
                 ).pipe(
-                  tap(((e) => setStatus(e.type))),
+                  tap(((e) => {
+                    if (e.type === "rate-limit") {
+                      setStatus(`${e.type}, ${Date.now() + e.limitExpiresMs}`)
+                    } else {
+                      setStatus(e.type)
+                    }
+                  })),
                   validResults(),
                   toArray()
                 ).subscribe((items) => {
