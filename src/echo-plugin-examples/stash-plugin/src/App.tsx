@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { context } from './entry'
-import { filter, scan, tap, toArray } from 'rxjs'
+import { delay, filter, last, scan, tap, toArray } from 'rxjs'
 import { EchoPoeItem } from 'echo-common'
 
 const App = () => {
   const league = 'Ancestor'
 
   const [searchString, setSearchString] = useState('')
+  const [status, setStatus] = useState('')
 
   const { value: stashes } = context().poeStash.useStashes(league)
 
@@ -25,6 +26,7 @@ const App = () => {
   return (
     <>
       <div className="flex flex-col h-full w-full pt-2 pl-2 pr-2">
+        <div>Status: {status}</div>
         <div className="flex-shrink-0 flex flex-row gap-2 overflow-x-scroll pb-5 pt-2">
           {(stashes ?? []).map((partialTab) => (
             <div
@@ -37,26 +39,18 @@ const App = () => {
                   league,
                   [partialTab.id!!]
                 ).pipe(
-                  tap(((e) => console.log("snapshot status", e))),
+                  tap(((e) => setStatus(e.type))),
                   scan((a: EchoPoeItem[], e) => {
                     if (e.type === "result" && e.result) {
                       a.push(e.result)
                     }
                     return a
-                  }, [])
-                ).subscribe({
-                  next: (e) => {
-                    console.log("items", e)
-                  },
-                  complete: () => {
-                    console.log("COMPLETE")
-                  }
+                  }, []),
+                  last(),
+                ).subscribe((items) => {
+                  setStatus(`loaded ${items.length}`)
+                  console.log("final items", items)
                 })
-
-
-                //               context()
-                //                  .poeStash.cacheStashContent.load({ key: `${e.league}_${e.id}` })
-                //                .subscribe()
               }
             >
               {partialTab.name}
