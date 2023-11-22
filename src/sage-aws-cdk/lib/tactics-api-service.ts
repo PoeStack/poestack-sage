@@ -11,7 +11,7 @@ import { DeploymentControllerType, EnvironmentFile, LogDriver } from 'aws-cdk-li
 import { RetentionDays } from 'aws-cdk-lib/aws-logs'
 import { SageStack } from './sage-stack'
 
-export class TacticsAPIStack {
+export class TacticsApiService {
   constructor(sageStack: SageStack, bootstrap: boolean) {
     const domainName = 'poe.zone'
     const siteDomain = 'www' + '.' + domainName
@@ -36,7 +36,7 @@ export class TacticsAPIStack {
     })
 
 
-    if (bootstrap) {
+    if (!bootstrap) {
       const apiTask = new aws_ecs.Ec2TaskDefinition(sageStack, 'TacticsAPITask')
       apiTask.addContainer('TacticsAPI', {
         image: aws_ecs.ContainerImage.fromEcrRepository(ecr),
