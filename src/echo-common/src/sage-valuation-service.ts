@@ -7,19 +7,15 @@ export class SageValuationService {
 
   constructor(private echoDir: EchoDirService) { }
 
-  public cacheValuationShards = new SmartCache<SageValuationShard>(this.echoDir, "sage-valuations", (key) =>
-    this.loadInternal(key)
-  )
+  public cacheValuationShards = new SmartCache<SageValuationShard>(this.echoDir, "sage-valuations")
 
   public valuation(league: string, group: SageItemGroup) {
+    const key = `${group.tag}_${group.shard}_${league}`.replaceAll(' ', '_')
     return this.cacheValuationShards
-      .load({ key: `${group.tag}_${group.shard}_${league}`.replaceAll(' ', '_') })
-  }
-
-  public load(tag: string, shard: number | string, league: string) {
-    this.cacheValuationShards
-      .load({ key: `${tag}_${shard}_${league}`.replaceAll(' ', '_') })
-      .subscribe()
+      .load(
+        { key: key },
+        () => this.loadInternal(key)
+      )
   }
 
   private loadInternal(key: string) {

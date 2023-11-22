@@ -7,7 +7,13 @@ import { SageStack } from '../lib/sage-stack'
 
 const app = new cdk.App()
 
-const sageStack = new SageStack(app, 'SageStack', {})
+const sageStack = new SageStack(app, 'SageStack', {
+  env: {
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region: process.env.CDK_DEFAULT_REGION
+  }
+})
 
-new InsightsService(sageStack, true)
-new TacticsApiService(sageStack, true)
+const bootstrap = process.env['BOOTSTRAP'] === "true"
+new InsightsService(sageStack, bootstrap)
+new TacticsApiService(sageStack, bootstrap)

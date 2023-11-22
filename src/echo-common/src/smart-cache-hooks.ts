@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { SmartCache, SmartCacheEvent, SmartCacheLoadConfig, SmartCacheResultEvent, SmartCacheStore } from './smart-cache'
 import { filterNullish } from 'ts-ratchet'
-import { Observable, UnaryFunction, map, filter, pipe,  OperatorFunction, tap } from 'rxjs'
+import { Observable, UnaryFunction, map, filter, pipe, OperatorFunction, tap } from 'rxjs'
 
 export function validResults<T>(): UnaryFunction<Observable<SmartCacheEvent<T>>, Observable<T>> {
   return pipe(
@@ -21,15 +21,16 @@ export type SmartCacheHookType<T> = SmartCacheStore<T> & {
 
 export function useCache<T>(
   cache: SmartCache<T>,
-  config: SmartCacheLoadConfig
+  config: SmartCacheLoadConfig,
+  loadFun: () => Observable<T | null>
 ): SmartCacheHookType<T> {
   const subject = cache.memoryCache$
   const initalValue = subject.getValue()?.[config.key] ?? {}
   const [value, setValue] = useState(initalValue)
 
   const load = useCallback(() => {
-    return cache.load(config)
-  }, [cache, config])
+    return cache.load(config, loadFun)
+  }, [cache, config, loadFun])
 
   useEffect(() => {
     if (value?.lastResultEvent?.key && value?.lastResultEvent?.key !== config.key) {
@@ -51,7 +52,7 @@ export function useCache<T>(
     return () => {
       subscription.unsubscribe()
     }
-  }, [subject, config])
+  }, [subject, config, load])
 
   const result: SmartCacheHookType<T> = {
     lastResultEvent: value.lastResultEvent,

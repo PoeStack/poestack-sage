@@ -1,29 +1,32 @@
-import { map } from 'rxjs'
 import { SmartCache } from './smart-cache'
 import { PoeLeague, PoeProfile } from 'sage-common'
 import { GggApi } from 'ggg-api'
 import { EchoDirService } from './echo-dir-service'
+import { useCache } from './smart-cache-hooks'
 
 export class PoeAccountService {
-  public profile = new SmartCache<PoeProfile>(this.echoDir, "poe-profile", () => this.gggApi.getProfile())
-  public leagues = new SmartCache<PoeLeague[]>(this.echoDir, "poe-leagues", () => this.gggApi.getLeagues())
+  public profile = new SmartCache<PoeProfile>(this.echoDir, "poe-profile")
+  public leagues = new SmartCache<PoeLeague[]>(this.echoDir, "poe-leagues")
 
   constructor(
     private echoDir: EchoDirService,
     private gggApi: GggApi
   ) { }
 
-  public poeProfile() {
-    const result = this.profile.memoryCache$.pipe(
-      map((e) => Object.values(e)?.[0]?.lastResultEvent?.result)
+  public useProfile() {
+    return useCache(
+      this.profile,
+      { key: "profiles" },
+      () => this.gggApi.getProfile()
     )
-    return result
   }
 
-  public poeLeagues() {
-    const result = this.leagues.memoryCache$.pipe(
-      map((e) => Object.values(e)?.[0]?.lastResultEvent?.result)
+  public useLeagues() {
+    return useCache(
+      this.leagues,
+      { key: "leagues" },
+      () => this.gggApi.getLeagues()
     )
-    return result
   }
+
 }

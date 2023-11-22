@@ -19,10 +19,10 @@ gradle.projectsEvaluated {
 
 task("dockerBuildAndPublish") {
 
-  val packageName = "poestack-insightsx"
+  val packageName = "poestack-tactics-apix"
   doLast {
     exec {
-      commandLine("docker", "build", "-t", packageName, ".")
+      commandLine("docker", "build", "--platform=linux/amd64", "--progress=plain", "-t", packageName, ".")
     }
     exec {
       commandLine(
