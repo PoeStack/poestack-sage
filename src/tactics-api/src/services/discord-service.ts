@@ -30,7 +30,7 @@ export class DiscordService {
   }
 
   public async getOAuth2AuthorizeUrl() {
-    return await this.discordApi.oauth2.generateAuthorizationURL({
+    return this.discordApi.oauth2.generateAuthorizationURL({
       client_id: DISCORD_CLIENT_ID,
       response_type: 'code',
       redirect_uri: `${SAGE_BACKEND_URL}/oauth/callback`,
