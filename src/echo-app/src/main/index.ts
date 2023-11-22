@@ -84,11 +84,9 @@ app.on('window-all-closed', () => {
     if (server && server.listening) {
       server?.close(() => {
         app.quit()
-        return
       })
     } else {
       app.quit()
-      return
     }
   }
 })
