@@ -1,7 +1,6 @@
 import { IItem } from './item.interface'
 
 export interface ICharacter {
-  uuid?: string
   id: string
   name: string
   class: string

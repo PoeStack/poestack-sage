@@ -1,5 +1,5 @@
 import { useStore } from './useStore'
-import { IStore } from '../mst-store/rootStore'
+import { IStore } from '../store/rootStore'
 
 export type MapStore<T> = (store: IStore) => T
 

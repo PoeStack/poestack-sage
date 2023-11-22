@@ -2,7 +2,7 @@ import { Observable } from 'rxjs'
 import axios from 'axios'
 
 export class HttpUtil {
-  private client = axios.create({ adapter: 'http' })
+  private client = axios.create({})
 
   public get<T>(
     url: string,

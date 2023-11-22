@@ -1,6 +1,6 @@
 import React from 'react'
 import NetWorth from './routes/net-worth/NetWorth'
-import { Store } from './mst-store/rootStore'
+import { Store } from './store/rootStore'
 import { StoreContext } from './context/store'
 import { applySnapshot, getSnapshot } from 'mobx-state-tree'
 

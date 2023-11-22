@@ -1,5 +1,5 @@
-import { runInAction } from 'mobx'
-import { Instance, cast, getParent, types } from 'mobx-state-tree'
+import { remove, runInAction } from 'mobx'
+import { Instance, cast, getParent, types, tryReference, destroy } from 'mobx-state-tree'
 import { Subject, delay, from, interval, map, mergeMap } from 'rxjs'
 import { Store, IStore } from './rootStore'
 import { v4 as uuidv4 } from 'uuid'
@@ -12,6 +12,7 @@ export interface IStatusMessage extends Instance<typeof StatusMessage> {}
 export interface IUiStateStore extends Instance<typeof UiStateStore> {}
 
 export const StatusMessage = types.model('StatusMessage', {
+  uuid: types.identifier,
   message: types.string,
   translateParam: types.maybe(types.union(types.number, types.string)),
   currentCount: types.maybe(types.number),
@@ -51,6 +52,21 @@ export const UiStateStore = types
         this.setIsSnapshotting(false)
         self.cancelSnapshot.next(!cancel)
       }
+    },
+
+    setStatusMessage(
+      message: string,
+      translateParam?: string | number,
+      currentCount?: number,
+      totalCount?: number
+    ) {
+      // self.statusMessage = StatusMessage.create({
+      //   uuid: uuidv4(),
+      //   message: message,
+      //   translateParam: translateParam,
+      //   currentCount: currentCount,
+      //   totalCount: totalCount
+      // })
     },
 
     resetStatusMessage() {
@@ -102,20 +118,47 @@ export const UiStateStore = types
         self.counter++
       }
     },
-    addAccount() {
+    addAccounts() {
       const rootStore = getParent<IStore>(self)
-      const profile = ProfileEntry.create({
-        uuid: uuidv4(),
-        name: `Profile: ${Math.random() * 10}`
-      })
-      const account = AccountEntry.create({
-        uuid: 'Account_' + uuidv4(),
-        name: `Account: ${Math.random() * 10}`,
+
+      const account1 = AccountEntry.create({
+        uuid: 'Account_1',
+        name: `Account_1`,
         accountLeagues: [],
         profiles: []
       })
-      rootStore.accountStore.addAccount(account)
-      rootStore.accountStore.setActiveAccount(account)
+      const account2 = AccountEntry.create({
+        uuid: 'Account_2',
+        name: `Account_2`,
+        accountLeagues: [],
+        profiles: []
+      })
+      try {
+        rootStore.accountStore.setAccounts([account1, account2])
+        rootStore.accountStore.setActiveAccount(account2)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    replaceAccounts() {
+      try {
+        const rootStore = getParent<IStore>(self)
+        const account2 = AccountEntry.create({
+          uuid: 'Account_2',
+          name: `Account_TEST`,
+          accountLeagues: [],
+          profiles: []
+        })
+        const account3 = AccountEntry.create({
+          uuid: 'Account_3',
+          name: `Account_3`,
+          accountLeagues: [],
+          profiles: []
+        })
+        // rootStore.accountStore.setAccounts([account2, account3])
+        rootStore.accountStore.removeAccount(rootStore.accountStore.accounts[1])
+      } catch (error) {}
+
       // account.addProfile(profile)
       // account.setActiveProfile(profile)
     },
@@ -129,20 +172,20 @@ export const UiStateStore = types
       })
       rootStore.accountStore.addAccount(account)
     },
-    addProfileToActiveAccount() {
-      const rootStore = getParent<IStore>(self)
-      const profile = ProfileEntry.create({
-        uuid: 'Profile_' + uuidv4(),
-        name: `Next Profile: ${Math.random() * 10}`
-      })
-      rootStore.accountStore.activeAccount?.addProfile(profile)
-    },
+    // addProfileToActiveAccount() {
+    //   const rootStore = getParent<IStore>(self)
+    //   const profile = ProfileEntry.create({
+    //     uuid: 'Profile_' + uuidv4(),
+    //     name: `Next Profile: ${Math.random() * 10}`
+    //   })
+    //   rootStore.accountStore.activeAccount?.addProfile(profile)
+    // },
     subscribtion() {
       from([1, 3, 5])
         .pipe(delay(500))
         .subscribe((val) => {
           runInAction(() => {
-            this.addProfileToActiveAccount()
+            // this.addProfileToActiveAccount()
           })
         })
 

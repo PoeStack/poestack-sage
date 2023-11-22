@@ -7,6 +7,7 @@ export interface ILeaguePriceSourceEntry extends Instance<typeof LeaguePriceSour
 export const LeaguePriceSourceEntry = types
   .model('LeaguePriceSourceEntry', {
     uuid: types.identifier,
+    // TODO: Do I need?
     prices: types.frozen<IExternalPrice[]>([]),
     created: types.optional(types.number, () => dayjs.utc().valueOf()),
     updated: types.optional(types.number, () => dayjs.utc().valueOf())
