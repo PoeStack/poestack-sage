@@ -1,6 +1,5 @@
 import { APP_CONTEXT, GGG_HTTP_UTIL } from '../echo-context-factory'
 
-
 export function ProfilePage() {
   const { value: profile } = APP_CONTEXT.poeAccounts.useProfile()
 

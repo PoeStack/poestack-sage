@@ -1,3 +1,4 @@
+import { Subscription } from 'rxjs'
 import { EchoDirService } from './echo-dir-service'
 import { EchoPluginService } from './echo-plugin-service'
 import { EchoRouter } from './echo-router'
@@ -16,5 +17,6 @@ export type EchoContext = {
   poeCharacters: PoeCharacterService
   poeLog: PoeLogService
   poeStash: PoeStashService
-  poeValuations: SageValuationService
+  poeValuations: SageValuationService,
+  subscriptions: Subscription[]
 }

@@ -13,6 +13,20 @@ export class PoeCharacterService {
     private gggApi: GggApi
   ) { }
 
+  public character(name: string) {
+    return this.cacheCharacter.load(
+      { key: name },
+      () => this.gggApi.getCharacter(name)
+    )
+  }
+
+  public characterList() {
+    return this.cacheCharacterList.load(
+      { key: "poe_character_list" },
+      () => this.gggApi.getCharacters()
+    )
+  }
+
   public useCharacterList(config: SmartCacheLoadConfig = { key: 'poe_character_list' }) {
     return useCache(
       this.cacheCharacterList,
