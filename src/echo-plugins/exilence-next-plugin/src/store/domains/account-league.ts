@@ -2,6 +2,8 @@ import { Instance, types } from 'mobx-state-tree'
 import { CharacterEntry, ICharacterEntry } from './character'
 import { StashTabEntry, IStashTabEntry } from './stash-tab'
 import { LeagueEntry, ILeagueEntry } from './league'
+import { IAccountEntity } from '../../interfaces/account.interface'
+import { IAccountEntry } from './account'
 
 export interface IAccountLeagueEntry extends Instance<typeof AccountLeagueEntry> {}
 

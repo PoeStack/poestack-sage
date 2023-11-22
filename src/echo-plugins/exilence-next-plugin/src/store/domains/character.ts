@@ -6,16 +6,15 @@ export interface ICharacterEntry extends Instance<typeof CharacterEntry> {}
 
 export const CharacterEntry = types
   .model('CharacterEntry', {
-    uuid: types.identifier,
-    id: types.string,
+    id: types.identifier,
     name: types.string,
+    realm: types.string,
     class: types.string,
+    league: types.safeReference(LeagueEntry),
     level: types.number,
     experience: types.number,
-    league: types.safeReference(LeagueEntry),
-    expired: types.maybe(types.boolean),
     current: types.maybe(types.boolean),
-    deleted: types.maybe(types.boolean),
+    deleted: false, // Still referenced but does not exist anymore
     inventory: types.frozen<IItem[]>([]),
     equipment: types.frozen<IItem[]>([]),
     jewels: types.frozen<IItem[]>([])
@@ -30,5 +29,11 @@ export const CharacterEntry = types
     },
     setJewels(jewels: IItem[]) {
       self.jewels = jewels
+    },
+    setDeleted(deleted: boolean) {
+      self.deleted = deleted
+    },
+    updateCharacter(character: ICharacterEntry) {
+      Object.assign(self, character)
     }
   }))

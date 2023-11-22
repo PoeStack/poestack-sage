@@ -16,9 +16,9 @@ export const ProfileEntry = types
   .model('ProfileEntry', {
     uuid: types.identifier,
     name: types.string,
-    activeLeague: types.safeReference(LeagueEntry),
-    activePriceLeague: types.safeReference(LeagueEntry),
-    activeCharacter: types.safeReference(CharacterEntry),
+    activeLeague: types.reference(LeagueEntry),
+    activePriceLeague: types.reference(LeagueEntry),
+    activeCharacter: types.maybe(types.reference(CharacterEntry)),
     activeStashTabs: types.optional(
       // Account holds the objects
       types.array(types.safeReference(StashTabEntry, { acceptsUndefined: false })),
@@ -27,38 +27,28 @@ export const ProfileEntry = types
     snapshots: types.optional(types.array(SnapshotEntry), []),
     includeEquipment: false,
     includeInventory: false,
-    incomeResetAt: types.optional(types.number, () => dayjs.utc().valueOf())
+    incomeResetAt: types.maybe(types.number)
   })
   .views((self) => ({
-    get hasPricesForActiveLeague() {
-      const store = getParent<any>(self, 3) // Account -> AccountStore -> RootStore
-      const activePriceDetails = store.priceStore.leaguePriceDetails.find(
-        (l: ILeaguePriceDetailsEntry) => l.league?.id === self.activePriceLeague?.id
+    get isProfileValid() {
+      return (
+        !self.activeLeague.deleted &&
+        !self.activePriceLeague.deleted &&
+        !self.activeCharacter?.deleted &&
+        self.activeStashTabs.every((st) => !st.deleted)
       )
-      const leaguePriceSources = activePriceDetails?.leaguePriceSources
-      if (!leaguePriceSources || leaguePriceSources?.length === 0) {
-        return false
-      }
-      const prices = leaguePriceSources[0]?.prices
-      return prices !== undefined && prices.length > 0
     },
 
     get readyToSnapshot(): boolean {
-      const store = getParent<any>(self, 3) // Account -> AccountStore -> RootStore
-      const account = store.accountStore.activeAccount
-      const league = account?.accountLeagues.find(
-        (al: IAccountLeagueEntry) =>
-          account.activeLeague && al.league?.id === account.activeLeague.id
-      )
+      const { priceStore, uiStateStore } = getParent<IStore>(self, 3) // Account -> AccountStore -> RootStore
 
       return (
-        league &&
-        league.stashTabs.length > 0 &&
-        !store.priceStore.isUpdatingPrices &&
-        store.uiStateStore.validated &&
-        store.uiStateStore.initiated &&
-        !store.uiStateStore.isSnapshotting &&
-        this.hasPricesForActiveLeague
+        self.activeStashTabs.length > 0 &&
+        !priceStore.isUpdatingPrices &&
+        uiStateStore.validated &&
+        uiStateStore.initiated &&
+        !uiStateStore.isSnapshotting &&
+        this.isProfileValid
         // store.rateLimitStore.retryAfter === 0
       )
     }
@@ -70,13 +60,13 @@ export const ProfileEntry = types
       })
     },
     // First set all basic C(R)UD functions
-    setActiveLeague(league?: ILeagueEntry) {
+    setActiveLeague(league: ILeagueEntry) {
       self.activeLeague = league
     },
-    setActivePriceLeague(league?: ILeagueEntry) {
+    setActivePriceLeague(league: ILeagueEntry) {
       self.activePriceLeague = league
     },
-    setActiveCharacter(character?: ICharacterEntry) {
+    setActiveCharacter(character: ICharacterEntry) {
       self.activeCharacter = character
     },
     addActiveStashTab(stashTab: IStashTabEntry) {
