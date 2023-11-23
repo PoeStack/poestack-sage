@@ -12,6 +12,7 @@ export type RouterNavLocation = 'l-sidebar-m' | 'l-sidebar-b'
 export type EchoRouterNavItem = {
   location: RouterNavLocation
   icon: any
+  displayname: string
 }
 
 export class EchoRouter {

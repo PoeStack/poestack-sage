@@ -1,9 +1,9 @@
 import { bind } from '@react-rxjs/core'
-import { PoeZoneEntranceEvent } from 'echo-common'
+import { PoEZoneEntranceEvent } from 'echo-common'
 import { BehaviorSubject, combineLatestWith, filter, interval, map } from 'rxjs'
 import { context } from './entry'
 
-const lastZone$ = new BehaviorSubject<PoeZoneEntranceEvent>(null)
+const lastZone$ = new BehaviorSubject<PoEZoneEntranceEvent>(null)
 context()
   .poeLog.logEvents$.pipe(filter((e) => e.type == 'ZoneEntranceEvent'))
   .subscribe(lastZone$)
@@ -72,7 +72,7 @@ const App = () => {
       </div>
       {zones.length > 0 &&
         zones.map((zone) => (
-          <div>
+          <div className='flex flex-col bg-slate-300 bg-primary-surface'>
             <p>
               At: {zone.time.toISOString()} | In {zone.location} for{' '}
               {Math.round((zone.timeDelta / 1000) * 10) / 10}

@@ -12,7 +12,7 @@ const pluginRoute: EchoRoute = {
   plugin: 'example-stash',
   path: 'main',
   page: App,
-  navItems: [{ location: 'l-sidebar-m', icon: ArchiveBoxIcon }]
+  navItems: [{ location: 'l-sidebar-m', icon: ArchiveBoxIcon, displayname: 'Stash search' }]
 }
 
 function start() {
