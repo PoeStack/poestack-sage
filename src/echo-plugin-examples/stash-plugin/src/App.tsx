@@ -1,10 +1,13 @@
 import { useState } from 'react'
 import { context } from './entry'
+import { delay, filter, last, scan, tap, toArray } from 'rxjs'
+import { EchoPoeItem, validResults } from 'echo-common'
 
 const App = () => {
   const league = 'Ancestor'
 
   const [searchString, setSearchString] = useState('')
+  const [status, setStatus] = useState('')
 
   const { value: stashes } = context().poeStash.useStashes(league)
 
@@ -23,19 +26,34 @@ const App = () => {
   return (
     <>
       <div className="flex flex-col h-full w-full pt-2 pl-2 pr-2">
+        <div>Status: {status}</div>
         <div className="flex-shrink-0 flex flex-row gap-2 overflow-x-scroll pb-5 pt-2">
-          {(stashes ?? []).map((e) => (
+          {(stashes ?? []).map((partialTab) => (
             <div
-              key={e.id}
-              style={{ backgroundColor: `#${e.metadata.colour}` }}
+              key={partialTab.id}
+              style={{ backgroundColor: `#${partialTab.metadata.colour}` }}
               className="flex-shrink-0 cursor-pointer py-2 px-4 shadow-md no-underline rounded-full  text-white text-sm hover:text-white hover:bg-blue-light focus:outline-none active:shadow-none mr-2"
               onClick={() =>
-                context()
-                  .poeStash.cacheStashContent.load({ key: `${e.league}_${e.id}` })
-                  .subscribe()
+                context().poeStash.snapshot(
+                  league,
+                  [partialTab.id!!]
+                ).pipe(
+                  tap(((e) => {
+                    if (e.type === "rate-limit") {
+                      setStatus(`${e.type}, ${Date.now() + e.limitExpiresMs}`)
+                    } else {
+                      setStatus(e.type)
+                    }
+                  })),
+                  validResults(),
+                  toArray()
+                ).subscribe((items) => {
+                  setStatus(`loaded ${items.length}`)
+                  console.log("final items", items)
+                })
               }
             >
-              {e.name}
+              {partialTab.name}
             </div>
           ))}
         </div>

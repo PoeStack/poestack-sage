@@ -1,10 +1,18 @@
 import { BehaviorSubject, filter, map, Observable, of, Subject } from 'rxjs'
-import { concatMap, delay, tap } from 'rxjs/operators'
+import { concatMap, delay } from 'rxjs/operators'
 import { EchoDirService } from './echo-dir-service'
 
 export type SmartCacheLoadConfig = {
   key: string
-  maxCacheAgeMs?: number
+  maxStaleMs?: number,
+  maxAgeMs?: number
+}
+
+type SmartCacheLoadConfigInternal<T> = {
+  key: string
+  maxStaleMs: number,
+  maxAgeMs: number,
+  loadFun: () => Observable<T | null>
 }
 
 export type SmartCacheBaseEvent = {
@@ -50,8 +58,8 @@ export type SmartCacheStore<T> = {
 }
 
 export class SmartCache<T> {
-  private events$ = new Subject<SmartCacheEvent<T>>()
-  private workQueue$ = new Subject<SmartCacheQueuedEvent>()
+  public events$ = new Subject<SmartCacheEvent<T>>()
+  private workQueue$ = new Subject<SmartCacheLoadConfigInternal<T>>()
 
   public memoryCache$ = new BehaviorSubject<{ [key: string]: SmartCacheStore<T> }>({})
   private localCacheChecked: { [key: string]: boolean } = {}
@@ -59,7 +67,6 @@ export class SmartCache<T> {
   constructor(
     private dir: EchoDirService,
     private type: string,
-    loadFun: (key: string) => Observable<T | null>
   ) {
     this.events$.subscribe((e) => {
       const currentStore = this.memoryCache$.value[e.key] ?? {}
@@ -82,7 +89,6 @@ export class SmartCache<T> {
       .pipe(
         concatMap((e) => {
           const ratelimitDelayMs = 1000 //calculate rate limit here
-          console.log('pre-ratelimit', e, ratelimitDelayMs)
           this.events$.next({
             type: 'rate-limit',
             key: e.key,
@@ -91,9 +97,8 @@ export class SmartCache<T> {
           })
           return of(e).pipe(
             delay(ratelimitDelayMs),
-            tap((e) => console.log('post-ratelimit', e)),
             concatMap((e) => {
-              return loadFun(e.key).pipe(map((r) => ({ e, r })))
+              return e.loadFun().pipe(map((r) => ({ e, r })))
             })
           )
         })
@@ -103,10 +108,20 @@ export class SmartCache<T> {
       })
   }
 
+  public static emptyResult<T>(key: string = ""): Observable<SmartCacheResultEvent<T>> {
+    return of({
+      type: "result",
+      result: null,
+      timestampMs: Date.now(),
+      key: key
+    })
+  }
+
   private loadFromLocalIfValid(config: SmartCacheLoadConfig): SmartCacheResultEvent<T> | null {
     const key = config.key
+    const maxAgeMs = config.maxAgeMs!! + config.maxStaleMs!!
     const memoryCachedResult = this.memoryCache$.value[key]?.lastResultEvent
-    if (memoryCachedResult && this.isValid(config, memoryCachedResult)) {
+    if (memoryCachedResult && this.isValid(memoryCachedResult, maxAgeMs)) {
       return memoryCachedResult
     }
 
@@ -114,7 +129,8 @@ export class SmartCache<T> {
       this.localCacheChecked[key] = true
       if (this.dir.existsJson('cache', key)) {
         const localCachedValue = this.dir.loadJson<SmartCacheResultEvent<T>>('cache', key)
-        if (localCachedValue && this.isValid(config, localCachedValue)) {
+        if (localCachedValue && this.isValid(localCachedValue, maxAgeMs)) {
+          this.events$.next(localCachedValue)
           return localCachedValue
         }
       }
@@ -124,29 +140,72 @@ export class SmartCache<T> {
   }
 
   private isValid(
-    config: SmartCacheLoadConfig,
-    value: SmartCacheResultEvent<T> | undefined | null
+    value: SmartCacheResultEvent<T> | undefined | null,
+    maxAgeMs: number
   ): boolean {
-    const maxCacheAgeMs = config.maxCacheAgeMs === undefined ? 120_000 : config.maxCacheAgeMs
-    return Date.now() - (value?.timestampMs ?? 0) < maxCacheAgeMs
+    if (process.env['FORCE_SMART_CACHE_VALUE'] === "true") {
+      console.log("smart-cache forced valid = true")
+      return true
+    }
+
+    const validAge = Date.now() - (value?.timestampMs ?? 0) < maxAgeMs
+    return validAge
   }
 
   public fromCache(key: string): Observable<SmartCacheStore<T> | null | undefined> {
     return this.memoryCache$.pipe(map((e) => e[key]))
   }
 
-  public load(config: SmartCacheLoadConfig): Observable<SmartCacheEvent<T>> {
+  private fireLoad(config: SmartCacheLoadConfigInternal<T>) {
+    const currentStore = this.memoryCache$.value[config.key] ?? {}
+    if (
+      !currentStore.lastRequestEvent?.type ||
+      currentStore.lastRequestEvent?.type === 'result' ||
+      currentStore.lastRequestEvent?.type === 'error'
+    ) {
+      const nextEvent: SmartCacheQueuedEvent = {
+        type: 'queued',
+        key: config.key,
+        timestampMs: Date.now()
+      }
+      this.memoryCache$.next({
+        ...this.memoryCache$.value,
+        [config.key]: { ...currentStore, lastRequestEvent: nextEvent!! }
+      })
+      this.events$.next(nextEvent)
+      this.workQueue$.next(config)
+    }
+  }
+
+  public load(
+    config: SmartCacheLoadConfig,
+    loadFun: () => Observable<T | null>
+  ): Observable<SmartCacheEvent<T>> {
     if (config.key === null || config.key === undefined) {
       throw new Error('Config key cannot be null or undefined')
     }
 
+    const configInternal: SmartCacheLoadConfigInternal<T> = {
+      maxAgeMs: 60_000,
+      maxStaleMs: 30_000,
+      ...config,
+      loadFun: loadFun
+    }
+
     return new Observable<SmartCacheEvent<T>>((sub) => {
-      const localResult = this.loadFromLocalIfValid(config)
+      const localResult = this.loadFromLocalIfValid(configInternal)
       if (localResult) {
         sub.next(localResult)
         sub.complete()
+
+        const stale = !this.isValid(localResult, configInternal.maxAgeMs!!)
+        if (stale) {
+          this.fireLoad(configInternal)
+        }
       } else {
-        const eventSub = this.events$.pipe(filter((e) => e.key === config.key)).subscribe((e) => {
+        const eventSub = this.events$.pipe(
+          filter((e) => e.key === configInternal.key)
+        ).subscribe((e) => {
           sub.next(e)
 
           if (e.type === 'error') {
@@ -159,24 +218,7 @@ export class SmartCache<T> {
           }
         })
 
-        const currentStore = this.memoryCache$.value[config.key] ?? {}
-        if (
-          !currentStore.lastRequestEvent?.type ||
-          currentStore.lastRequestEvent?.type === 'result' ||
-          currentStore.lastRequestEvent?.type === 'error'
-        ) {
-          const nextEvent: SmartCacheQueuedEvent = {
-            type: 'queued',
-            key: config.key,
-            timestampMs: Date.now()
-          }
-          this.memoryCache$.next({
-            ...this.memoryCache$.value,
-            [config.key]: { ...currentStore, lastRequestEvent: nextEvent!! }
-          })
-          this.events$.next(nextEvent)
-          this.workQueue$.next(nextEvent)
-        }
+        this.fireLoad(configInternal)
       }
     })
   }

@@ -79,17 +79,14 @@ app.whenReady().then(() => {
   })
 })
 
-app.on('will-quit', function (e) {
-  if (server && server.listening) {
-    e.preventDefault()
-    server?.close(() => {
-      app.quit()
-    })
-  }
-})
-
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit()
+    if (server && server.listening) {
+      server?.close(() => {
+        app.quit()
+      })
+    } else {
+      app.quit()
+    }
   }
 })

@@ -13,7 +13,9 @@ FROM adoptopenjdk:11-jre-hotspot as build
 RUN apt-get update && apt-get install -y \
     software-properties-common \
     npm
+
 RUN npm install npm@latest -g && \
+    npm install typescript -g && \
     npm install n -g && \
     n latest
 
@@ -24,7 +26,7 @@ COPY gradlew.bat .
 COPY gradle ./gradle
 COPY --from=copy-gradle-files /app/gradle_struct/ .
 
-ARG PROJECT="src:insights"
+ARG PROJECT="src:tactics-api"
 ARG INSTALL_COMMAND="npmInstall"
 ARG BUILD_COMMAND="npmBuild"
 
@@ -37,14 +39,3 @@ RUN ./gradlew $PROJECT:$BUILD_COMMAND
 FROM --platform=linux/amd64 node:slim as runner
 WORKDIR /app
 COPY --from=build /app .
-
-
-
-
-
-
-
-
-
-
-

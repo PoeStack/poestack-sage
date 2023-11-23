@@ -1,6 +1,6 @@
 import { GggApi } from 'ggg-api'
-import { SmartCache } from './smart-cache'
-import { Observable, combineLatestWith, filter, from, map, mergeMap, tap, toArray } from 'rxjs'
+import { SmartCache, SmartCacheEvent } from './smart-cache'
+import { Observable, combineLatestWith, filter, from, mergeMap, of, toArray } from 'rxjs'
 import { filterNullish } from 'ts-ratchet'
 import {
   ItemGroupingService,
@@ -17,14 +17,10 @@ import { bind } from '@react-rxjs/core'
 export class PoeStashService {
   private groupingService = new ItemGroupingService()
 
-  public cacheStashes = new SmartCache<PoePartialStashTab[]>(this.echoDir, "poe-stashes", (key) =>
-    this.gggApi.getStashes(key)
-  )
-  public cacheStashContent = new SmartCache<PoeStashTab>(this.echoDir, "poe-stash-contents", (key) =>
-    this.gggApi.getStashContent(key.split('_')[0], key.split('_')[1])
-  )
+  public cacheStashes = new SmartCache<PoePartialStashTab[]>(this.echoDir, "poe-stashes")
+  public cacheStashContent = new SmartCache<PoeStashTab>(this.echoDir, "poe-stash-contents")
 
-  public usePoeStashItems = bind((league: string) => this.stashItems(league), [])[0]
+  public usePoeStashItems = bind((league: string) => this.useEchoItemCache(league), [])[0]
 
   constructor(
     private echoDir: EchoDirService,
@@ -33,10 +29,59 @@ export class PoeStashService {
   ) { }
 
   public useStashes(league: string): SmartCacheHookType<PoePartialStashTab[]> {
-    return useCache(this.cacheStashes, { key: league })
+    return useCache(
+      this.cacheStashes,
+      { key: league },
+      () => this.gggApi.getStashes(league)
+    )
   }
 
-  public stashItems(league: string): Observable<EchoPoeItem[]> {
+  private snapshotStashTab(league: string, stashId: string): Observable<SmartCacheEvent<EchoPoeItem>> {
+    return this.cacheStashContent.load(
+      { key: `${league}_${stashId}` },
+      () => this.gggApi.getStashContent(league, stashId)
+    ).pipe(
+      mergeMap((e) => {
+        if (e.type === 'result') {
+          return from(e.result?.items ?? []).pipe(
+            mergeMap((item) => {
+              const group = this.groupingService.group(item)
+              if (group) {
+                return this.valuationApi.valuation(league, group).pipe(
+                  mergeMap((vEvent) => {
+                    if (vEvent.type === "result") {
+                      const itemValuation = vEvent?.result?.valuations?.[group.hash]
+                      const eItem: EchoPoeItem = {
+                        stash: e?.result!!,
+                        data: item,
+                        valuation: itemValuation,
+                        group: group
+                      }
+                      return of({ ...vEvent, result: eItem })
+                    }
+                    return of(vEvent)
+                  })
+                )
+              }
+              return of(null)
+            }),
+            filterNullish()
+          )
+        }
+        else {
+          return of(e)
+        }
+      })
+    )
+  }
+
+  public snapshot(league: string, stashes: string[]): Observable<SmartCacheEvent<EchoPoeItem>> {
+    return from(stashes).pipe(
+      mergeMap((e) => this.snapshotStashTab(league, e)),
+    )
+  }
+
+  public useEchoItemCache(league: string): Observable<EchoPoeItem[]> {
     const result = this.cacheStashContent.memoryCache$.pipe(
       combineLatestWith(this.valuationApi.cacheValuationShards.memoryCache$),
       mergeMap(([tabs, valuationCache]) =>
@@ -52,7 +97,10 @@ export class PoeStashService {
                 const valuation =
                   valuationCache[valuationKey]?.lastResultEvent?.result?.valuations[group.hash] ??
                   null
-                this.valuationApi.load(group.tag, group.shard, league)
+                this.valuationApi.valuation(
+                  league,
+                  group
+                ).subscribe()
                 return { stash, data: item, group, valuation }
               }
 
@@ -60,7 +108,6 @@ export class PoeStashService {
             })
           ),
           toArray<EchoPoeItem>(),
-          tap((e) => console.log('aa', e))
         )
       )
     )
@@ -69,8 +116,8 @@ export class PoeStashService {
 }
 
 export type EchoPoeItem = {
-  stash: PoeStashTab
+  stash?: PoeStashTab
   data: PoeItem
-  group: SageItemGroup | null
-  valuation: SageValuation | null
+  group?: SageItemGroup | null | undefined
+  valuation?: SageValuation | null | undefined
 }
