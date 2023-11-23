@@ -1,7 +1,6 @@
 import { BehaviorSubject, filter, map, Observable, of, Subject } from 'rxjs'
 import { concatMap, delay } from 'rxjs/operators'
 import { EchoDirService } from './echo-dir-service'
-import { config } from 'process'
 
 export type SmartCacheLoadConfig = {
   key: string
@@ -107,6 +106,15 @@ export class SmartCache<T> {
       .subscribe(({ e, r }) => {
         this.events$.next({ type: 'result', result: r, key: e.key, timestampMs: Date.now() })
       })
+  }
+
+  public static emptyResult<T>(key: string = ""): Observable<SmartCacheResultEvent<T>> {
+    return of({
+      type: "result",
+      result: null,
+      timestampMs: Date.now(),
+      key: key
+    })
   }
 
   private loadFromLocalIfValid(config: SmartCacheLoadConfig): SmartCacheResultEvent<T> | null {

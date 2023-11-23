@@ -3,10 +3,16 @@ import { SmartCache, SmartCacheEvent, SmartCacheLoadConfig, SmartCacheResultEven
 import { filterNullish } from 'ts-ratchet'
 import { Observable, UnaryFunction, map, filter, pipe, OperatorFunction, tap } from 'rxjs'
 
-export function validResults<T>(): UnaryFunction<Observable<SmartCacheEvent<T>>, Observable<T>> {
+export function validResultsWithNullish<T>(): UnaryFunction<Observable<SmartCacheEvent<T>>, Observable<T | null | undefined>> {
   return pipe(
     filter((x) => x.type === "result") as OperatorFunction<SmartCacheEvent<T>, SmartCacheResultEvent<T>>,
     map((e) => e.result),
+  )
+}
+
+export function validResults<T>(): UnaryFunction<Observable<SmartCacheEvent<T>>, Observable<T>> {
+  return pipe(
+    validResultsWithNullish(),
     filterNullish()
   )
 }
