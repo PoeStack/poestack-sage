@@ -33,7 +33,14 @@ const [useSnapshots] = bind(snapshots, { history: [] })
 
 const App2 = () => {
   const snapshots = useSnapshots()
-  return <>{JSON.stringify(snapshots)}</>
+  return <>
+    <div>
+      <div onClick={() => { context().poeLog.logEvents$.next({ type: "ZoneEntranceEvent", location: "Hideout or something", raw: "asdasd" }) }}>fake event</div>
+    </div>
+    <div>
+      {JSON.stringify(snapshots)}
+    </div>
+  </>
 }
 
 export default App2

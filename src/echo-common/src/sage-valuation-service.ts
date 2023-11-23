@@ -39,7 +39,7 @@ export class SageValuationService {
 
   private loadInternal(key: string) {
     return this.httpUtil.get<SageValuationShard>(
-      `https://d2irw5qsw9zuri.cloudfront.net/v3/${key}.json`
+      `https://d1tuebvb7o7shd.cloudfront.net/v3/${key}.json`
     )
   }
 }
