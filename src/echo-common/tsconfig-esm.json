@@ -9,7 +9,8 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist/esm",
     "declaration": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "sourceMap": true
   },
-  "include": ["./src"]
+  "include": ["./src", "./test"]
 }
