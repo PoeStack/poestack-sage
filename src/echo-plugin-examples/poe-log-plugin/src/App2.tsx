@@ -1,12 +1,14 @@
-import { BehaviorSubject, concatMap, filter, from, map, mergeMap, of, tap, toArray } from "rxjs";
+import { BehaviorSubject, concatMap, filter, mergeMap, toArray } from "rxjs";
 import { context } from "./entry";
 import { bind } from "@react-rxjs/core";
-import { validResults } from "echo-common";
+import { EchoPoeItem, validResults } from "echo-common";
+
+type SnapshotHistoryEntry = { totalValue: number, changeValue: number, items: EchoPoeItem[] }
 
 type SnapshotStore = {
   lastZone?: string,
-  lastSnapshot?: any,
-  history: any[]
+  lastSnapshot?: SnapshotHistoryEntry,
+  history: SnapshotHistoryEntry[]
 }
 
 const snapshots = new BehaviorSubject<SnapshotStore>({ history: [] })
@@ -22,7 +24,14 @@ const sub = context().poeLog.logEvents$.subscribe((e) => {
       context().poeValuations.withValuations("Ancestor", currentCharacter.inventory ?? []).pipe(
         toArray()
       ).subscribe((itemsWithValuations) => {
-        snapshots.next({ ...snapshots.value, lastZone: e.location, lastSnapshot: itemsWithValuations })
+        console.log("items with valuations", itemsWithValuations)
+        const totalVaulation = itemsWithValuations?.reduce((a, b) => {
+          return a + (b?.valuation?.pvs[3] ?? 0)
+        }, 0)
+
+        const valueDiff = totalVaulation - (snapshots.value.lastSnapshot?.totalValue ?? 0)
+        const entry = { totalValue: totalVaulation, changeValue: valueDiff, items: itemsWithValuations }
+        snapshots.next({ lastZone: e.location, lastSnapshot: entry, history: [entry, ...snapshots.value.history] })
       })
     })
   }
@@ -38,7 +47,7 @@ const App2 = () => {
       <div onClick={() => { context().poeLog.logEvents$.next({ type: "ZoneEntranceEvent", location: "Hideout or something", raw: "asdasd" }) }}>fake event</div>
     </div>
     <div>
-      {JSON.stringify(snapshots)}
+      {snapshots.history?.map((entry) => (<div>{entry.totalValue}: {entry.changeValue}</div>))}
     </div>
   </>
 }

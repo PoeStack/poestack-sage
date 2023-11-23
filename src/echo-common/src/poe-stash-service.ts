@@ -116,8 +116,8 @@ export class PoeStashService {
 }
 
 export type EchoPoeItem = {
-  stash: PoeStashTab
+  stash?: PoeStashTab
   data: PoeItem
-  group: SageItemGroup | null | undefined
-  valuation: SageValuation | null | undefined
+  group?: SageItemGroup | null | undefined
+  valuation?: SageValuation | null | undefined
 }

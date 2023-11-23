@@ -1,8 +1,9 @@
 import { SmartCache } from './smart-cache'
 import { HttpUtil, ItemGroupingService, PoeItem, SageItemGroup } from 'sage-common'
 import { EchoDirService } from './echo-dir-service'
-import { from, map, mergeMap, of } from 'rxjs'
+import { Observable, map, mergeMap, of, tap } from 'rxjs'
 import { validResults } from './smart-cache-hooks'
+import { EchoPoeItem } from './poe-stash-service'
 
 export class SageValuationService {
   private httpUtil = new HttpUtil()
@@ -11,11 +12,12 @@ export class SageValuationService {
 
   public cacheValuationShards = new SmartCache<SageValuationShard>(this.echoDir, "sage-valuations")
 
-  public withValuations(league: string, items: PoeItem[]) {
+  public withValuations(league: string, items: PoeItem[]): Observable<EchoPoeItem> {
     return this.itemGroupingService.withGroup(items).pipe(
       mergeMap((e) => this.itemValuation(league, e.data).pipe(
         validResults(),
-        map((shard) => ({ ...e, valuation: shard?.valuations?.[e.group?.key ?? ""] }))
+        tap((e) => console.log("shard", e)),
+        map((shard) => ({ ...e, valuation: shard?.valuations?.[e.group?.hash ?? ""] }))
       ))
     )
   }
