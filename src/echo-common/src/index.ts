@@ -32,11 +32,9 @@ export type {
   EchoPluginHook,
   SmartCacheEvent,
   EchoPoeItem,
-  PoeLogEvent,
-  PoeZoneEntranceEvent,
+  PoEZoneEntranceEvent,
   EchoPluginConfigs,
   EchoPluginConfig,
   EchoRoute,
-  EchoContext,
-  PoEZoneEntranceEvent
+  EchoContext
 }
