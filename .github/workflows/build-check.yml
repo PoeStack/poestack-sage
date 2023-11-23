@@ -1,4 +1,4 @@
-name: Build Passes
+name: project builds
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: publish plugins
+    name: project builds
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
