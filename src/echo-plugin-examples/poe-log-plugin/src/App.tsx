@@ -81,22 +81,6 @@ const App = () => {
         ))}
     </>
   )
-
-  if (currentZone.location.includes('Hideout')) {
-    return (
-      <>
-        Time wasted in hideout {currentZone.time ? currentZone.time.toISOString() : 'not there :/'}{' '}
-        seconds, get back to mapping!
-      </>
-    )
-  }
-
-  return (
-    <>
-      At: {currentZone.time.toISOString()} | In {currentZone.location}, good job!{' '}
-      {(Math.round((currentZone.timeDelta / 1000) * 10) / 10).toFixed(1)}
-    </>
-  )
 }
 
 export default App
