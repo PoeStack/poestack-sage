@@ -70,7 +70,8 @@ function storeKey(key: string) {
     TableName: 'RuntimeConfig',
     Item: {
       "key": "last-psstream-key",
-      value: key
+      value: key,
+      updatedAt: new Date().toISOString()
     }
   };
 
