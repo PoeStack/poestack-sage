@@ -1,9 +1,9 @@
 import { bind } from '@react-rxjs/core'
-import { PoEZoneEntranceEvent } from 'echo-common'
+import { PoeZoneEntranceEvent } from 'echo-common'
 import { BehaviorSubject, combineLatestWith, filter, interval, map } from 'rxjs'
 import { context } from './entry'
 
-const lastZone$ = new BehaviorSubject<PoEZoneEntranceEvent>(null)
+const lastZone$ = new BehaviorSubject<PoeZoneEntranceEvent>(null)
 context()
   .poeClientLog.logEvents$.pipe(filter((e) => e.type == 'ZoneEntranceEvent'))
   .subscribe(lastZone$)
