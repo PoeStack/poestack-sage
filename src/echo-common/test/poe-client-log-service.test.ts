@@ -7,11 +7,11 @@ import path from 'path'
 import * as fs from 'fs'
 
 import { 
-  PoeLogService,
-  PoEZoneEntranceEvent,
-  PoEInstanceConnectionEvent,
-  PoECharacterSlainEvent,
-  PoENPCEncounterEvent 
+  PoeClientLogService,
+  PoeZoneEntranceEvent,
+  PoeInstanceConnectionEvent,
+  PoeCharacterSlainEvent,
+  PoeNPCEncounterEvent 
 } from '../src/poe-client-log-service'
 
 let file: string
@@ -39,15 +39,15 @@ afterEach(() => {
   tail.unwatch()
 })
 
-test('PoeLogService ZoneEnteranceEventParser test', async () => {
+test('PoeClientLogService ZoneEnteranceEventParser test', async () => {
   
-  const logService: PoeLogService = new PoeLogService(tail)
+  const logService: PoeClientLogService = new PoeClientLogService(tail)
 
-  let eventData: PoEZoneEntranceEvent[] = []
+  let eventData: PoeZoneEntranceEvent[] = []
 
   logService.logEvents$.pipe(
     filter((e) => e.type == 'ZoneEntranceEvent'),
-    map(e => e as PoEZoneEntranceEvent)
+    map(e => e as PoeZoneEntranceEvent)
   )
   .subscribe(data => {
     eventData.push(data)
@@ -71,15 +71,15 @@ test('PoeLogService ZoneEnteranceEventParser test', async () => {
   });
 })
 
-test('PoeLogService InstanceConnectionEventParser test', async () => {
+test('PoeClientLogService InstanceConnectionEventParser test', async () => {
   
-  const logService: PoeLogService = new PoeLogService(tail)
+  const logService: PoeClientLogService = new PoeClientLogService(tail)
 
-  let eventData: PoEInstanceConnectionEvent[] = []
+  let eventData: PoeInstanceConnectionEvent[] = []
 
   logService.logEvents$.pipe(
     filter((e) => e.type == 'InstanceConnectionEvent'),
-    map(e => e as PoEInstanceConnectionEvent)
+    map(e => e as PoeInstanceConnectionEvent)
   )
   .subscribe(data => {
     eventData.push(data)
@@ -97,15 +97,15 @@ test('PoeLogService InstanceConnectionEventParser test', async () => {
   });
 })
 
-test('PoeLogService CharacterSlainEventParser test', async () => {
+test('PoeClientLogService CharacterSlainEventParser test', async () => {
   
-  const logService: PoeLogService = new PoeLogService(tail)
+  const logService: PoeClientLogService = new PoeClientLogService(tail)
 
-  let eventData: PoECharacterSlainEvent[] = []
+  let eventData: PoeCharacterSlainEvent[] = []
 
   logService.logEvents$.pipe(
     filter((e) => e.type == 'CharacterSlainEvent'),
-    map(e => e as PoECharacterSlainEvent)
+    map(e => e as PoeCharacterSlainEvent)
   )
   .subscribe(data => {
     eventData.push(data)
@@ -140,15 +140,15 @@ test('PoeLogService CharacterSlainEventParser test', async () => {
   });
 })
 
-test('PoeLogService NPCEncounterEventParser test', async () => {
+test('PoeClientLogService NPCEncounterEventParser test', async () => {
   
-  const logService: PoeLogService = new PoeLogService(tail)
+  const logService: PoeClientLogService = new PoeClientLogService(tail)
 
-  let eventData: PoENPCEncounterEvent[] = []
+  let eventData: PoeNPCEncounterEvent[] = []
 
   logService.logEvents$.pipe(
     filter((e) => e.type == 'NPCEncounterEvent'),
-    map(e => e as PoENPCEncounterEvent)
+    map(e => e as PoeNPCEncounterEvent)
   )
   .subscribe(data => {
     eventData.push(data)
