@@ -18,11 +18,11 @@ module.exports = {
     },
     extend: {
       colors: {
-        'primary-surface': 'var(--color-primary-surface)',
-        'input-surface': 'var(--color-input-surface)',
-        'secondary-surface': 'var(--color-secondary-surface)',
-        'primary-text': 'var(--color-text)',
-        'primary-accent': 'var(--color-primary-accent)',
+        'primary-surface': 'var(--color-primary-surface)', //Deprecated
+        'input-surface': 'var(--color-input-surface)', //Deprecated
+        'secondary-surface': 'var(--color-secondary-surface)', //Deprecated
+        'primary-text': 'var(--color-text)', //Deprecated
+        'primary-accent': 'var(--color-primary-accent)', //Deprecated
 
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

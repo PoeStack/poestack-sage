@@ -4,11 +4,11 @@
 
 @layer base {
   :root {
-    --color-primary-surface: #303338;
-    --color-secondary-surface: #2a2d31;
-    --color-input-surface: #373a3f;
-    --color-text: #d4d4d4;
-    --color-primary-accent: #5764f2;
+    --color-primary-surface: #303338; /*Deprecated*/
+    --color-secondary-surface: #2a2d31; /*Deprecated*/
+    --color-input-surface: #373a3f; /*Deprecated*/
+    --color-text: #d4d4d4; /*Deprecated*/
+    --color-primary-accent: #5764f2; /*Deprecated*/
 
     --gradient: #005AA7;
 
