@@ -2,6 +2,7 @@ import { HttpUtil, ItemGroupingService, PoePublicStashResponse } from 'sage-comm
 import { debounceTime, Subject, throttleTime } from 'rxjs'
 import process from 'process'
 import Redis from 'ioredis'
+import AWS from 'aws-sdk'
 
 const divineTypes = new Set(['d', 'div', 'divine'])
 const chaosTypes = new Set(['c', 'chaos'])
@@ -55,11 +56,35 @@ function loadChanges(paginationCode: string) {
   )
 }
 
+
+
+
+AWS.config.update({ region: 'us-east-1' });
+var docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
+function storeKey(key: string) {
+  var params = {
+    TableName: 'RunetimeConfig',
+    Item: {
+      "key": "test",
+      value: key
+    }
+  };
+
+  docClient.put(params, function(err, data) {
+    if (err) {
+      console.log("Error", err);
+    } else {
+      console.log("Success", data);
+    }
+  });
+}
+
 const itemGroupingService = new ItemGroupingService()
 const resultsSubject = new Subject<PoePublicStashResponse>()
 
-resultsSubject.pipe(debounceTime(60000)).subscribe((e) => {
+resultsSubject.pipe(debounceTime(1000)).subscribe((e) => {
   console.log('loading', e.next_change_id)
+  storeKey(e.next_change_id)
   loadChanges(e.next_change_id).subscribe((e) => {
     resultsSubject.next(e)
   })

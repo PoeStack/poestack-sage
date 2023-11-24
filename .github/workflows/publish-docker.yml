@@ -1,0 +1,34 @@
+name: public docker
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  build:
+    name: publish docker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v4
+        with:
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+          node-version: 'latest'
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "corretto"
+          java-version: "17"
+          cache: 'gradle'
+      - name: update plugins.json
+        working-directory: src/echo-tools
+        run: node src/build-plugins-json.mjs
+      - name: npm install
+        run: ./gradlew npmInstall
+      - name: build plugins
+        run: ./gradlew npmBuild
+      - name: build and publish docker
+        run: |
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 604080725100.dkr.ecr.us-east-1.amazonaws.com
+          docker build -t test .
+

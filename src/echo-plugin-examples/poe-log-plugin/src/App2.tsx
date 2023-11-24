@@ -1,4 +1,4 @@
-import { BehaviorSubject, concatMap, filter, mergeMap, toArray } from "rxjs";
+import { BehaviorSubject, concatMap, filter, from, map, mergeMap, tap, toArray } from "rxjs";
 import { context } from "./entry";
 import { bind } from "@react-rxjs/core";
 import { EchoPoeItem, validResults } from "echo-common";
@@ -44,7 +44,11 @@ const App2 = () => {
   const snapshots = useSnapshots()
   return <>
     <div>
-      <div onClick={() => { context().poeLog.logEvents$.next({ type: "ZoneEntranceEvent", location: "Hideout or something", raw: "asdasd" }) }}>fake event</div>
+      <div
+        className="bg-primary-accent px-1 py-0.5 rounded-lg pointer-cursor"
+        onClick={() => { context().poeLog.logEvents$.next({ type: "ZoneEntranceEvent", location: "Hideout or something", raw: "asdasd" }) }}>
+        fake event
+      </div>
     </div>
     <div>
       {snapshots.history?.map((entry) => (<div>{entry.totalValue}: {entry.changeValue}</div>))}

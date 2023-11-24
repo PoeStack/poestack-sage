@@ -1,41 +1,18 @@
-FROM alpine AS copy-gradle-files
-WORKDIR /app
-COPY build.gradle.kts .
-COPY settings.gradle.kts .
-COPY ./src ./src
-RUN mkdir gradle_struct
-RUN find . -type f -name '*.gradle.kts' -exec cp --parents {} gradle_struct \;
-RUN find . -type f -name 'package.json' -exec cp --parents {} gradle_struct \;
-RUN find . -type f -name 'package-lock.json' -exec cp --parents {} gradle_struct \;
+FROM node:20-buster
 
-FROM adoptopenjdk:11-jre-hotspot as build
-
-RUN apt-get update && apt-get install -y \
-    software-properties-common \
-    npm
-
-RUN npm install npm@latest -g && \
-    npm install typescript -g && \
-    npm install n -g && \
-    n latest
+RUN apt-get update && \
+    apt-get install -y \
+    g++ \
+    make \
+    cmake \
+    unzip \
+    default-jre \
+    libcurl4-openssl-dev
 
 WORKDIR /app
 
-COPY gradlew .
-COPY gradlew.bat .
-COPY gradle ./gradle
-COPY --from=copy-gradle-files /app/gradle_struct/ .
+ENV NPM_CONFIG_CACHE=/tmp/.npm
 
-ARG PROJECT="src:tactics-api"
-ARG INSTALL_COMMAND="npmInstall"
-ARG BUILD_COMMAND="npmBuild"
+RUN npm install aws-lambda-ric -g
 
-RUN ./gradlew $PROJECT:$INSTALL_COMMAND
-
-COPY ./src ./src
-
-RUN ./gradlew $PROJECT:$BUILD_COMMAND
-
-FROM --platform=linux/amd64 node:slim as runner
-WORKDIR /app
-COPY --from=build /app .
+COPY . .
