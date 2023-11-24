@@ -49,6 +49,16 @@ export class Account extends Model({
   }
 
   @computed
+  get activeLeague() {
+    return this.activeProfile?.activeLeague
+  }
+
+  @computed
+  get activePriceLeague() {
+    return this.activeProfile?.activePriceLeague
+  }
+
+  @computed
   get activeLeagueCharacters() {
     const activeLeagueId = this.activeProfile?.activeLeagueRef?.id
     if (!activeLeagueId) return

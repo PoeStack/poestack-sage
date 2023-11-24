@@ -1,7 +1,7 @@
 import { Ref } from 'mobx-keystone'
-import { Character } from '../store-ks/domains/character'
-import { Profile } from '../store-ks/domains/profile'
-import { StashTab } from '../store-ks/domains/stashtab'
+import { Character } from '../store/domains/character'
+import { Profile } from '../store/domains/profile'
+import { StashTab } from '../store/domains/stashtab'
 
 export interface IAccount {
   uuid: string

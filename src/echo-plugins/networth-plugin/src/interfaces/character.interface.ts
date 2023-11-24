@@ -1,6 +1,6 @@
 import { Frozen, Ref } from 'mobx-keystone'
 import { IItem } from './item.interface'
-import { League } from '../store-ks/domains/league'
+import { League } from '../store/domains/league'
 
 export interface ICharacter {
   id: string

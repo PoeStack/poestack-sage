@@ -4,7 +4,12 @@ import { useState } from 'react'
 import { useStore } from '../../hooks/useStore'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { v4 as uuidv4 } from 'uuid'
-import { ProfileEntry } from '../../store/domains/profile'
+import {
+  Profile,
+  profileLeagueRef,
+  profilePriceLeagueRef,
+  profileStashTabRef
+} from '../../store/domains/profile'
 
 type AddProfilePayload = {
   name: string
@@ -20,18 +25,18 @@ export function AddProfileDialog() {
   } = useForm<AddProfilePayload>({
     mode: 'onChange'
   })
-  const store = useStore()
-  const addProfile = store.accountStore.activeAccount?.addProfile
-  const stashTabs = store.accountStore.activeAccount?.activeLeagueStashTabs
-  const league = store.accountStore.activeAccount?.activeLeague
-  const priceLeague = store.accountStore.activeAccount?.activePriceLeague
+  const { accountStore } = useStore()
+
   const onSubmit: SubmitHandler<AddProfilePayload> = (data) => {
-    const newProfile = ProfileEntry.create({
+    if (!accountStore.activeAccount) return
+    const { addProfile, stashTabs, activeLeague, activePriceLeague } = accountStore.activeAccount
+    if (!activeLeague || !activePriceLeague) return
+    const newProfile = new Profile({
       uuid: uuidv4(),
       name: data.name,
-      activeLeague: league?.uuid as string,
-      activePriceLeague: priceLeague?.uuid as string,
-      activeStashTabs: stashTabs?.map((st) => st.id)
+      activeLeagueRef: profileLeagueRef(activeLeague),
+      activePriceLeagueRef: profilePriceLeagueRef(activePriceLeague),
+      activeStashTabsRef: stashTabs.map((st) => profileStashTabRef(st))
     })
     addProfile?.(newProfile)
     setDialogOpen(false)
