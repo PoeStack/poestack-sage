@@ -24,6 +24,7 @@ module.exports = {
         'primary-text': 'var(--color-text)', //Deprecated
         'primary-accent': 'var(--color-primary-accent)', //Deprecated
 
+        gradient: "var(--gradient)",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
