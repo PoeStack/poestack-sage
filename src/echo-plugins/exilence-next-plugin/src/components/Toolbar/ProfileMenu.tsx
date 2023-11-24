@@ -1,26 +1,21 @@
 import { Menu } from '@headlessui/react'
 import { useState } from 'react'
 import { IProfile } from '../../interfaces/profile.interface'
+import { useStore } from '../../hooks/useStore'
 
-const testProfiles: IProfile[] = [{ name: 'Account 1' }, { name: 'Account 2' }]
-
-export type ProfileMenuProps = {
-  profiles?: IProfile[]
-  handleProfileSelect?: () => void
-}
-
-export function ProfileMenu({ profiles = testProfiles, handleProfileSelect }: ProfileMenuProps) {
-  const hasProfiles = profiles?.length > 0
-  const [selectedProfile, setSelectedProfile] = useState<IProfile | undefined>(
-    hasProfiles ? profiles[0] : undefined
-  )
+export function ProfileMenu() {
+  const store = useStore()
+  const profiles = store?.accountStore?.activeAccount?.profiles
+  const activeProfile = store?.accountStore?.activeAccount?.activeProfile
+  const setActiveProfile = store.accountStore.activeAccount?.setActiveProfile
+  const hasProfiles = profiles && profiles?.length > 0
 
   return (
     <Menu as="div">
       {!hasProfiles && <Menu.Button disabled>No profiles</Menu.Button>}
       {hasProfiles && (
         <Menu.Button disabled={!hasProfiles}>
-          <div className="flex flex-col">{selectedProfile?.name}</div>
+          <div className="flex flex-col">{activeProfile?.name}</div>
           <div className="w-full h-1 border-t border-primary-text" />
         </Menu.Button>
       )}
@@ -30,8 +25,8 @@ export function ProfileMenu({ profiles = testProfiles, handleProfileSelect }: Pr
             return (
               <Menu.Item key={profile.name}>
                 <button
-                  onClick={() => setSelectedProfile(profile)}
-                  className={`${profile.name === selectedProfile?.name && 'text-sky-100'}`}
+                  onClick={() => setActiveProfile?.(profile)}
+                  className={`${profile.name === activeProfile?.name && 'text-sky-100'}`}
                 >
                   {profile.name}
                 </button>
