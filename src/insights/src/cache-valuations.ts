@@ -1,6 +1,6 @@
 import * as AWS from 'aws-sdk'
 import Redis from 'ioredis'
-import { from, groupBy, GroupedObservable, map, mergeMap, Observable, of, tap, toArray } from 'rxjs'
+import { from, groupBy, map, mergeMap, Observable, of, tap, toArray } from 'rxjs'
 import * as process from 'process'
 import percentile from 'percentile'
 import { scanKeys } from './utils'

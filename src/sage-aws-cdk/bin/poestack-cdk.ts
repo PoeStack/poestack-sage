@@ -16,4 +16,4 @@ const sageStack = new SageStack(app, 'SageStack', {
 
 const bootstrap = process.env['BOOTSTRAP'] === "true"
 new InsightsService(sageStack, bootstrap)
-new TacticsApiService(sageStack, bootstrap)
+//new TacticsApiService(sageStack, bootstrap)

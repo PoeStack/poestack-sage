@@ -4,6 +4,7 @@ import { Observable, combineLatestWith, filter, from, mergeMap, of, toArray } fr
 import { filterNullish } from 'ts-ratchet'
 import {
   ItemGroupingService,
+  PoeCharacter,
   PoeItem,
   PoePartialStashTab,
   PoeStashTab,
@@ -116,8 +117,9 @@ export class PoeStashService {
 }
 
 export type EchoPoeItem = {
-  stash?: PoeStashTab
   data: PoeItem
+  character?: PoeCharacter | null | undefined
+  stash?: PoeStashTab | null | undefined
   group?: SageItemGroup | null | undefined
   valuation?: SageValuation | null | undefined
 }

@@ -9,6 +9,8 @@ import { UpdatePolicy } from 'aws-cdk-lib/aws-autoscaling'
 export class SageStack extends cdk.Stack {
   public vpc: aws_ec2.Vpc
 
+  public runtimeConfigTable: cdk.aws_dynamodb.TableV2
+
   public ecsCluster: aws_ecs.Cluster
 
   public psStreamSecurityGroup: SecurityGroup
@@ -22,6 +24,11 @@ export class SageStack extends cdk.Stack {
     this.vpc = new aws_ec2.Vpc(this, 'VPC', {
       availabilityZones: ['us-east-1c', 'us-east-1d', 'us-east-1b'],
       subnetConfiguration: [{ cidrMask: 18, name: 'Public', subnetType: SubnetType.PUBLIC }]
+    })
+
+    this.runtimeConfigTable = new cdk.aws_dynamodb.TableV2(this, "RuntimeTable", {
+      tableName: "RuntimeConfig",
+      partitionKey: { name: "key", type: cdk.aws_dynamodb.AttributeType.STRING }
     })
 
     this.ecsCluster = new aws_ecs.Cluster(this, 'InsightCluster', {
