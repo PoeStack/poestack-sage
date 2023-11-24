@@ -26,10 +26,14 @@
     "@electron-toolkit/utils": "^2.0.0",
     "@electron/remote": "^2.0.12",
     "body-parser": "^1.20.2",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
     "cors": "^2.8.5",
     "echo-common": "file:../echo-common",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
+    "tailwind-merge": "^2.0.0",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.2.2"
   },
   "optionalDependencies": {
