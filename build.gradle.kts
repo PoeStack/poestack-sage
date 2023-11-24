@@ -18,7 +18,6 @@ gradle.projectsEvaluated {
 }
 
 task("dockerBuildAndPublish") {
-
   val packageName = "poestack-tactics-apix"
   doLast {
     exec {
