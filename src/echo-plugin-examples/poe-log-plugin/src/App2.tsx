@@ -12,7 +12,7 @@ type SnapshotStore = {
 }
 
 const snapshots = new BehaviorSubject<SnapshotStore>({ history: [] })
-const sub = context().poeLog.logEvents$.subscribe((e) => {
+const sub = context().poeClientLog.logEvents$.subscribe((e) => {
   if (e.type === "ZoneEntranceEvent") {
     context().poeCharacters.characterList().pipe(
       validResults(),
@@ -46,7 +46,7 @@ const App2 = () => {
     <div>
       <div
         className="bg-primary-accent px-1 py-0.5 rounded-lg pointer-cursor"
-        onClick={() => { context().poeLog.logEvents$.next({ type: "ZoneEntranceEvent", location: "Hideout or something", raw: "asdasd" }) }}>
+        onClick={() => { context().poeClientLog.logEvents$.next({ type: "ZoneEntranceEvent", location: "Hideout or something", raw: "asdasd" }) }}>
         fake event
       </div>
     </div>

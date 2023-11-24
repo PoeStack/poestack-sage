@@ -5,7 +5,7 @@ import { context } from './entry'
 
 const lastZone$ = new BehaviorSubject<PoeZoneEntranceEvent>(null)
 context()
-  .poeLog.logEvents$.pipe(filter((e) => e.type == 'ZoneEntranceEvent'))
+  .poeClientLog.logEvents$.pipe(filter((e) => e.type == 'ZoneEntranceEvent'))
   .subscribe(lastZone$)
 
 const zones: Array<PoeZoneInstance> = []
