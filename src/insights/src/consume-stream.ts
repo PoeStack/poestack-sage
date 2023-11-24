@@ -1,5 +1,5 @@
 import { HttpUtil, ItemGroupingService, PoePublicStashResponse } from 'sage-common'
-import { debounceTime, Subject, throttleTime } from 'rxjs'
+import { debounceTime, from, of, Subject, throttleTime } from 'rxjs'
 import process from 'process'
 import Redis from 'ioredis'
 import AWS from 'aws-sdk'
@@ -57,11 +57,15 @@ function loadChanges(paginationCode: string) {
 }
 
 
-
-
 AWS.config.update({ region: 'us-east-1' });
 var docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
+var storeCount = 0
 function storeKey(key: string) {
+  if (storeCount++ < 100) {
+    return
+  }
+  storeCount = 0
+
   var params = {
     TableName: 'RuntimeConfig',
     Item: {
@@ -180,7 +184,16 @@ resultsSubject.subscribe((data) => {
 
 resultsSubject.subscribe((e) => console.log('got', e.stashes?.length))
 
-resultsSubject.next({
-  next_change_id: '2145640831-2137918784-2068567059-2296748038-2229165629',
-  stashes: []
-})
+
+
+from(docClient.get({ TableName: "RuntimeConfig", Key: { key: "last-psstream-key" } }).promise())
+  .subscribe((e) => {
+    console.log("got doc response", e.Item)
+    const nextKey = e.Item?.value
+
+    resultsSubject.next({
+      next_change_id: nextKey,
+      stashes: []
+    })
+  })
+
