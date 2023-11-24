@@ -5,31 +5,24 @@ import path from 'path'
 import * as os from 'os'
 import * as fs from 'fs'
 
-export type PoeLogEventType = 'GENERATING_AREA'
-
-export type PoeLogTextEvent = {
+export type PoeClientLogTextEvent = {
   raw: string
   time: Date
   systemUptime: number
   type: string
 }
 
-export type PoEZoneGenerationEvent = PoeLogTextEvent & {
-  type: 'ZoneGenerationEvent'
-  area: string
-}
-
-export type PoEZoneEntranceEvent = PoeLogTextEvent & {
+export type PoeZoneEntranceEvent = PoeClientLogTextEvent & {
   type: 'ZoneEntranceEvent'
   location: string
 }
 
-export type PoEInstanceConnectionEvent = PoeLogTextEvent & {
+export type PoeInstanceConnectionEvent = PoeClientLogTextEvent & {
   type: 'InstanceConnectionEvent'
   server: string
 }
 
-export type PoENPCEventSubtype = 
+export type PoeNPCEventSubtype = 
   'EinharEncounterEvent' |
   'AlvaEncounterEvent' |
   'NikoEncounterEvent' | 
@@ -39,30 +32,29 @@ export type PoENPCEventSubtype =
   'HarvestEncounterEvent' |
   'ExpeditionTujenEncounterEvent' | 'ExpeditionRogEncounterEvent' | 'ExpeditionGwennenEncounterEvent' | 'ExpeditionDannigEncounterEvent'
 
-export type PoENPCEncounterEvent = PoeLogTextEvent & {
+export type PoeNPCEncounterEvent = PoeClientLogTextEvent & {
   type: 'NPCEncounterEvent'
-  subtype: PoENPCEventSubtype
+  subtype: PoeNPCEventSubtype
 }
 
-export type PoECharacterSlainEvent = PoeLogTextEvent & {
+export type PoeCharacterSlainEvent = PoeClientLogTextEvent & {
   type: 'CharacterSlainEvent'
   character: string
   isMyCharacter: boolean
 }
 
-export type PoeLogEvent =
-  | PoEZoneGenerationEvent
-  | PoEZoneEntranceEvent
-  | PoEInstanceConnectionEvent
-  | PoENPCEncounterEvent
-  | PoECharacterSlainEvent
+export type PoeClientLogEvent =
+    PoeZoneEntranceEvent
+  | PoeInstanceConnectionEvent
+  | PoeNPCEncounterEvent
+  | PoeCharacterSlainEvent
 
-interface PoeLogEventParser {
-  parse(raw: string): PoeLogEvent | undefined
+interface PoeClientLogEventParser {
+  parse(raw: string): PoeClientLogEvent | undefined
 }
 
-class ZoneEnteranceEventParser implements PoeLogEventParser {
-  parse(raw: string): PoEZoneEntranceEvent | undefined {
+class ZoneEnteranceEventParser implements PoeClientLogEventParser {
+  parse(raw: string): PoeZoneEntranceEvent | undefined {
     if (raw.includes('] : You have entered')) {
       return {
         type: 'ZoneEntranceEvent',
@@ -76,8 +68,8 @@ class ZoneEnteranceEventParser implements PoeLogEventParser {
   }
 }
 
-class InstanceConnectionEventParser implements PoeLogEventParser {
-  parse(raw: string): PoEInstanceConnectionEvent | undefined {
+class InstanceConnectionEventParser implements PoeClientLogEventParser {
+  parse(raw: string): PoeInstanceConnectionEvent | undefined {
     if (raw.includes('] Connecting to instance server at')) {
       return {
         type: 'InstanceConnectionEvent',
@@ -91,7 +83,7 @@ class InstanceConnectionEventParser implements PoeLogEventParser {
   }
 }
 
-let NPCEncounterMap = new Map<string, PoENPCEventSubtype>([
+let NPCEncounterMap = new Map<string, PoeNPCEventSubtype>([
   ['] Einhar, Beastmaster:', 'EinharEncounterEvent'],
 
   ['] Alva, Master Explorer:', 'AlvaEncounterEvent'],
@@ -112,8 +104,8 @@ let NPCEncounterMap = new Map<string, PoENPCEventSubtype>([
   ['] Gwennen', 'ExpeditionGwennenEncounterEvent']
 ])
 
-class NPCEncounterEventParser implements PoeLogEventParser {
-  parse(raw: string): PoENPCEncounterEvent | undefined {
+class NPCEncounterEventParser implements PoeClientLogEventParser {
+  parse(raw: string): PoeNPCEncounterEvent | undefined {
     for (let [key, value] of NPCEncounterMap) {
       if (raw.includes(key)) {
         return {
@@ -132,8 +124,8 @@ class NPCEncounterEventParser implements PoeLogEventParser {
 
 const characterSlainRegex = new RegExp('[.]* : (\\S+?) has been slain.')
 
-class CharacterSlainEventParser implements PoeLogEventParser {
-  parse(raw: string): PoECharacterSlainEvent | undefined {
+class CharacterSlainEventParser implements PoeClientLogEventParser {
+  parse(raw: string): PoeCharacterSlainEvent | undefined {
     const match = characterSlainRegex.exec(raw)
     const character = match == null ? null : match[1]
 
@@ -156,13 +148,13 @@ class CharacterSlainEventParser implements PoeLogEventParser {
 
 //TODO TRADE PARSER?
 
-export class PoeLogService {
+export class PoeClientLogService {
   private logTail: Tail | null = null
 
   public logRaw$ = new Subject<string>()
-  public logEvents$ = new Subject<PoeLogEvent>()
+  public logEvents$ = new Subject<PoeClientLogEvent>()
 
-  public parsers: PoeLogEventParser[] = [
+  public parsers: PoeClientLogEventParser[] = [
     new ZoneEnteranceEventParser(),
     new InstanceConnectionEventParser(),
     new NPCEncounterEventParser(),
