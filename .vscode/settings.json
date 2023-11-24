@@ -1,6 +1,5 @@
 {
   "files.eol": "\n",
-  "editor.formatOnSave": true,
   "eslint.codeActionsOnSave.mode": "all",
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -11,5 +10,6 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "typescript.tsdk": "src\\eslint-config-sage\\node_modules\\typescript\\lib"
+  "typescript.tsdk": "src\\eslint-config-sage\\node_modules\\typescript\\lib",
+  "jest.autoRun": {}
 }

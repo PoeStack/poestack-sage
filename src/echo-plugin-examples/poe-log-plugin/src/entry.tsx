@@ -4,15 +4,14 @@ export function context() {
 }
 
 // noinspection JSUnusedGlobalSymbols
-
-import App from './App'
 import { DocumentTextIcon } from '@heroicons/react/24/outline'
+import App2 from './App2'
 
 const pluginRoute: EchoRoute = {
   plugin: 'example-log-plugin-stash',
   path: 'main',
-  page: App,
-  navItems: [{ location: 'l-sidebar-m', icon: DocumentTextIcon }]
+  page: App2,
+  navItems: [{ location: 'l-sidebar-m', icon: DocumentTextIcon, displayname: 'Networth' }]
 }
 
 function start() {
@@ -23,7 +22,7 @@ function destroy() {
   context().router.unregisterRoute(pluginRoute)
 }
 
-export default function (): EchoPluginHook {
+export default function(): EchoPluginHook {
   return {
     start: start,
     destroy: destroy

@@ -52,11 +52,10 @@ export class InsightsService {
         }),
         command: ['node', 'src/insights/dist/consume-stream.js'],
         environment: {
-          REDIS_URL: redis.attrRedisEndpointAddress
-        },
-        environmentFiles: [EnvironmentFile.fromBucket(sageStack.configBucket, 'insights.env')]
+          REDIS_URL: redis.attrRedisEndpointAddress }, environmentFiles: [EnvironmentFile.fromBucket(sageStack.configBucket, 'insights.env')]
       })
       sageStack.configBucket.grantRead(streamConsumerTask.executionRole!!)
+      sageStack.runtimeConfigTable.grantFullAccess(streamConsumerTask.executionRole!!)
       new aws_ecs.Ec2Service(sageStack, 'InsStreamConsumerSvc', {
         cluster: sageStack.ecsCluster,
         taskDefinition: streamConsumerTask,

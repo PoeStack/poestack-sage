@@ -18,13 +18,13 @@
     "lint": "eslint ./src --fix --resolve-plugins-relative-to ../../eslint-config-sage"
   },
   "peerDependencies": {
-    "react": "^18.2.0",
     "@heroicons/react": "^2.0.18",
-    "react-dom": "^18.2.0",
-    "ggg-api": "file:../../ggg-api",
-    "echo-common": "file:../../echo-common",
     "@react-rxjs/core": "^0.10.7",
     "@react-rxjs/utils": "^0.9.7",
+    "echo-common": "file:../../echo-common",
+    "ggg-api": "file:../../ggg-api",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "rxjs": "^7.8.1"
   },
   "optionalDependencies": {
@@ -35,14 +35,14 @@
     "@types/node": "^20.8.7",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/parser": "^6.10.0",
+    "eslint": "^8.53.0",
+    "prettier": "^3.0.3",
     "rimraf": "^5.0.5",
     "rollup": "^4.2.0",
-    "rollup-plugin-peer-deps-external": "^2.2.3",
     "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-peer-deps-external": "^2.2.3",
     "tslib": "^2.6.2",
-    "typescript": "^5.2.2",
-    "prettier": "^3.0.3",
-    "eslint": "^8.53.0",
-    "@typescript-eslint/parser": "^6.10.0"
+    "typescript": "^5.2.2"
   }
 }

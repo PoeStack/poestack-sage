@@ -1,12 +1,7 @@
-import { bind } from '@react-rxjs/core'
 import { APP_CONTEXT, GGG_HTTP_UTIL } from '../echo-context-factory'
 
-const [usePoeProfile] = bind(APP_CONTEXT.poeAccounts.poeProfile(), null)
-
 export function ProfilePage() {
-  const profile = usePoeProfile()
-
-  APP_CONTEXT.poeAccounts.profile.load({ key: "profile" }).subscribe()
+  const { value: profile } = APP_CONTEXT.poeAccounts.useProfile()
 
   return (
     <>
