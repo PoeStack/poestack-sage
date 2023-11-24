@@ -14,7 +14,8 @@ const pluginRoute: EchoRoute = {
   navItems: [
     {
       location: 'l-sidebar-m',
-      icon: UsersIcon
+      icon: UsersIcon,
+      displayname: 'Characters'
     }
   ]
 }

@@ -63,9 +63,9 @@ AWS.config.update({ region: 'us-east-1' });
 var docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 function storeKey(key: string) {
   var params = {
-    TableName: 'RunetimeConfig',
+    TableName: 'RuntimeConfig',
     Item: {
-      "key": "test",
+      "key": "last-psstream-key",
       value: key
     }
   };
