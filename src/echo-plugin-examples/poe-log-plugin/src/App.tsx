@@ -72,7 +72,7 @@ const App = () => {
       </div>
       {zones.length > 0 &&
         zones.map((zone) => (
-          <div>
+          <div className='flex flex-col bg-slate-300 bg-primary-surface'>
             <p>
               At: {zone.time.toISOString()} | In {zone.location} for{' '}
               {Math.round((zone.timeDelta / 1000) * 10) / 10}

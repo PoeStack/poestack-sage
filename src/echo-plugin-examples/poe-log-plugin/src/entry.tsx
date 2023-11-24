@@ -11,7 +11,7 @@ const pluginRoute: EchoRoute = {
   plugin: 'example-log-plugin-stash',
   path: 'main',
   page: App2,
-  navItems: [{ location: 'l-sidebar-m', icon: DocumentTextIcon }]
+  navItems: [{ location: 'l-sidebar-m', icon: DocumentTextIcon, displayname: 'Networth' }]
 }
 
 function start() {

@@ -1,7 +1,7 @@
 import { QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
 import { CpuChipIcon, HomeIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import { bind } from '@react-rxjs/core'
-import { ECHO_CONTEXT_SERVICE, EchoPluginHook } from 'echo-common'
+import { ECHO_CONTEXT_SERVICE, EchoPluginHook, ActionTooltip, cn } from 'echo-common'
 import { EchoRoute } from 'echo-common/dist/cjs/echo-router'
 import React, { Suspense, useEffect } from 'react'
 import { ProfilePage } from './profile-page'
@@ -25,7 +25,8 @@ export const PluginPage: React.FC = () => {
       navItems: [
         {
           location: 'l-sidebar-m',
-          icon: HomeIcon
+          icon: HomeIcon,
+          displayname: 'Home'
         }
       ],
       page: DefaultPage,
@@ -39,7 +40,8 @@ export const PluginPage: React.FC = () => {
       navItems: [
         {
           location: 'l-sidebar-b',
-          icon: UserCircleIcon
+          icon: UserCircleIcon,
+          displayname: 'Profile'
         }
       ],
       page: ProfilePage,
@@ -50,7 +52,8 @@ export const PluginPage: React.FC = () => {
       navItems: [
         {
           location: 'l-sidebar-b',
-          icon: CpuChipIcon
+          icon: CpuChipIcon,
+          displayname: 'Plugins'
         }
       ],
       page: PluginSettingsPage,
@@ -103,16 +106,24 @@ const RouterIconNavigator = ({ location }: { location: string }) => {
           .map((navItem, idx) => {
             const Icon = navItem.icon ?? QuestionMarkCircleIcon
             return (
-              <Icon
-                key={echoRoute.plugin + echoRoute.path + navItem.location + idx}
-                className={
-                  'h-7 w-7 cursor-pointer ' +
-                  (currentRoute === echoRoute ? 'text-primary-accent' : '')
-                }
-                onClick={() => {
-                  APP_CONTEXT.router.push(echoRoute)
-                }}
-              ></Icon>
+              <ActionTooltip
+                side='right'
+                align='center'
+                label={navItem.displayname}
+              >
+                <Icon
+                  key={echoRoute.plugin + echoRoute.path + navItem.location + idx}
+                  className={
+                    cn(
+                      'h-7 w-7 cursor-pointer' ,
+                      currentRoute === echoRoute && 'text-primary-accent'
+                    )
+                  }
+                  onClick={() => {
+                    APP_CONTEXT.router.push(echoRoute)
+                  }}
+                ></Icon>
+              </ActionTooltip>
             )
           })
       })}
