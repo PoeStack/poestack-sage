@@ -7,42 +7,25 @@ const NetWorth = () => {
 
   return (
     <>
-      {/* <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-1"
-        onClick={() => {
-          uiStateStore?.increment()
-        }}
-      >
-        Increment
-      </button> */}
-      {/* <br />
+      <br />
       <button
         className="h-10 px-6 font-semibold rounded-full bg-violet-600 text-white mb-1"
         onClick={() => {
-          store?.uiStateStore.addAccounts()
+          store?.uiStateStore.fillTree()
         }}
       >
-        addAccounts
+        fillTree
       </button>
       <br />
       <button
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-1"
         onClick={() => {
-          store?.uiStateStore.replaceAccounts()
+          store?.uiStateStore.testReferences()
         }}
       >
-        replaceAccounts
+        testReferences
       </button>
-      <br /> */}
-      {/* <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-1"
-        onClick={() => {
-          store?.uiStateStore.addProfileToActiveAccount()
-        }}
-      >
-        addProfileToActiveAccount
-      </button>
-      <br /> */}
+      <br />
       <button
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-1"
         onClick={() => {
@@ -74,9 +57,10 @@ const NetWorth = () => {
       <br />
       Active Profile: {store?.accountStore.activeAccount?.activeProfile?.name}
       <br />
-      Active League: {store?.accountStore.activeAccount?.activeProfile?.activeLeague.id}
+      Active League: {store?.accountStore.activeAccount?.activeProfile?.activeLeague?.name}
       <br />
-      Active Price-League: {store?.accountStore.activeAccount?.activeProfile?.activePriceLeague.id}
+      Active Price-League:{' '}
+      {store?.accountStore.activeAccount?.activeProfile?.activePriceLeague?.name}
       <br />
       Active Character: {store?.accountStore.activeAccount?.activeProfile?.activeCharacter?.id}
       <br />

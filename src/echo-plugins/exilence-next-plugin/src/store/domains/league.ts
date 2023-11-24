@@ -1,25 +1,18 @@
-import { Instance, types } from 'mobx-state-tree'
+import { computed } from 'mobx'
+import { detach, idProp, model, Model, modelAction, rootRef, tProp, types } from 'mobx-keystone'
+import { ILeagueNode } from '../../interfaces/league.interface'
 
-export interface ILeagueEntry extends Instance<typeof LeagueEntry> {}
-
-interface ILeagueRule {
-  id: string
-  name: string
+@model('nw/league')
+export class League extends Model({
+  hash: idProp,
+  name: tProp(types.string),
+  realm: tProp(types.string),
+  deleted: tProp(false).withSetter() // Still referenced but does not exist anymore
+}) {
+  @modelAction
+  updateLeague(league: ILeagueNode) {
+    this.name = league.name
+    this.realm = league.realm
+    this.deleted = league.deleted
+  }
 }
-
-export const LeagueEntry = types
-  .model('LeagueEntry', {
-    uuid: types.identifier,
-    id: types.string,
-    realm: types.string,
-    deleted: false // Still referenced but does not exist anymore
-  })
-  .views((self) => ({}))
-  .actions((self) => ({
-    setDeleted(deleted: boolean) {
-      self.deleted = deleted
-    },
-    updateLeague(league: ILeagueEntry) {
-      Object.assign(self, { ...league, uuid: self.uuid })
-    }
-  }))

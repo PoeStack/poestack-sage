@@ -1,24 +1,15 @@
-import { Instance, types } from 'mobx-state-tree'
-import { StashTabSnapshotEntry, IStashTabSnapshotEntry } from './stashtab-snapshot'
 import dayjs from 'dayjs'
+import { idProp, model, Model, modelAction, rootRef, tProp, types } from 'mobx-keystone'
+import { StashTabSnapshot } from './stashtab-snapshot'
 
-export interface ISnapshotEntry extends Instance<typeof SnapshotEntry> {}
-
-export const SnapshotEntry = types
-  .model('SnapshotEntry', {
-    uuid: types.identifier,
-    created: types.optional(types.number, () => dayjs.utc().valueOf()),
-    stashTabSnapshots: types.optional(types.array(StashTabSnapshotEntry), [])
-  })
-  .views((self) => ({}))
-  .actions((self) => ({
-    addStashTabSnapshot(stashTabSnapshot: IStashTabSnapshotEntry) {
-      self.stashTabSnapshots.push(stashTabSnapshot)
-    },
-    removeStashTabSnapshot(stashTabSnapshot: IStashTabSnapshotEntry) {
-      self.stashTabSnapshots.remove(stashTabSnapshot)
-    },
-    setStashTabSnapshots(stashTabSnapshots: IStashTabSnapshotEntry[]) {
-      self.stashTabSnapshots.replace(stashTabSnapshots)
-    }
-  }))
+@model('nw/snapshot')
+export class Snapshot extends Model({
+  uuid: idProp,
+  created: tProp(types.number, () => dayjs.utc().valueOf()),
+  stashTabSnapshots: tProp(types.array(types.model(StashTabSnapshot)), [])
+}) {
+  @modelAction
+  addStashTabSnapshot(stashTabSnapshot: StashTabSnapshot) {
+    this.stashTabSnapshots.push(stashTabSnapshot)
+  }
+}

@@ -1,4 +1,20 @@
+import { Frozen, Ref } from 'mobx-keystone'
 import { IItem } from './item.interface'
+import { League } from '../store-ks/domains/league'
+
+export interface IStashTabNode {
+  hash: string // Id + leagueHash
+  id: string
+  leagueRef: Ref<League>
+  name: string
+  index: number
+  type: string
+  parent?: string
+  folder?: boolean
+  public?: boolean
+  metadata: Frozen<IMetaData>
+  deleted: boolean
+}
 
 export interface IStash {
   stashes: IStashTab[]

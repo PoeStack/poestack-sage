@@ -1,29 +1,18 @@
-import { types, getEnv, onSnapshot, Instance } from 'mobx-state-tree'
+import { computed } from 'mobx'
+import { model, Model, tProp, types } from 'mobx-keystone'
 import { AccountStore } from './accountStore'
 import { LeagueStore } from './leagueStore'
 import { NotificationStore } from './notificationStore'
-import { SettingStore } from './settingsStore'
+import { SettingStore } from './settingStore'
 import { UiStateStore } from './uiStateStore'
 import { PriceStore } from './priceStore'
 
-export interface IStore extends Instance<typeof Store> {}
-
-export const Store = types
-  .model('Store', {
-    accountStore: types.optional(AccountStore, {
-      accounts: []
-    }),
-    leagueStore: types.optional(LeagueStore, { leagues: [], priceLeagues: [] }),
-    notificationStore: types.optional(NotificationStore, { notifications: [], displayed: [] }),
-    settingStore: types.optional(SettingStore, { currency: 'chaos' }),
-    uiStateStore: types.optional(UiStateStore, {}),
-    priceStore: types.optional(PriceStore, {})
-  })
-  .views((self) => ({}))
-  .actions((self) => ({
-    afterAttach() {
-      onSnapshot(self, (_snapshot) => {
-        console.log('Snapshot Store: ', _snapshot)
-      })
-    }
-  }))
+@model('nw/rootStore')
+export class RootStore extends Model({
+  accountStore: tProp(types.model(AccountStore), new AccountStore({})),
+  leagueStore: tProp(types.model(LeagueStore), new LeagueStore({})),
+  notificationStore: tProp(types.model(NotificationStore), new NotificationStore({})),
+  settingStore: tProp(types.model(SettingStore), new SettingStore({})),
+  uiStateStore: tProp(types.model(UiStateStore), new UiStateStore({})),
+  priceStore: tProp(types.model(PriceStore), new PriceStore({}))
+}) {}

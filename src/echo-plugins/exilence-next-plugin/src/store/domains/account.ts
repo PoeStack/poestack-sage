@@ -1,169 +1,195 @@
-import { Instance, cast, destroy, getParent, onSnapshot, types } from 'mobx-state-tree'
-import { AccountLeagueEntry, IAccountLeagueEntry } from './account-league'
-import { ProfileEntry, IProfileEntry } from './profile'
-import { Subject, delay, from, map, of, takeUntil, timer } from 'rxjs'
-import { runInAction } from 'mobx'
-import { IStore, Store } from '../rootStore'
-import { ILeagueEntry } from './league'
-import { CharacterEntry, ICharacterEntry } from './character'
+import {
+  detach,
+  frozen,
+  getRefsResolvingTo,
+  getRoot,
+  idProp,
+  model,
+  Model,
+  modelAction,
+  rootRef,
+  tProp,
+  types
+} from 'mobx-keystone'
+import { Character, characterLeagueRef } from './character'
+import { StashTab, stashTabLeagueRef } from './stashtab'
+import { Profile, profileCharacterRef, profileStashTabRef } from './profile'
+import { RootStore } from '../rootStore'
+import { map, Subject, takeUntil, timer } from 'rxjs'
+import { computed } from 'mobx'
 import { PoeCharacter, PoePartialStashTab } from 'sage-common'
-import { toCharacterEntity, toStashTab } from '../../utils/entity.utils'
-import { IStashTabEntry, StashTabEntry } from './stash-tab'
+import { League } from './league'
+import objectHash from 'object-hash'
+import { createLeagueHash } from '../leagueStore'
+import { ICharacterNode } from '../../interfaces/character.interface'
+import { IStashTabNode } from '../../interfaces/stash.interface'
 
-export interface IAccountEntry extends Instance<typeof AccountEntry> {}
-
-const findEntryToSafeRemove = <T extends { id: string }>(
-  self: IAccountEntry,
-  entriesToRemove: T[],
-  compare: (profile: IProfileEntry, toComp: string) => boolean
-) => {
-  // Find nodes with a reference: 'type.reference(XXX)' => Profile
-  const toKeep = entriesToRemove.filter((etr) => {
-    return self.profiles.some((ac) => compare(ac, etr.id))
-  })
-  const toRemove = entriesToRemove.filter((ltr) => !toKeep.some((tr) => tr.id === ltr.id))
-  return [toRemove, toKeep]
-}
-
-export const AccountEntry = types
-  .model('AccountEntry', {
-    uuid: types.identifier,
-    name: types.string,
-    characters: types.optional(types.array(CharacterEntry), []),
-    stashTabs: types.optional(types.array(StashTabEntry), []),
-    profiles: types.optional(types.array(ProfileEntry), []),
-    activeProfile: types.safeReference(ProfileEntry)
-  })
-  .volatile((self) => ({
-    cancelled: new Subject<boolean>()
-  }))
-  .views((self) => ({
-    get activeLeague() {
-      return self.activeProfile?.activeLeague
-    },
-    get activePriceLeague() {
-      return self.activeProfile?.activePriceLeague
-    },
-    get activeCharacter() {
-      return self.activeProfile?.activeCharacter
-    },
-    get activeLeagueCharacters() {
-      return self.characters.filter((c) => c.league?.id === self.activeProfile?.activeLeague.id)
-    },
-    get activeLeagueStashTabs() {
-      return self.stashTabs.filter((st) => st.league?.id === self.activeProfile?.activeLeague.id)
+export const accountProfileRef = rootRef<Profile>('nw/accountProfileRef', {
+  onResolvedValueChange(ref, newNode, oldNode) {
+    if (oldNode && !newNode) {
+      detach(ref)
     }
-  }))
-  .actions((self) => ({
-    afterAttach() {
-      onSnapshot(self, (_snapshot) => {
-        console.log('Snapshot AccountEntry: ', _snapshot)
-      })
-    },
-    addProfile(profile: IProfileEntry) {
-      self.profiles.push(profile)
-    },
-    // First set all basic C(R)UD functions
-    setActiveProfile(profile?: IProfileEntry) {
-      const store = getParent<IStore>(self, 3)
-      store.uiStateStore.setChangingProfile(true)
-      store.uiStateStore.changeItemTablePage(0)
-      self.activeProfile = profile
-    },
-    updateCharacters(activeApiCharacter: PoeCharacter[]) {
-      const activeCharacters = activeApiCharacter.map((c) => toCharacterEntity(c))
+  }
+})
 
-      // Update already existent characters
-      const removedCharacters: ICharacterEntry[] = []
-      self.characters.forEach((pl) => {
-        const character = activeCharacters.find((apl) => pl.id === apl.id)
-        if (character) {
-          pl.updateCharacter(character)
+@model('nw/account')
+export class Account extends Model({
+  uuid: idProp,
+  name: tProp(types.string),
+  characters: tProp(types.array(types.model(Character)), []),
+  stashTabs: tProp(types.array(types.model(StashTab)), []),
+  profiles: tProp(types.array(types.model(Profile)), []),
+  activeProfileRef: tProp(types.maybe(types.ref(accountProfileRef)))
+}) {
+  cancelled = new Subject<boolean>()
+
+  @computed
+  get activeProfile() {
+    return this.activeProfileRef?.maybeCurrent
+  }
+
+  @computed
+  get activeLeagueCharacters() {
+    const activeLeagueId = this.activeProfile?.activeLeagueRef?.id
+    if (!activeLeagueId) return
+    return this.characters.filter((c) => c.leagueRef?.id === activeLeagueId)
+  }
+
+  @computed
+  get activeLeagueStashTabs() {
+    const activeLeagueId = this.activeProfile?.activeLeagueRef?.id
+    if (!activeLeagueId) return
+    return this.stashTabs.filter((st) => {
+      if (this.activeProfile) st.leagueRef?.id === activeLeagueId
+    })
+  }
+
+  @modelAction
+  addProfile(profile: Profile) {
+    this.profiles.push(profile)
+  }
+
+  @modelAction
+  setActiveProfile(profile: Profile) {
+    const { uiStateStore } = getRoot<RootStore>(this)
+    uiStateStore.setChangingProfile(true)
+    uiStateStore.changeItemTablePage(0)
+    this.activeProfileRef = accountProfileRef(profile)
+  }
+
+  @modelAction
+  updateCharacters(activeApiCharacters: PoeCharacter[]) {
+    const activeCharacters = activeApiCharacters.map(
+      (character): ICharacterNode => ({
+        id: character.id!,
+        name: character.name!,
+        realm: character.realm!,
+        class: character.class!,
+        level: character.level!,
+        experience: character.experience!,
+        leagueRef: characterLeagueRef(createLeagueHash(character.league!, character.realm!)),
+        current: character.current!,
+        deleted: false,
+        inventory: frozen(character.inventory || []),
+        equipment: frozen(character.equipment || []),
+        jewels: frozen(character.jewels || [])
+      })
+    )
+
+    let i = this.characters.length
+    while (i--) {
+      const char = this.characters[i]
+      const foundChar = activeCharacters.find((x) => char.id === x.id)
+      if (foundChar) {
+        // Update already existent character
+        char.updateCharacter(foundChar)
+      } else {
+        if (getRefsResolvingTo(char, profileCharacterRef).size === 0) {
+          // No profile reference - safe to delete
+          console.log('Delete character: ', this.characters[i])
+          this.characters.splice(i, 1)
         } else {
-          removedCharacters.push(pl)
+          // Mark character as deleted
+          console.log('Mark character as deleted: ', this.characters[i])
+          char.setDeleted(true)
         }
-      })
-
-      // Delete or mark removed characters
-      const [toRemove, toKeep] = findEntryToSafeRemove(
-        self as IAccountEntry,
-        removedCharacters,
-        (profile, id) => profile.activeCharacter?.id === id
-      )
-      toRemove.forEach((c) => {
-        self.characters.remove(c)
-      })
-      toKeep.forEach((c) => {
-        c.setDeleted(true)
-      })
-
-      // Add new characters
-      const newCharacters = activeCharacters.filter(
-        (apl) => !self.characters.some((pl) => pl.id === apl.id)
-      )
-      if (newCharacters.length > 0) {
-        self.characters.push(...newCharacters)
       }
-    },
-    updateLeagueStashTabs(stashTabs: PoePartialStashTab[], league: ILeagueEntry) {
-      const activeStashTabs = stashTabs.map((st) => toStashTab(st, league.uuid))
+    }
 
-      // Update already existent stashTabs
-      const removedStashTabs: IStashTabEntry[] = []
-      self.stashTabs
-        .filter((st) => st.league?.id === league.id)
-        .forEach((st) => {
-          const stashTab = activeStashTabs.find((ast) => st.id === ast.id)
-          if (stashTab) {
-            st.updateStashTab(stashTab)
-          } else {
-            removedStashTabs.push(st)
-          }
-        })
+    // Add new characters
+    const newCharacters = activeCharacters.filter(
+      (x) => !this.characters.some((y) => y.id === x.id)
+    )
+    if (newCharacters.length > 0) {
+      this.characters.push(...newCharacters.map((char) => new Character(char)))
+    }
+  }
 
-      // Delete or mark removed stashTabs
-      const [toRemove, toKeep] = findEntryToSafeRemove(
-        self as IAccountEntry,
-        removedStashTabs,
-        (profile, id) => profile.activeStashTabs.some((st) => st.id === id)
-      )
-      toRemove.forEach((st) => {
-        self.stashTabs.remove(st)
+  @modelAction
+  updateLeagueStashTabs(activeApiStashTabs: PoePartialStashTab[], league: League) {
+    const activeStashTabs = activeApiStashTabs.map(
+      (stash): IStashTabNode => ({
+        hash: objectHash({ id: stash.id!, league: league.hash }),
+        id: stash.id!,
+        name: stash.name!,
+        index: stash.index!,
+        type: stash.type!,
+        parent: stash.parent,
+        folder: stash.metadata?.folder,
+        public: stash.metadata?.public,
+        leagueRef: stashTabLeagueRef(league),
+        metadata: frozen(stash.metadata!),
+        deleted: false
       })
-      toKeep.forEach((st) => {
-        st.setDeleted(true)
-      })
+    )
 
-      // Add new stashTabs
-      const newStashTabs = activeStashTabs.filter(
-        (apl) => !self.stashTabs.some((pl) => pl.id === apl.id && pl.league?.id === apl.league?.id)
-      )
-      if (newStashTabs.length > 0) {
-        self.stashTabs.push(...newStashTabs)
+    let i = this.stashTabs.length
+    while (i--) {
+      const stash = this.stashTabs[i]
+      const foundStash = activeStashTabs.find((x) => stash.hash === x.hash)
+      if (foundStash) {
+        // Update already existent stashtabs
+        stash.updateStashTab(foundStash)
+      } else {
+        if (getRefsResolvingTo(stash, profileStashTabRef).size === 0) {
+          // No profile reference - safe to delete
+          console.log('Delete stashtab: ', this.stashTabs[i])
+          this.stashTabs.splice(i, 1)
+        } else {
+          // Mark stashtab as deleted
+          console.log('Mark stashtab as deleted: ', this.stashTabs[i])
+          stash.setDeleted(true)
+        }
       }
-      self.stashTabs.forEach((st) => {
-        st.setLeague(league)
-      })
     }
-  }))
-  .actions((self) => ({
-    queueSnapshot(milliseconds?: number) {
-      const store = getParent<IStore>(self, 2)
-      // fromStream(
-      timer(milliseconds ? milliseconds : store.settingStore.autoSnapshotInterval).pipe(
-        map(() => {
-          if (self.activeProfile && self.activeProfile.readyToSnapshot) {
-            // self.activeProfile.snapshot()
-          } else {
-            this.dequeueSnapshot()
-            this.queueSnapshot(10 * 1000)
-          }
-        }),
-        takeUntil(self.cancelled)
-      )
-      // )
-    },
-    dequeueSnapshot() {
-      self.cancelled.next(true)
+
+    // Add new stashtabs
+    const newStashTabs = activeStashTabs.filter(
+      (x) => !this.stashTabs.some((y) => y.hash === x.hash)
+    )
+    if (newStashTabs.length > 0) {
+      this.stashTabs.push(...newStashTabs.map((x) => new StashTab(x)))
     }
-  }))
+  }
+
+  @modelAction
+  queueSnapshot(milliseconds?: number) {
+    const store = getRoot<RootStore>(this)
+    timer(milliseconds ? milliseconds : store.settingStore.autoSnapshotInterval).pipe(
+      map(() => {
+        if (this.activeProfile?.readyToSnapshot) {
+          // this.activeProfile.snapshot()
+        } else {
+          this.dequeueSnapshot()
+          this.queueSnapshot(10 * 1000)
+        }
+      }),
+      takeUntil(this.cancelled)
+    )
+  }
+
+  @modelAction
+  dequeueSnapshot() {
+    this.cancelled.next(true)
+  }
+}

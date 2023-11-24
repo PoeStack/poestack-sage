@@ -1,100 +1,75 @@
-import { types, getParent, onSnapshot, Instance } from 'mobx-state-tree'
-import { LeagueEntry, ILeagueEntry } from './league'
-import { CharacterEntry, ICharacterEntry } from './character'
-import { StashTabEntry, IStashTabEntry } from './stash-tab'
-import { SnapshotEntry, ISnapshotEntry } from './snapshot'
-import dayjs from 'dayjs'
-import { IPriceStore } from '../priceStore'
-import { IStore } from '../rootStore'
-import { IAccountLeagueEntry } from './account-league'
-import { ILeague } from '../../interfaces/league.interface'
-import { ILeaguePriceDetailsEntry } from './league-price-details'
+import { computed } from 'mobx'
+import { detach, getRoot, idProp, model, Model, rootRef, tProp, types } from 'mobx-keystone'
+import { League } from './league'
+import { StashTab } from './stashtab'
+import { Snapshot } from './snapshot'
+import { RootStore } from '../rootStore'
+import { Character } from './character'
 
-export interface IProfileEntry extends Instance<typeof ProfileEntry> {}
-
-export const ProfileEntry = types
-  .model('ProfileEntry', {
-    uuid: types.identifier,
-    name: types.string,
-    activeLeague: types.reference(LeagueEntry),
-    activePriceLeague: types.reference(LeagueEntry),
-    activeCharacter: types.maybe(types.reference(CharacterEntry)),
-    activeStashTabs: types.optional(
-      // Account holds the objects
-      types.array(types.safeReference(StashTabEntry, { acceptsUndefined: false })),
-      []
-    ),
-    snapshots: types.optional(types.array(SnapshotEntry), []),
-    includeEquipment: false,
-    includeInventory: false,
-    incomeResetAt: types.maybe(types.number)
-  })
-  .views((self) => ({
-    get isProfileValid() {
-      return (
-        !self.activeLeague.deleted &&
-        !self.activePriceLeague.deleted &&
-        !self.activeCharacter?.deleted &&
-        self.activeStashTabs.every((st) => !st.deleted)
-      )
-    },
-
-    get readyToSnapshot(): boolean {
-      const { priceStore, uiStateStore } = getParent<IStore>(self, 3) // Account -> AccountStore -> RootStore
-
-      return (
-        self.activeStashTabs.length > 0 &&
-        !priceStore.isUpdatingPrices &&
-        uiStateStore.validated &&
-        uiStateStore.initiated &&
-        !uiStateStore.isSnapshotting &&
-        this.isProfileValid
-        // store.rateLimitStore.retryAfter === 0
-      )
+export const profileLeagueRef = rootRef<League>('nw/profileLeagueRef')
+export const profilePriceLeagueRef = rootRef<League>('nw/profilePriceLeagueRef')
+export const profileCharacterRef = rootRef<Character>('nw/profileCharacterRef')
+export const profileStashTabRef = rootRef<StashTab>('nw/profileStashTabRef', {
+  onResolvedValueChange(ref, newNode, oldNode) {
+    if (oldNode && !newNode) {
+      detach(ref)
     }
-  }))
-  .actions((self) => ({
-    afterAttach() {
-      onSnapshot(self, (_snapshot) => {
-        console.log('Snapshot ProfileEntry: ', _snapshot)
-      })
-    },
-    // First set all basic C(R)UD functions
-    setActiveLeague(league: ILeagueEntry) {
-      self.activeLeague = league
-    },
-    setActivePriceLeague(league: ILeagueEntry) {
-      self.activePriceLeague = league
-    },
-    setActiveCharacter(character: ICharacterEntry) {
-      self.activeCharacter = character
-    },
-    addActiveStashTab(stashTab: IStashTabEntry) {
-      self.activeStashTabs.push(stashTab)
-    },
-    removeActiveStashTab(stashTab: IStashTabEntry) {
-      self.activeStashTabs.remove(stashTab)
-    },
-    setActiveStashTabs(stashTabs: IStashTabEntry[]) {
-      self.activeStashTabs.replace(stashTabs)
-    },
-    setIncludeEquipment(includeEquipment: boolean) {
-      self.includeEquipment = includeEquipment
-    },
-    setIncludeInventory(includeInventory: boolean) {
-      self.includeInventory = includeInventory
-    },
-    setIncomeResetAt(resetAt: number) {
-      self.incomeResetAt = resetAt
-    },
-    unshiftSnapshot(snapshot: ISnapshotEntry) {
-      self.snapshots.unshift(snapshot)
-    },
-    removeSnapshot(snapshot: ISnapshotEntry) {
-      self.snapshots.remove(snapshot)
-    },
-    setSnapshots(snapshots: ISnapshotEntry[]) {
-      self.snapshots.replace(snapshots)
-    }
-  }))
-  .actions((self) => ({}))
+  }
+})
+
+@model('nw/profile')
+export class Profile extends Model({
+  uuid: idProp,
+  name: tProp(types.string),
+  activeLeagueRef: tProp(types.ref(profileLeagueRef)).withSetter(),
+  activePriceLeagueRef: tProp(types.ref(profilePriceLeagueRef)).withSetter(),
+  activeCharacterRef: tProp(types.maybe(types.ref(profileCharacterRef))).withSetter(),
+  activeStashTabsRef: tProp(types.array(types.ref(profileStashTabRef)), []).withSetter(),
+  snapshots: tProp(types.array(types.model(Snapshot)), []),
+  includeEquipment: tProp(false),
+  includeInventory: tProp(false),
+  incomeResetAt: tProp(types.maybe(types.number)).withSetter()
+}) {
+  @computed
+  get activeLeague() {
+    return this.activeLeagueRef.maybeCurrent
+  }
+  @computed
+  get activePriceLeague() {
+    return this.activePriceLeagueRef.maybeCurrent
+  }
+  @computed
+  get activeCharacter() {
+    return this.activeCharacterRef?.maybeCurrent
+  }
+  @computed
+  get activeStashTabs() {
+    return this.activeStashTabsRef.filter((st) => st.maybeCurrent).map((st) => st.maybeCurrent!)
+  }
+  @computed
+  get isProfileValid() {
+    return (
+      this.activeLeagueRef.isValid &&
+      !this.activeLeague!.deleted &&
+      this.activePriceLeagueRef.isValid &&
+      !this.activePriceLeague!.deleted &&
+      (!this.activeCharacterRef ||
+        (this.activeCharacterRef.isValid && !this.activeCharacterRef.current.deleted)) &&
+      this.activeStashTabs.every((st) => !st.deleted)
+    )
+  }
+  @computed
+  get readyToSnapshot(): boolean {
+    const { uiStateStore } = getRoot<RootStore>(this)
+
+    return (
+      this.activeStashTabs.length > 0 &&
+      // !priceStore.isUpdatingPrices &&
+      uiStateStore.validated &&
+      uiStateStore.initiated &&
+      !uiStateStore.isSnapshotting &&
+      this.isProfileValid
+      // store.rateLimitStore.retryAfter === 0
+    )
+  }
+}

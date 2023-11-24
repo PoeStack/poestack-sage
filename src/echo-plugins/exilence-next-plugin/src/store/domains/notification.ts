@@ -1,24 +1,17 @@
-import { Instance, types } from 'mobx-state-tree'
+import { computed } from 'mobx'
+import { detach, idProp, model, Model, rootRef, tProp, types } from 'mobx-keystone'
 import { NotificationType } from '../../interfaces/notification.interface'
 import dayjs from 'dayjs'
 
-export interface INotificationEntry extends Instance<typeof NotificationEntry> {}
-
-export const NotificationEntry = types
-  .model('NotificationEntry', {
-    uuid: types.identifier,
-    title: types.string,
-    timestamp: types.optional(types.number, () => dayjs.utc().valueOf()),
-    description: types.string,
-    read: false,
-    type: types.literal<NotificationType>('info'),
-    displayAlert: types.maybe(types.boolean),
-    stackTrace: types.maybe(types.string),
-    translateParam: types.maybe(types.string)
-  })
-  .views((self) => ({}))
-  .actions((self) => ({
-    setRead(read: boolean) {
-      self.read = read
-    }
-  }))
+@model('nw/notification')
+export class Notification extends Model({
+  uuid: idProp,
+  title: tProp(types.string),
+  timestamp: tProp(types.number, () => dayjs.utc().valueOf()),
+  description: tProp(types.string),
+  read: tProp(false).withSetter(),
+  type: tProp(types.literal<NotificationType>('info'), 'info'),
+  displayAlert: tProp(types.maybe(types.boolean)),
+  stackTrace: tProp(types.maybe(types.string)),
+  translateParam: tProp(types.maybe(types.string))
+}) {}

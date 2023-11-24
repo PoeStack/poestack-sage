@@ -1,4 +1,4 @@
 import { useContext, createContext } from 'react'
-import { Store, IStore } from '../store/rootStore'
+import { RootStore } from '../store/rootStore'
 
-export const StoreContext = createContext<IStore>({} as IStore)
+export const StoreContext = createContext<RootStore>({} as RootStore)

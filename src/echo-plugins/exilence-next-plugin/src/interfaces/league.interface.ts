@@ -1,5 +1,6 @@
-export interface ILeague {
-  uuid?: string
-  id: string
+export interface ILeagueNode {
+  hash: string
+  name: string
   realm: string
+  deleted: boolean
 }

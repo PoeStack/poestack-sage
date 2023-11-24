@@ -1,5 +1,6 @@
 export type NotificationType = 'success' | 'info' | 'error' | 'warning'
 
+// CHECKED
 export interface INotification {
   uuid?: string
   title: string

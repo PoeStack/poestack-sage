@@ -1,10 +1,31 @@
 import React from 'react'
 import NetWorth from './routes/net-worth/NetWorth'
-import { Store } from './store/rootStore'
+import { RootStore } from './store/rootStore'
 import { StoreContext } from './context/store'
-import { applySnapshot, getSnapshot } from 'mobx-state-tree'
+import { applySnapshot, getSnapshot, registerRootStore, onSnapshot } from 'mobx-keystone'
 
-export const store = Store.create({})
+export function createRootStore() {
+  const rootStore = new RootStore({})
+  // although not strictly required, it is always a good idea to register your root stores
+  // as such, since this allows the model hook `onAttachedToRootStore` to work and other goodies
+  registerRootStore(rootStore)
+
+  onSnapshot(rootStore, (sn) => {
+    console.log(sn)
+  })
+
+  // we can also connect the store to the redux dev tools
+  // const remotedev = require('remotedev')
+  // const connection = remotedev.connectViaExtension({
+  //   name: 'Test account'
+  // })
+
+  // connectReduxDevTools(remotedev, connection, rootStore)
+
+  return rootStore
+}
+
+export const store = createRootStore()
 
 // @ts-ignore
 window.rootStore = store

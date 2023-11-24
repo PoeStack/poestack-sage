@@ -1,7 +1,7 @@
 import { useStore } from './useStore'
-import { IStore } from '../store/rootStore'
+import { RootStore } from '../store/rootStore'
 
-export type MapStore<T> = (store: IStore) => T
+export type MapStore<T> = (store: RootStore) => T
 
 const useInject = <T>(mapStore: MapStore<T>) => {
   const store = useStore()

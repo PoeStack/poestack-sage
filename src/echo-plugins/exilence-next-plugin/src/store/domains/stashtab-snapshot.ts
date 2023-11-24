@@ -1,18 +1,22 @@
-import { Instance, types } from 'mobx-state-tree'
+import { computed } from 'mobx'
+import { detach, frozen, idProp, model, Model, rootRef, tProp, types } from 'mobx-keystone'
 import { IPricedItem } from '../../interfaces/priced-item.interface'
+import { StashTab } from './stashtab'
 
-export interface IStashTabSnapshotEntry extends Instance<typeof StashTabSnapshotEntry> {}
-
-export const StashTabSnapshotEntry = types
-  .model('StashTabSnapshotEntry', {
-    uuid: types.identifier,
-    stashTabId: types.string, // The stash may not exists anymore for old snapshots
-    value: 0,
-    pricedItems: types.frozen<IPricedItem[]>([]) // Immutable!
-  })
-  .views((self) => ({}))
-  .actions((self) => ({
-    setPricedItems(pricedItems: IPricedItem[]) {
-      self.pricedItems = pricedItems
+export const stashTabSnapshotStashTabRef = rootRef<StashTab>('nw/stashTabSnapshotStashTabRef', {
+  onResolvedValueChange(ref, newNode, oldNode) {
+    if (oldNode && !newNode) {
+      detach(ref)
     }
-  }))
+  }
+})
+
+@model('nw/stashTabSnapshot')
+export class StashTabSnapshot extends Model({
+  uuid: idProp,
+  stashTab: tProp(types.ref(stashTabSnapshotStashTabRef)), // The stash may not exists anymore - need to be checked for isAlive
+  value: tProp(0),
+  pricedItems: tProp(types.frozen(types.unchecked<IPricedItem[]>()), () =>
+    frozen<IPricedItem[]>([])
+  )
+}) {}

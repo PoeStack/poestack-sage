@@ -1,83 +1,70 @@
-import { Instance, types } from 'mobx-state-tree'
-import { NotificationEntry, INotificationEntry } from './domains/notification'
+import { computed } from 'mobx'
+import { model, Model, modelAction, tProp, types } from 'mobx-keystone'
+import { Notification } from './domains/notification'
 import { NotificationType } from '../interfaces/notification.interface'
 import { translateError } from '../utils/error.utils'
-import { v4 as uuidv4 } from 'uuid'
 
-export interface INotificationStore extends Instance<typeof NotificationStore> {}
+@model('nw/notificationStore')
+export class NotificationStore extends Model({
+  notifications: tProp(types.array(types.model(Notification)), []),
+  displayed: tProp(types.array(types.string), [])
+}) {
+  @computed
+  get alertNotifications() {
+    const alerts = this.notifications.filter((n) => n.displayAlert)
+    return alerts
+  }
 
-export const NotificationStore = types
-  .model('NotificationStore', {
-    notifications: types.optional(types.array(NotificationEntry), []),
-    displayed: types.optional(types.array(types.string), [])
-  })
-  .views((self) => ({
-    get alertNotifications() {
-      const alerts = self.notifications.filter((n) => n.displayAlert)
-      return alerts
-    },
-    get unreadNotifications() {
-      const alerts = self.notifications.filter((n) => !n.read)
-      return alerts
-    }
-  }))
-  .actions((self) => ({
-    addNotification(notification: INotificationEntry) {
-      self.notifications.push(notification)
-    },
-    removeNotification(notification: INotificationEntry) {
-      self.notifications.remove(notification)
-    },
-    setNotifications(notifications: INotificationEntry[]) {
-      self.notifications.replace(notifications)
-    },
-    addDisplayed(displayed: string) {
-      self.displayed.unshift(displayed), self.displayed.replace(self.displayed.slice(0, 10))
-    },
-    removeDisplayed(displayed: string) {
-      self.displayed.remove(displayed)
-    },
-    setDisplayed(displayed: string[]) {
-      self.displayed.replace(displayed)
-    }
-  }))
-  .actions((self) => ({
-    createNotification(
-      key: string,
-      type: NotificationType,
-      displayAlert?: boolean,
-      error?: Error,
-      translateParam?: string
-    ) {
-      const prefix = `notification:${type}`
-      const title = `${prefix}.title.${key}`
-      const description = error ? translateError(error) : `${prefix}.description.${key}`
+  @computed
+  get unreadNotifications() {
+    const alerts = this.notifications.filter((n) => !n.read)
+    return alerts
+  }
 
-      const notification = NotificationEntry.create({
-        uuid: uuidv4(),
-        title,
-        description,
-        type,
-        displayAlert,
-        stackTrace: error ? error.message : undefined,
-        translateParam
-      })
+  @modelAction
+  addDisplayed(uuid: string) {
+    this.displayed.unshift(uuid)
+    this.displayed = this.displayed.slice(0, 10)
+  }
 
-      self.notifications.unshift(notification)
-      self.notifications.replace(self.notifications.slice(0, 10))
+  @modelAction
+  createNotification(
+    key: string,
+    type: NotificationType,
+    displayAlert?: boolean,
+    error?: Error,
+    translateParam?: string
+  ) {
+    const prefix = `notification:${type}`
+    const title = `${prefix}.title.${key}`
+    const description = error ? translateError(error) : `${prefix}.description.${key}`
 
-      return notification
-    },
+    const notification = new Notification({
+      title,
+      description,
+      type,
+      displayAlert,
+      stackTrace: error ? error.message : undefined,
+      translateParam
+    })
 
-    markAsRead(uuid: string) {
-      const notification = self.notifications.find((n) => n.uuid === uuid)
-      notification!.setRead(true)
-      return notification
-    },
+    this.notifications.unshift(notification)
+    this.notifications = this.notifications.slice(0, 10)
 
-    markAllAsRead() {
-      self.notifications.forEach((n) => {
-        n.setRead(true)
-      })
-    }
-  }))
+    return notification
+  }
+
+  @modelAction
+  markAsRead(uuid: string) {
+    const notification = this.notifications.find((n) => n.uuid === uuid)
+    notification?.setRead(true)
+    return notification
+  }
+
+  @modelAction
+  markAllAsRead() {
+    this.notifications.forEach((n) => {
+      n.setRead(true)
+    })
+  }
+}
