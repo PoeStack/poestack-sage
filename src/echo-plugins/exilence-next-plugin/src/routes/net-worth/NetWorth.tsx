@@ -2,6 +2,7 @@ import React from 'react'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import { Toolbar } from '../../components/Toolbar/Toolbar'
+import { Toolbar } from '../../components/Toolbar/Toolbar'
 
 const NetWorth = () => {
   const store = useStore()
