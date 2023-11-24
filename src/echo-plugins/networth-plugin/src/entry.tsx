@@ -14,7 +14,7 @@ export function context() {
 }
 
 const pluginRoute = (): EchoRoute => ({
-  plugin: 'exilence-next',
+  plugin: 'networth',
   path: 'networth',
   page: App,
   navItems: [{ location: 'l-sidebar-m', icon: ArchiveBoxIcon }]

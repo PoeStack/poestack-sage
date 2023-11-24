@@ -1,12 +1,12 @@
 {
-  "name": "exilence-next-plugin",
+  "name": "networth-plugin",
   "private": true,
   "version": "0.0.0",
-  "main": "./dist/exilence-next-plugin.js",
-  "module": "./dist/exilence-next-plugin.js",
+  "main": "./dist/networth-plugin.js",
+  "module": "./dist/networth-plugin.js",
   "exports": {
     "development": "./src/entry.tsx",
-    "default": "./dist/exilence-next-plugin.js"
+    "default": "./dist/networth-plugin.js"
   },
   "scripts": {
     "clean": "rimraf dist",
