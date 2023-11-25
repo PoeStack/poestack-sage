@@ -1,8 +1,8 @@
 import { HttpUtil, ItemGroupingService, PoePublicStashResponse } from 'sage-common'
-import { debounceTime, from, of, Subject, throttleTime } from 'rxjs'
+import objectHash from 'object-hash'
+import { debounceTime, Subject } from 'rxjs'
 import process from 'process'
-import Redis from 'ioredis'
-import AWS from 'aws-sdk'
+import Database from 'libsql'
 
 const divineTypes = new Set(['d', 'div', 'divine'])
 const chaosTypes = new Set(['c', 'chaos'])
@@ -56,57 +56,27 @@ function loadChanges(paginationCode: string) {
   )
 }
 
-AWS.config.update({ region: 'us-east-1' })
-var docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
-var storeCount = 0
-function storeKey(key: string) {
-  if (storeCount++ < 100) {
-    return
-  }
-  storeCount = 0
-
-  var params = {
-    TableName: 'RuntimeConfig',
-    Item: {
-      key: 'last-psstream-key',
-      value: key,
-      updatedAt: new Date().toISOString()
-    }
-  }
-
-  docClient.put(params, function (err, data) {
-    if (err) {
-      console.log('Error', err)
-    } else {
-      console.log('Success', data)
-    }
-  })
-}
-
 const itemGroupingService = new ItemGroupingService()
 const resultsSubject = new Subject<PoePublicStashResponse>()
 
-resultsSubject.pipe(debounceTime(200)).subscribe((e) => {
+resultsSubject.pipe(debounceTime(5000)).subscribe((e) => {
   console.log('loading', e.next_change_id)
-  storeKey(e.next_change_id)
   loadChanges(e.next_change_id).subscribe((e) => {
     resultsSubject.next(e)
   })
 })
 
-console.log('redis url', process.env['REDIS_URL'])
-const client = new Redis({
-  host: process.env['REDIS_URL'] ?? 'localhost',
-  port: 6379,
-  tls: undefined
-})
+const db = new Database('psstream-2.db')
+db.exec(
+  'CREATE TABLE IF NOT EXISTS listings (id TEXT PRIMARY KEY, groupHash TEXT, quantity INTEGER, value TEXT)'
+)
+
 resultsSubject.subscribe((data) => {
   try {
     if (data?.stashes) {
       const dateMs = Date.now()
       const dateTruncatedMins = Math.round(dateMs / 1000 / 60)
       let updates = 0
-      const multi = client.multi()
       for (const stashData of data.stashes) {
         if (
           !stashData.league ||
@@ -158,40 +128,26 @@ resultsSubject.subscribe((data) => {
         for (const [itemGroupHashString, data] of Object.entries(toWrite)) {
           updates++
           const shard = parseInt(itemGroupHashString, 16) % 5
-          multi.hset(
-            `psev6:${data.tag}:${shard}:${stashData.league}`,
-            `${itemGroupHashString}:${stashData.accountName}`,
-            `${dateTruncatedMins},${data.stackSize},${data.value},${data.currencyType}`
+
+          const id = objectHash({
+            l: stashData.league,
+            a: stashData.accountName,
+            g: itemGroupHashString
+          })
+
+          db.exec(
+            `INSERT INTO listings (id, groupHash, quantity, value) VALUES ('${id}', '${itemGroupHashString}', ${data.stackSize}, '${data.value}')`
           )
         }
-      }
-
-      if (updates > 0) {
-        multi
-          .exec()
-          .catch((e) => {
-            console.log('error in write', e)
-          })
-          .finally(() => {
-            console.log('finished', updates, 'updates in', Date.now() - dateMs, 'ms')
-          })
       }
     }
   } catch (error) {
     console.error(error)
   }
 })
-
 resultsSubject.subscribe((e) => console.log('got', e.stashes?.length))
 
-from(
-  docClient.get({ TableName: 'RuntimeConfig', Key: { key: 'last-psstream-key' } }).promise()
-).subscribe((e) => {
-  console.log('got doc response', e.Item)
-  const nextKey = e.Item?.value
-
-  resultsSubject.next({
-    next_change_id: nextKey,
-    stashes: []
-  })
+resultsSubject.next({
+  next_change_id: '2169196834-2160857942-2091476413-2321414968-2254238271',
+  stashes: []
 })

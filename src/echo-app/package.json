@@ -32,6 +32,7 @@
     "echo-common": "file:../echo-common",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
+    "libsql": "^0.2.0-pre.2",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.2.2"
