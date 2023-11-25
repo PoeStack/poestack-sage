@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json --composite false",
     "prepublishOnly": "npm run build",
     "format": "prettier --write ./src",
-    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../eslint-config-sage",
+    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../sage-frontend-tooling",
     "start": "node dist/index.js",
     "dev": "concurrently \"tsc -p tsconfig.json --watch\" \"nodemon -q dist/index.js\""
   },

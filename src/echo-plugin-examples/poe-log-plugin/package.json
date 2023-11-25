@@ -15,7 +15,7 @@
     "dev": "cd ../../echo-app && npm run dev",
     "build": "npm run clean && rollup -c --configPlugin typescript",
     "format": "prettier --write ./src",
-    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../../eslint-config-sage"
+    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../../sage-frontend-tooling"
   },
   "peerDependencies": {
     "@heroicons/react": "^2.0.18",

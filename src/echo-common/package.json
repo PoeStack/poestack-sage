@@ -22,7 +22,7 @@
     "test": "npm run build && node dist/cjs/poe-api-test.js",
     "prepublishOnly": "npm run build",
     "format": "prettier --write ./src",
-    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../eslint-config-sage",
+    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../sage-frontend-tooling",
     "jest-test": "npm run build && jest --detectOpenHandles ./test/*"
   },
   "dependencies": {

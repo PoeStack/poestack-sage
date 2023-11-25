@@ -21,7 +21,7 @@
     "build": "tsc -p tsconfig-esm.json && tsc -p tsconfig.json",
     "prepublishOnly": "npm run build",
     "format": "prettier --write ./src",
-    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../eslint-config-sage"
+    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../sage-frontend-tooling"
   },
   "dependencies": {
     "rxjs": "^7.8.1"

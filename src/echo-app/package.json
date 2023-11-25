@@ -19,7 +19,7 @@
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
     "format": "prettier --write ./src",
-    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../eslint-config-sage"
+    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../sage-frontend-tooling"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^2.0.0",
