@@ -17,7 +17,7 @@ const pluginRoute = (): EchoRoute => ({
   plugin: 'networth',
   path: 'networth',
   page: App,
-  navItems: [{ location: 'l-sidebar-m', icon: ArchiveBoxIcon }]
+  navItems: [{ displayname: 'Networth', location: 'l-sidebar-m', icon: ArchiveBoxIcon }]
 })
 
 const start = () => {

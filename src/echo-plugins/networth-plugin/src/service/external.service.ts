@@ -5,7 +5,7 @@ import { IStashTab } from '../interfaces/stash.interface'
 
 export const getProfile = () => {
   const { poeAccounts } = context()
-  return poeAccounts.profile.load({ key: 'profile' }).pipe(
+  return poeAccounts.profile().pipe(
     map((e) => {
       if (e.type === 'error') {
         throw new Error(e.error)
@@ -21,7 +21,7 @@ export const getProfile = () => {
 
 export const getLeagues = () => {
   const { poeAccounts } = context()
-  return poeAccounts.leagues.load({ key: 'leagues' }).pipe(
+  return poeAccounts.leagues().pipe(
     map((e) => {
       if (e.type === 'error') {
         throw new Error(e.error)
@@ -37,7 +37,7 @@ export const getLeagues = () => {
 
 export const getCharacters = () => {
   const { poeCharacters } = context()
-  return poeCharacters.cacheCharacterList.load({ key: 'character_list' }).pipe(
+  return poeCharacters.characterList().pipe(
     map((e) => {
       if (e.type === 'error') {
         throw new Error(e.error)
@@ -53,7 +53,7 @@ export const getCharacters = () => {
 
 export const getCharacter = (character: string) => {
   const { poeCharacters } = context()
-  return poeCharacters.cacheCharacter.load({ key: character }).pipe(
+  return poeCharacters.character(character).pipe(
     map((e) => {
       if (e.type === 'error') {
         throw new Error(e.error)
@@ -69,7 +69,7 @@ export const getCharacter = (character: string) => {
 
 export const getStashTabs = (league: string) => {
   const { poeStash } = context()
-  return poeStash.cacheStashes.load({ key: league }).pipe(
+  return poeStash.stashes(league).pipe(
     map((e) => {
       if (e.type === 'error') {
         throw new Error(e.error)
@@ -82,12 +82,12 @@ export const getStashTabs = (league: string) => {
     filterNullish()
   )
 }
-
 export const getStashTabWithChildren = (stash: IStashTab, league: string, children?: boolean) => {
   const { poeStash } = context()
   const prefix = stash.parent && children ? `${stash.parent}/` : ''
-  const id = `${prefix}${stash.id}`
-  return poeStash.cacheStashContent.load({ key: `${league}_${id}` }).pipe(
+  const stashId = `${prefix}${stash.id}`
+
+  return poeStash.stashTab(league, stashId).pipe(
     map((e) => {
       if (e.type === 'error') {
         throw new Error(e.error)
