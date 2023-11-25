@@ -4,14 +4,19 @@ import { EchoDirService } from './echo-dir-service'
 
 export type SmartCacheLoadConfig = {
   key: string
-  maxStaleMs?: number,
+  maxStaleMs?: number
   maxAgeMs?: number
+}
+
+export type SmartCacheConfig = {
+  maxAgeMs?: number
+  maxStaleMs?: number
 }
 
 type SmartCacheLoadConfigInternal<T> = {
   key: string
-  maxStaleMs: number,
-  maxAgeMs: number,
+  maxStaleMs: number
+  maxAgeMs: number
   loadFun: () => Observable<T | null>
 }
 
@@ -66,7 +71,7 @@ export class SmartCache<T> {
 
   constructor(
     private dir: EchoDirService,
-    private type: string,
+    private type: string
   ) {
     this.events$.subscribe((e) => {
       const currentStore = this.memoryCache$.value[e.key] ?? {}
@@ -77,7 +82,7 @@ export class SmartCache<T> {
       } else if (e.type === 'result') {
         nextStore.lastResultEvent = e
         nextStore.lastErorrEvent = undefined
-        this.dir.writeJson(['cache', "smart-cache", this.type, e.key], e)
+        this.dir.writeJson(['cache', 'smart-cache', this.type, e.key], e)
       }
 
       if (e.type !== 'queued') {
@@ -108,9 +113,9 @@ export class SmartCache<T> {
       })
   }
 
-  public static emptyResult<T>(key: string = ""): Observable<SmartCacheResultEvent<T>> {
+  public static emptyResult<T>(key: string = ''): Observable<SmartCacheResultEvent<T>> {
     return of({
-      type: "result",
+      type: 'result',
       result: null,
       timestampMs: Date.now(),
       key: key
@@ -139,12 +144,9 @@ export class SmartCache<T> {
     return null
   }
 
-  private isValid(
-    value: SmartCacheResultEvent<T> | undefined | null,
-    maxAgeMs: number
-  ): boolean {
-    if (process.env['FORCE_SMART_CACHE_VALUE'] === "true") {
-      console.log("smart-cache forced valid = true")
+  private isValid(value: SmartCacheResultEvent<T> | undefined | null, maxAgeMs: number): boolean {
+    if (process.env['FORCE_SMART_CACHE_VALUE'] === 'true') {
+      console.log('smart-cache forced valid = true')
       return true
     }
 
@@ -203,20 +205,20 @@ export class SmartCache<T> {
           this.fireLoad(configInternal)
         }
       } else {
-        const eventSub = this.events$.pipe(
-          filter((e) => e.key === configInternal.key)
-        ).subscribe((e) => {
-          sub.next(e)
+        const eventSub = this.events$
+          .pipe(filter((e) => e.key === configInternal.key))
+          .subscribe((e) => {
+            sub.next(e)
 
-          if (e.type === 'error') {
-            sub.error(e.error)
-            eventSub.unsubscribe()
-            sub.complete()
-          } else if (e.type === 'result') {
-            eventSub.unsubscribe()
-            sub.complete()
-          }
-        })
+            if (e.type === 'error') {
+              sub.error(e.error)
+              eventSub.unsubscribe()
+              sub.complete()
+            } else if (e.type === 'result') {
+              eventSub.unsubscribe()
+              sub.complete()
+            }
+          })
 
         this.fireLoad(configInternal)
       }
