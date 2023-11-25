@@ -26,9 +26,9 @@ export class SageStack extends cdk.Stack {
       subnetConfiguration: [{ cidrMask: 18, name: 'Public', subnetType: SubnetType.PUBLIC }]
     })
 
-    this.runtimeConfigTable = new cdk.aws_dynamodb.TableV2(this, "RuntimeTable", {
-      tableName: "RuntimeConfig",
-      partitionKey: { name: "key", type: cdk.aws_dynamodb.AttributeType.STRING }
+    this.runtimeConfigTable = new cdk.aws_dynamodb.TableV2(this, 'RuntimeTable', {
+      tableName: 'RuntimeConfig',
+      partitionKey: { name: 'key', type: cdk.aws_dynamodb.AttributeType.STRING }
     })
 
     this.ecsCluster = new aws_ecs.Cluster(this, 'InsightCluster', {

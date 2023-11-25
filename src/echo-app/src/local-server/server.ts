@@ -15,7 +15,7 @@ export const createLocalServer = (messageSender: (token: string) => void) => {
         // (like mobile apps or curl requests)
         if (!origin) return callback(null, true)
         if (ALLOWED_ORIGINS.indexOf(origin) === -1) {
-          var msg =
+          const msg =
             'The CORS policy for this site does not ' + 'allow access from the specified Origin.'
           return callback(new Error(msg), false)
         }

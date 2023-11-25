@@ -22,15 +22,18 @@ export type PoeInstanceConnectionEvent = PoeClientLogTextEvent & {
   server: string
 }
 
-export type PoeNPCEventSubtype = 
-  'EinharEncounterEvent' |
-  'AlvaEncounterEvent' |
-  'NikoEncounterEvent' | 
-  'CassiaEncounterEvent' |
-  'JunEncounterEvent' |
-  'DeleriumMirrorEvent' |
-  'HarvestEncounterEvent' |
-  'ExpeditionTujenEncounterEvent' | 'ExpeditionRogEncounterEvent' | 'ExpeditionGwennenEncounterEvent' | 'ExpeditionDannigEncounterEvent'
+export type PoeNPCEventSubtype =
+  | 'EinharEncounterEvent'
+  | 'AlvaEncounterEvent'
+  | 'NikoEncounterEvent'
+  | 'CassiaEncounterEvent'
+  | 'JunEncounterEvent'
+  | 'DeleriumMirrorEvent'
+  | 'HarvestEncounterEvent'
+  | 'ExpeditionTujenEncounterEvent'
+  | 'ExpeditionRogEncounterEvent'
+  | 'ExpeditionGwennenEncounterEvent'
+  | 'ExpeditionDannigEncounterEvent'
 
 export type PoeNPCEncounterEvent = PoeClientLogTextEvent & {
   type: 'NPCEncounterEvent'
@@ -44,7 +47,7 @@ export type PoeCharacterSlainEvent = PoeClientLogTextEvent & {
 }
 
 export type PoeClientLogEvent =
-    PoeZoneEntranceEvent
+  | PoeZoneEntranceEvent
   | PoeInstanceConnectionEvent
   | PoeNPCEncounterEvent
   | PoeCharacterSlainEvent
@@ -161,7 +164,7 @@ export class PoeClientLogService {
     new CharacterSlainEventParser()
   ]
 
-  constructor(tail: Tail|null=null) {
+  constructor(tail: Tail | null = null) {
     if (!tail) {
       const path = this.getLogFilePath()
       if (path) {

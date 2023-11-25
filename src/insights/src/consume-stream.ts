@@ -56,9 +56,8 @@ function loadChanges(paginationCode: string) {
   )
 }
 
-
-AWS.config.update({ region: 'us-east-1' });
-var docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
+AWS.config.update({ region: 'us-east-1' })
+var docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
 var storeCount = 0
 function storeKey(key: string) {
   if (storeCount++ < 100) {
@@ -69,19 +68,19 @@ function storeKey(key: string) {
   var params = {
     TableName: 'RuntimeConfig',
     Item: {
-      "key": "last-psstream-key",
+      key: 'last-psstream-key',
       value: key,
       updatedAt: new Date().toISOString()
     }
-  };
+  }
 
-  docClient.put(params, function(err, data) {
+  docClient.put(params, function (err, data) {
     if (err) {
-      console.log("Error", err);
+      console.log('Error', err)
     } else {
-      console.log("Success", data);
+      console.log('Success', data)
     }
-  });
+  })
 }
 
 const itemGroupingService = new ItemGroupingService()
@@ -185,16 +184,14 @@ resultsSubject.subscribe((data) => {
 
 resultsSubject.subscribe((e) => console.log('got', e.stashes?.length))
 
+from(
+  docClient.get({ TableName: 'RuntimeConfig', Key: { key: 'last-psstream-key' } }).promise()
+).subscribe((e) => {
+  console.log('got doc response', e.Item)
+  const nextKey = e.Item?.value
 
-
-from(docClient.get({ TableName: "RuntimeConfig", Key: { key: "last-psstream-key" } }).promise())
-  .subscribe((e) => {
-    console.log("got doc response", e.Item)
-    const nextKey = e.Item?.value
-
-    resultsSubject.next({
-      next_change_id: nextKey,
-      stashes: []
-    })
+  resultsSubject.next({
+    next_change_id: nextKey,
+    stashes: []
   })
-
+})

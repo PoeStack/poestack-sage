@@ -22,7 +22,7 @@ function destroy() {
   context().router.unregisterRoute(pluginRoute)
 }
 
-export default function(): EchoPluginHook {
+export default function (): EchoPluginHook {
   return {
     start: start,
     destroy: destroy
