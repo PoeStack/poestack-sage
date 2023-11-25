@@ -29,7 +29,6 @@
     "highcharts": "11.2.0",
     "highcharts-react-official": "^3.2.1",
     "i18next": "^23.7.6",
-    "localforage": "1.10.0",
     "mobx": "6.11.0",
     "mobx-keystone": "^1.7.1",
     "mobx-react": "^9.1.0",
