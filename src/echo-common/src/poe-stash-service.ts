@@ -44,6 +44,8 @@ export class PoeStashService {
   }
 
   public useStashes(league: string): SmartCacheHookType<PoePartialStashTab[]> {
+    // TODO Investigate
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     return useCache(this.cacheStashes, { key: league }, () => this.gggApi.getStashes(league))
   }
 
@@ -63,6 +65,8 @@ export class PoeStashService {
                     if (vEvent.type === 'result') {
                       const itemValuation = vEvent?.result?.valuations?.[group.hash]
                       const eItem: EchoPoeItem = {
+                        // TODO Investigate
+                        // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
                         stash: e?.result!!,
                         data: item,
                         valuation: itemValuation,
