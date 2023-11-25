@@ -86,7 +86,7 @@ class InstanceConnectionEventParser implements PoeClientLogEventParser {
   }
 }
 
-let NPCEncounterMap = new Map<string, PoeNPCEventSubtype>([
+const NPCEncounterMap = new Map<string, PoeNPCEventSubtype>([
   ['] Einhar, Beastmaster:', 'EinharEncounterEvent'],
 
   ['] Alva, Master Explorer:', 'AlvaEncounterEvent'],
@@ -109,7 +109,7 @@ let NPCEncounterMap = new Map<string, PoeNPCEventSubtype>([
 
 class NPCEncounterEventParser implements PoeClientLogEventParser {
   parse(raw: string): PoeNPCEncounterEvent | undefined {
-    for (let [key, value] of NPCEncounterMap) {
+    for (const [key, value] of NPCEncounterMap) {
       if (raw.includes(key)) {
         return {
           type: 'NPCEncounterEvent',

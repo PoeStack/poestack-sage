@@ -67,6 +67,8 @@ export function useCache<T>(
     return () => {
       subscription.unsubscribe()
     }
+    // TODO Investigate
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subject, config, load])
 
   const result: SmartCacheHookType<T> = {

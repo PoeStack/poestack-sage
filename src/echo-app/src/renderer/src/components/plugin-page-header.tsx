@@ -30,8 +30,8 @@ const WindowsHeader = () => {
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
-            stroke-line-cap="round"
-            stroke-line-join="round"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             strokeWidth="1"
           >
             <path stroke="none" d="M0 0h24v24H0z" />
@@ -54,8 +54,8 @@ const WindowsHeader = () => {
             fill="none"
             stroke="currentColor"
             strokeWidth="1"
-            stroke-line-cap="round"
-            stroke-line-join="round"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
             <path stroke="none" d="M0 0h24v24H0z" />{' '}
             <rect x="4" y="4" width="16" height="16" rx="2" />
@@ -73,8 +73,8 @@ const WindowsHeader = () => {
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
-            stroke-line-cap="round"
-            stroke-line-join="round"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             strokeWidth="1"
           >
             <line x1="20" y1="4" x2="4" y2="20" /> <line x1="4" y1="4" x2="20" y2="20" />
