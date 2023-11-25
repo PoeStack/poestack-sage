@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "format": "prettier --write ./lib",
-    "lint": "eslint ./lib --fix --resolve-plugins-relative-to ../sage-frontend-tooling"
+    "lint": "eslint ./lib --fix --resolve-plugins-relative-to ../sage-ts-tooling"
   },
   "devDependencies": {
     "@types/node": "^20.9.0",

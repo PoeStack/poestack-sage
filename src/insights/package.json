@@ -7,7 +7,7 @@
     "build": "rimraf ./dist && tsc",
     "start": "npm run build && node ./dist/test.js",
     "format": "prettier --write ./src",
-    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../sage-frontend-tooling"
+    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../sage-ts-tooling"
   },
   "author": "",
   "license": "ISC",

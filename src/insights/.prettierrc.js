@@ -1,3 +1,3 @@
-const config = { ...require('../sage-frontend-tooling/.prettierrc.js') }
+const config = { ...require("../sage-ts-tooling/.prettierrc.js") };
 
-module.exports = config
+module.exports = config;

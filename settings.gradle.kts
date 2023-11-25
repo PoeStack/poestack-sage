@@ -13,7 +13,7 @@ include(
   "src:sage-docs",
   "src:sage-common",
   "src:tactics-image-gen",
-  "src:sage-frontend-tooling",
+  "src:sage-ts-tooling",
   "src:tactics-api"
 )
 

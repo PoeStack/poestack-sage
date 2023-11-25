@@ -10,6 +10,6 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "typescript.tsdk": "src\\sage-frontend-tooling\\node_modules\\typescript\\lib",
+  "typescript.tsdk": "src\\sage-ts-tooling\\node_modules\\typescript\\lib",
   "jest.autoRun": {}
 }
