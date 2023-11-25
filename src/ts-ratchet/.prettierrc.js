@@ -1,11 +1,3 @@
-const config = {
-  trailingComma: 'none',
-  singleQuote: true,
-  semi: false,
-  tabWidth: 2,
-  printWidth: 100,
-  useTabs: false,
-  endOfLine: 'lf'
-}
+const config = { ...require('../sage-frontend-tooling/.prettierrc.js') }
 
 module.exports = config
