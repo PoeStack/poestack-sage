@@ -1,5 +1,5 @@
 {
   "root": true,
-  "extends": "../eslint-config-sage/.eslintrc.json",
+  "extends": "../sage-ts-tooling/.eslintrc.json",
   "parser": "@typescript-eslint/parser"
 }

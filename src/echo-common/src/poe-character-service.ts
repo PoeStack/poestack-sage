@@ -28,10 +28,14 @@ export class PoeCharacterService {
   }
 
   public useCharacterList(config: SmartCacheLoadConfig = { key: 'poe_character_list' }) {
+    // TODO investigate
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     return useCache(this.cacheCharacterList, config, () => this.gggApi.getCharacters())
   }
 
   public useCharacter(name: string, config: SmartCacheLoadConfig = { key: name }) {
+    // TODO Investigate
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     return useCache(this.cacheCharacter, config, () => this.gggApi.getCharacter(name))
   }
 }

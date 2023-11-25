@@ -91,7 +91,7 @@ export class EchoPluginService {
   }
 
   public loadInstalledPlugins() {
-    fs.readdir(this.installedPluginsPath, (err, files) => {
+    fs.readdir(this.installedPluginsPath, (_, files) => {
       files.forEach((file) => {
         const pluginKey = file.slice(0, -3)
         const pluginPath = path.resolve(this.installedPluginsPath, file)

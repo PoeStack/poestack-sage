@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json --composite false",
     "prepublishOnly": "npm run build",
     "format": "prettier --write ./src",
-    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../eslint-config-sage",
+    "lint": "eslint ./src --fix --resolve-plugins-relative-to ../sage-ts-tooling",
     "start": "node dist/index.js",
     "dev": "concurrently \"tsc -p tsconfig.json --watch\" \"nodemon -q dist/index.js\""
   },
@@ -34,6 +34,11 @@
     "concurrently": "^8.2.2",
     "eslint": "^8.53.0",
     "nodemon": "^3.0.1",
+    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2"
   }
