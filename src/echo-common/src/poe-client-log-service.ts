@@ -22,15 +22,25 @@ export type PoeInstanceConnectionEvent = PoeClientLogTextEvent & {
   server: string
 }
 
-export type PoeNPCEventSubtype = 
-  'EinharEncounterEvent' |
-  'AlvaEncounterEvent' |
-  'NikoEncounterEvent' | 
-  'CassiaEncounterEvent' |
-  'JunEncounterEvent' |
-  'DeleriumMirrorEvent' |
-  'HarvestEncounterEvent' |
-  'ExpeditionTujenEncounterEvent' | 'ExpeditionRogEncounterEvent' | 'ExpeditionGwennenEncounterEvent' | 'ExpeditionDannigEncounterEvent'
+export type PoeGeneratingAreaEvent = PoeClientLogTextEvent & {
+  type: 'GeneratingAreaEvent'
+  areaLevel: number
+  areaTag: string
+  seed: number
+}
+
+export type PoeNPCEventSubtype =
+  | 'EinharEncounterEvent'
+  | 'AlvaEncounterEvent'
+  | 'NikoEncounterEvent'
+  | 'CassiaEncounterEvent'
+  | 'JunEncounterEvent'
+  | 'DeliriumMirrorEvent'
+  | 'HarvestEncounterEvent'
+  | 'ExpeditionTujenEncounterEvent'
+  | 'ExpeditionRogEncounterEvent'
+  | 'ExpeditionGwennenEncounterEvent'
+  | 'ExpeditionDannigEncounterEvent'
 
 export type PoeNPCEncounterEvent = PoeClientLogTextEvent & {
   type: 'NPCEncounterEvent'
@@ -44,10 +54,11 @@ export type PoeCharacterSlainEvent = PoeClientLogTextEvent & {
 }
 
 export type PoeClientLogEvent =
-    PoeZoneEntranceEvent
+  | PoeZoneEntranceEvent
   | PoeInstanceConnectionEvent
   | PoeNPCEncounterEvent
   | PoeCharacterSlainEvent
+  | PoeGeneratingAreaEvent
 
 interface PoeClientLogEventParser {
   parse(raw: string): PoeClientLogEvent | undefined
@@ -85,6 +96,24 @@ class InstanceConnectionEventParser implements PoeClientLogEventParser {
   }
 }
 
+class GeneratingAreaEventParser implements PoeClientLogEventParser {
+  parse(raw: string): PoeGeneratingAreaEvent | undefined {
+    if (raw.includes('] Generating level')) {
+      const split = raw.split(' ')
+      return {
+        type: 'GeneratingAreaEvent',
+        raw: raw,
+        systemUptime: Number(split[2]),
+        time: new Date(split[0] + ' ' + split[1]),
+        areaLevel: Number(split[9]),
+        areaTag: split[11].replaceAll('"', ''),
+        seed: Number(split[14])
+      }
+    }
+    return undefined
+  }
+}
+
 let NPCEncounterMap = new Map<string, PoeNPCEventSubtype>([
   ['] Einhar, Beastmaster:', 'EinharEncounterEvent'],
 
@@ -96,7 +125,7 @@ let NPCEncounterMap = new Map<string, PoeNPCEventSubtype>([
 
   ['] Sister Cassia:', 'CassiaEncounterEvent'],
 
-  ['] Strange Voice:', 'DeleriumMirrorEvent'],
+  ['] Strange Voice:', 'DeliriumMirrorEvent'],
 
   ['] Oshabi:', 'HarvestEncounterEvent'],
 
@@ -162,10 +191,11 @@ export class PoeClientLogService {
     new ZoneEnteranceEventParser(),
     new InstanceConnectionEventParser(),
     new NPCEncounterEventParser(),
-    new CharacterSlainEventParser()
+    new CharacterSlainEventParser(),
+    new GeneratingAreaEventParser()
   ]
 
-  constructor(tail: Tail|null=null) {
+  constructor(tail: Tail | null = null) {
     if (!tail) {
       const path = this.getLogFilePath()
       if (path) {
