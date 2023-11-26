@@ -22,15 +22,18 @@ export type PoeInstanceConnectionEvent = PoeClientLogTextEvent & {
   server: string
 }
 
-export type PoeNPCEventSubtype = 
-  'EinharEncounterEvent' |
-  'AlvaEncounterEvent' |
-  'NikoEncounterEvent' | 
-  'CassiaEncounterEvent' |
-  'JunEncounterEvent' |
-  'DeleriumMirrorEvent' |
-  'HarvestEncounterEvent' |
-  'ExpeditionTujenEncounterEvent' | 'ExpeditionRogEncounterEvent' | 'ExpeditionGwennenEncounterEvent' | 'ExpeditionDannigEncounterEvent'
+export type PoeNPCEventSubtype =
+  | 'EinharEncounterEvent'
+  | 'AlvaEncounterEvent'
+  | 'NikoEncounterEvent'
+  | 'CassiaEncounterEvent'
+  | 'JunEncounterEvent'
+  | 'DeleriumMirrorEvent'
+  | 'HarvestEncounterEvent'
+  | 'ExpeditionTujenEncounterEvent'
+  | 'ExpeditionRogEncounterEvent'
+  | 'ExpeditionGwennenEncounterEvent'
+  | 'ExpeditionDannigEncounterEvent'
 
 export type PoeNPCEncounterEvent = PoeClientLogTextEvent & {
   type: 'NPCEncounterEvent'
@@ -44,7 +47,7 @@ export type PoeCharacterSlainEvent = PoeClientLogTextEvent & {
 }
 
 export type PoeClientLogEvent =
-    PoeZoneEntranceEvent
+  | PoeZoneEntranceEvent
   | PoeInstanceConnectionEvent
   | PoeNPCEncounterEvent
   | PoeCharacterSlainEvent
@@ -83,7 +86,7 @@ class InstanceConnectionEventParser implements PoeClientLogEventParser {
   }
 }
 
-let NPCEncounterMap = new Map<string, PoeNPCEventSubtype>([
+const NPCEncounterMap = new Map<string, PoeNPCEventSubtype>([
   ['] Einhar, Beastmaster:', 'EinharEncounterEvent'],
 
   ['] Alva, Master Explorer:', 'AlvaEncounterEvent'],
@@ -106,7 +109,7 @@ let NPCEncounterMap = new Map<string, PoeNPCEventSubtype>([
 
 class NPCEncounterEventParser implements PoeClientLogEventParser {
   parse(raw: string): PoeNPCEncounterEvent | undefined {
-    for (let [key, value] of NPCEncounterMap) {
+    for (const [key, value] of NPCEncounterMap) {
       if (raw.includes(key)) {
         return {
           type: 'NPCEncounterEvent',
@@ -161,7 +164,7 @@ export class PoeClientLogService {
     new CharacterSlainEventParser()
   ]
 
-  constructor(tail: Tail|null=null) {
+  constructor(tail: Tail | null = null) {
     if (!tail) {
       const path = this.getLogFilePath()
       if (path) {

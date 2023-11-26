@@ -1,4 +1,4 @@
-import { CSSProperties } from 'react'
+import { CSSProperties, useCallback } from 'react'
 import { useEffect, useState } from 'react'
 import { bind } from '@react-rxjs/core'
 import jwt from 'jsonwebtoken'
@@ -23,30 +23,33 @@ export function LoginPage() {
   const [inputValue, setInputValue] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  function handleSet(input: string) {
-    const decoded = jwt.decode(input)
-    const oAuthCode = decoded?.['oAuthToken']
-    if (oAuthCode) {
-      dir.writeJson(['auth'], { jwt: input })
-      setErrorMessage(null)
-      GGG_HTTP_UTIL.tokenSubject$.next(oAuthCode)
-    } else {
-      setErrorMessage(t('error.description.jwtDecode', { ns: 'notification' }))
-    }
-  }
+  const handleSet = useCallback(
+    (input: string) => {
+      const decoded = jwt.decode(input)
+      const oAuthCode = decoded?.['oAuthToken']
+      if (oAuthCode) {
+        dir.writeJson(['auth'], { jwt: input })
+        setErrorMessage(null)
+        GGG_HTTP_UTIL.tokenSubject$.next(oAuthCode)
+      } else {
+        setErrorMessage(t('error.description.jwtDecode', { ns: 'notification' }))
+      }
+    },
+    [dir]
+  )
 
   useEffect(() => {
     window.electron.ipcRenderer.on('AUTH_TOKEN_RECEIVED', (_, value) => {
       handleSet(value.TOKEN_RECEIVED)
     })
-  }, [])
+  }, [handleSet])
 
   useEffect(() => {
     if (dir.existsJson('auth')) {
       const loadedAuth = dir.loadJson('auth')
       handleSet(loadedAuth?.['jwt'])
     }
-  }, [])
+  }, [dir, handleSet])
 
   return (
     <div

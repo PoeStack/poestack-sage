@@ -1,5 +1,5 @@
 {
-  "name": "eslint-config-sage",
+  "name": "sage-ts-tooling",
   "version": "1.0.3",
   "private": "true",
   "scripts": {

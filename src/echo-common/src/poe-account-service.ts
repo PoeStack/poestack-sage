@@ -28,10 +28,14 @@ export class PoeAccountService {
   }
 
   public useProfile() {
+    // TODO Investigate
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     return useCache(this.cacheProfile, { key: 'profiles' }, () => this.gggApi.getProfile())
   }
 
   public useLeagues() {
+    // TODO Investigate
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     return useCache(this.cacheLeagues, { key: 'leagues' }, () => this.gggApi.getLeagues())
   }
 }

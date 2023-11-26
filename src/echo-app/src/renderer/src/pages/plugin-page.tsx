@@ -65,7 +65,7 @@ export const PluginPage: React.FC = () => {
       path: 'plugin-settings',
       plugin: 'sage'
     })
-  }, [])
+  }, [router])
 
   useEffect(() => {
     if (import.meta.env.MODE === 'development') {
@@ -81,7 +81,7 @@ export const PluginPage: React.FC = () => {
     } else {
       plugins.loadPlugins()
     }
-  }, [])
+  }, [plugins])
 
   return (
     <>
@@ -111,9 +111,13 @@ const RouterIconNavigator = ({ location }: { location: string }) => {
           .map((navItem, idx) => {
             const Icon = navItem.icon ?? QuestionMarkCircleIcon
             return (
-              <ActionTooltip side="right" align="center" label={navItem.displayname}>
+              <ActionTooltip
+                key={echoRoute.plugin + echoRoute.path + navItem.location + idx}
+                side="right"
+                align="center"
+                label={navItem.displayname}
+              >
                 <Icon
-                  key={echoRoute.plugin + echoRoute.path + navItem.location + idx}
                   className={cn(
                     'h-7 w-7 cursor-pointer',
                     currentRoute === echoRoute && 'text-primary-accent'

@@ -34,19 +34,27 @@ const sub = context().poeClientLog.logEvents$.subscribe((e) => {
               return a + (b?.valuation?.pvs[3] ?? 0)
             }, 0)
 
-            const valueDiff = totalVaulation - (snapshots.value.lastSnapshot?.totalValue ?? 0)
-            const entry = {
+                const valueDiff = totalVaulation - (snapshots.value.lastSnapshot?.totalValue ?? 0)
+                const entry = {
+             
               totalValue: totalVaulation,
+             
               changeValue: valueDiff,
+             
               items: itemsWithValuations
+           
             }
-            snapshots.next({
+                snapshots.next({
+             
               lastZone: e.location,
+             
               lastSnapshot: entry,
+             
               history: [entry, ...snapshots.value.history]
+           
             })
-          })
-      })
+              })
+        })
   }
 })
 context().subscriptions.push(sub)

@@ -18,7 +18,9 @@ Module['_resolveLookupPaths'] = function (request, parent) {
   const orgResults: string[] = []
   try {
     orgResults.push(...orgResolvePath(request, parent))
-  } catch (error) {}
+  } catch (error) {
+    /* empty */
+  }
 
   const mappedResults = orgResults
     .map((e) => e.split('node_modules'))
