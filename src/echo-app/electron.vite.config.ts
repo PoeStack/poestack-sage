@@ -4,7 +4,8 @@ import react from '@vitejs/plugin-react'
 import commonjsExternals from 'vite-plugin-commonjs-externals'
 // @ts-ignore
 import externalNodePackages from './external-packages'
-import { externalizeDepsAndPeerPlugin } from './plugins/externalizeDeps'
+import { externalizeDepsAndPeerDepsPlugin } from './plugins/externalizeDeps'
+import { i18nHotReloadPlugin } from './plugins/i18nHotReload'
 
 // All this modules are now accessible via 'import fs from 'fs'' instead of require which always works but cause problems in libs which use this node modules via import
 const commonjsPackages = Array.from(
@@ -23,7 +24,8 @@ const commonjsPackages = Array.from(
       'jsonwebtoken',
       'axios', // Adapter { https } does only work in node env
       'sqlite3',
-      'tail'
+      'tail',
+      'i18next-fs-backend'
     ],
     ...[
       // Do not include them or the dev serves does not work anymore
@@ -41,12 +43,12 @@ const commonjsPackages = Array.from(
 export default defineConfig({
   main: defineViteConfig(() => {
     return {
-      plugins: [externalizeDepsAndPeerPlugin()]
+      plugins: [externalizeDepsAndPeerDepsPlugin()]
     }
   }),
   preload: defineViteConfig(() => {
     return {
-      plugins: [externalizeDepsAndPeerPlugin()]
+      plugins: [externalizeDepsAndPeerDepsPlugin()]
     }
   }),
   renderer: defineViteConfig((config) => {
@@ -77,7 +79,8 @@ export default defineConfig({
         react(),
         commonjsExternals({ externals: commonjsPackages }),
         // Do not bundle any dependencies in production
-        config.mode === 'production' && externalizeDepsAndPeerPlugin()
+        config.mode === 'production' && externalizeDepsAndPeerDepsPlugin(),
+        i18nHotReloadPlugin()
       ]
     }
   })

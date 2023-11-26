@@ -4,6 +4,7 @@ import { bind } from '@react-rxjs/core'
 import { ECHO_CONTEXT_SERVICE, EchoPluginHook, ActionTooltip, cn } from 'echo-common'
 import { EchoRoute } from 'echo-common/dist/cjs/echo-router'
 import React, { Suspense, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ProfilePage } from './profile-page'
 import { PluginSettingsPage } from './plugin-settings-page'
 // @ts-ignore
@@ -130,5 +131,6 @@ const RouterIconNavigator = ({ location }: { location: string }) => {
 }
 
 const DefaultPage = () => {
-  return <>Welcome to PoeStack - Sage</>
+  const { t } = useTranslation()
+  return <>{t('title.welcomeTo')}</>
 }

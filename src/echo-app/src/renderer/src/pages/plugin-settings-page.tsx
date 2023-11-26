@@ -1,9 +1,11 @@
 import { bind } from '@react-rxjs/core'
 import { APP_CONTEXT } from '../echo-context-factory'
+import { useTranslation } from 'react-i18next'
 
 const [usePlugins] = bind(APP_CONTEXT.plugins.currentPlugins$, {})
 
 export const PluginSettingsPage = () => {
+  const { t } = useTranslation()
   const pluginMap = usePlugins()
   const plugins = Object.values(pluginMap)
 
@@ -12,16 +14,16 @@ export const PluginSettingsPage = () => {
       <div className="p-4 w-full h-full overflow-y-scroll">
         <div className="flex flex-row">
           <div className="flex flex-col">
-            <h1 className="font-semibold text-primary-accent">Plugins</h1>
+            <h1 className="font-semibold text-primary-accent">{t('title.pluginsTableTitle')}</h1>
           </div>
         </div>
         <div className="pt-4 flex-row flex w-full">
           <table className="bg-secondary-surface table-auto border-separate border-spacing-3 text-left">
             <thead>
               <tr className="">
-                <th>Plugin Name</th>
-                <th>Version</th>
-                <th>Enabled</th>
+                <th>{t('label.pluginName')}</th>
+                <th>{t('label.version')}</th>
+                <th>{t('label.enabled')}</th>
               </tr>
             </thead>
             <tbody>
@@ -46,7 +48,7 @@ export const PluginSettingsPage = () => {
                 ))}
               {(plugins || []).length === 0 && (
                 <tr>
-                  <td>No Plugins installed</td>
+                  <td>{t('label.noPluginsInstalled')}</td>
                 </tr>
               )}
             </tbody>

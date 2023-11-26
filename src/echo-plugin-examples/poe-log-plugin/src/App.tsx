@@ -3,13 +3,13 @@ import { PoeZoneEntranceEvent } from 'echo-common'
 import { BehaviorSubject, combineLatestWith, filter, interval, map } from 'rxjs'
 import { context } from './entry'
 
-const lastZone$ = new BehaviorSubject<PoeZoneEntranceEvent>(null)
+const lastZone$ = new BehaviorSubject<PoeZoneEntranceEvent | null>(null)
 context()
   .poeClientLog.logEvents$.pipe(filter((e) => e.type == 'ZoneEntranceEvent'))
   .subscribe(lastZone$)
 
 const zones: Array<PoeZoneInstance> = []
-let lastZoneActual: PoeZoneInstance = null
+let lastZoneActual: PoeZoneInstance | null = null
 
 interface PoeZoneInstance {
   location: string
@@ -34,7 +34,7 @@ export const [useCurrentZone] = bind(
 )
 
 const App = () => {
-  const currentZone: { location: string; time: Date; timeDelta: number } = useCurrentZone()
+  const currentZone = useCurrentZone()
 
   if (!currentZone) {
     return <>Change zone to start plugin.</>
@@ -72,7 +72,7 @@ const App = () => {
       </div>
       {zones.length > 0 &&
         zones.map((zone) => (
-          <div className='flex flex-col bg-slate-300 bg-primary-surface'>
+          <div className="flex flex-col bg-slate-300 bg-primary-surface">
             <p>
               At: {zone.time.toISOString()} | In {zone.location} for{' '}
               {Math.round((zone.timeDelta / 1000) * 10) / 10}

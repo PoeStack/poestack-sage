@@ -1,11 +1,11 @@
 const config = {
-  trailingComma: 'none',
+  trailingComma: "none",
   singleQuote: true,
   semi: false,
   tabWidth: 2,
   printWidth: 100,
   useTabs: false,
-  endOfLine: 'lf'
+  endOfLine: "lf"
 }
 
 module.exports = config
