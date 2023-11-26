@@ -61,7 +61,7 @@ function uploadDbToS3() {
     // Upload the file to a specified bucket
     const uploadParams = {
       Bucket: "sage-insights-cache",
-      Key: `test-${Date.now()}.db`,
+      Key: `listings/test-${Date.now()}.db`,
       Body: fileStream,
     };
 
@@ -77,10 +77,7 @@ function uploadDbToS3() {
   }
 }
 
-
-
 const httpUtil = new HttpUtil()
-
 function loadChanges(paginationCode: string) {
   return httpUtil.get<PoePublicStashResponse>(
     `https://api.pathofexile.com/public-stash-tabs?id=${paginationCode}`,
@@ -95,7 +92,7 @@ function loadChanges(paginationCode: string) {
 
 const itemGroupingService = new ItemGroupingService()
 const resultsSubject = new Subject<PoePublicStashResponse>()
-resultsSubject.pipe(debounceTime(3000)).subscribe((e) => {
+resultsSubject.pipe(debounceTime(500)).subscribe((e) => {
   console.log('loading', e.next_change_id)
   loadChanges(e.next_change_id).subscribe((e) => {
     resultsSubject.next(e)
@@ -198,7 +195,7 @@ resultsSubject.subscribe((data) => {
 var resultCounter = 0
 resultsSubject.subscribe((e) => {
   console.log("got result", resultCounter)
-  if (resultCounter++ > 20) {
+  if (resultCounter++ > 1000) {
     resultCounter = 0
     console.info("starting s3 write")
     uploadDbToS3()

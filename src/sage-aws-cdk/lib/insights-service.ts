@@ -55,7 +55,7 @@ export class InsightsService {
         },
         environmentFiles: [EnvironmentFile.fromBucket(sageStack.configBucket, 'insights.env')]
       })
-      cacheBucket.grantReadWrite(streamConsumerTask.executionRole!!)
+      cacheBucket.grantReadWrite(streamConsumerTask.taskRole!!)
       sageStack.configBucket.grantRead(streamConsumerTask.executionRole!!)
       sageStack.runtimeConfigTable.grantFullAccess(streamConsumerTask.executionRole!!)
       new aws_ecs.Ec2Service(sageStack, 'InsStreamConsumerSvc', {
