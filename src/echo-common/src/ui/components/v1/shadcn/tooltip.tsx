@@ -5,7 +5,7 @@ import { cn } from '../../../lib/utils'
 
 const TooltipProvider = TooltipPrimitive.Provider
 
-const Tooltip = TooltipPrimitive.Root
+const TooltipRoot = TooltipPrimitive.Root
 
 const TooltipTrigger = TooltipPrimitive.Trigger
 
@@ -25,4 +25,12 @@ const TooltipContent = React.forwardRef<
 ))
 TooltipContent.displayName = TooltipPrimitive.Content.displayName
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+export const Tooltip: typeof TooltipRoot & {
+  Trigger: typeof TooltipTrigger
+  Content: typeof TooltipContent
+  Provider: typeof TooltipProvider
+} = Object.assign(TooltipRoot, {
+  Trigger: TooltipTrigger,
+  Content: TooltipContent,
+  Provider: TooltipProvider
+})
