@@ -72,8 +72,7 @@ function uploadDbToS3() {
       }
     });
   } catch (error) {
-
-    console.log("s3 upload error 2", err);
+    console.log("s3 upload error 2", error);
   }
 }
 
@@ -199,7 +198,7 @@ resultsSubject.subscribe((e) => {
   if (resultCounter++ > 20) {
     resultCounter = 0
     console.info("starting s3 write")
-    uploadDbToS3()
+
   }
 })
 
