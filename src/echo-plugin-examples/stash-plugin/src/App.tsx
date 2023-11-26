@@ -5,7 +5,6 @@ import { EchoPoeItem, validResults } from 'echo-common'
 import { useTranslation } from 'react-i18next'
 
 const App = () => {
-  const { t } = useTranslation()
   const league = 'Ancestor'
 
   const [searchString, setSearchString] = useState('')
@@ -28,7 +27,7 @@ const App = () => {
   return (
     <>
       <div className="flex flex-col h-full w-full pt-2 pl-2 pr-2">
-        <div>{t('label.status') + status}</div>
+        <div>{'Status: ' + status}</div>
         <div className="flex-shrink-0 flex flex-row gap-2 overflow-x-scroll pb-5 pt-2">
           {(stashes ?? []).map((partialTab) => (
             <div
@@ -62,7 +61,7 @@ const App = () => {
         <div className="flex-shrink-0">
           <input
             type="text"
-            placeholder={t('label.searchPlaceholder')}
+            placeholder={'Search...'}
             value={searchString}
             onChange={(e) => setSearchString(e.target.value)}
             className="w-full px-2 py-0.5 bg-input-surface rounded-lg shadow-md border-0 focus:outline-none focus:ring focus:border-primary-accent"

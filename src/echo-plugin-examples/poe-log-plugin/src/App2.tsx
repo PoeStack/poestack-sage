@@ -34,27 +34,19 @@ const sub = context().poeClientLog.logEvents$.subscribe((e) => {
               return a + (b?.valuation?.pvs[3] ?? 0)
             }, 0)
 
-                const valueDiff = totalVaulation - (snapshots.value.lastSnapshot?.totalValue ?? 0)
-                const entry = {
-             
+            const valueDiff = totalVaulation - (snapshots.value.lastSnapshot?.totalValue ?? 0)
+            const entry = {
               totalValue: totalVaulation,
-             
               changeValue: valueDiff,
-             
               items: itemsWithValuations
-           
             }
-                snapshots.next({
-             
+            snapshots.next({
               lastZone: e.location,
-             
               lastSnapshot: entry,
-             
               history: [entry, ...snapshots.value.history]
-           
             })
-              })
-        })
+          })
+      })
   }
 })
 context().subscriptions.push(sub)
@@ -62,7 +54,6 @@ context().subscriptions.push(sub)
 const [useSnapshots] = bind(snapshots, { history: [] })
 
 const App2 = () => {
-  const { t } = useTranslation()
   const snapshots = useSnapshots()
   return (
     <>
@@ -79,7 +70,7 @@ const App2 = () => {
             })
           }}
         >
-          {t('label.fakeEvent')}
+          Fake Event
         </div>
       </div>
       <div>
