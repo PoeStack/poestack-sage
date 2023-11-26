@@ -5,16 +5,32 @@
   "main": "./dist/esm/index.js",
   "module": "./dist/cjs/index.js",
   "files": [
-    "dist/"
+    "dist/",
+    "*.d.ts"
   ],
   "exports": {
-    "development": {
-      "import": "./src/index.ts",
-      "require": "./src/index.ts"
+    ".": {
+      "development": {
+        "import": "./src/index.ts",
+        "require": "./src/index.ts"
+      },
+      "default": {
+        "import": "./dist/esm/index.js",
+        "require": "./dist/cjs/index.js",
+        "types": "./dist/cjs/index.d.ts"
+      }
     },
-    "default": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+    "./components-v1": {
+      "development": {
+        "import": "./src/ui/components/v1/index.ts",
+        "require": "./src/ui/components/v1/index.ts",
+        "types": "./dist/ui/components/v1/index.d.ts"
+      },
+      "default": {
+        "import": "./dist/esm/ui/components/v1/index.js",
+        "require": "./dist/cjs/ui/components/v1/index.js",
+        "types": "./dist/ui/components/v1/index.d.ts"
+      }
     }
   },
   "scripts": {
