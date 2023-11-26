@@ -198,7 +198,7 @@ resultsSubject.subscribe((e) => {
   if (resultCounter++ > 20) {
     resultCounter = 0
     console.info("starting s3 write")
-
+    uploadDbToS3()
   }
 })
 
