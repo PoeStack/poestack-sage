@@ -8,6 +8,7 @@ import { drizzle } from 'drizzle-orm/libsql';
 import { listings } from './consume-schema';
 import fs from "fs"
 import AWS from 'aws-sdk';
+import { SQLiteInsertBase } from 'drizzle-orm/sqlite-core';
 
 const sqlClient = createClient({ url: "file:psstream-3.db" })
 const listingsDb = drizzle(sqlClient)
@@ -94,7 +95,7 @@ function loadChanges(paginationCode: string) {
 
 const itemGroupingService = new ItemGroupingService()
 const resultsSubject = new Subject<PoePublicStashResponse>()
-resultsSubject.pipe(debounceTime(5000)).subscribe((e) => {
+resultsSubject.pipe(debounceTime(3000)).subscribe((e) => {
   console.log('loading', e.next_change_id)
   loadChanges(e.next_change_id).subscribe((e) => {
     resultsSubject.next(e)
@@ -155,7 +156,7 @@ resultsSubject.subscribe((data) => {
           }
         }
 
-        for (const [itemGroupHashString, data] of Object.entries(toWrite)) {
+        const batch = Object.entries(toWrite).map(([itemGroupHashString, data]) => {
           updates++
           const shard = parseInt(itemGroupHashString, 16) % 5
 
@@ -182,8 +183,10 @@ resultsSubject.subscribe((data) => {
               quantity: data.stackSize
             }
           })
-          from(insert).subscribe()
-        }
+
+          return insert
+        })
+        from(listingsDb.batch(batch as unknown as any)).subscribe()
       }
     }
   } catch (error) {
