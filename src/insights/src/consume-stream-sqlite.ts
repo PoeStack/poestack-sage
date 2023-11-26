@@ -1,8 +1,17 @@
 import { HttpUtil, ItemGroupingService, PoePublicStashResponse } from 'sage-common'
 import objectHash from 'object-hash'
-import { debounceTime, Subject } from 'rxjs'
+import { debounceTime, from, Subject } from 'rxjs'
 import process from 'process'
-import Database from 'libsql'
+import { migrate } from 'drizzle-orm/libsql/migrator';
+import { createClient } from '@libsql/client';
+import { drizzle } from 'drizzle-orm/libsql';
+import { listings } from './consume-schema';
+import fs from "fs"
+import AWS from 'aws-sdk';
+
+const sqlClient = createClient({ url: "file:psstream-3.db" })
+const listingsDb = drizzle(sqlClient)
+migrate(listingsDb, { migrationsFolder: 'test.sql' })
 
 const divineTypes = new Set(['d', 'div', 'divine'])
 const chaosTypes = new Set(['c', 'chaos'])
@@ -42,6 +51,28 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
   return null
 }
 
+const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
+function uploadDbToS3() {
+  const fileStream = fs.createReadStream("psstream-3.db");
+
+  // Upload the file to a specified bucket
+  const uploadParams = {
+    Bucket: "sage-insights-cache",
+    Key: `test-${Date.now()}.db`,
+    Body: fileStream,
+  };
+
+  s3.upload(uploadParams, function(err, data) {
+    if (err) {
+      console.log("Error", err);
+    } if (data) {
+      console.log("Upload Success", data.Location);
+    }
+  });
+}
+
+
+
 const httpUtil = new HttpUtil()
 
 function loadChanges(paginationCode: string) {
@@ -58,18 +89,12 @@ function loadChanges(paginationCode: string) {
 
 const itemGroupingService = new ItemGroupingService()
 const resultsSubject = new Subject<PoePublicStashResponse>()
-
 resultsSubject.pipe(debounceTime(5000)).subscribe((e) => {
   console.log('loading', e.next_change_id)
   loadChanges(e.next_change_id).subscribe((e) => {
     resultsSubject.next(e)
   })
 })
-
-const db = new Database('psstream-2.db')
-db.exec(
-  'CREATE TABLE IF NOT EXISTS listings (id TEXT PRIMARY KEY, groupHash TEXT, quantity INTEGER, value TEXT)'
-)
 
 resultsSubject.subscribe((data) => {
   try {
@@ -135,9 +160,24 @@ resultsSubject.subscribe((data) => {
             g: itemGroupHashString
           })
 
-          db.exec(
-            `INSERT INTO listings (id, groupHash, quantity, value) VALUES ('${id}', '${itemGroupHashString}', ${data.stackSize}, '${data.value}')`
-          )
+          const insert = listingsDb.insert(listings).values({
+            id: id,
+            listedAtTimestamp: Date.now(),
+            shard: `${data.tag}-${shard}`,
+            itemGroupHashString: itemGroupHashString,
+            value: data.value,
+            valueType: data.currencyType,
+            quantity: data.stackSize
+          }).onConflictDoUpdate({
+            target: listings.id,
+            set: {
+              listedAtTimestamp: Date.now(),
+              value: data.value,
+              valueType: data.currencyType,
+              quantity: data.stackSize
+            }
+          })
+          from(insert).subscribe((e) => console.log("wrote", e?.toJSON()))
         }
       }
     }
@@ -145,7 +185,16 @@ resultsSubject.subscribe((data) => {
     console.error(error)
   }
 })
-resultsSubject.subscribe((e) => console.log('got', e.stashes?.length))
+
+
+var resultCounter = 0
+resultsSubject.subscribe((e) => {
+  console.log("got result", resultCounter)
+  if (resultCounter++ > 1000) {
+    resultCounter = 0
+    uploadDbToS3()
+  }
+})
 
 resultsSubject.next({
   next_change_id: '2169196834-2160857942-2091476413-2321414968-2254238271',
