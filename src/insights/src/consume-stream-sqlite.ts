@@ -11,7 +11,7 @@ import AWS from 'aws-sdk';
 
 const sqlClient = createClient({ url: "file:psstream-3.db" })
 const listingsDb = drizzle(sqlClient)
-migrate(listingsDb, { migrationsFolder: 'test.sql' })
+migrate(listingsDb, { migrationsFolder: 'src/insights/test.sql' })
 
 const divineTypes = new Set(['d', 'div', 'divine'])
 const chaosTypes = new Set(['c', 'chaos'])
