@@ -1,20 +1,29 @@
 import { useCallback, useEffect, useState } from 'react'
-import { SmartCache, SmartCacheEvent, SmartCacheLoadConfig, SmartCacheResultEvent, SmartCacheStore } from './smart-cache'
+import {
+  SmartCache,
+  SmartCacheEvent,
+  SmartCacheLoadConfig,
+  SmartCacheResultEvent,
+  SmartCacheStore
+} from './smart-cache'
 import { filterNullish } from 'ts-ratchet'
 import { Observable, UnaryFunction, map, filter, pipe, OperatorFunction, tap } from 'rxjs'
 
-export function validResultsWithNullish<T>(): UnaryFunction<Observable<SmartCacheEvent<T>>, Observable<T | null | undefined>> {
+export function validResultsWithNullish<T>(): UnaryFunction<
+  Observable<SmartCacheEvent<T>>,
+  Observable<T | null | undefined>
+> {
   return pipe(
-    filter((x) => x.type === "result") as OperatorFunction<SmartCacheEvent<T>, SmartCacheResultEvent<T>>,
-    map((e) => e.result),
+    filter((x) => x.type === 'result') as OperatorFunction<
+      SmartCacheEvent<T>,
+      SmartCacheResultEvent<T>
+    >,
+    map((e) => e.result)
   )
 }
 
 export function validResults<T>(): UnaryFunction<Observable<SmartCacheEvent<T>>, Observable<T>> {
-  return pipe(
-    validResultsWithNullish(),
-    filterNullish()
-  )
+  return pipe(validResultsWithNullish(), filterNullish())
 }
 
 export type SmartCacheHookType<T> = SmartCacheStore<T> & {
@@ -58,6 +67,8 @@ export function useCache<T>(
     return () => {
       subscription.unsubscribe()
     }
+    // TODO Investigate
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subject, config, load])
 
   const result: SmartCacheHookType<T> = {

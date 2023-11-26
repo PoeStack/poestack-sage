@@ -8,21 +8,29 @@ import { EchoPoeItem } from './poe-stash-service'
 export class SageValuationService {
   private httpUtil = new HttpUtil()
 
-  constructor(private echoDir: EchoDirService, private itemGroupingService: ItemGroupingService) { }
+  constructor(
+    private echoDir: EchoDirService,
+    private itemGroupingService: ItemGroupingService
+  ) {}
 
-  public cacheValuationShards = new SmartCache<SageValuationShard>(this.echoDir, "sage-valuations")
+  public cacheValuationShards = new SmartCache<SageValuationShard>(this.echoDir, 'sage-valuations')
 
   public withValuations(league: string, items: PoeItem[]): Observable<EchoPoeItem> {
     return this.itemGroupingService.withGroup(items).pipe(
-      mergeMap((e) => this.itemValuation(league, e.data).pipe(
-        validResultsWithNullish(),
-        tap((e) => console.log("shard", e)),
-        map((shard) => ({ ...e, valuation: shard?.valuations?.[e.group?.hash ?? ""] }))
-      ))
+      mergeMap((e) =>
+        this.itemValuation(league, e.data).pipe(
+          validResultsWithNullish(),
+          tap((e) => console.log('shard', e)),
+          map((shard) => ({ ...e, valuation: shard?.valuations?.[e.group?.hash ?? ''] }))
+        )
+      )
     )
   }
 
-  public itemValuation(league: string, item: PoeItem): Observable<SmartCacheEvent<SageValuationShard>> {
+  public itemValuation(
+    league: string,
+    item: PoeItem
+  ): Observable<SmartCacheEvent<SageValuationShard>> {
     const group = this.itemGroupingService.group(item)
     if (group) {
       return this.valuation(league, group)
@@ -32,11 +40,7 @@ export class SageValuationService {
 
   public valuation(league: string, group: SageItemGroup) {
     const key = `${group.tag}_${group.shard}_${league}`.replaceAll(' ', '_')
-    return this.cacheValuationShards
-      .load(
-        { key: key },
-        () => this.loadInternal(key)
-      )
+    return this.cacheValuationShards.load({ key: key }, () => this.loadInternal(key))
   }
 
   private loadInternal(key: string) {

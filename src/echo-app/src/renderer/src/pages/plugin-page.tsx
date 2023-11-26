@@ -15,12 +15,16 @@ const [useCurrentRoutes] = bind(APP_CONTEXT.router.routes$)
 
 export const PluginPage: React.FC = () => {
   const { router, plugins } = APP_CONTEXT
+  const mounted = React.useRef(false)
 
   const currentRoute = useCurrentRoute()
 
   const PluginBody = currentRoute?.page ?? DefaultPage
 
   useEffect(() => {
+    // Prevent React.StrictMode duplicate execution in devMode to keep current page in HMR (Exception)
+    if (mounted.current) return
+    mounted.current = true
     const homeRoute: EchoRoute = {
       navItems: [
         {
@@ -60,7 +64,7 @@ export const PluginPage: React.FC = () => {
       path: 'plugin-settings',
       plugin: 'sage'
     })
-  }, [])
+  }, [router])
 
   useEffect(() => {
     if (import.meta.env.MODE === 'development') {
@@ -76,7 +80,7 @@ export const PluginPage: React.FC = () => {
     } else {
       plugins.loadPlugins()
     }
-  }, [])
+  }, [plugins])
 
   return (
     <>
@@ -107,18 +111,16 @@ const RouterIconNavigator = ({ location }: { location: string }) => {
             const Icon = navItem.icon ?? QuestionMarkCircleIcon
             return (
               <ActionTooltip
-                side='right'
-                align='center'
+                key={echoRoute.plugin + echoRoute.path + navItem.location + idx}
+                side="right"
+                align="center"
                 label={navItem.displayname}
               >
                 <Icon
-                  key={echoRoute.plugin + echoRoute.path + navItem.location + idx}
-                  className={
-                    cn(
-                      'h-7 w-7 cursor-pointer' ,
-                      currentRoute === echoRoute && 'text-primary-accent'
-                    )
-                  }
+                  className={cn(
+                    'h-7 w-7 cursor-pointer',
+                    currentRoute === echoRoute && 'text-primary-accent'
+                  )}
                   onClick={() => {
                     APP_CONTEXT.router.push(echoRoute)
                   }}

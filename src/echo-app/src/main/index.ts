@@ -64,7 +64,7 @@ app.whenReady().then(() => {
   createWindow()
 
   if (is.dev) {
-    function notifyOfRemoteAuth(token: string) {
+    const notifyOfRemoteAuth = (token: string) => {
       mainWindow?.webContents.send('AUTH_TOKEN_RECEIVED', { TOKEN_RECEIVED: token })
     }
     if (!server || !server.listening) {

@@ -44,6 +44,8 @@ export class PoeStashService {
   }
 
   public useStashes(league: string): SmartCacheHookType<PoePartialStashTab[]> {
+    // TODO Investigate
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     return useCache(this.cacheStashes, { key: league }, () => this.gggApi.getStashes(league))
   }
 
@@ -51,40 +53,40 @@ export class PoeStashService {
     league: string,
     stashId: string
   ): Observable<SmartCacheEvent<EchoPoeItem>> {
-    return this.cacheStashContent
-      .load({ key: `${league}_${stashId}` }, () => this.gggApi.getStashContent(league, stashId))
-      .pipe(
-        mergeMap((e) => {
-          if (e.type === 'result') {
-            return from(e.result?.items ?? []).pipe(
-              mergeMap((item) => {
-                const group = this.groupingService.group(item)
-                if (group) {
-                  return this.valuationApi.valuation(league, group).pipe(
-                    mergeMap((vEvent) => {
-                      if (vEvent.type === 'result') {
-                        const itemValuation = vEvent?.result?.valuations?.[group.hash]
-                        const eItem: EchoPoeItem = {
-                          stash: e?.result!!,
-                          data: item,
-                          valuation: itemValuation,
-                          group: group
-                        }
-                        return of({ ...vEvent, result: eItem })
+    return this.stashTab(league, stashId).pipe(
+      mergeMap((e) => {
+        if (e.type === 'result') {
+          return from(e.result?.items ?? []).pipe(
+            mergeMap((item) => {
+              const group = this.groupingService.group(item)
+              if (group) {
+                return this.valuationApi.valuation(league, group).pipe(
+                  mergeMap((vEvent) => {
+                    if (vEvent.type === 'result') {
+                      const itemValuation = vEvent?.result?.valuations?.[group.hash]
+                      const eItem: EchoPoeItem = {
+                        // TODO Investigate
+                        // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+                        stash: e?.result!!,
+                        data: item,
+                        valuation: itemValuation,
+                        group: group
                       }
-                      return of(vEvent)
-                    })
-                  )
-                }
-                return of(null)
-              }),
-              filterNullish()
-            )
-          } else {
-            return of(e)
-          }
-        })
-      )
+                      return of({ ...vEvent, result: eItem })
+                    }
+                    return of(vEvent)
+                  })
+                )
+              }
+              return of(null)
+            }),
+            filterNullish()
+          )
+        } else {
+          return of(e)
+        }
+      })
+    )
   }
 
   public snapshot(league: string, stashes: string[]): Observable<SmartCacheEvent<EchoPoeItem>> {

@@ -13,7 +13,7 @@ include(
   "src:sage-docs",
   "src:sage-common",
   "src:tactics-image-gen",
-  "src:eslint-config-sage",
+  "src:sage-ts-tooling",
   "src:tactics-api"
 )
 
@@ -25,3 +25,6 @@ File("src/echo-plugins").listFiles()?.forEach {
   include("src:echo-plugins:${it.name}")
 }
 
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version("0.4.0")
+}

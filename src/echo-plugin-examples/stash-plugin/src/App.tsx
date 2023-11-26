@@ -34,23 +34,23 @@ const App = () => {
               style={{ backgroundColor: `#${partialTab.metadata.colour}` }}
               className="flex-shrink-0 cursor-pointer py-2 px-4 shadow-md no-underline rounded-full  text-white text-sm hover:text-white hover:bg-blue-light focus:outline-none active:shadow-none mr-2"
               onClick={() =>
-                context().poeStash.snapshot(
-                  league,
-                  [partialTab.id!!]
-                ).pipe(
-                  tap(((e) => {
-                    if (e.type === "rate-limit") {
-                      setStatus(`${e.type}, ${Date.now() + e.limitExpiresMs}`)
-                    } else {
-                      setStatus(e.type)
-                    }
-                  })),
-                  validResults(),
-                  toArray()
-                ).subscribe((items) => {
-                  setStatus(`loaded ${items.length}`)
-                  console.log("final items", items)
-                })
+                context()
+                  .poeStash.snapshot(league, [partialTab.id!!])
+                  .pipe(
+                    tap((e) => {
+                      if (e.type === 'rate-limit') {
+                        setStatus(`${e.type}, ${Date.now() + e.limitExpiresMs}`)
+                      } else {
+                        setStatus(e.type)
+                      }
+                    }),
+                    validResults(),
+                    toArray()
+                  )
+                  .subscribe((items) => {
+                    setStatus(`loaded ${items.length}`)
+                    console.log('final items', items)
+                  })
               }
             >
               {partialTab.name}

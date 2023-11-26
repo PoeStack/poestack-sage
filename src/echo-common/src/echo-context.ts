@@ -17,6 +17,6 @@ export type EchoContext = {
   poeCharacters: PoeCharacterService
   poeClientLog: PoeClientLogService
   poeStash: PoeStashService
-  poeValuations: SageValuationService,
+  poeValuations: SageValuationService
   subscriptions: Subscription[]
 }

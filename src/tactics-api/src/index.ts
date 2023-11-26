@@ -12,7 +12,7 @@ const sageBackendServer = Fastify({
 sageBackendServer.register(helmet)
 
 sageBackendServer.register(cors, {
-  origin: "*"
+  origin: '*'
 })
 
 sageBackendServer.register(discordRoutes)
