@@ -4,10 +4,10 @@ import { IProfile } from '../../interfaces/profile.interface'
 import { useStore } from '../../hooks/useStore'
 
 export function ProfileMenu() {
-  const store = useStore()
-  const profiles = store?.accountStore?.activeAccount?.profiles
-  const activeProfile = store?.accountStore?.activeAccount?.activeProfile
-  const setActiveProfile = store.accountStore.activeAccount?.setActiveProfile
+  const { accountStore } = useStore()
+  const profiles = accountStore.activeAccount?.profiles
+  const activeProfile = accountStore.activeAccount?.activeProfile
+  const setActiveProfile = accountStore.activeAccount?.setActiveProfile
   const hasProfiles = profiles && profiles?.length > 0
 
   return (

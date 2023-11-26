@@ -10,6 +10,8 @@ import {
   profilePriceLeagueRef,
   profileStashTabRef
 } from '../../store/domains/profile'
+import { Button } from 'echo-common/components-v1'
+import { Plus } from 'lucide-react'
 
 type AddProfilePayload = {
   name: string
@@ -44,52 +46,55 @@ export function AddProfileDialog() {
   console.log(errors)
 
   return (
-    <div className="flex items-center justify-center">
-      <button
-        className="h-full"
+    <>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8"
         onClick={() => {
           setDialogOpen(true)
         }}
       >
-        <PlusIcon className="w-5 h-5" />
-      </button>
+        <Plus className="w-5 h-5" />
+      </Button>
+      <div className="flex items-center justify-center">
+        <Dialog
+          open={dialogOpen}
+          onClose={() => {
+            setDialogOpen(false)
+          }}
+          className="relative z-50"
+        >
+          <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
-      <Dialog
-        open={dialogOpen}
-        onClose={() => {
-          setDialogOpen(false)
-        }}
-        className="relative z-50"
-      >
-        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-
-        <div className="z-51 fixed inset-0 flex w-screen items-center justify-center">
-          <Dialog.Panel className="rounded flex flex-col h-4/5 w-[500px] bg-secondary-surface items-center py-4 gap-4">
-            <Dialog.Title className="text-white font-bold p-6">Add Profile</Dialog.Title>
-            <form className=" w-[400px]" onSubmit={handleSubmit(onSubmit)}>
-              <div className="block flex flex-col gap-5">
-                <div className="block flex flex-row gap-3 justify-start">
-                  <label className="text-primary-text">Profile Name</label>
-                  <input
-                    className="peer text-primary-text rounded bg-input-surface pl-2"
-                    {...register('name', { required: true })}
-                  />
-                  {errors.name && (
-                    <ExclamationCircleIcon fill="red" className="w-5 h-5 peer-invalid:visible" />
-                  )}
+          <div className="z-51 fixed inset-0 flex w-screen items-center justify-center">
+            <Dialog.Panel className="rounded flex flex-col h-4/5 w-[500px] bg-secondary-surface items-center py-4 gap-4">
+              <Dialog.Title className="text-white font-bold p-6">Add Profile</Dialog.Title>
+              <form className=" w-[400px]" onSubmit={handleSubmit(onSubmit)}>
+                <div className="block flex flex-col gap-5">
+                  <div className="block flex flex-row gap-3 justify-start">
+                    <label className="text-primary-text">Profile Name</label>
+                    <input
+                      className="peer text-primary-text rounded bg-input-surface pl-2"
+                      {...register('name', { required: true })}
+                    />
+                    {errors.name && (
+                      <ExclamationCircleIcon fill="red" className="w-5 h-5 peer-invalid:visible" />
+                    )}
+                  </div>
+                  <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold rounded mb-1"
+                    disabled={!isValid}
+                    type="submit"
+                  >
+                    Create Profile
+                  </button>
                 </div>
-                <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold rounded mb-1"
-                  disabled={!isValid}
-                  type="submit"
-                >
-                  Create Profile
-                </button>
-              </div>
-            </form>
-          </Dialog.Panel>
-        </div>
-      </Dialog>
-    </div>
+              </form>
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+      </div>
+    </>
   )
 }
