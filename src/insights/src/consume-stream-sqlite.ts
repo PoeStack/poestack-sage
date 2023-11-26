@@ -53,22 +53,28 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
 
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 function uploadDbToS3() {
-  const fileStream = fs.createReadStream("psstream-3.db");
+  try {
 
-  // Upload the file to a specified bucket
-  const uploadParams = {
-    Bucket: "sage-insights-cache",
-    Key: `test-${Date.now()}.db`,
-    Body: fileStream,
-  };
+    const fileStream = fs.createReadStream("psstream-3.db");
 
-  s3.upload(uploadParams, function(err, data) {
-    if (err) {
-      console.log("Error", err);
-    } if (data) {
-      console.log("Upload Success", data.Location);
-    }
-  });
+    // Upload the file to a specified bucket
+    const uploadParams = {
+      Bucket: "sage-insights-cache",
+      Key: `test-${Date.now()}.db`,
+      Body: fileStream,
+    };
+
+    s3.upload(uploadParams, function(err, data) {
+      if (err) {
+        console.log("s3 upload error", err);
+      } if (data) {
+        console.log("s3 upload success", data.Location);
+      }
+    });
+  } catch (error) {
+
+    console.log("s3 upload error 2", err);
+  }
 }
 
 
@@ -177,7 +183,7 @@ resultsSubject.subscribe((data) => {
               quantity: data.stackSize
             }
           })
-          from(insert).subscribe((e) => console.log("wrote", e?.toJSON()))
+          from(insert).subscribe()
         }
       }
     }
@@ -190,8 +196,9 @@ resultsSubject.subscribe((data) => {
 var resultCounter = 0
 resultsSubject.subscribe((e) => {
   console.log("got result", resultCounter)
-  if (resultCounter++ > 1000) {
+  if (resultCounter++ > 20) {
     resultCounter = 0
+    console.info("starting s3 write")
     uploadDbToS3()
   }
 })
