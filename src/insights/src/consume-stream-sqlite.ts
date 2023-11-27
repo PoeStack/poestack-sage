@@ -195,7 +195,7 @@ resultsSubject.subscribe((data) => {
   }
 })
 
-var resultCounter = 0
+let resultCounter = 0
 resultsSubject.subscribe((e) => {
   console.log('got result', resultCounter)
   if (resultCounter++ > 1000) {

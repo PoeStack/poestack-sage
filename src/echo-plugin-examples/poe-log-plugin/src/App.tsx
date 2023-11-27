@@ -5,7 +5,9 @@ import { context } from './entry'
 
 const lastZone$ = new BehaviorSubject<PoeZoneEntranceEvent | null>(null)
 context()
-  .poeClientLog.logEvents$.pipe(filter((e) => e.type == 'ZoneEntranceEvent'))
+  .poeClientLog.logEvents$.pipe(
+    filter((e): e is PoeZoneEntranceEvent => e.type === 'ZoneEntranceEvent')
+  )
   .subscribe(lastZone$)
 
 const zones: Array<PoeZoneInstance> = []
@@ -72,7 +74,10 @@ const App = () => {
       </div>
       {zones.length > 0 &&
         zones.map((zone) => (
-          <div className="flex flex-col bg-slate-300 bg-primary-surface">
+          <div
+            key={`${zone.location}_${zone.timeDelta}`}
+            className="flex flex-col bg-slate-300 bg-primary-surface"
+          >
             <p>
               At: {zone.time.toISOString()} | In {zone.location} for{' '}
               {Math.round((zone.timeDelta / 1000) * 10) / 10}
