@@ -15,13 +15,16 @@ const SheetClose = SheetPrimitive.Close
 
 const SheetPortal = SheetPrimitive.Portal
 
+const SheetBase = (props: SheetPrimitive.DialogProps) => <SheetRoot {...props} />
+SheetBase.displayName = SheetPrimitive.Root.displayName
+
 const SheetOverlay = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay>
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Overlay
     className={cn(
-      'fixed inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+      'fixed inset-0 top-7 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
       className
     )}
     {...props}
@@ -117,7 +120,7 @@ export const Sheet: typeof SheetRoot & {
   Footer: typeof SheetFooter
   Title: typeof SheetTitle
   Description: typeof SheetDescription
-} = Object.assign(SheetRoot, {
+} = Object.assign(SheetBase, {
   Portal: SheetPortal,
   Overlay: SheetOverlay,
   Trigger: SheetTrigger,
