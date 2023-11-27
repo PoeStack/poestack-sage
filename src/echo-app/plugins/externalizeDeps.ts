@@ -10,7 +10,7 @@ export interface ExternalOptions {
 /**
  * Automatically externalize dependencies and peerDepencencies
  */
-export function externalizeDepsAndPeerPlugin(options: ExternalOptions = {}): Plugin | null {
+export function externalizeDepsAndPeerDepsPlugin(options: ExternalOptions = {}): Plugin | null {
   const { exclude = [], include = [] } = options
 
   const packagePath = path.resolve(process.cwd(), 'package.json')

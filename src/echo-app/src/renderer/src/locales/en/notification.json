@@ -1,0 +1,21 @@
+{
+  "success": {
+    "title": {},
+    "description": {}
+  },
+  "error": {
+    "unknown_error": "Unknown error occurred",
+    "title": {},
+    "description": {
+      "jwtDecode": "Failed to decode jwt."
+    }
+  },
+  "warning": {
+    "title": {},
+    "description": {}
+  },
+  "info": {
+    "title": {},
+    "description": {}
+  }
+}
