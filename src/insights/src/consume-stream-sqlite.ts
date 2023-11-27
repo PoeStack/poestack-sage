@@ -2,15 +2,15 @@ import { HttpUtil, ItemGroupingService, PoePublicStashResponse } from 'sage-comm
 import objectHash from 'object-hash'
 import { debounceTime, from, Subject } from 'rxjs'
 import process from 'process'
-import { migrate } from 'drizzle-orm/libsql/migrator';
-import { createClient } from '@libsql/client';
-import { drizzle } from 'drizzle-orm/libsql';
-import { listings } from './consume-schema';
-import fs from "fs"
-import AWS from 'aws-sdk';
-import { SQLiteInsertBase } from 'drizzle-orm/sqlite-core';
+import { migrate } from 'drizzle-orm/libsql/migrator'
+import { createClient } from '@libsql/client'
+import { drizzle } from 'drizzle-orm/libsql'
+import { listings } from './consume-schema'
+import fs from 'fs'
+import AWS from 'aws-sdk'
+import { SQLiteInsertBase } from 'drizzle-orm/sqlite-core'
 
-const sqlClient = createClient({ url: "file:psstream-3.db" })
+const sqlClient = createClient({ url: 'file:psstream-3.db' })
 const listingsDb = drizzle(sqlClient)
 migrate(listingsDb, { migrationsFolder: 'src/insights/test.sql' })
 
@@ -52,28 +52,28 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
   return null
 }
 
-const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
+const s3 = new AWS.S3({ apiVersion: '2006-03-01' })
 function uploadDbToS3() {
   try {
-
-    const fileStream = fs.createReadStream("psstream-3.db");
+    const fileStream = fs.createReadStream('psstream-3.db')
 
     // Upload the file to a specified bucket
     const uploadParams = {
-      Bucket: "sage-insights-cache",
+      Bucket: 'sage-insights-cache',
       Key: `listings/test-${Date.now()}.db`,
-      Body: fileStream,
-    };
+      Body: fileStream
+    }
 
-    s3.upload(uploadParams, function(err, data) {
+    s3.upload(uploadParams, function (err, data) {
       if (err) {
-        console.log("s3 upload error", err);
-      } if (data) {
-        console.log("s3 upload success", data.Location);
+        console.log('s3 upload error', err)
       }
-    });
+      if (data) {
+        console.log('s3 upload success', data.Location)
+      }
+    })
   } catch (error) {
-    console.log("s3 upload error 2", error);
+    console.log('s3 upload error 2', error)
   }
 }
 
@@ -164,23 +164,26 @@ resultsSubject.subscribe((data) => {
             g: itemGroupHashString
           })
 
-          const insert = listingsDb.insert(listings).values({
-            id: id,
-            listedAtTimestamp: Date.now(),
-            shard: `${data.tag}-${shard}`,
-            itemGroupHashString: itemGroupHashString,
-            value: data.value,
-            valueType: data.currencyType,
-            quantity: data.stackSize
-          }).onConflictDoUpdate({
-            target: listings.id,
-            set: {
+          const insert = listingsDb
+            .insert(listings)
+            .values({
+              id: id,
               listedAtTimestamp: Date.now(),
+              shard: `${data.tag}-${shard}`,
+              itemGroupHashString: itemGroupHashString,
               value: data.value,
               valueType: data.currencyType,
               quantity: data.stackSize
-            }
-          })
+            })
+            .onConflictDoUpdate({
+              target: listings.id,
+              set: {
+                listedAtTimestamp: Date.now(),
+                value: data.value,
+                valueType: data.currencyType,
+                quantity: data.stackSize
+              }
+            })
 
           return insert
         })
@@ -192,13 +195,12 @@ resultsSubject.subscribe((data) => {
   }
 })
 
-
 var resultCounter = 0
 resultsSubject.subscribe((e) => {
-  console.log("got result", resultCounter)
+  console.log('got result', resultCounter)
   if (resultCounter++ > 1000) {
     resultCounter = 0
-    console.info("starting s3 write")
+    console.info('starting s3 write')
     uploadDbToS3()
   }
 })

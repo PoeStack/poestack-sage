@@ -74,7 +74,7 @@ function storeKey(key: string) {
     }
   }
 
-  docClient.put(params, function(err, data) {
+  docClient.put(params, function (err, data) {
     if (err) {
       console.log('Error', err)
     } else {
