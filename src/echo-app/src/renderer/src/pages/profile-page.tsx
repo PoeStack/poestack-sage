@@ -1,6 +1,8 @@
+import { useTranslation } from 'react-i18next'
 import { APP_CONTEXT, GGG_HTTP_UTIL } from '../echo-context-factory'
 
 export function ProfilePage() {
+  const { t } = useTranslation()
   const { value: profile } = APP_CONTEXT.poeAccounts.useProfile()
 
   return (
@@ -8,14 +10,14 @@ export function ProfilePage() {
       <div className="w-full h-full overflow-y-scroll flex flex-row">
         <div className="basis-1/4"></div>
         <div className="flex flex-col">
-          <div>Welcome {profile?.name} to your profile</div>
+          <div>{t('title.welcomeUser', { 0: profile?.name })}</div>
           <button
             onClick={() => {
               APP_CONTEXT.dir.deleteJson('auth')
               GGG_HTTP_UTIL.tokenSubject$.next(undefined)
             }}
           >
-            Logout
+            {t('action.logout')}
           </button>
         </div>
         <div className="basis-1/4"></div>
