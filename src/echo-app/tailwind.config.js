@@ -21,10 +21,6 @@ module.exports = {
         /**
          * Deprecated
          */
-        'primary-surface': 'var(--color-primary-surface)',
-        /**
-         * Deprecated
-         */
         'input-surface': 'var(--color-input-surface)',
         /**
          * Deprecated
@@ -39,6 +35,7 @@ module.exports = {
          */
         'primary-accent': 'var(--color-primary-accent)',
 
+        // Color conventions: https://ui.shadcn.com/docs/theming
         gradient: 'var(--gradient)',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

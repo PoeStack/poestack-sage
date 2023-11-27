@@ -5,7 +5,7 @@ import { getCurrentWindow } from '@electron/remote'
 
 export function PluginPageHeader() {
   if (Process.platform === 'win32') {
-    return <WindowsHeader />
+    return <MacOSHeader /> //<WindowsHeader />
   } else {
     return <MacOSHeader />
   }
@@ -15,7 +15,7 @@ const WindowsHeader = () => {
   return (
     <div
       style={{ WebkitAppRegion: 'drag' } as CSSProperties}
-      className="bg-secondary-surface fixed top-0 h-7 w-full flex"
+      className="bg-background brightness-75 fixed top-0 h-7 w-full flex"
     >
       <div className="flex justify-end items-center space-x-4 h-full w-full pr-2">
         <button
@@ -89,7 +89,7 @@ const MacOSHeader = () => {
   return (
     <div
       style={{ WebkitAppRegion: 'drag' } as CSSProperties}
-      className="bg-secondary-surface fixed top-0 h-7 w-full flex"
+      className="bg-background brightness-75 fixed top-0 h-7 w-full flex"
     >
       <div
         style={{ WebkitAppRegion: 'no-drag' } as CSSProperties}
