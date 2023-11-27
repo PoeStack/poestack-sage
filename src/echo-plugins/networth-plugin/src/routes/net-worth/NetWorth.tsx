@@ -37,24 +37,20 @@ const NetWorth = () => {
         </button>
         <br />
         Accounts:
-        {store?.accountStore.accounts.map((acccount) => {
-          return (
-            <ul>
-              <li key={acccount.name}>{acccount!.name}</li>
-            </ul>
-          )
-        })}
+        <ul>
+          {store?.accountStore.accounts.map((acccount) => {
+            return <li key={acccount.name}>{acccount!.name}</li>
+          })}
+        </ul>
         <br />
         Active account: {store?.accountStore.activeAccount?.name}
         <br />
         Profiles in account: {store?.accountStore.activeAccount?.name}
-        {store?.accountStore.activeAccount?.profiles.map((profile) => {
-          return (
-            <ul>
-              <li key={profile.name}>{profile.name}</li>
-            </ul>
-          )
-        })}
+        <ul>
+          {store?.accountStore.activeAccount?.profiles.map((profile) => {
+            return <li key={profile.name}>{profile.name}</li>
+          })}
+        </ul>
         <br />
         Active Profile: {store?.accountStore.activeAccount?.activeProfile?.name}
         <br />
