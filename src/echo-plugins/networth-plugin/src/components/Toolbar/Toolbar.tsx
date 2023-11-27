@@ -14,7 +14,7 @@ export type ToolbarProps = {}
 
 export function Toolbar({}: ToolbarProps) {
   return (
-    <header className="sticky top-0 z-50 divide-x divide-solid flex flex-row items-center justify-end border-b">
+    <header className="z-50 divide-x divide-solid flex flex-row items-center justify-end border-b">
       <div className="py-2 px-2 h-full flex justify-center items-center gap-2.5">
         <ProfileMenu />
       </div>

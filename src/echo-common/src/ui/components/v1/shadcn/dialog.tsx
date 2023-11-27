@@ -14,6 +14,9 @@ const DialogPortal = DialogPrimitive.Portal
 
 const DialogClose = DialogPrimitive.Close
 
+const DialogBase = (props: DialogPrimitive.DialogProps) => <DialogRoot {...props} />
+DialogBase.displayName = DialogPrimitive.Root.displayName
+
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
@@ -21,7 +24,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      'fixed inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+      'fixed inset-0 top-7 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
       className
     )}
     {...props}
@@ -100,7 +103,7 @@ export const Dialog: typeof DialogRoot & {
   Footer: typeof DialogFooter
   Title: typeof DialogTitle
   Description: typeof DialogDescription
-} = Object.assign(DialogRoot, {
+} = Object.assign(DialogBase, {
   Portal: DialogPortal,
   Overlay: DialogOverlay,
   Close: DialogClose,

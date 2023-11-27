@@ -7,7 +7,7 @@ const NetWorth = () => {
   const store = useStore()
 
   return (
-    <div className="relative flex flex-col h-full w-full">
+    <div className="flex flex-col h-full w-full">
       <Toolbar />
       <main className="flex-row p-2">
         <button
