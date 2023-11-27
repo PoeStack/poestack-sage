@@ -6,7 +6,7 @@ module.exports = {
     './src/**/*.{js,jsx,ts,tsx}',
     '../echo-common/src/**/*.{js,jsx,ts,tsx}',
     '../echo-plugin-examples/*/src/**/*.{js,jsx,ts,tsx}',
-    '../echo-plugin/*/src/**/*.{js,jsx,ts,tsx}'
+    '../echo-plugins/*/src/**/*.{js,jsx,ts,tsx}'
   ],
   theme: {
     container: {
@@ -18,27 +18,7 @@ module.exports = {
     },
     extend: {
       colors: {
-        /**
-         * Deprecated
-         */
-        'primary-surface': 'var(--color-primary-surface)',
-        /**
-         * Deprecated
-         */
-        'input-surface': 'var(--color-input-surface)',
-        /**
-         * Deprecated
-         */
-        'secondary-surface': 'var(--color-secondary-surface)',
-        /**
-         * Deprecated
-         */
-        'primary-text': 'var(--color-text)',
-        /**
-         * Deprecated
-         */
-        'primary-accent': 'var(--color-primary-accent)',
-
+        // Color conventions: https://ui.shadcn.com/docs/theming
         gradient: 'var(--gradient)',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -90,11 +70,20 @@ module.exports = {
         'accordion-up': {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' }
+        },
+        'plugin-select-scale': {
+          '0%': {
+            transform: 'scaleY(0)'
+          },
+          '100%': {
+            transform: 'scaleY(1)'
+          }
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out'
+        'accordion-up': 'accordion-up 0.2s ease-out',
+        'plugin-select': 'plugin-select-scale 0.3s ease-out'
       }
     }
   },
