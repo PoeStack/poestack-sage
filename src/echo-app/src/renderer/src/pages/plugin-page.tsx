@@ -85,7 +85,7 @@ export const PluginPage: React.FC = () => {
 
   return (
     <>
-      <div className="w-12 drop-shadow-md h-full top-7 fixed flex flex-col bg-background brightness-75 items-center px-2 pt-2 pb-9 justify-center gap-2">
+      <div className="w-12 drop-shadow-md h-full top-7 fixed z-10 flex flex-col bg-background brightness-75 items-center px-2 pt-2 pb-9 justify-center gap-2">
         <RouterIconNavigator location="l-sidebar-m" />
         <div className="flex-1 border-gray-500 w-full border-b-2"></div>
         <RouterIconNavigator location="l-sidebar-b" />
