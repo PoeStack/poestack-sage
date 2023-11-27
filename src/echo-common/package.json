@@ -2,19 +2,34 @@
   "name": "echo-common",
   "version": "1.0.3",
   "type": "commonjs",
-  "main": "./dist/esm/index.js",
-  "module": "./dist/cjs/index.js",
+  "main": "./dist/cjs/index.ts",
   "files": [
-    "dist/"
+    "dist/",
+    "*.d.ts"
   ],
   "exports": {
-    "development": {
-      "import": "./src/index.ts",
-      "require": "./src/index.ts"
+    ".": {
+      "development": {
+        "import": "./src/index.ts",
+        "require": "./src/index.ts"
+      },
+      "default": {
+        "import": "./dist/esm/index.js",
+        "require": "./dist/cjs/index.js",
+        "types": "./dist/cjs/index.d.ts"
+      }
     },
-    "default": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+    "./components-v1": {
+      "development": {
+        "import": "./src/ui/components/v1/index.ts",
+        "require": "./src/ui/components/v1/index.ts",
+        "types": "./dist/ui/components/v1/index.d.ts"
+      },
+      "default": {
+        "import": "./dist/esm/ui/components/v1/index.js",
+        "require": "./dist/cjs/ui/components/v1/index.js",
+        "types": "./dist/ui/components/v1/index.d.ts"
+      }
     }
   },
   "scripts": {
@@ -27,12 +42,28 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
+    "@hookform/resolvers": "^3.3.2",
+    "@radix-ui/react-accordion": "^1.1.2",
+    "@radix-ui/react-checkbox": "^1.0.4",
+    "@radix-ui/react-dialog": "^1.0.5",
+    "@radix-ui/react-hover-card": "^1.0.7",
+    "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-menubar": "^1.0.4",
+    "@radix-ui/react-popover": "^1.0.7",
+    "@radix-ui/react-scroll-area": "^1.0.5",
+    "@radix-ui/react-select": "^2.0.0",
+    "@radix-ui/react-separator": "^1.0.3",
+    "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-switch": "^1.0.3",
+    "@radix-ui/react-tabs": "^1.0.4",
+    "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/react-tooltip": "^1.0.7",
     "@react-rxjs/core": "^0.10.7",
     "@react-rxjs/utils": "^0.9.7",
     "@types/mock-fs": "^4.13.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "cmdk": "^0.2.0",
     "ggg-api": "file:../ggg-api",
     "i18next": "^23.7.6",
     "i18next-browser-languagedetector": "^7.2.0",

@@ -13,6 +13,7 @@
     "strict": true,
     "strictNullChecks": true,
     "baseUrl": ".",
+    "moduleResolution": "bundler",
     "paths": {
       "@renderer/*": ["src/renderer/src/*"]
     }
