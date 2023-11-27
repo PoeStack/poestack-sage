@@ -1,10 +1,12 @@
 import { bind } from '@react-rxjs/core'
 import { APP_CONTEXT } from '../echo-context-factory'
 import { Input, Table } from 'echo-common/components-v1'
+import { useTranslation } from 'react-i18next'
 
 const [usePlugins] = bind(APP_CONTEXT.plugins.currentPlugins$, {})
 
 export const PluginSettingsPage = () => {
+  const { t } = useTranslation()
   const pluginMap = usePlugins()
   const plugins = Object.values(pluginMap)
 
@@ -13,15 +15,15 @@ export const PluginSettingsPage = () => {
       <div className="p-4 w-full h-full overflow-y-scroll">
         <div className="flex flex-row">
           <div className="flex flex-col">
-            <h1 className="font-semibold text-accent-foreground">Plugins</h1>
+            <h1 className="font-semibold text-accent-foreground">{t('title.pluginsTableTitle')}</h1>
           </div>
         </div>
         <Table>
           <Table.Header>
             <Table.Row>
-              <Table.Head>Plugin Name</Table.Head>
-              <Table.Head>Version</Table.Head>
-              <Table.Head>Enabled</Table.Head>
+              <Table.Head>{t('label.pluginName')}</Table.Head>
+              <Table.Head>{t('label.version')}</Table.Head>
+              <Table.Head>{t('label.enabled')}</Table.Head>
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -48,7 +50,7 @@ export const PluginSettingsPage = () => {
               ))}
             {(plugins || []).length === 0 && (
               <Table.Row>
-                <Table.Cell colSpan={3}>No Plugins installed</Table.Cell>
+                <Table.Cell colSpan={3}>{t('label.noPluginsInstalled')}</Table.Cell>
               </Table.Row>
             )}
           </Table.Body>

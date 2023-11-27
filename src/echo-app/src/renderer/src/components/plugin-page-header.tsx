@@ -5,7 +5,7 @@ import { getCurrentWindow } from '@electron/remote'
 
 export function PluginPageHeader() {
   if (Process.platform === 'win32') {
-    return <MacOSHeader /> //<WindowsHeader />
+    return <WindowsHeader />
   } else {
     return <MacOSHeader />
   }

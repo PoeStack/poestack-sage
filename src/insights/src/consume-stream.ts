@@ -57,15 +57,15 @@ function loadChanges(paginationCode: string) {
 }
 
 AWS.config.update({ region: 'us-east-1' })
-var docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
-var storeCount = 0
+const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
+let storeCount = 0
 function storeKey(key: string) {
   if (storeCount++ < 100) {
     return
   }
   storeCount = 0
 
-  var params = {
+  const params = {
     TableName: 'RuntimeConfig',
     Item: {
       key: 'last-psstream-key',
@@ -111,8 +111,9 @@ resultsSubject.subscribe((data) => {
         if (
           !stashData.league ||
           stashData.league.includes('(PL') ||
-          stashData.league.includes('SSF ') ||
-          stashData.league.includes('Ruthless ')
+          stashData.league.includes('SSF') ||
+          stashData.league.includes('Solo Self Found') ||
+          stashData.league.includes('Ruthless')
         ) {
           continue
         }
@@ -131,25 +132,22 @@ resultsSubject.subscribe((data) => {
           if (note.length > 3 && (note.includes('~b/o ') || note.includes('~price '))) {
             const group = itemGroupingService.group(item)
             if (group) {
-              if (!toWrite[group.hash]) {
-                toWrite[group.hash] = {
-                  stackSize: 0,
-                  value: '',
-                  currencyType: '',
-                  tag: group.tag
-                }
-              }
-
               const noteSplit = note.trim().split(' ')
               const valueString = extractCurrencyValue(noteSplit[1])
               const currencyType = extractCurrencyType(noteSplit[2])
 
               if (valueString?.length && currencyType?.length) {
-                const doc = toWrite[group.hash]
+                if (!toWrite[group.hash]) {
+                  toWrite[group.hash] = {
+                    stackSize: 0,
+                    value: valueString,
+                    currencyType: currencyType,
+                    tag: group.tag
+                  }
+                }
 
-                doc.stackSize = toWrite[group.hash].stackSize + (item.stackSize ?? 1)
-                doc.value = valueString
-                doc.currencyType = currencyType
+                const doc = toWrite[group.hash]
+                doc.stackSize = doc.stackSize + (item.stackSize ?? 1)
               }
             }
           }

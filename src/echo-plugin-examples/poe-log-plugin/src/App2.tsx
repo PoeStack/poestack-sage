@@ -2,6 +2,7 @@ import { BehaviorSubject, concatMap, filter, from, map, mergeMap, tap, toArray }
 import { context } from './entry'
 import { bind } from '@react-rxjs/core'
 import { EchoPoeItem, validResults } from 'echo-common'
+import { useTranslation } from 'react-i18next'
 
 type SnapshotHistoryEntry = { totalValue: number; changeValue: number; items: EchoPoeItem[] }
 
@@ -19,8 +20,8 @@ const sub = context().poeClientLog.logEvents$.subscribe((e) => {
       .pipe(
         validResults(),
         mergeMap((e) => e),
-        filter((e) => e?.current),
-        concatMap((e) => context().poeCharacters.character(e.name)),
+        filter((e) => !!e.current),
+        concatMap((e) => context().poeCharacters.character(e.name || '')),
         validResults()
       )
       .subscribe((currentCharacter) => {
@@ -63,16 +64,18 @@ const App2 = () => {
             context().poeClientLog.logEvents$.next({
               type: 'ZoneEntranceEvent',
               location: 'Hideout or something',
-              raw: 'asdasd'
+              raw: 'asdasd',
+              systemUptime: 0,
+              time: new Date()
             })
           }}
         >
-          fake event
+          Fake Event
         </div>
       </div>
       <div>
-        {snapshots.history?.map((entry) => (
-          <div>
+        {snapshots.history?.map((entry, i) => (
+          <div key={`${entry.changeValue}-${i}`}>
             {entry.totalValue}: {entry.changeValue}
           </div>
         ))}

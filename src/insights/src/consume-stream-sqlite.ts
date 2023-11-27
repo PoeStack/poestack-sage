@@ -1,8 +1,18 @@
 import { HttpUtil, ItemGroupingService, PoePublicStashResponse } from 'sage-common'
 import objectHash from 'object-hash'
-import { debounceTime, Subject } from 'rxjs'
+import { debounceTime, from, Subject } from 'rxjs'
 import process from 'process'
-import Database from 'libsql'
+import { migrate } from 'drizzle-orm/libsql/migrator'
+import { createClient } from '@libsql/client'
+import { drizzle } from 'drizzle-orm/libsql'
+import { listings } from './consume-schema'
+import fs from 'fs'
+import AWS from 'aws-sdk'
+import { SQLiteInsertBase } from 'drizzle-orm/sqlite-core'
+
+const sqlClient = createClient({ url: 'file:psstream-3.db' })
+const listingsDb = drizzle(sqlClient)
+migrate(listingsDb, { migrationsFolder: 'src/insights/test.sql' })
 
 const divineTypes = new Set(['d', 'div', 'divine'])
 const chaosTypes = new Set(['c', 'chaos'])
@@ -42,8 +52,32 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
   return null
 }
 
-const httpUtil = new HttpUtil()
+const s3 = new AWS.S3({ apiVersion: '2006-03-01' })
+function uploadDbToS3() {
+  try {
+    const fileStream = fs.createReadStream('psstream-3.db')
 
+    // Upload the file to a specified bucket
+    const uploadParams = {
+      Bucket: 'sage-insights-cache',
+      Key: `listings/test-${Date.now()}.db`,
+      Body: fileStream
+    }
+
+    s3.upload(uploadParams, function (err, data) {
+      if (err) {
+        console.log('s3 upload error', err)
+      }
+      if (data) {
+        console.log('s3 upload success', data.Location)
+      }
+    })
+  } catch (error) {
+    console.log('s3 upload error 2', error)
+  }
+}
+
+const httpUtil = new HttpUtil()
 function loadChanges(paginationCode: string) {
   return httpUtil.get<PoePublicStashResponse>(
     `https://api.pathofexile.com/public-stash-tabs?id=${paginationCode}`,
@@ -58,18 +92,12 @@ function loadChanges(paginationCode: string) {
 
 const itemGroupingService = new ItemGroupingService()
 const resultsSubject = new Subject<PoePublicStashResponse>()
-
-resultsSubject.pipe(debounceTime(5000)).subscribe((e) => {
+resultsSubject.pipe(debounceTime(500)).subscribe((e) => {
   console.log('loading', e.next_change_id)
   loadChanges(e.next_change_id).subscribe((e) => {
     resultsSubject.next(e)
   })
 })
-
-const db = new Database('psstream-2.db')
-db.exec(
-  'CREATE TABLE IF NOT EXISTS listings (id TEXT PRIMARY KEY, groupHash TEXT, quantity INTEGER, value TEXT)'
-)
 
 resultsSubject.subscribe((data) => {
   try {
@@ -80,9 +108,10 @@ resultsSubject.subscribe((data) => {
       for (const stashData of data.stashes) {
         if (
           !stashData.league ||
-          stashData.league.includes('(PL') ||
-          stashData.league.includes('SSF ') ||
-          stashData.league.includes('Ruthless ')
+          stashData.league.includes('(') ||
+          stashData.league.includes('SSF') ||
+          stashData.league.includes('Solo Self Found') ||
+          stashData.league.includes('Ruthless')
         ) {
           continue
         }
@@ -125,7 +154,7 @@ resultsSubject.subscribe((data) => {
           }
         }
 
-        for (const [itemGroupHashString, data] of Object.entries(toWrite)) {
+        const batch = Object.entries(toWrite).map(([itemGroupHashString, data]) => {
           updates++
           const shard = parseInt(itemGroupHashString, 16) % 5
 
@@ -135,17 +164,46 @@ resultsSubject.subscribe((data) => {
             g: itemGroupHashString
           })
 
-          db.exec(
-            `INSERT INTO listings (id, groupHash, quantity, value) VALUES ('${id}', '${itemGroupHashString}', ${data.stackSize}, '${data.value}')`
-          )
-        }
+          const insert = listingsDb
+            .insert(listings)
+            .values({
+              id: id,
+              listedAtTimestamp: Date.now(),
+              shard: `${data.tag}-${shard}`,
+              itemGroupHashString: itemGroupHashString,
+              value: data.value,
+              valueType: data.currencyType,
+              quantity: data.stackSize
+            })
+            .onConflictDoUpdate({
+              target: listings.id,
+              set: {
+                listedAtTimestamp: Date.now(),
+                value: data.value,
+                valueType: data.currencyType,
+                quantity: data.stackSize
+              }
+            })
+
+          return insert
+        })
+        from(listingsDb.batch(batch as unknown as any)).subscribe()
       }
     }
   } catch (error) {
     console.error(error)
   }
 })
-resultsSubject.subscribe((e) => console.log('got', e.stashes?.length))
+
+let resultCounter = 0
+resultsSubject.subscribe((e) => {
+  console.log('got result', resultCounter)
+  if (resultCounter++ > 1000) {
+    resultCounter = 0
+    console.info('starting s3 write')
+    uploadDbToS3()
+  }
+})
 
 resultsSubject.next({
   next_change_id: '2169196834-2160857942-2091476413-2321414968-2254238271',
