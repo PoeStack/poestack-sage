@@ -20,7 +20,7 @@ const sub = context().poeClientLog.logEvents$.subscribe((e) => {
       .pipe(
         validResults(),
         mergeMap((e) => e),
-        filter((e) => e?.current!),
+        filter((e) => !!e.current),
         concatMap((e) => context().poeCharacters.character(e.name || '')),
         validResults()
       )
@@ -74,8 +74,8 @@ const App2 = () => {
         </div>
       </div>
       <div>
-        {snapshots.history?.map((entry) => (
-          <div>
+        {snapshots.history?.map((entry, i) => (
+          <div key={`${entry.changeValue}-${i}`}>
             {entry.totalValue}: {entry.changeValue}
           </div>
         ))}

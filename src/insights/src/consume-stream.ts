@@ -57,15 +57,15 @@ function loadChanges(paginationCode: string) {
 }
 
 AWS.config.update({ region: 'us-east-1' })
-var docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
-var storeCount = 0
+const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
+let storeCount = 0
 function storeKey(key: string) {
   if (storeCount++ < 100) {
     return
   }
   storeCount = 0
 
-  var params = {
+  const params = {
     TableName: 'RuntimeConfig',
     Item: {
       key: 'last-psstream-key',
