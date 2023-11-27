@@ -17,9 +17,9 @@ const App = () => {
               onClick={() => {
                 setCharacterName(c.name || '')
               }}
-              className="cursor-pointer bg-input-surface rounded-lg p-2 flex flex-col"
+              className="cursor-pointer bg-accent rounded-lg p-2 flex flex-col"
             >
-              <div className="font-semibold text-primary-accent">{c.name}</div>
+              <div className="font-semibold text-accent-foreground">{c.name}</div>
               <div>
                 lvl {c.level} {c.class}
               </div>

@@ -2,7 +2,7 @@ import { QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
 import { CpuChipIcon, HomeIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import { bind } from '@react-rxjs/core'
 import { ECHO_CONTEXT_SERVICE, EchoPluginHook, cn, EchoRoute } from 'echo-common'
-import { ActionTooltip } from 'echo-common/components-v1'
+import { ActionTooltip, Button, ToggleGroup } from 'echo-common/components-v1'
 import React, { Suspense, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ProfilePage } from './profile-page'
@@ -111,22 +111,35 @@ const RouterIconNavigator = ({ location }: { location: string }) => {
           .map((navItem, idx) => {
             const Icon = navItem.icon ?? QuestionMarkCircleIcon
             return (
-              <ActionTooltip
+              <div
                 key={echoRoute.plugin + echoRoute.path + navItem.location + idx}
-                side="right"
-                align="center"
-                label={navItem.displayname}
+                className="group flex flex-row items-center"
               >
-                <Icon
+                <div
                   className={cn(
-                    'h-7 w-7 cursor-pointer',
-                    currentRoute === echoRoute && 'text-primary-accent'
+                    '-ml-2 bg-accent-foreground w-2 rounded-full',
+                    // If notifiction: 'h-2',
+                    currentRoute === echoRoute
+                      ? 'animate-plugin-select h-5'
+                      : 'group-hover:animate-plugin-select group-hover:h-3'
                   )}
-                  onClick={() => {
-                    APP_CONTEXT.router.push(echoRoute)
-                  }}
-                ></Icon>
-              </ActionTooltip>
+                />
+                <ActionTooltip side="right" align="center" label={navItem.displayname}>
+                  <Button
+                    id={`Btn-${idx}`}
+                    className="hover:bg-inherit"
+                    size="icon"
+                    variant="ghost"
+                  >
+                    <Icon
+                      className="h-7 w-7"
+                      onClick={() => {
+                        APP_CONTEXT.router.push(echoRoute)
+                      }}
+                    />
+                  </Button>
+                </ActionTooltip>
+              </div>
             )
           })
       })}

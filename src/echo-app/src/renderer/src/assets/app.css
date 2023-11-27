@@ -4,11 +4,6 @@
 
 @layer base {
   :root {
-    --color-secondary-surface: #2a2d31; /*Deprecated*/
-    --color-input-surface: #373a3f; /*Deprecated*/
-    --color-text: #d4d4d4; /*Deprecated*/
-    --color-primary-accent: #5764f2; /*Deprecated*/
-
     /* CSS: .bg-gradient { background: var(--gradient) } */
     --gradient: linear-gradient(to top left,#1FA2FF,#12D8FA,#A6FFCB);
 
@@ -40,6 +35,8 @@
     --destructive-foreground: 218 10% 97.8%;
 
     --ring: 218 100% 56%;
+
+    --radius: 0.5rem;
   }
 }
 
