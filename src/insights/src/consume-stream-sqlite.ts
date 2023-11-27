@@ -108,9 +108,10 @@ resultsSubject.subscribe((data) => {
       for (const stashData of data.stashes) {
         if (
           !stashData.league ||
-          stashData.league.includes('(PL') ||
-          stashData.league.includes('SSF ') ||
-          stashData.league.includes('Ruthless ')
+          stashData.league.includes('(') ||
+          stashData.league.includes('SSF') ||
+          stashData.league.includes('Solo Self Found') ||
+          stashData.league.includes('Ruthless')
         ) {
           continue
         }
