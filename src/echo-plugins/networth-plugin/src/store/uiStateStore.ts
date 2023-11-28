@@ -157,6 +157,7 @@ export class UiStateStore extends Model({
       current: false
     }
     accountStore.activeAccount?.updateCharacters([char1, char2])
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     const activeCharacter1 = profileCharacterRef(accountStore.activeAccount?.characters[0]!)
 
     // Stashes
@@ -175,6 +176,7 @@ export class UiStateStore extends Model({
       league: 'Anchestor'
     }
     accountStore.activeAccount?.updateLeagueStashTabs([stash1, stash2], leagueStore.leagues[0])
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     const activeStashTabs = [profileStashTabRef(accountStore.activeAccount?.stashTabs[0]!)]
 
     // Profile

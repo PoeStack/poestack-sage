@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { IProfile } from '../../interfaces/profile.interface'
 import { useStore } from '../../hooks/useStore'
 import { AlertDialog, Button, Command, Dialog, Popover } from 'echo-common/components-v1'
 import {
