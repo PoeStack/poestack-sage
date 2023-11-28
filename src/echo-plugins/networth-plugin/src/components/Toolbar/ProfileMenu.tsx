@@ -16,16 +16,13 @@ import { ProfileForm } from './ProfileForm'
 
 export function ProfileMenu() {
   const { accountStore } = useStore()
+  const activeAccount = accountStore.activeAccount
   const [menuOpen, setMenuOpen] = useState(false)
   const [editProfileId, setEditProfileId] = useState('')
   const [profileDialogOpen, setProfileDialogOpen] = useState(false)
   const [deleteProfileDialogOpen, setDeleteProfileDialogOpen] = useState(false)
-  const profiles = accountStore.activeAccount?.profiles
-  const activeProfile = accountStore.activeAccount?.activeProfile
-  const setActiveProfile = accountStore.activeAccount?.setActiveProfile
-  const deleteProfile = accountStore.activeAccount?.deleteProfile
 
-  const hasProfiles = profiles && profiles?.length > 0
+  const hasProfiles = activeAccount?.profiles && activeAccount?.profiles?.length > 0
 
   return (
     <Dialog open={profileDialogOpen} onOpenChange={setProfileDialogOpen}>
@@ -40,7 +37,7 @@ export function ProfileMenu() {
                 aria-expanded={menuOpen}
                 aria-label="Select profile"
               >
-                {activeProfile?.name ?? 'Add Profile'}
+                {activeAccount?.activeProfile?.name ?? 'Add Profile'}
                 {menuOpen ? (
                   <ChevronDownIcon className="ml-2 h-4 w-4" />
                 ) : (
@@ -68,13 +65,21 @@ export function ProfileMenu() {
                 <>
                   <Command.List>
                     <Command.Group>
-                      {profiles.map((profile) => (
+                      {activeAccount?.profiles.map((profile) => (
                         <Command.Item key={profile.name}>
-                          <div onClick={() => setActiveProfile?.(profile)}>{profile.name}</div>
+                          <div
+                            onClick={() => {
+                              accountStore.activeAccount?.setActiveProfile?.(profile)
+                            }}
+                          >
+                            {profile.name}
+                          </div>
                           <CheckIcon
                             className={cn(
                               'ml-auto h-4 w-4',
-                              activeProfile?.uuid === profile.uuid ? 'opacity-100' : 'opacity-0'
+                              activeAccount?.activeProfile?.uuid === profile.uuid
+                                ? 'opacity-100'
+                                : 'opacity-0'
                             )}
                           />
                           <Dialog.Trigger asChild>
@@ -146,7 +151,7 @@ export function ProfileMenu() {
               onClick={() => {
                 console.log(editProfileId)
                 if (editProfileId) {
-                  deleteProfile?.(editProfileId)
+                  activeAccount?.deleteProfile(editProfileId)
                   setEditProfileId('')
                   setDeleteProfileDialogOpen(false)
                 }

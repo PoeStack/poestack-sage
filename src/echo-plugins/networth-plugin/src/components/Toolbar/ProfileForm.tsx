@@ -21,9 +21,8 @@ type ProfileFormProps = {
 
 export function ProfileForm({ profileId, onClose }: ProfileFormProps) {
   const { accountStore } = useStore()
-  const currentProfile = accountStore.activeAccount?.profiles.find(
-    (profile) => profile.uuid === profileId
-  )
+  const activeAccount = accountStore.activeAccount
+  const currentProfile = activeAccount?.profiles.find((profile) => profile.uuid === profileId)
   const form = useForm<ProfilePayload>({
     values: {
       name: currentProfile?.name ?? '',
@@ -31,28 +30,26 @@ export function ProfileForm({ profileId, onClose }: ProfileFormProps) {
     }
   })
 
-  const stashTabs = accountStore.activeAccount?.stashTabs ?? []
+  const stashTabs = activeAccount?.stashTabs ?? []
 
   const onSubmit: SubmitHandler<ProfilePayload> = (data) => {
-    if (!accountStore.activeAccount) return
+    if (!activeAccount) return
     if (currentProfile) {
       currentProfile.updateProfile({ name: data.name, activeStashTabIds: data.stashTabs })
       onClose?.()
       return
     }
-    const { addProfile, activeLeague, activePriceLeague } = accountStore.activeAccount
-    if (!activeLeague || !activePriceLeague) return
+    if (!activeAccount?.activeLeague || !activeAccount?.activePriceLeague) return
     const newProfile = new Profile({
       name: data.name,
-      activeLeagueRef: profileLeagueRef(activeLeague),
-      activePriceLeagueRef: profilePriceLeagueRef(activePriceLeague),
+      activeLeagueRef: profileLeagueRef(activeAccount?.activeLeague),
+      activePriceLeagueRef: profilePriceLeagueRef(activeAccount?.activePriceLeague),
       activeStashTabsRef: data.stashTabs.map((stashTab) => {
         console.log('stash', stashTab)
         return profileStashTabRef(stashTab)
       })
     })
-    console.log(newProfile, activeLeague, activePriceLeague)
-    addProfile?.(newProfile)
+    activeAccount?.addProfile(newProfile)
     onClose?.()
   }
 
