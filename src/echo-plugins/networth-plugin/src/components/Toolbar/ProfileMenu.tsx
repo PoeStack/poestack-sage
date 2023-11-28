@@ -1,4 +1,3 @@
-import { Menu } from '@headlessui/react'
 import { useState } from 'react'
 import { IProfile } from '../../interfaces/profile.interface'
 import { useStore } from '../../hooks/useStore'
