@@ -70,6 +70,7 @@ export function ProfileMenu() {
                           <div
                             onClick={() => {
                               accountStore.activeAccount?.setActiveProfile?.(profile)
+                              setMenuOpen(false)
                             }}
                           >
                             {profile.name}
