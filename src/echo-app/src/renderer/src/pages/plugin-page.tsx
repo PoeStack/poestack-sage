@@ -125,12 +125,7 @@ const RouterIconNavigator = ({ location }: { location: string }) => {
                   )}
                 />
                 <ActionTooltip side="right" align="center" label={navItem.displayname}>
-                  <Button
-                    id={`Btn-${idx}`}
-                    className="hover:bg-inherit"
-                    size="icon"
-                    variant="ghost"
-                  >
+                  <Button className="hover:bg-inherit" size="icon" variant="ghost">
                     <Icon
                       className="h-7 w-7"
                       onClick={() => {
