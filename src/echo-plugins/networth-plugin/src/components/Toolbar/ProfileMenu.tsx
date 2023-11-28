@@ -89,16 +89,14 @@ export function ProfileMenu() {
                               />
                             </Button>
                           </Dialog.Trigger>
-                          <AlertDialog.Trigger>
-                            <Button className="ml-2" size="icon" variant="ghost">
-                              <TrashIcon
-                                onClick={() => {
-                                  setEditProfileId(profile.uuid)
-                                  setDeleteProfileDialogOpen(true)
-                                }}
-                                className="h-4 w-4"
-                              />
-                            </Button>
+                          <AlertDialog.Trigger className="ml-2">
+                            <TrashIcon
+                              onClick={() => {
+                                setEditProfileId(profile.uuid)
+                                setDeleteProfileDialogOpen(true)
+                              }}
+                              className="h-4 w-4"
+                            />
                           </AlertDialog.Trigger>
                         </Command.Item>
                       ))}

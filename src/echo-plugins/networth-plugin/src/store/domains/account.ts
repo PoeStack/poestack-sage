@@ -76,13 +76,17 @@ export class Account extends Model({
 
   @modelAction
   addProfile(profile: Profile) {
+    console.log('add profile', profile)
     this.profiles.push(profile)
   }
 
   @modelAction
   deleteProfile(profileId: string) {
-    const nextProfiles = this.profiles.filter((profile) => profile.uuid !== profileId)
-    this.profiles = nextProfiles
+    const profileIndex = this.profiles.findIndex((profile) => profile.uuid === profileId)
+    console.log('delete', profileIndex)
+    if (profileIndex > -1) {
+      this.profiles = this.profiles.splice(profileIndex, 1)
+    }
   }
 
   @modelAction

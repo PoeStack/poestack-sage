@@ -31,7 +31,7 @@ export function ProfileForm({ profileId, onClose }: ProfileFormProps) {
     }
   })
 
-  const stashTabs = accountStore.activeAccount?.activeLeagueStashTabs ?? []
+  const stashTabs = accountStore.activeAccount?.stashTabs ?? []
 
   const onSubmit: SubmitHandler<ProfilePayload> = (data) => {
     if (!accountStore.activeAccount) return
@@ -43,7 +43,6 @@ export function ProfileForm({ profileId, onClose }: ProfileFormProps) {
     const { addProfile, activeLeague, activePriceLeague } = accountStore.activeAccount
     if (!activeLeague || !activePriceLeague) return
     const newProfile = new Profile({
-      uuid: uuidv4(),
       name: data.name,
       activeLeagueRef: profileLeagueRef(activeLeague),
       activePriceLeagueRef: profilePriceLeagueRef(activePriceLeague),
@@ -52,6 +51,7 @@ export function ProfileForm({ profileId, onClose }: ProfileFormProps) {
         return profileStashTabRef(stashTab)
       })
     })
+    console.log(newProfile, activeLeague, activePriceLeague)
     addProfile?.(newProfile)
     onClose?.()
   }
@@ -117,7 +117,7 @@ export function ProfileForm({ profileId, onClose }: ProfileFormProps) {
             }}
           />
           <Button disabled={!form.formState.isValid} type="submit">
-            {currentProfile ? 'Edit Profile' : 'Create Profile'}
+            {currentProfile ? 'Save Profile' : 'Create Profile'}
           </Button>
         </form>
       </Form>
