@@ -1,10 +1,21 @@
 import { computed } from 'mobx'
-import { detach, getRoot, idProp, model, Model, rootRef, tProp, types } from 'mobx-keystone'
+import {
+  detach,
+  getRoot,
+  idProp,
+  model,
+  Model,
+  modelAction,
+  rootRef,
+  tProp,
+  types
+} from 'mobx-keystone'
 import { League } from './league'
-import { StashTab } from './stashtab'
+import { StashTab, stashTabLeagueRef } from './stashtab'
 import { Snapshot } from './snapshot'
 import { RootStore } from '../rootStore'
 import { Character } from './character'
+import { IProfile } from '../../interfaces/profile.interface'
 
 export const profileLeagueRef = rootRef<League>('nw/profileLeagueRef')
 export const profilePriceLeagueRef = rootRef<League>('nw/profilePriceLeagueRef')
@@ -70,6 +81,14 @@ export class Profile extends Model({
       !uiStateStore.isSnapshotting &&
       this.isProfileValid
       // store.rateLimitStore.retryAfter === 0
+    )
+  }
+
+  @modelAction
+  updateProfile(profile: Pick<IProfile, 'name' | 'activeStashTabIds'>) {
+    this.name = profile.name
+    this.activeStashTabsRef = profile.activeStashTabIds.map((stashId) =>
+      profileStashTabRef(stashId)
     )
   }
 }
