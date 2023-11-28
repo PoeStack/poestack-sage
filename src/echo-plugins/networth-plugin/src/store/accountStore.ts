@@ -11,7 +11,18 @@ import {
   types
 } from 'mobx-keystone'
 import { Account } from './domains/account'
-import { catchError, concatMap, forkJoin, from, map, of, switchMap } from 'rxjs'
+import {
+  catchError,
+  concatMap,
+  forkJoin,
+  from,
+  map,
+  of,
+  Subject,
+  switchMap,
+  takeUntil,
+  timer
+} from 'rxjs'
 import { RootStore } from './rootStore'
 import externalService from '../service/external.service'
 import {
@@ -36,6 +47,8 @@ export class AccountStore extends Model({
   accounts: tProp(types.array(types.model(Account)), []),
   activeAccountRef: tProp(types.maybe(types.ref(accountStoreAccountRef))).withSetter()
 }) {
+  cancelledRetry: Subject<boolean> = new Subject()
+
   @computed
   get activeAccount() {
     return this.activeAccountRef?.maybeCurrent
@@ -70,9 +83,12 @@ export class AccountStore extends Model({
   }
 
   initSession() {
-    const { uiStateStore, leagueStore, accountStore } = getRoot<RootStore>(this)
-    uiStateStore.setStatusMessage('initializing_session')
+    const { uiStateStore, leagueStore } = getRoot<RootStore>(this)
+    if (uiStateStore.isInitiating || uiStateStore.initiated) {
+      return
+    }
     uiStateStore.setIsInitiating(true)
+    uiStateStore.setStatusMessage('initializing_session')
 
     externalService
       .getProfile()
@@ -161,10 +177,10 @@ export class AccountStore extends Model({
       .subscribe()
   }
 
-  initSessionSuccess() {
+  private initSessionSuccess() {
     const { uiStateStore, notificationStore, settingStore } = getRoot<RootStore>(this)
     uiStateStore.resetStatusMessage()
-    // notificationStore.createNotification('init_session', 'success')
+    notificationStore.createNotification('init_session', 'success')
     uiStateStore.setIsInitiating(false)
     uiStateStore.setInitiated(true)
 
@@ -173,12 +189,20 @@ export class AccountStore extends Model({
     }
   }
 
-  initSessionFail(e: Error) {
+  private initSessionFail(e: Error) {
     const { uiStateStore, notificationStore } = getRoot<RootStore>(this)
+
+    timer(45 * 1000)
+      .pipe(
+        switchMap(() => of(this.initSession())),
+        takeUntil(this.cancelledRetry)
+      )
+      .subscribe()
+
     uiStateStore.resetStatusMessage()
-    // notificationStore.createNotification('init_session', 'error', true, e)
+    notificationStore.createNotification('init_session', 'error', true, e)
     uiStateStore.setIsInitiating(false)
-    uiStateStore.setInitiated(true)
+    uiStateStore.setInitiated(false)
     console.error(e) // TODO: Remove
   }
 }

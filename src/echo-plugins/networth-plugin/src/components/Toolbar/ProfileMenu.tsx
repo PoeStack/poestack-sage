@@ -10,10 +10,11 @@ import {
   TrashIcon
 } from 'lucide-react'
 import { cn } from 'echo-common'
-import { ProfileForm } from './ProfileForm'
+import ProfileForm from './ProfileForm'
 import { Profile } from '../../store/domains/profile'
+import { observer } from 'mobx-react'
 
-export function ProfileMenu() {
+const ProfileMenu = () => {
   const { accountStore } = useStore()
   const activeAccount = accountStore.activeAccount
   const [menuOpen, setMenuOpen] = useState(false)
@@ -179,3 +180,5 @@ export function ProfileMenu() {
     </Dialog>
   )
 }
+
+export default observer(ProfileMenu)

@@ -45,15 +45,14 @@ export class StatusMessage extends Model({
 
 @model('nw/uiStateStore')
 export class UiStateStore extends Model({
-  validated: tProp(false).withSetter(),
-  isValidating: tProp(false).withSetter(),
+  // validated: tProp(false).withSetter(),
+  // isValidating: tProp(false).withSetter(),
   isSubmitting: tProp(false).withSetter(),
   initiated: tProp(false).withSetter(),
   isInitiating: tProp(false).withSetter(),
   isSnapshotting: tProp(false).withSetter(),
   statusMessage: tProp(types.maybe(types.model(StatusMessage))),
   itemTablePageIndex: tProp(0),
-  changingProfile: tProp(false).withSetter(),
   counter: tProp(0).withSetter()
 }) {
   cancelSnapshot = new Subject<boolean>()

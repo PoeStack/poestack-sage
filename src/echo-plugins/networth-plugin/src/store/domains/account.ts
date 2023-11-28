@@ -92,7 +92,6 @@ export class Account extends Model({
   @modelAction
   setActiveProfile(profile: Profile) {
     const { uiStateStore } = getRoot<RootStore>(this)
-    uiStateStore.setChangingProfile(true)
     uiStateStore.changeItemTablePage(0)
     this.activeProfileRef = accountProfileRef(profile)
   }

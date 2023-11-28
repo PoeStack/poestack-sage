@@ -1,5 +1,5 @@
 import { computed } from 'mobx'
-import { detach, idProp, model, Model, rootRef, tProp, types } from 'mobx-keystone'
+import { detach, idProp, model, Model, prop, rootRef, tProp, types } from 'mobx-keystone'
 import { NotificationType } from '../../interfaces/notification.interface'
 import dayjs from 'dayjs'
 
@@ -10,7 +10,7 @@ export class Notification extends Model({
   timestamp: tProp(types.number, () => dayjs.utc().valueOf()),
   description: tProp(types.string),
   read: tProp(false).withSetter(),
-  type: tProp(types.literal<NotificationType>('info'), 'info'),
+  type: prop<NotificationType>('info'),
   displayAlert: tProp(types.maybe(types.boolean)),
   stackTrace: tProp(types.maybe(types.string)),
   translateParam: tProp(types.maybe(types.string))

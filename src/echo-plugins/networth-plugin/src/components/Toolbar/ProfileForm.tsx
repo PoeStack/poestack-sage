@@ -9,6 +9,7 @@ import {
 import { Button, Checkbox, Dialog, Form, Input, Label, Select } from 'echo-common/components-v1'
 import { League } from '../../store/domains/league'
 import { Character } from '../../store/domains/character'
+import { observer } from 'mobx-react'
 
 type ProfilePayload = {
   name: string
@@ -25,7 +26,7 @@ type ProfileFormProps = {
   profile?: Profile
 }
 
-export function ProfileForm({ profile, onClose }: ProfileFormProps) {
+const ProfileForm = ({ profile, onClose }: ProfileFormProps) => {
   const { accountStore, leagueStore } = useStore()
   const activeAccount = accountStore.activeAccount
   console.log(profile?.activeLeague?.name)
@@ -199,3 +200,5 @@ export function ProfileForm({ profile, onClose }: ProfileFormProps) {
     </Dialog.Content>
   )
 }
+
+export default observer(ProfileForm)
