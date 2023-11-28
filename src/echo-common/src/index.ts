@@ -12,8 +12,8 @@ import { EchoPluginService } from './echo-plugin-service'
 import { ECHO_CONTEXT_SERVICE, EchoContextService } from './echo-context-service'
 import { SageValuationService } from './sage-valuation-service'
 import { validResults } from './smart-cache-hooks'
-import { ActionTooltip } from './ui/components/v1/action-tooltip'
-import { cn } from './ui/lib/utils'
+
+export { cn } from './ui/lib/utils'
 
 export {
   PoeStashService,
@@ -27,9 +27,7 @@ export {
   EchoDirService,
   validResults,
   EchoContextService,
-  ECHO_CONTEXT_SERVICE,
-  ActionTooltip,
-  cn
+  ECHO_CONTEXT_SERVICE
 }
 
 export type {

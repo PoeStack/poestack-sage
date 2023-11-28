@@ -3,6 +3,7 @@ import { context } from './entry'
 import { delay, filter, last, scan, tap, toArray } from 'rxjs'
 import { EchoPoeItem, validResults } from 'echo-common'
 import { useTranslation } from 'react-i18next'
+import { Input } from 'echo-common/components-v1'
 
 const App = () => {
   const league = 'Ancestor'
@@ -59,12 +60,11 @@ const App = () => {
           ))}
         </div>
         <div className="flex-shrink-0">
-          <input
+          <Input
             type="text"
             placeholder={'Search...'}
             value={searchString}
             onChange={(e) => setSearchString(e.target.value)}
-            className="w-full px-2 py-0.5 bg-input-surface rounded-lg shadow-md border-0 focus:outline-none focus:ring focus:border-primary-accent"
           />
         </div>
         <div className="overflow-y-scroll flex-1 mt-2">

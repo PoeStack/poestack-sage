@@ -1,6 +1,6 @@
 'use client'
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './shadcn/tooltip'
+import { Tooltip } from './shadcn/tooltip'
 
 interface ActionTooltipProps {
   label: string
@@ -11,15 +11,13 @@ interface ActionTooltipProps {
 
 export const ActionTooltip = ({ label, children, side, align }: ActionTooltipProps) => {
   return (
-    <TooltipProvider>
+    <Tooltip.Provider>
       <Tooltip delayDuration={50}>
-        <TooltipTrigger asChild>{children}</TooltipTrigger>
-        <TooltipContent side={side} align={align} className="bg-primary-surface border-none">
-          <p className="font-semibold text-sm capitalize text-primary-text bg-primary-surface">
-            {label.toLowerCase()}
-          </p>
-        </TooltipContent>
+        <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
+        <Tooltip.Content side={side} align={align} className="border-none">
+          <p className="font-semibold text-sm capitalize">{label.toLowerCase()}</p>
+        </Tooltip.Content>
       </Tooltip>
-    </TooltipProvider>
+    </Tooltip.Provider>
   )
 }
