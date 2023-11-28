@@ -80,6 +80,12 @@ export class Account extends Model({
   }
 
   @modelAction
+  deleteProfile(profileId: string) {
+    const nextProfiles = this.profiles.filter((profile) => profile.uuid !== profileId)
+    this.profiles = nextProfiles
+  }
+
+  @modelAction
   setActiveProfile(profile: Profile) {
     const { uiStateStore } = getRoot<RootStore>(this)
     uiStateStore.setChangingProfile(true)

@@ -1,5 +1,3 @@
-import { ExclamationCircleIcon, PlusIcon } from '@heroicons/react/20/solid'
-import { useState } from 'react'
 import { useStore } from '../../hooks/useStore'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { v4 as uuidv4 } from 'uuid'
@@ -10,30 +8,39 @@ import {
   profileStashTabRef
 } from '../../store/domains/profile'
 import { Button, Checkbox, Dialog, Form, Input, Label } from 'echo-common/components-v1'
-import { StashTab } from '../../store/domains/stashtab'
 
-type AddProfilePayload = {
+type ProfilePayload = {
   name: string
   stashTabs: string[]
 }
 
-type AddProfileFormProps = {
+type ProfileFormProps = {
   onClose?: () => void
+  profileId?: string
 }
 
-export function AddProfileForm({ onClose }: AddProfileFormProps) {
-  const form = useForm<AddProfilePayload>({
+export function ProfileForm({ profileId, onClose }: ProfileFormProps) {
+  const { accountStore } = useStore()
+  const currentProfile = accountStore.activeAccount?.profiles.find(
+    (profile) => profile.uuid === profileId
+  )
+  const form = useForm<ProfilePayload>({
     values: {
-      name: '',
-      stashTabs: []
+      name: currentProfile?.name ?? '',
+      stashTabs: currentProfile?.activeStashTabs.map((tab) => tab.id) ?? []
     }
   })
-  const { accountStore } = useStore()
+
   const stashTabs = accountStore.activeAccount?.activeLeagueStashTabs ?? []
 
-  const onSubmit: SubmitHandler<AddProfilePayload> = (data) => {
+  const onSubmit: SubmitHandler<ProfilePayload> = (data) => {
     if (!accountStore.activeAccount) return
-    const { addProfile, stashTabs, activeLeague, activePriceLeague } = accountStore.activeAccount
+    if (currentProfile) {
+      currentProfile.updateProfile({ name: data.name, activeStashTabIds: data.stashTabs })
+      onClose?.()
+      return
+    }
+    const { addProfile, activeLeague, activePriceLeague } = accountStore.activeAccount
     if (!activeLeague || !activePriceLeague) return
     const newProfile = new Profile({
       uuid: uuidv4(),
@@ -63,7 +70,7 @@ export function AddProfileForm({ onClose }: AddProfileFormProps) {
   return (
     <Dialog.Content>
       <Dialog.Header>
-        <Dialog.Title>Add Profile</Dialog.Title>
+        <Dialog.Title>{currentProfile ? 'Edit Profile' : 'Add Profile'}</Dialog.Title>
       </Dialog.Header>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -110,7 +117,7 @@ export function AddProfileForm({ onClose }: AddProfileFormProps) {
             }}
           />
           <Button disabled={!form.formState.isValid} type="submit">
-            Create Profile
+            {currentProfile ? 'Edit Profile' : 'Create Profile'}
           </Button>
         </form>
       </Form>
