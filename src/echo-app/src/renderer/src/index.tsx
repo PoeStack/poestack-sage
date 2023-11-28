@@ -14,7 +14,7 @@ const App = () => {
   return (
     <Suspense>
       <I18nextProvider i18n={i18n}>
-        <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <div className="h-screen w-screen bg-background text-foreground">
             <PluginPageHeader />
             <AuthGuard>
@@ -31,9 +31,7 @@ const App = () => {
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <Subscribe>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <App />
-      </ThemeProvider>
+      <App />
     </Subscribe>
   </React.StrictMode>
 )

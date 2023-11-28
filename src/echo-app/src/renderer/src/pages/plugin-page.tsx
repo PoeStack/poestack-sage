@@ -2,7 +2,7 @@ import { QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
 import { CpuChipIcon, HomeIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import { bind } from '@react-rxjs/core'
 import { ECHO_CONTEXT_SERVICE, EchoPluginHook, cn, EchoRoute } from 'echo-common'
-import { ActionTooltip, Button, ToggleGroup } from 'echo-common/components-v1'
+import { ActionTooltip, Button } from 'echo-common/components-v1'
 import React, { Suspense, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ProfilePage } from './profile-page'
@@ -125,12 +125,7 @@ const RouterIconNavigator = ({ location }: { location: string }) => {
                   )}
                 />
                 <ActionTooltip side="right" align="center" label={navItem.displayname}>
-                  <Button
-                    id={`Btn-${idx}`}
-                    className="hover:bg-inherit"
-                    size="icon"
-                    variant="ghost"
-                  >
+                  <Button className="hover:bg-inherit" size="icon" variant="ghost">
                     <Icon
                       className="h-7 w-7"
                       onClick={() => {
