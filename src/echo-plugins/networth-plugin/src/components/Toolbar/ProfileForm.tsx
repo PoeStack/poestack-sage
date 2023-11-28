@@ -7,26 +7,38 @@ import {
   profilePriceLeagueRef,
   profileStashTabRef
 } from '../../store/domains/profile'
-import { Button, Checkbox, Dialog, Form, Input, Label } from 'echo-common/components-v1'
+import { Button, Checkbox, Dialog, Form, Input, Label, Select } from 'echo-common/components-v1'
+import { League } from '../../store/domains/league'
+import { Character } from '../../store/domains/character'
 
 type ProfilePayload = {
   name: string
   stashTabs: string[]
+  league?: League
+  pricingLeague?: League
+  character?: Character
+  includeEquipment: boolean
+  includeInventory: boolean
 }
 
 type ProfileFormProps = {
   onClose?: () => void
-  profileId?: string
+  profile?: Profile
 }
 
-export function ProfileForm({ profileId, onClose }: ProfileFormProps) {
-  const { accountStore } = useStore()
+export function ProfileForm({ profile, onClose }: ProfileFormProps) {
+  const { accountStore, leagueStore } = useStore()
   const activeAccount = accountStore.activeAccount
-  const currentProfile = activeAccount?.profiles.find((profile) => profile.uuid === profileId)
+  console.log(profile?.activeLeague?.name)
   const form = useForm<ProfilePayload>({
     values: {
-      name: currentProfile?.name ?? '',
-      stashTabs: currentProfile?.activeStashTabs.map((tab) => tab.id) ?? []
+      name: profile?.name ?? '',
+      stashTabs: profile?.activeStashTabs.map((tab) => tab.id) ?? [],
+      league: profile?.activeLeague,
+      pricingLeague: profile?.activePriceLeague,
+      character: profile?.activeCharacter,
+      includeEquipment: profile?.includeEquipment ?? false,
+      includeInventory: profile?.includeInventory ?? false
     }
   })
 
@@ -34,8 +46,8 @@ export function ProfileForm({ profileId, onClose }: ProfileFormProps) {
 
   const onSubmit: SubmitHandler<ProfilePayload> = (data) => {
     if (!activeAccount) return
-    if (currentProfile) {
-      currentProfile.updateProfile({ name: data.name, activeStashTabIds: data.stashTabs })
+    if (profile) {
+      profile.updateProfile({ name: data.name, activeStashTabIds: data.stashTabs })
       onClose?.()
       return
     }
@@ -50,6 +62,7 @@ export function ProfileForm({ profileId, onClose }: ProfileFormProps) {
       })
     })
     activeAccount?.addProfile(newProfile)
+    form.reset()
     onClose?.()
   }
 
@@ -67,7 +80,7 @@ export function ProfileForm({ profileId, onClose }: ProfileFormProps) {
   return (
     <Dialog.Content>
       <Dialog.Header>
-        <Dialog.Title>{currentProfile ? 'Edit Profile' : 'Add Profile'}</Dialog.Title>
+        <Dialog.Title>{profile ? `Edit Profile: ${profile.name}` : 'Add Profile'}</Dialog.Title>
       </Dialog.Header>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -78,7 +91,7 @@ export function ProfileForm({ profileId, onClose }: ProfileFormProps) {
               <Form.Item>
                 <Form.Label>Profile Name</Form.Label>
                 <Form.Control>
-                  <Input {...field} />
+                  <Input {...field} placeholder="Name your profile" />
                 </Form.Control>
               </Form.Item>
             )}
@@ -113,8 +126,74 @@ export function ProfileForm({ profileId, onClose }: ProfileFormProps) {
               )
             }}
           />
+          <Form.Field
+            control={form.control}
+            name="league"
+            render={({ field }) => (
+              <Form.Item>
+                <Form.Label>League</Form.Label>
+                <Select
+                  value={field.value?.name}
+                  onValueChange={(value) => {
+                    const league = leagueStore.leagues.find((league) => league.name === value)
+                    if (league) {
+                      field.onChange(league)
+                    }
+                  }}
+                >
+                  <Form.Control>
+                    <Select.Trigger>
+                      <Select.Value placeholder="Select a league" />
+                    </Select.Trigger>
+                  </Form.Control>
+                  <Select.Content>
+                    {leagueStore.leagues.map((league) => {
+                      return (
+                        <Select.Item key={league.hash} value={league.name}>
+                          {league.name}
+                        </Select.Item>
+                      )
+                    })}
+                  </Select.Content>
+                </Select>
+              </Form.Item>
+            )}
+          />
+          <Form.Field
+            control={form.control}
+            name="pricingLeague"
+            render={({ field }) => (
+              <Form.Item>
+                <Form.Label>Pricing League</Form.Label>
+                <Select
+                  value={field.value?.name}
+                  onValueChange={(value) => {
+                    const league = leagueStore.priceLeagues.find((league) => league.name === value)
+                    if (league) {
+                      field.onChange(league)
+                    }
+                  }}
+                >
+                  <Form.Control>
+                    <Select.Trigger>
+                      <Select.Value placeholder="Select a pricing league" />
+                    </Select.Trigger>
+                  </Form.Control>
+                  <Select.Content>
+                    {leagueStore.priceLeagues.map((league) => {
+                      return (
+                        <Select.Item key={league.hash} value={league.name}>
+                          {league.name}
+                        </Select.Item>
+                      )
+                    })}
+                  </Select.Content>
+                </Select>
+              </Form.Item>
+            )}
+          />
           <Button disabled={!form.formState.isValid} type="submit">
-            {currentProfile ? 'Save Profile' : 'Create Profile'}
+            {profile ? 'Save Profile' : 'Create Profile'}
           </Button>
         </form>
       </Form>

@@ -13,20 +13,37 @@ import {
 } from 'lucide-react'
 import { cn } from 'echo-common'
 import { ProfileForm } from './ProfileForm'
+import { Profile } from '../../store/domains/profile'
 
 export function ProfileMenu() {
   const { accountStore } = useStore()
   const activeAccount = accountStore.activeAccount
   const [menuOpen, setMenuOpen] = useState(false)
-  const [editProfileId, setEditProfileId] = useState('')
+  const [selectedProfile, setSelectedProfile] = useState<Profile | undefined>()
   const [profileDialogOpen, setProfileDialogOpen] = useState(false)
   const [deleteProfileDialogOpen, setDeleteProfileDialogOpen] = useState(false)
 
   const hasProfiles = activeAccount?.profiles && activeAccount?.profiles?.length > 0
 
   return (
-    <Dialog open={profileDialogOpen} onOpenChange={setProfileDialogOpen}>
-      <AlertDialog open={deleteProfileDialogOpen} onOpenChange={setDeleteProfileDialogOpen}>
+    <Dialog
+      open={profileDialogOpen}
+      onOpenChange={(open) => {
+        setProfileDialogOpen(open)
+        if (!open) {
+          setSelectedProfile(undefined)
+        }
+      }}
+    >
+      <AlertDialog
+        open={deleteProfileDialogOpen}
+        onOpenChange={(open) => {
+          setDeleteProfileDialogOpen(open)
+          if (!open) {
+            setSelectedProfile(undefined)
+          }
+        }}
+      >
         <Popover open={menuOpen} onOpenChange={setMenuOpen}>
           {hasProfiles ? (
             <Popover.Trigger asChild>
@@ -66,15 +83,14 @@ export function ProfileMenu() {
                   <Command.List>
                     <Command.Group>
                       {activeAccount?.profiles.map((profile) => (
-                        <Command.Item key={profile.name}>
-                          <div
-                            onClick={() => {
-                              accountStore.activeAccount?.setActiveProfile?.(profile)
-                              setMenuOpen(false)
-                            }}
-                          >
-                            {profile.name}
-                          </div>
+                        <Command.Item
+                          onSelect={() => {
+                            accountStore.activeAccount?.setActiveProfile?.(profile)
+                            setMenuOpen(false)
+                          }}
+                          key={profile.uuid}
+                        >
+                          {profile.name}
                           <CheckIcon
                             className={cn(
                               'ml-auto h-4 w-4',
@@ -87,7 +103,7 @@ export function ProfileMenu() {
                             <Button className="ml-auto" size="icon" variant="ghost">
                               <PencilIcon
                                 onClick={() => {
-                                  setEditProfileId(profile.uuid)
+                                  setSelectedProfile(profile)
                                   setMenuOpen(false)
                                   setProfileDialogOpen(true)
                                 }}
@@ -98,7 +114,7 @@ export function ProfileMenu() {
                           <AlertDialog.Trigger className="ml-2">
                             <TrashIcon
                               onClick={() => {
-                                setEditProfileId(profile.uuid)
+                                setSelectedProfile(profile)
                                 setDeleteProfileDialogOpen(true)
                               }}
                               className="h-4 w-4"
@@ -130,15 +146,15 @@ export function ProfileMenu() {
           </Popover.Content>
         </Popover>
         <ProfileForm
-          profileId={editProfileId}
+          profile={selectedProfile}
           onClose={() => {
-            setEditProfileId('')
+            setSelectedProfile(undefined)
             setProfileDialogOpen(false)
           }}
         />
         <AlertDialog.Content>
           <AlertDialog.Header>
-            <AlertDialog.Title>Delete Profile</AlertDialog.Title>
+            <AlertDialog.Title>{`Delete Profile: ${selectedProfile?.name}`} </AlertDialog.Title>
           </AlertDialog.Header>
           <AlertDialog.Footer>
             <AlertDialog.Cancel
@@ -150,10 +166,9 @@ export function ProfileMenu() {
             </AlertDialog.Cancel>
             <AlertDialog.Action
               onClick={() => {
-                console.log(editProfileId)
-                if (editProfileId) {
-                  activeAccount?.deleteProfile(editProfileId)
-                  setEditProfileId('')
+                if (selectedProfile) {
+                  activeAccount?.deleteProfile(selectedProfile.uuid)
+                  setSelectedProfile(undefined)
                   setDeleteProfileDialogOpen(false)
                 }
               }}
