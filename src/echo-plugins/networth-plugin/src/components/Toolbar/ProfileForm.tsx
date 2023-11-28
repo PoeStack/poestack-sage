@@ -1,6 +1,5 @@
 import { useStore } from '../../hooks/useStore'
 import { useForm, SubmitHandler } from 'react-hook-form'
-import { v4 as uuidv4 } from 'uuid'
 import {
   Profile,
   profileLeagueRef,
