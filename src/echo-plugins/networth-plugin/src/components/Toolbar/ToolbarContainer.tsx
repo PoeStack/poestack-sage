@@ -8,12 +8,6 @@ type ToolbarContainerProps = {}
 const ToolbarContainer: React.FC<ToolbarContainerProps> = () => {
   const { uiStateStore } = useStore()
 
-  console.log(
-    uiStateStore.isInitiating,
-    uiStateStore.isSnapshotting,
-    uiStateStore.statusMessage?.message
-  )
-
   return (
     <Toolbar
       isSubmitting={uiStateStore.isSubmitting}

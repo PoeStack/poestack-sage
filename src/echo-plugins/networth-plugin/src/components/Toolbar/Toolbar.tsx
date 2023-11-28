@@ -4,8 +4,9 @@ import { PictureInPicture2, RefreshCcw, Trash2, XCircle } from 'lucide-react'
 import { useStore } from '../../hooks/useStore'
 import { IStatusMessage } from '../../interfaces/status-message.interface'
 import { Loader2 } from 'lucide-react'
-import StatusMessageContainer from '../StatusMessage/StatusMessageContainer'
+import StatusMessageContainer from '../statusMessage/StatusMessageContainer'
 import { observer } from 'mobx-react'
+import { cn } from 'echo-common'
 
 type ToolbarProps = {
   isSubmitting: boolean
@@ -33,7 +34,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
         <div className="py-2 px-2 h-full flex justify-center items-center gap-2.5">
           <Button variant="ghost" className="border p-1 pr-1.5 rounded h-8">
             <div className="flex flex-row justify-center text-xs items-center gap-1">
-              <RefreshCcw className="h-4 w-4" />
+              <RefreshCcw className={cn('h-4 w-4', isSnapshotting && 'animate-spin')} />
               TAKE SNAPSHOT
             </div>
           </Button>
