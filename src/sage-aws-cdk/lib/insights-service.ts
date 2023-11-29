@@ -32,7 +32,6 @@ export class InsightsService {
     })
     redis.addDependency(subnetGroup)
 
-
     const cacheBucket = new Bucket(sageStack, 'InsCacheBucket', {
       bucketName: 'sage-insights-cache'
     })
@@ -50,10 +49,13 @@ export class InsightsService {
           streamPrefix: 'insights-stream-consumer-container',
           logRetention: RetentionDays.THREE_DAYS
         }),
-        command: ['node', 'src/insights/dist/consume-stream.js'],
+        command: ['node', 'src/insights/dist/consume-stream-sqlite.js'],
         environment: {
-          REDIS_URL: redis.attrRedisEndpointAddress }, environmentFiles: [EnvironmentFile.fromBucket(sageStack.configBucket, 'insights.env')]
+          REDIS_URL: redis.attrRedisEndpointAddress
+        },
+        environmentFiles: [EnvironmentFile.fromBucket(sageStack.configBucket, 'insights.env')]
       })
+      cacheBucket.grantReadWrite(streamConsumerTask.taskRole!!)
       sageStack.configBucket.grantRead(streamConsumerTask.executionRole!!)
       sageStack.runtimeConfigTable.grantFullAccess(streamConsumerTask.executionRole!!)
       new aws_ecs.Ec2Service(sageStack, 'InsStreamConsumerSvc', {

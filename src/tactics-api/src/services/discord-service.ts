@@ -11,7 +11,7 @@ export class DiscordService {
   private discordApi: API
 
   constructor() {
-    console.log("asdasdasd")
+    console.log('asdasdasd')
     const restApiInstance = new REST({
       version: '10'
     }).setToken(DISCORD_BOT_TOKEN)

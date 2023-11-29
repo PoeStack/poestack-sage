@@ -1,5 +1,5 @@
 import { HttpUtil, ItemGroupingService, PoePublicStashResponse } from 'sage-common'
-import { debounceTime, Subject, throttleTime } from 'rxjs'
+import { debounceTime, from, of, Subject, throttleTime } from 'rxjs'
 import process from 'process'
 import Redis from 'ioredis'
 import AWS from 'aws-sdk'
@@ -56,33 +56,37 @@ function loadChanges(paginationCode: string) {
   )
 }
 
-
-
-
-AWS.config.update({ region: 'us-east-1' });
-var docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
+AWS.config.update({ region: 'us-east-1' })
+const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
+let storeCount = 0
 function storeKey(key: string) {
-  var params = {
+  if (storeCount++ < 100) {
+    return
+  }
+  storeCount = 0
+
+  const params = {
     TableName: 'RuntimeConfig',
     Item: {
-      "key": "last-psstream-key",
-      value: key
+      key: 'last-psstream-key',
+      value: key,
+      updatedAt: new Date().toISOString()
     }
-  };
+  }
 
-  docClient.put(params, function(err, data) {
+  docClient.put(params, function (err, data) {
     if (err) {
-      console.log("Error", err);
+      console.log('Error', err)
     } else {
-      console.log("Success", data);
+      console.log('Success', data)
     }
-  });
+  })
 }
 
 const itemGroupingService = new ItemGroupingService()
 const resultsSubject = new Subject<PoePublicStashResponse>()
 
-resultsSubject.pipe(debounceTime(1000)).subscribe((e) => {
+resultsSubject.pipe(debounceTime(200)).subscribe((e) => {
   console.log('loading', e.next_change_id)
   storeKey(e.next_change_id)
   loadChanges(e.next_change_id).subscribe((e) => {
@@ -107,8 +111,9 @@ resultsSubject.subscribe((data) => {
         if (
           !stashData.league ||
           stashData.league.includes('(PL') ||
-          stashData.league.includes('SSF ') ||
-          stashData.league.includes('Ruthless ')
+          stashData.league.includes('SSF') ||
+          stashData.league.includes('Solo Self Found') ||
+          stashData.league.includes('Ruthless')
         ) {
           continue
         }
@@ -127,25 +132,22 @@ resultsSubject.subscribe((data) => {
           if (note.length > 3 && (note.includes('~b/o ') || note.includes('~price '))) {
             const group = itemGroupingService.group(item)
             if (group) {
-              if (!toWrite[group.hash]) {
-                toWrite[group.hash] = {
-                  stackSize: 0,
-                  value: '',
-                  currencyType: '',
-                  tag: group.tag
-                }
-              }
-
               const noteSplit = note.trim().split(' ')
               const valueString = extractCurrencyValue(noteSplit[1])
               const currencyType = extractCurrencyType(noteSplit[2])
 
               if (valueString?.length && currencyType?.length) {
-                const doc = toWrite[group.hash]
+                if (!toWrite[group.hash]) {
+                  toWrite[group.hash] = {
+                    stackSize: 0,
+                    value: valueString,
+                    currencyType: currencyType,
+                    tag: group.tag
+                  }
+                }
 
-                doc.stackSize = toWrite[group.hash].stackSize + (item.stackSize ?? 1)
-                doc.value = valueString
-                doc.currencyType = currencyType
+                const doc = toWrite[group.hash]
+                doc.stackSize = doc.stackSize + (item.stackSize ?? 1)
               }
             }
           }
@@ -180,7 +182,14 @@ resultsSubject.subscribe((data) => {
 
 resultsSubject.subscribe((e) => console.log('got', e.stashes?.length))
 
-resultsSubject.next({
-  next_change_id: '2145640831-2137918784-2068567059-2296748038-2229165629',
-  stashes: []
+from(
+  docClient.get({ TableName: 'RuntimeConfig', Key: { key: 'last-psstream-key' } }).promise()
+).subscribe((e) => {
+  console.log('got doc response', e.Item)
+  const nextKey = e.Item?.value
+
+  resultsSubject.next({
+    next_change_id: nextKey,
+    stashes: []
+  })
 })

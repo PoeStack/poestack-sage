@@ -38,17 +38,14 @@ export class TacticsApiService {
     })
 
     if (!bootstrap) {
-
-      new aws_lambda_nodejs.NodejsFunction(sageStack, "test2", {
-        entry: "/dist/lambda/send-dm.js",
-        handler: "handler"
+      new aws_lambda_nodejs.NodejsFunction(sageStack, 'test2', {
+        entry: '/dist/lambda/send-dm.js',
+        handler: 'handler'
       })
 
       new aws_lambda.DockerImageFunction(sageStack, 'MyFunction', {
-        code: aws_lambda.DockerImageCode.fromEcr(ecr, {
-
-        }),
-      });
+        code: aws_lambda.DockerImageCode.fromEcr(ecr, {})
+      })
 
       const apiTask = new aws_ecs.Ec2TaskDefinition(sageStack, 'TacticsApiTask')
       apiTask.addContainer('TacticsApiC', {

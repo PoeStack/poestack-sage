@@ -1,5 +1,6 @@
 export type PoeCharacter = {
   class?: string
+  realm?: string
   current?: boolean
   deleted?: boolean
   equipment?: PoeItem[]
@@ -228,6 +229,7 @@ export type PoePartialStashTab = {
   name?: string
   parent?: string
   type?: string
+  folder?: string
 
   //Injected
   league: string

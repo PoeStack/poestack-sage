@@ -1,0 +1,28 @@
+{
+  "action": {
+    "test": "TestAction",
+    "syncAuth": "Sync Auth",
+    "getToken": "Get Token",
+    "login": "Login",
+    "logout": "Logout"
+  },
+  "title": {
+    "welcomeTo": "Welcome to PoeStack - Sage",
+    "appName": "PoeStack - Sage",
+    "syncAuth": "Sync auth with PoEStack",
+    "manualAuth": "Manual auth with PoEStack",
+    "welcomeUser": "Welcome {{0}} to your profile",
+    "pluginsTableTitle": "Plugins"
+  },
+  "label": {
+    "enterToken": "Enter your PoeStack token. ",
+    "tokenPlaceholder": "Token",
+    "pluginName": "Plugin Name",
+    "version": "Version",
+    "enabled": "Enabled",
+    "noPluginsInstalled": "No Plugins installed"
+  },
+  "body": {
+    "default": ""
+  }
+}

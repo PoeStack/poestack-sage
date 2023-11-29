@@ -45,7 +45,7 @@ export class EchoPluginService {
           ECHO_CONTEXT_SERVICE.contexts['plugin'] = context
 
           const pluginEntry = module.require(p.path)
-          const hook: EchoPluginHook = pluginEntry()
+          const hook: EchoPluginHook = pluginEntry.default()
           hook.start()
           this.plugins$.next({ key: p.key, hook: hook })
         }
@@ -91,7 +91,7 @@ export class EchoPluginService {
   }
 
   public loadInstalledPlugins() {
-    fs.readdir(this.installedPluginsPath, (err, files) => {
+    fs.readdir(this.installedPluginsPath, (_, files) => {
       files.forEach((file) => {
         const pluginKey = file.slice(0, -3)
         const pluginPath = path.resolve(this.installedPluginsPath, file)

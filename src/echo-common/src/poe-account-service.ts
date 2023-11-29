@@ -1,32 +1,41 @@
-import { SmartCache } from './smart-cache'
+import { SmartCache, SmartCacheConfig } from './smart-cache'
 import { PoeLeague, PoeProfile } from 'sage-common'
 import { GggApi } from 'ggg-api'
 import { EchoDirService } from './echo-dir-service'
 import { useCache } from './smart-cache-hooks'
 
 export class PoeAccountService {
-  public profile = new SmartCache<PoeProfile>(this.echoDir, "poe-profile")
-  public leagues = new SmartCache<PoeLeague[]>(this.echoDir, "poe-leagues")
+  public cacheProfile = new SmartCache<PoeProfile>(this.echoDir, 'poe-profile')
+  public cacheLeagues = new SmartCache<PoeLeague[]>(this.echoDir, 'poe-leagues')
 
   constructor(
     private echoDir: EchoDirService,
     private gggApi: GggApi
-  ) { }
+  ) {}
 
-  public useProfile() {
-    return useCache(
-      this.profile,
-      { key: "profiles" },
+  public profile(config?: SmartCacheConfig) {
+    return this.cacheProfile.load(
+      { maxAgeMs: 10_000, maxStaleMs: 5_000, ...config, key: 'profiles' },
       () => this.gggApi.getProfile()
     )
   }
 
-  public useLeagues() {
-    return useCache(
-      this.leagues,
-      { key: "leagues" },
+  public leagues(config?: SmartCacheConfig) {
+    return this.cacheLeagues.load(
+      { maxAgeMs: 10_000, maxStaleMs: 5_000, ...config, key: 'leagues' },
       () => this.gggApi.getLeagues()
     )
   }
 
+  public useProfile() {
+    // TODO Investigate
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useCache(this.cacheProfile, { key: 'profiles' }, () => this.gggApi.getProfile())
+  }
+
+  public useLeagues() {
+    // TODO Investigate
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useCache(this.cacheLeagues, { key: 'leagues' }, () => this.gggApi.getLeagues())
+  }
 }
