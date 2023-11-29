@@ -43,8 +43,8 @@
   "dependencies": {
     "@heroicons/react": "^2.0.18",
     "@hookform/resolvers": "^3.3.2",
-    "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-accordion": "^1.1.2",
+    "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-checkbox": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-hover-card": "^1.0.7",
@@ -61,6 +61,7 @@
     "@radix-ui/react-tooltip": "^1.0.7",
     "@react-rxjs/core": "^0.10.7",
     "@react-rxjs/utils": "^0.9.7",
+    "@types/jest": "^29.5.10",
     "@types/mock-fs": "^4.13.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
@@ -87,6 +88,7 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
+    "@jest/types": "^29.6.3",
     "@types/node": "^20.9.0",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",

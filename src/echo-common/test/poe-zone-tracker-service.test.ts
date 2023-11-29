@@ -1,23 +1,13 @@
 import { expect, test, afterEach, beforeEach } from '@jest/globals'
-import { Observable, Subject, delay } from 'rxjs'
+import { Observable, Subject } from 'rxjs'
 
 import { Tail } from 'tail'
 import path from 'path'
 import * as fs from 'fs'
 
-import {
-  PoeClientLogService,
-  PoeZoneEntranceEvent,
-  PoeInstanceConnectionEvent,
-  PoeCharacterSlainEvent,
-  PoeNPCEncounterEvent
-} from '../src/poe-client-log-service'
+import { PoeClientLogService } from '../src/poe-client-log-service'
 
-import {
-  PoeZoneDelta,
-  PoeZoneInstance,
-  PoeZoneTrackerService
-} from '../src/poe-zone-tracker-service'
+import { PoeZoneDelta, PoeZoneTrackerService } from '../src/poe-zone-tracker-service'
 import { EchoDirService, PoeCharacterService, SmartCacheEvent } from '../src'
 import { PoeCharacter } from 'sage-common'
 import { GggApi, GggHttpUtil } from 'ggg-api'
