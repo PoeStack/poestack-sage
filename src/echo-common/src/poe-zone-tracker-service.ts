@@ -15,8 +15,8 @@ import { SmartCacheResultEvent } from './smart-cache'
 export class PoeZoneTrackerService {
   private logEvents$: Subject<PoeClientLogEvent>
 
-  public zones: Map<string, PoeZoneInstance> = new Map<string, PoeZoneInstance>() //TODO MAKE PRIVATE
-  public currentZoneDelta?: PoeZoneDelta = undefined //TODO MAKE PRIVATE
+  private zones: Map<string, PoeZoneInstance> = new Map<string, PoeZoneInstance>() //TODO MAKE PRIVATE
+  private currentZoneDelta?: PoeZoneDelta = undefined //TODO MAKE PRIVATE
   private previousZoneDelta?: PoeZoneDelta = undefined
 
   public zoneEntered$ = new Subject<PoeZoneDelta>()
@@ -24,9 +24,7 @@ export class PoeZoneTrackerService {
 
   private characterSubscription?: Subscription
 
-  //Getter/Setter for this. Probably dont allow plugins to set from true -> false, as they have no context of other plugins
-
-  //TODO expose observables for when zoneDelta is finnihsed, and when a new zoneDelta is created
+  //TODO some way externally to configure if character snapshots are wanted, and frequency. Every zone, x-duration
 
   constructor(
     poeClientLogService: PoeClientLogService,
