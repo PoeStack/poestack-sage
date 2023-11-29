@@ -85,10 +85,24 @@ export class Profile extends Model({
   }
 
   @modelAction
-  updateProfile(profile: Pick<IProfile, 'name' | 'activeStashTabIds'>) {
+  updateProfile(
+    profile: Pick<
+      Profile,
+      | 'name'
+      | 'activeCharacterRef'
+      | 'activeStashTabsRef'
+      | 'activePriceLeagueRef'
+      | 'activeLeagueRef'
+      | 'includeEquipment'
+      | 'includeInventory'
+    >
+  ) {
     this.name = profile.name
-    this.activeStashTabsRef = profile.activeStashTabIds.map((stashId) =>
-      profileStashTabRef(stashId)
-    )
+    this.activeCharacterRef = profile.activeCharacterRef
+    this.activeStashTabsRef = profile.activeStashTabsRef
+    this.includeEquipment = profile.includeEquipment
+    this.includeInventory = profile.includeInventory
+    this.activeLeagueRef = profile.activeLeagueRef
+    this.activePriceLeagueRef = profile.activePriceLeagueRef
   }
 }
