@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
-import ToolbarContainer from '../../components/toolbar/ToolbarContainer'
+import ToolbarContainer from '../../components/Toolbar/ToolbarContainer'
 import ItemTableContainer from '../../components/itemTable/ItemTableContainer'
 
 const NetWorth = () => {

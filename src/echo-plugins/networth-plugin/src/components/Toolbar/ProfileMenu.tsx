@@ -48,7 +48,7 @@ const ProfileMenu = () => {
             <Popover.Trigger asChild>
               <Button
                 variant="ghost"
-                className="border rounded h-8 pl-2 pr-1"
+                className="flex flex-row border rounded h-8 pl-2 pr-1 min-w-[100px] justify-between"
                 role="combobox"
                 aria-expanded={menuOpen}
                 aria-label="Select profile"
@@ -90,14 +90,6 @@ const ProfileMenu = () => {
                           key={profile.uuid}
                         >
                           {profile.name}
-                          <CheckIcon
-                            className={cn(
-                              'ml-auto h-4 w-4',
-                              activeAccount?.activeProfile?.uuid === profile.uuid
-                                ? 'opacity-100'
-                                : 'opacity-0'
-                            )}
-                          />
                           <Dialog.Trigger asChild>
                             <Button className="ml-auto" size="icon" variant="ghost">
                               <PencilIcon
@@ -106,17 +98,17 @@ const ProfileMenu = () => {
                                   setMenuOpen(false)
                                   setProfileDialogOpen(true)
                                 }}
-                                className="h-4 w-4"
+                                className="h-6 w-6 p-1 rounded hover:border-accent-foreground border border-transparent"
                               />
                             </Button>
                           </Dialog.Trigger>
-                          <AlertDialog.Trigger className="ml-2">
+                          <AlertDialog.Trigger className="ml-2 ">
                             <TrashIcon
                               onClick={() => {
                                 setSelectedProfile(profile)
                                 setDeleteProfileDialogOpen(true)
                               }}
-                              className="h-4 w-4"
+                              className="h-6 w-6 p-1 rounded hover:border-accent-foreground border border-transparent"
                             />
                           </AlertDialog.Trigger>
                         </Command.Item>
