@@ -43,6 +43,31 @@ export class PoeStashService {
     )
   }
 
+  public valuateItems(items: PoeItem[], league: string) {
+    return from(items).pipe(
+      mergeMap((item) => {
+        const group = this.groupingService.group(item)
+        if (group) {
+          return this.valuationApi.valuation(league, group).pipe(
+            mergeMap((vEvent) => {
+              if (vEvent.type === 'result') {
+                const itemValuation = vEvent?.result?.valuations?.[group.hash]
+                const eItem = {
+                  data: item,
+                  valuation: itemValuation,
+                  group: group
+                }
+                return of({ ...vEvent, result: eItem })
+              }
+              return of(vEvent)
+            })
+          )
+        }
+        return of(null)
+      })
+    )
+  }
+
   public useStashes(league: string): SmartCacheHookType<PoePartialStashTab[]> {
     // TODO Investigate
     // eslint-disable-next-line react-hooks/rules-of-hooks
