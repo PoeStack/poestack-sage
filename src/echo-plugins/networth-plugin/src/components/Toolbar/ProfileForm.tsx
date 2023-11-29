@@ -107,8 +107,8 @@ const ProfileForm = ({ profile, onClose }: ProfileFormProps) => {
   }
 
   return (
-    <Sheet.Content className="mt-7 overflow-y-scroll">
-      <Sheet.Header className="sticky">
+    <Sheet.Content className="mt-7 overflow-y-scroll w-3/5 sm:max-w-full">
+      <Sheet.Header>
         <Sheet.Title>{profile ? `Edit Profile: ${profile.name}` : 'Add Profile'}</Sheet.Title>
       </Sheet.Header>
       <Form {...form}>
