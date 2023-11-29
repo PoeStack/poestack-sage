@@ -9,7 +9,16 @@ import {
   profilePriceLeagueRef,
   profileStashTabRef
 } from '../../store/domains/profile'
-import { Button, Checkbox, Dialog, Form, Input, Label, Select } from 'echo-common/components-v1'
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  Form,
+  Input,
+  Label,
+  Select,
+  Sheet
+} from 'echo-common/components-v1'
 import { League } from '../../store/domains/league'
 import { Character } from '../../store/domains/character'
 import { observer } from 'mobx-react'
@@ -98,10 +107,10 @@ const ProfileForm = ({ profile, onClose }: ProfileFormProps) => {
   }
 
   return (
-    <Dialog.Content className="max-h-[80%] overflow-y-scroll">
-      <Dialog.Header className="sticky">
-        <Dialog.Title>{profile ? `Edit Profile: ${profile.name}` : 'Add Profile'}</Dialog.Title>
-      </Dialog.Header>
+    <Sheet.Content className="mt-7 overflow-y-scroll">
+      <Sheet.Header className="sticky">
+        <Sheet.Title>{profile ? `Edit Profile: ${profile.name}` : 'Add Profile'}</Sheet.Title>
+      </Sheet.Header>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           <Form.Field
@@ -306,7 +315,7 @@ const ProfileForm = ({ profile, onClose }: ProfileFormProps) => {
           </Button>
         </form>
       </Form>
-    </Dialog.Content>
+    </Sheet.Content>
   )
 }
 

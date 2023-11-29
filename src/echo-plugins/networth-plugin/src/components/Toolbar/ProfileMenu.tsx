@@ -1,15 +1,13 @@
 import { useState } from 'react'
 import { useStore } from '../../hooks/useStore'
-import { AlertDialog, Button, Command, Dialog, Popover } from 'echo-common/components-v1'
+import { AlertDialog, Button, Command, Popover, Sheet } from 'echo-common/components-v1'
 import {
-  CheckIcon,
   ChevronDownIcon,
   ChevronRightIcon,
   PencilIcon,
   PlusCircleIcon,
   TrashIcon
 } from 'lucide-react'
-import { cn } from 'echo-common'
 import ProfileForm from './ProfileForm'
 import { Profile } from '../../store/domains/profile'
 import { observer } from 'mobx-react'
@@ -25,7 +23,7 @@ const ProfileMenu = () => {
   const hasProfiles = activeAccount?.profiles && activeAccount?.profiles?.length > 0
 
   return (
-    <Dialog
+    <Sheet
       open={profileDialogOpen}
       onOpenChange={(open) => {
         setProfileDialogOpen(open)
@@ -62,7 +60,7 @@ const ProfileMenu = () => {
               </Button>
             </Popover.Trigger>
           ) : (
-            <Dialog.Trigger asChild>
+            <Sheet.Trigger asChild>
               <Button
                 variant="ghost"
                 className="border rounded h-8"
@@ -73,7 +71,7 @@ const ProfileMenu = () => {
                 <PlusCircleIcon className="ml-auto mr-2 h-4 w-4" />
                 Add Profile
               </Button>
-            </Dialog.Trigger>
+            </Sheet.Trigger>
           )}
           <Popover.Content>
             <Command>
@@ -90,7 +88,7 @@ const ProfileMenu = () => {
                           key={profile.uuid}
                         >
                           {profile.name}
-                          <Dialog.Trigger asChild>
+                          <Sheet.Trigger asChild>
                             <Button className="ml-auto" size="icon" variant="ghost">
                               <PencilIcon
                                 onClick={() => {
@@ -101,7 +99,7 @@ const ProfileMenu = () => {
                                 className="h-6 w-6 p-1 rounded hover:border-accent-foreground border border-transparent"
                               />
                             </Button>
-                          </Dialog.Trigger>
+                          </Sheet.Trigger>
                           <AlertDialog.Trigger className="ml-2 ">
                             <TrashIcon
                               onClick={() => {
@@ -120,7 +118,7 @@ const ProfileMenu = () => {
               )}
               <Command.List>
                 <Command.Group>
-                  <Dialog.Trigger asChild>
+                  <Sheet.Trigger asChild>
                     <Command.Item
                       onSelect={() => {
                         setMenuOpen(false)
@@ -130,7 +128,7 @@ const ProfileMenu = () => {
                       <PlusCircleIcon className="mr-2 h-5 w-5" />
                       Add Profile
                     </Command.Item>
-                  </Dialog.Trigger>
+                  </Sheet.Trigger>
                 </Command.Group>
               </Command.List>
             </Command>
@@ -169,7 +167,7 @@ const ProfileMenu = () => {
           </AlertDialog.Footer>
         </AlertDialog.Content>
       </AlertDialog>
-    </Dialog>
+    </Sheet>
   )
 }
 
