@@ -1,3 +1,4 @@
+import { PoeItem } from 'sage-common'
 import { IPricedItem } from './priced-item.interface'
 
 export interface ISnapshot {
@@ -11,4 +12,9 @@ export interface IStashTabSnapshot {
   stashTabId: string
   value: number
   pricedItems: IPricedItem[]
+}
+
+export interface IStashTabItems {
+  stashTabId: string
+  items: PoeItem[]
 }

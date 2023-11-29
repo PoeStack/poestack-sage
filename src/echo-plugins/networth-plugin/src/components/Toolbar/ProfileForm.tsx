@@ -3,12 +3,12 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import {
-  Profile,
   profileCharacterRef,
   profileLeagueRef,
   profilePriceLeagueRef,
   profileStashTabRef
 } from '../../store/domains/profile'
+import { Profile } from '../../store/domains/profile'
 import {
   Button,
   Checkbox,
@@ -66,7 +66,7 @@ const ProfileForm = ({ profile, onClose }: ProfileFormProps) => {
     resolver: zodResolver(schema)
   })
 
-  const stashTabs = activeAccount?.stashTabs ?? []
+  const stashTabs = activeAccount.stashTabs ?? []
 
   const onSubmit: SubmitHandler<ProfilePayload> = (data) => {
     if (!activeAccount) return
@@ -86,7 +86,7 @@ const ProfileForm = ({ profile, onClose }: ProfileFormProps) => {
       onClose?.()
       return
     }
-    activeAccount?.addProfile(new Profile(payload))
+    activeAccount.addProfile(new Profile(payload))
     form.reset()
     onClose?.()
   }
@@ -240,7 +240,7 @@ const ProfileForm = ({ profile, onClose }: ProfileFormProps) => {
                   disabled={!form.getValues().league}
                   value={field.value?.name}
                   onValueChange={(value) => {
-                    const character = activeAccount?.characters.find(
+                    const character = activeAccount.characters.find(
                       (character) => character.name === value
                     )
                     if (character) {
@@ -254,7 +254,7 @@ const ProfileForm = ({ profile, onClose }: ProfileFormProps) => {
                     </Select.Trigger>
                   </Form.Control>
                   <Select.Content>
-                    {activeAccount?.characters
+                    {activeAccount.characters
                       .filter((character) => character.league === form.getValues().league)
                       .map((character) => {
                         return (

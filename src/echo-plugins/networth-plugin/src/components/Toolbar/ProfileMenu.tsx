@@ -20,7 +20,7 @@ const ProfileMenu = () => {
   const [profileDialogOpen, setProfileDialogOpen] = useState(false)
   const [deleteProfileDialogOpen, setDeleteProfileDialogOpen] = useState(false)
 
-  const hasProfiles = activeAccount?.profiles && activeAccount?.profiles?.length > 0
+  const hasProfiles = activeAccount.profiles && activeAccount.profiles?.length > 0
 
   return (
     <Sheet
@@ -51,7 +51,7 @@ const ProfileMenu = () => {
                 aria-expanded={menuOpen}
                 aria-label="Select profile"
               >
-                {activeAccount?.activeProfile?.name ?? 'Add Profile'}
+                {activeAccount.activeProfile?.name ?? 'Add Profile'}
                 {menuOpen ? (
                   <ChevronDownIcon className="ml-2 h-4 w-4" />
                 ) : (
@@ -79,10 +79,10 @@ const ProfileMenu = () => {
                 <>
                   <Command.List>
                     <Command.Group>
-                      {activeAccount?.profiles.map((profile) => (
+                      {activeAccount.profiles.map((profile) => (
                         <Command.Item
                           onSelect={() => {
-                            accountStore.activeAccount?.setActiveProfile?.(profile)
+                            accountStore.activeAccount.setActiveProfile?.(profile)
                             setMenuOpen(false)
                           }}
                           key={profile.uuid}
@@ -156,7 +156,7 @@ const ProfileMenu = () => {
             <AlertDialog.Action
               onClick={() => {
                 if (selectedProfile) {
-                  activeAccount?.deleteProfile(selectedProfile.uuid)
+                  activeAccount.deleteProfile(selectedProfile.uuid)
                   setSelectedProfile(undefined)
                   setDeleteProfileDialogOpen(false)
                 }

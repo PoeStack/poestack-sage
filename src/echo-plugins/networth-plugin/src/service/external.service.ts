@@ -1,4 +1,4 @@
-import { map, mergeMap } from 'rxjs'
+import { Observable, map, mergeMap } from 'rxjs'
 import { context } from '../entry'
 import { filterNullish } from 'ts-ratchet'
 import { IStashTab } from '../interfaces/stash.interface'

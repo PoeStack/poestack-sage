@@ -13,7 +13,8 @@ import {
 } from 'mobx-keystone'
 import { Character, characterLeagueRef } from './character'
 import { StashTab, stashTabLeagueRef } from './stashtab'
-import { Profile, profileCharacterRef, profileStashTabRef } from './profile'
+import { profileCharacterRef, profileStashTabRef } from './profile'
+import { Profile } from './profile'
 import { RootStore } from '../rootStore'
 import { map, Subject, takeUntil, timer } from 'rxjs'
 import { computed } from 'mobx'
@@ -194,17 +195,19 @@ export class Account extends Model({
   @modelAction
   queueSnapshot(milliseconds?: number) {
     const store = getRoot<RootStore>(this)
-    timer(milliseconds ? milliseconds : store.settingStore.autoSnapshotInterval).pipe(
-      map(() => {
-        if (this.activeProfile?.readyToSnapshot) {
-          // this.activeProfile.snapshot()
-        } else {
-          this.dequeueSnapshot()
-          this.queueSnapshot(10 * 1000)
-        }
-      }),
-      takeUntil(this.cancelled)
-    )
+    timer(milliseconds ? milliseconds : store.settingStore.autoSnapshotInterval)
+      .pipe(
+        map(() => {
+          if (this.activeProfile?.readyToSnapshot) {
+            // this.activeProfile.snapshot()
+          } else {
+            this.dequeueSnapshot()
+            this.queueSnapshot(10 * 1000)
+          }
+        }),
+        takeUntil(this.cancelled)
+      )
+      .subscribe()
   }
 
   @modelAction

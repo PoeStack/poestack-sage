@@ -16,12 +16,12 @@ import { Subject } from 'rxjs'
 import { RootStore } from './rootStore'
 import { Account } from './domains/account'
 import {
-  Profile,
   profileCharacterRef,
   profileLeagueRef,
   profilePriceLeagueRef,
   profileStashTabRef
 } from './domains/profile'
+import { Profile } from './domains/profile'
 import { accountStoreAccountRef } from './accountStore'
 import { PoeCharacter, PoePartialStashTab } from 'sage-common'
 
@@ -64,8 +64,8 @@ export class UiStateStore extends Model({
       this.resetStatusMessage()
       const { accountStore, settingStore } = getRoot<RootStore>(this)
       if (settingStore.autoSnapshotting) {
-        accountStore.activeAccount?.dequeueSnapshot()
-        accountStore.activeAccount?.queueSnapshot()
+        accountStore.activeAccount.dequeueSnapshot()
+        accountStore.activeAccount.queueSnapshot()
       }
       this.setIsSnapshotting(false)
       this.cancelSnapshot.next(!cancel)
@@ -155,9 +155,9 @@ export class UiStateStore extends Model({
       experience: 123_456_789,
       current: false
     }
-    accountStore.activeAccount?.updateCharacters([char1, char2])
+    accountStore.activeAccount.updateCharacters([char1, char2])
     // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-    const activeCharacter1 = profileCharacterRef(accountStore.activeAccount?.characters[0]!)
+    const activeCharacter1 = profileCharacterRef(accountStore.activeAccount.characters[0]!)
 
     // Stashes
     const stash1: PoePartialStashTab = {
@@ -174,9 +174,9 @@ export class UiStateStore extends Model({
       type: 'Map',
       league: 'Anchestor'
     }
-    accountStore.activeAccount?.updateLeagueStashTabs([stash1, stash2], leagueStore.leagues[0])
+    accountStore.activeAccount.updateLeagueStashTabs([stash1, stash2], leagueStore.leagues[0])
     // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-    const activeStashTabs = [profileStashTabRef(accountStore.activeAccount?.stashTabs[0]!)]
+    const activeStashTabs = [profileStashTabRef(accountStore.activeAccount.stashTabs[0]!)]
 
     // Profile
     const profile1 = new Profile({
@@ -191,9 +191,9 @@ export class UiStateStore extends Model({
       activePriceLeagueRef: activePriceLeague2,
       name: 'Profile_2'
     })
-    accountStore.activeAccount?.addProfile(profile1)
-    accountStore.activeAccount?.addProfile(profile2)
-    accountStore.activeAccount?.setActiveProfile(profile1)
+    accountStore.activeAccount.addProfile(profile1)
+    accountStore.activeAccount.addProfile(profile2)
+    accountStore.activeAccount.setActiveProfile(profile1)
   }
 
   /**

@@ -25,12 +25,8 @@ import {
 } from 'rxjs'
 import { RootStore } from './rootStore'
 import externalService from '../service/external.service'
-import {
-  Profile,
-  profileLeagueRef,
-  profilePriceLeagueRef,
-  profileStashTabRef
-} from './domains/profile'
+import { profileLeagueRef, profilePriceLeagueRef, profileStashTabRef } from './domains/profile'
+import { Profile } from './domains/profile'
 import { generateProfileName } from '../utils/profile.utils'
 import { getCharacterLeagues } from '../utils/league.utils'
 
@@ -51,7 +47,9 @@ export class AccountStore extends Model({
 
   @computed
   get activeAccount() {
-    return this.activeAccountRef?.maybeCurrent
+    // Once the session is initiated, the account is defined. In the meantime skeletons will hide the UI. We will disable all buttons as well
+    const account = this.activeAccountRef?.maybeCurrent
+    return account ? account : new Account({ name: 'Unknown' })
   }
 
   /**
@@ -133,19 +131,19 @@ export class AccountStore extends Model({
               ]).pipe(
                 concatMap(() => {
                   // Now init and set initial data
-                  if (!this.activeAccount?.activeProfile?.isProfileValid) {
+                  if (!this.activeAccount.activeProfile?.isProfileValid) {
                     // Select next valid profile
-                    const validProfile = this.activeAccount?.profiles.find(
+                    const validProfile = this.activeAccount.profiles.find(
                       (profile) => profile.isProfileValid
                     )
                     if (validProfile) {
-                      this.activeAccount?.setActiveProfile(validProfile)
+                      this.activeAccount.setActiveProfile(validProfile)
                       return of({})
                     }
 
                     // Create valid profle
                     const league = leagueStore.leagues.filter((l) => !l.deleted)[0]
-                    const stashTabs = this.activeAccount?.stashTabs
+                    const stashTabs = this.activeAccount.stashTabs
                       .filter((st) => st.leagueRef.id === league.getRefId())
                       .slice(0, 2)
                       .map((st) => profileStashTabRef(st))
@@ -158,8 +156,8 @@ export class AccountStore extends Model({
                       ),
                       activeStashTabsRef: stashTabs
                     })
-                    this.activeAccount?.addProfile(newProfile)
-                    this.activeAccount?.setActiveProfile(newProfile)
+                    this.activeAccount.addProfile(newProfile)
+                    this.activeAccount.setActiveProfile(newProfile)
 
                     uiStateStore.setStatusMessage('created_default_profile', newProfile.name)
                   }
@@ -185,7 +183,7 @@ export class AccountStore extends Model({
     uiStateStore.setInitiated(true)
 
     if (settingStore.autoSnapshotting) {
-      this.activeAccount?.queueSnapshot(1)
+      this.activeAccount.queueSnapshot(1)
     }
   }
 

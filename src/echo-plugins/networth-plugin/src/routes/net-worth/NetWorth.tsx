@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
-import ToolbarContainer from '../../components/Toolbar/ToolbarContainer'
+import ToolbarContainer from '../../components/toolbar/ToolbarContainer'
 import ItemTableContainer from '../../components/itemTable/ItemTableContainer'
 
 const NetWorth = () => {
@@ -58,25 +58,25 @@ const Test = observer(() => {
         })}
       </ul>
       <br />
-      Active account: {accountStore.activeAccount?.name}
+      Active account: {accountStore.activeAccount.name}
       <br />
-      Profiles in account: {accountStore.activeAccount?.name}
+      Profiles in account: {accountStore.activeAccount.name}
       <ul>
-        {accountStore.activeAccount?.profiles.map((profile) => {
+        {accountStore.activeAccount.profiles.map((profile) => {
           return <li key={profile.name}>{profile.name}</li>
         })}
       </ul>
       <br />
-      Active Profile: {accountStore.activeAccount?.activeProfile?.name}
+      Active Profile: {accountStore.activeAccount.activeProfile?.name}
       <br />
-      Active League: {accountStore.activeAccount?.activeProfile?.activeLeague?.name}
+      Active League: {accountStore.activeAccount.activeProfile?.activeLeague?.name}
       <br />
-      Active Price-League: {accountStore.activeAccount?.activeProfile?.activePriceLeague?.name}
+      Active Price-League: {accountStore.activeAccount.activeProfile?.activePriceLeague?.name}
       <br />
-      Active Character: {accountStore.activeAccount?.activeProfile?.activeCharacter?.name}
+      Active Character: {accountStore.activeAccount.activeProfile?.activeCharacter?.name}
       <br />
       Active Stash-Tabs:{' '}
-      {accountStore.activeAccount?.activeProfile?.activeStashTabs?.map((st) => st.name).join(', ')}
+      {accountStore.activeAccount.activeProfile?.activeStashTabs?.map((st) => st.name).join(', ')}
     </>
   )
 })
