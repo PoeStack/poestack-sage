@@ -8,6 +8,7 @@ import { cn } from 'echo-common'
 import { CurrencyShort } from '../../store/settingStore'
 import { IPricedItem } from '../../interfaces/priced-item.interface'
 import { observer } from 'mobx-react'
+import { useStore } from '../../hooks/useStore'
 
 type PricedItem = keyof IPricedItem | 'comulative'
 
@@ -23,8 +24,7 @@ export function itemIcon(options: {
     minSize: 100,
     cell: ({ row }) => {
       const value = row.getValue<string>(accessorKey)
-      const frameType = row.getValue<number>('frameType')
-      return <ItemIconCell value={value} frameType={frameType}></ItemIconCell>
+      return <ItemIconCell value={value} frameType={row.original.frameType}></ItemIconCell>
     }
   }
 }
@@ -41,8 +41,7 @@ export function itemName(options: {
     accessorKey,
     cell: ({ row }) => {
       const value = row.getValue<string>(accessorKey)
-      const frameType = row.getValue<number>('frameType')
-      return <ItemNameCell value={value} frameType={frameType} />
+      return <ItemNameCell value={value} frameType={row.original.frameType} />
     }
   }
 }
@@ -157,7 +156,7 @@ const ItemIconCell = ({ value, frameType }: ItemIconCellProps) => {
       className="flex justify-center items-center w-full h-full"
     >
       <div className="flex justify-center items-center relative">
-        <img className="h-6 min-h-6" src={typeof value === 'string' ? value : ''} />
+        <img className="h-6 min-h-6 pl-[1px]" src={typeof value === 'string' ? value : ''} />
       </div>
     </div>
   )
@@ -202,16 +201,16 @@ type ItemQuantityCellProps = {
 
 const ItemQuantityCell = ({ quantity, diff }: ItemQuantityCellProps) => {
   return (
-    <span
+    <div
       className={cn(
-        'font-bold',
+        'font-bold text-right',
         diff && quantity > 0 && `text-[${currencyChangeColors.positive}]`,
         diff && quantity < 0 && `text-[${currencyChangeColors.negative}]`
       )}
     >
       {diff && quantity > 0 ? '+ ' : ''}
       {quantity}
-    </span>
+    </div>
   )
 }
 
@@ -224,7 +223,7 @@ type ItemValueCellProps = {
 }
 
 const ItemValueCellComponent = ({ value, placeholder, diff, currencyType }: ItemValueCellProps) => {
-  const { priceStore } = useStores()
+  const { priceStore } = useStore()
 
   const tryParseNumber = (value: boolean | string | number, diff?: boolean) => {
     if (typeof value === 'number') {
@@ -239,11 +238,12 @@ const ItemValueCellComponent = ({ value, placeholder, diff, currencyType }: Item
   }
 
   return (
-    <>
+    <div className="text-right">
       {value ? (
         <span
+          style={{ color: itemColors.chaosOrb }}
           className={cn(
-            `text-[${itemColors.chaosOrb}] pr-1 font-bold`,
+            `pr-1 font-bold`,
             diff && value > 0 && `text-[${currencyChangeColors.positive}]`,
             diff && value < 0 && `text-[${currencyChangeColors.negative}]`
           )}
@@ -253,12 +253,8 @@ const ItemValueCellComponent = ({ value, placeholder, diff, currencyType }: Item
       ) : (
         <span className="pr-1">{placeholder}</span>
       )}
-    </>
+    </div>
   )
 }
 
 const ItemValueCell = observer(ItemValueCellComponent)
-
-function useStores(): { uiStateStore: any; customPriceStore: any; priceStore: any } {
-  throw new Error('Function not implemented.')
-}
