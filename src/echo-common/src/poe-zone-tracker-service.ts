@@ -8,7 +8,6 @@ import {
   PoeZoneEntranceEvent
 } from './poe-client-log-service'
 import { PoeCharacter, PoeItem } from 'sage-common'
-import { EchoPoeItem } from './poe-stash-service'
 import { Subject, Subscription, filter, map } from 'rxjs'
 import { PoeCharacterService } from './poe-character-service'
 import { SmartCacheResultEvent } from './smart-cache'
@@ -258,8 +257,8 @@ export class PoeZoneTrackerService {
     const enterMap = itemIdMap(enter.inventory ?? [])
     const exitMap = itemIdMap(exit.inventory ?? [])
 
-    let added: PoeItem[] = []
-    let removed: PoeItem[] = []
+    const added: PoeItem[] = []
+    const removed: PoeItem[] = []
     enterMap.forEach((item) => {
       if (item.id && !exitMap.has(item.id)) {
         removed.push(item)
@@ -352,7 +351,7 @@ export class PoeZoneTrackerService {
 }
 
 function itemIdMap(items: PoeItem[]) {
-  let map = new Map<string, PoeItem>()
+  const map = new Map<string, PoeItem>()
   items.forEach((item) => {
     if (item.id != undefined) {
       map.set(item.id, item)
@@ -363,6 +362,7 @@ function itemIdMap(items: PoeItem[]) {
   return map
 }
 
+//For logging
 function PoeZoneDeltaToString(delta: PoeZoneDelta) {
   let str = ''
 
