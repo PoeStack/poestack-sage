@@ -18,7 +18,7 @@ let file: string
 let tail: Tail
 
 beforeEach(() => {
-  const filename = Math.floor(Math.random() * 99999999) + '.txt'
+  const filename = Math.floor(Math.random() * 999999999999) + '.txt'
   file = path.join(process.cwd(), 'test', 'data', 'tmp', filename)
 
   if (!fs.existsSync(file)) {
