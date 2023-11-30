@@ -1,15 +1,13 @@
-## How to contribute to PoeStack Sage
-
-#### **Did you find a bug?**
+## **Did you find a bug?**
 
 * **Ensure the bug was not already reported** by searching on GitHub under [Issues](https://github.com/PoeStack/poestack-sage/issues).
 
 * If you're unable to find an open issue addressing the problem, [open a new one](https://github.com/PoeStack/poestack-sage/issues/new). Be sure to include a **title and clear description**, as much relevant information as possible, screenshots/videos of the issue and/or log files will greatly help the team help you. If the bug was in a plugin please include the plugin name in brackets in the issue title like `[Stash Tab Plugin] Failing to load cluster jewels` so we can get the right people looking at the issue.
 
-#### **Would you like to create a plugin?**
+## **Would you like to create a plugin?**
 
 
-#### **Would you like to add something to the core library?**
+## **Would you like to add something to the core library?**
 It is best practice to [open an issue](https://github.com/PoeStack/poestack-sage/issues/new) and mark it as an enhancement then describe what you plan on adding and what use-cases it will address. This gives other people including the maintainers an opportunity to provide feedback before you've committed your time to building the feature. Additions to the core library are held to a higher standard than plugins since maintenance on the core library is mainly handled by a small group of people and these changes effect the entire ecosystem.
 
 Additions to the core library should adhere to the following ideas:
