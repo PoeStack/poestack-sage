@@ -1,7 +1,20 @@
-import { Observable, map, mergeMap } from 'rxjs'
+import { map } from 'rxjs'
 import { context } from '../entry'
 import { filterNullish } from 'ts-ratchet'
 import { IStashTab } from '../interfaces/stash.interface'
+import { PoeItem } from 'sage-common'
+
+export const valuateItems = (league: string, items: PoeItem[]) => {
+  const { poeValuations } = context()
+  return poeValuations.withValuations(league, items).pipe(
+    map((e) => {
+      return {
+        data: e.data,
+        valuation: e.valuation
+      }
+    })
+  )
+}
 
 export const getProfile = () => {
   const { poeAccounts } = context()
@@ -102,6 +115,7 @@ export const getStashTabWithChildren = (stash: IStashTab, league: string, childr
 }
 
 export default {
+  valuateItems,
   getProfile,
   getLeagues,
   getCharacters,

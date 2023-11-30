@@ -92,3 +92,29 @@ export function mapMapStashItemToPoeItem(tab: IStashTab, league: string): PoeIte
   })
   return items || []
 }
+
+export function mergeItemStacks(items: PoeItem[]) {
+  const mergedItems: PoeItem[] = []
+
+  // items.forEach((item) => {
+  //   const clonedItem = { ...item }
+  //   const foundItem = findItem(mergedItems, clonedItem)
+
+  //   if (!foundItem) {
+  //     mergedItems.push(clonedItem)
+  //   } else {
+  //     const foundStackIndex = mergedItems.indexOf(foundItem)
+  //     mergedItems[foundStackIndex].stackSize += item.stackSize
+  //     mergedItems[foundStackIndex].total =
+  //       mergedItems[foundStackIndex].stackSize * mergedItems[foundStackIndex].calculated
+  //     if (mergedItems[foundStackIndex].tab !== undefined && item.tab !== undefined) {
+  //       mergedItems[foundStackIndex].tab = [...mergedItems[foundStackIndex].tab, ...item.tab]
+  //       mergedItems[foundStackIndex].tab = mergedItems[foundStackIndex].tab.filter(
+  //         (v, i, a) => a.findIndex((t) => t.id === v.id) === i
+  //       )
+  //     }
+  //   }
+  // })
+
+  return mergedItems
+}

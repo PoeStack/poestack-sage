@@ -33,7 +33,10 @@ import { IStashTabItems, IStashTabSnapshot } from '../../interfaces/snapshot.int
 import { IStashTab } from '../../interfaces/stash.interface'
 import { table } from 'console'
 import { IPricedItem } from '../../interfaces/priced-item.interface'
-import { mapMapStashItemToPoeItem as mapMapStashItemsToPoeItems } from '../../utils/item.utils'
+import {
+  mapMapStashItemToPoeItem as mapMapStashItemsToPoeItems,
+  mergeItemStacks
+} from '../../utils/item.utils'
 import { PoeItem } from 'sage-common'
 
 export const profileLeagueRef = rootRef<League>('nw/profileLeagueRef')
@@ -126,6 +129,8 @@ export class Profile extends Model({
 
   @modelAction
   snapshot() {
+    // TODO: Investigate - disable takesnapshotbutton, when then profile is not valid. - We may just ignore deleted stashtabs/character and mark them in profile as deleted
+    // Without a league, the player must investiagte or automatically archive the profile and create a new one? - Only with alertDialog
     if (this.isProfileValid) return this.notifyInvalidProfile()
 
     const { uiStateStore } = getRoot<RootStore>(this)
@@ -173,7 +178,7 @@ export class Profile extends Model({
 
   @modelAction
   refreshStashTabs() {
-    const { uiStateStore } = getRoot<RootStore>(this)
+    const { uiStateStore, accountStore } = getRoot<RootStore>(this)
     const league = this.activeLeague!
 
     uiStateStore.setStatusMessage('refreshing_stash_tabs')
@@ -181,7 +186,10 @@ export class Profile extends Model({
     externalService
       .getStashTabs(league.name)
       .pipe(
-        mergeMap(() => of(this.refreshStashTabsSuccess(league.name))),
+        mergeMap((st) => {
+          accountStore.activeAccount.updateLeagueStashTabs(st, league)
+          return of(this.refreshStashTabsSuccess(league))
+        }),
         takeUntil(uiStateStore.cancelSnapshot),
         catchError((e: Error) => of(this.refreshStashTabsFail(e, league.name)))
       )
@@ -189,16 +197,16 @@ export class Profile extends Model({
   }
 
   @modelAction
-  refreshStashTabsSuccess(leagueId: string) {
+  refreshStashTabsSuccess(league: League) {
     const { notificationStore } = getRoot<RootStore>(this)
     notificationStore.createNotification(
       'refreshing_stash_tabs',
       'success',
       undefined,
       undefined,
-      leagueId
+      league.name
     )
-    this.getItems()
+    this.getItems(league)
   }
 
   @modelAction
@@ -209,13 +217,10 @@ export class Profile extends Model({
   }
 
   @modelAction
-  getItems() {
-    if (this.isProfileValid) return this.notifyInvalidProfile()
-    const { accountStore, uiStateStore, notificationStore, settingStore, priceStore } =
-      getRoot<RootStore>(this)
+  getItems(league: League) {
+    const { uiStateStore } = getRoot<RootStore>(this)
 
-    const league = this.activeLeague!
-    const selectedStashTabs = this.activeStashTabs!
+    const selectedStashTabs = this.activeStashTabs.filter((st) => !st.deleted)
 
     if (selectedStashTabs.length === 0) {
       return this.getItemsFail(new Error('no_stash_tabs_selected_for_profile'), league?.name)
@@ -307,51 +312,25 @@ export class Profile extends Model({
             }
             stashTabsWithItems.push(characterTab)
           }
-          return stashTabsWithItems.map((stashTabWithItems) => {
-            return from(e.result?.items ?? []).pipe(
-              mergeMap((item) => {
-                const group = this.groupingService.group(item)
-                if (group) {
-                  return this.valuationApi.valuation(league, group).pipe(
-                    mergeMap((vEvent) => {
-                      if (vEvent.type === 'result') {
-                        const itemValuation = vEvent?.result?.valuations?.[group.hash]
-                        const eItem: EchoPoeItem = {
-                          // TODO Investigate
-                          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-                          stash: e?.result!!,
-                          data: item,
-                          valuation: itemValuation,
-                          group: group
-                        }
-                        return of({ ...vEvent, result: eItem })
-                      }
-                      return of(vEvent)
-                    })
-                  )
-                }
-                return of(null)
-              }),
-              filterNullish()
-            )
-
-            stashTabWithItems.items = mergeItemStacks(stashTabWithItems.items)
-            return stashTabWithItems
-          })
+          return stashTabsWithItems
         }),
-        mergeMap((stashTabsWithItems) => of(this.getItemsSuccess(stashTabsWithItems, league.name))),
+        // Process single to begin with valuation while receiving stasttabs
+        mergeMap((stashTabsWithItems) => of(this.getItemsSuccess(stashTabsWithItems, league))),
         takeUntil(uiStateStore.cancelSnapshot),
         catchError((e: Error) => of(this.getItemsFail(e, league.name)))
       )
-      .subscribe()
+      .subscribe(() => {
+        // TODO: 
+        // this.getItemsSuccess(stashTabsWithItems, league)
+      })
   }
 
   @modelAction
-  getItemsSuccess(stashTabsWithItems: IStashTabSnapshot[], leagueId: string) {
+  getItemsSuccess(stashTabsWithItems: IStashTabItems[], league: League) {
     // todo: clean up, must be possible to write this in a nicer manner (perhaps a joint function for both error/success?)
     const { notificationStore } = getRoot<RootStore>(this)
-    notificationStore.createNotification('get_items', 'success', undefined, undefined, leagueId)
-    this.priceItemsForStashTabs(stashTabsWithItems)
+    notificationStore.createNotification('get_items', 'success', undefined, undefined, league.name)
+    this.priceItemsForStashTabs(stashTabsWithItems, league)
   }
 
   @modelAction
@@ -362,5 +341,152 @@ export class Profile extends Model({
   }
 
   @modelAction
-  priceItemsForStashTabs() {}
+  priceItemsForStashTabs(stashTabsWithItems: IStashTabItems[], league: League) {
+    const { uiStateStore, accountStore, notificationStore, priceStore } = getRoot<RootStore>(this)
+
+    const getValuation = from(stashTabsWithItems).pipe(
+      mergeMap((stashTabWithItems) => {
+        return externalService.valuateItems(league.name, stashTabWithItems.items).pipe(
+          toArray(),
+          map((valuation) => {
+            return {
+              valuation,
+              stashTabId: stashTabWithItems.stashTabId
+            }
+          })
+        )
+      })
+    )
+    forkJoin([getValuation])
+      .pipe(
+        mergeMap((valuatedStash) => {
+          // Convert to priced items
+          valuatedStash
+        }),
+        takeUntil(uiStateStore.cancelSnapshot),
+        catchError((e: Error) => of(this.priceItemsForStashTabsFail(e)))
+      )
+      .subscribe((itemsWithValuations) => {
+        if(!itemsWithValuations) return
+        const mergedItems = mergeItemStacks(itemsWithValuations)
+        console.log('items with valuations', itemsWithValuations)
+
+        return stashTabWithItems
+      })
+
+    // uiStateStore.setStatusMessage('pricing_items')
+    // let activePriceLeague = accountStore.activeAccount.activePriceLeague
+
+    // if (!activePriceLeague) {
+    //   this.setActivePriceLeague('Standard')
+    //   activePriceLeague = accountStore.activeAccount.activePriceLeague
+    // }
+
+    // const activePriceDetails = priceStore.leaguePriceDetails.find(
+    //   (l) => l.leagueId === activePriceLeague!.id
+    // )
+
+    // if (!activePriceDetails) {
+    //   return this.priceItemsForStashTabsFail(new Error('no_prices_received_for_league'))
+    // }
+
+    // let prices = activePriceDetails.leaguePriceSources[0].prices
+
+    // if (!settingStore.lowConfidencePricing) {
+    //   prices = prices.filter((p) => p.count > 10)
+    // }
+
+    // if (settingStore.priceThreshold > 0) {
+    //   prices = prices.filter((p) => p.calculated && p.calculated >= settingStore.priceThreshold)
+    // }
+
+    // prices = excludeLegacyMaps(prices)
+    // prices = excludeInvalidItems(prices)
+
+    // const customPrices = customPriceStore.customLeaguePrices.find(
+    //   (cpl) => cpl.leagueId === activePriceLeague?.id
+    // )?.prices
+
+    // if (customPrices) {
+    //   customPrices.filter((x) => {
+    //     const foundPrice = findPrice(prices, x)
+    //     if (foundPrice) {
+    //       foundPrice.customPrice = x.customPrice
+    //       const index = prices.indexOf(foundPrice)
+    //       prices[index] = foundPrice
+    //     }
+    //   })
+    // }
+
+    // const pricedStashTabs = stashTabsWithItems.map((stashTabWithItems: IStashTabSnapshot) => {
+    //   stashTabWithItems.pricedItems = stashTabWithItems.pricedItems.map((item: IPricedItem) => {
+    //     return pricingService.priceItem(item, prices)
+    //   })
+    //   return stashTabWithItems
+    // })
+
+    // const filteredTabs = pricedStashTabs.map((pst) => {
+    //   const mergedTabItems = mergeItemStacks(pst.pricedItems).filter(
+    //     (pi) => pi.total >= rootStore.settingStore.totalPriceThreshold && pi.total > 0
+    //   )
+    //   pst.pricedItems = mergedTabItems
+    //   pst.value = mergedTabItems.map((ts) => ts.total).reduce((a, b) => a + b, 0)
+    //   return pst
+    // })
+
+    // return this.priceItemsForStashTabsSuccess(filteredTabs)
+  }
+
+  @modelAction
+  priceItemsForStashTabsSuccess(pricedStashTabs: IStashTabSnapshot[]) {
+    const { uiStateStore, accountStore, notificationStore, priceStore } = getRoot<RootStore>(this)
+    notificationStore.createNotification('price_stash_items', 'success')
+    this.saveSnapshot(pricedStashTabs)
+  }
+
+  @modelAction
+  priceItemsForStashTabsFail(e: Error) {
+    const { uiStateStore, accountStore, notificationStore, priceStore } = getRoot<RootStore>(this)
+    notificationStore.createNotification('price_stash_items', 'error', true, e)
+    this.snapshotFail()
+  }
+
+  @modelAction
+  saveSnapshot(pricedStashTabs: IStashTabSnapshot[]) {
+    const { uiStateStore, accountStore, notificationStore, priceStore } = getRoot<RootStore>(this)
+  //   uiStateStore.setStatusMessage('saving_snapshot');
+  //   rateLimitStore.setEstimatedSnapshotTime();
+  //   const snapshot: ISnapshot = {
+  //     stashTabSnapshots: pricedStashTabs.map((p) => new StashTabSnapshot(p)),
+  //   };
+
+  //   const snapshotToAdd = new Snapshot(snapshot);
+
+  //   const activeAccountLeague = accountStore.activeAccount.accountLeagues.find(
+  //     (al) => al.leagueId === this.activeLeagueId
+  //   );
+
+  //   if (activeAccountLeague) {
+  //     const apiSnapshot = mapSnapshotToApiSnapshot(snapshotToAdd, activeAccountLeague.stashtabList);
+  //     const callback = () => {
+  //       // keep items for only 10 snapshots at all times
+  //       if (this.snapshots.length > 10) {
+  //         this.snapshots[10].stashTabSnapshots.forEach((stss) => {
+  //           stss.pricedItems = [];
+  //         });
+  //       }
+
+  //       if (rootStore.signalrStore.activeGroup) {
+  //         rootStore.signalrStore.addOwnSnapshotToActiveGroup(snapshotToAdd);
+  //       }
+  //       runInAction(() => {
+  //         this.snapshots.unshift(snapshotToAdd);
+  //         this.snapshots = this.snapshots.slice(0, 1000);
+  //       });
+  //       this.session.saveSnapshot(snapshotToAdd);
+  //       this.updateNetWorthOverlay();
+  //     };
+  //     fromStream(this.sendSnapshot(apiSnapshot, this.snapshotSuccess, this.snapshotFail, callback));
+  //   }
+  // }
 }
