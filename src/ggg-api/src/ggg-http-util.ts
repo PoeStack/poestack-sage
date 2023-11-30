@@ -4,7 +4,7 @@ import { RateLimitError } from 'sage-common'
 
 export class GggRateLimiter {
   policyCache: { [rateLimitKey: string]: string } = {}
-  rulecache: { [policy: string]: { lookbackSeconds: number, maximumHits: number }[] } = {}
+  rulecache: { [policy: string]: { lookbackSeconds: number; maximumHits: number }[] } = {}
   policyRequestLog: { [policy: string]: number[] } = {}
   policyDelay: { [policy: string]: number } = {}
 
@@ -12,7 +12,7 @@ export class GggRateLimiter {
     const policy = this.policyCache[rateLimitKey]
     const rules = this.rulecache[policy ?? '']
 
-    console.log("checking current delay for", rateLimitKey, policy, rules)
+    console.log('checking current delay for', rateLimitKey, policy, rules)
 
     if (!policy || !rules) {
       return 0
@@ -25,21 +25,20 @@ export class GggRateLimiter {
 
     const requesLog = this.policyRequestLog[policy] ?? []
     for (const rule of rules) {
-      const windowStart = Date.now() - ((rule.lookbackSeconds + 3) * 1000)
+      const windowStart = Date.now() - (rule.lookbackSeconds + 3) * 1000
       const requestsInWindow = requesLog.filter((e) => e > windowStart)
-      console.log("checking", rule.lookbackSeconds, requestsInWindow.length, rule.maximumHits)
+      console.log('checking', rule.lookbackSeconds, requestsInWindow.length, rule.maximumHits)
 
       if (requestsInWindow.length >= rule.maximumHits - 1) {
         const oldestRequestAge = (Date.now() - Math.min(...requestsInWindow)) / 1000
-        const delay = Math.max(((rule.lookbackSeconds - oldestRequestAge) * 1000) + 1000, 1000)
-        console.log("request would exceed maximumHits", oldestRequestAge, delay)
+        const delay = Math.max((rule.lookbackSeconds - oldestRequestAge) * 1000 + 1000, 1000)
+        console.log('request would exceed maximumHits', oldestRequestAge, delay)
         return delay
       }
     }
 
     return 0
   }
-
 
   public recordRequestStart(rateLimitKey: string) {
     const policy = this.policyCache[rateLimitKey]
@@ -56,21 +55,22 @@ export class GggRateLimiter {
     this.policyCache[rateLimitKey] = policy
 
     if (headers['retry-after']) {
-      this.policyDelay[policy] = Date.now() + (parseInt(headers['retry-after']) * 1000)
+      this.policyDelay[policy] = Date.now() + parseInt(headers['retry-after']) * 1000
     }
 
     if (!this.rulecache[policy]) {
-      const ruleHeaders = headers['x-rate-limit-rules']?.split(",") ?? []
-      const allRulesRaw = ruleHeaders.flatMap((ruleHeader) => headers[`x-rate-limit-${ruleHeader.toLowerCase()}`].split(","))
+      const ruleHeaders = headers['x-rate-limit-rules']?.split(',') ?? []
+      const allRulesRaw = ruleHeaders.flatMap((ruleHeader) =>
+        headers[`x-rate-limit-${ruleHeader.toLowerCase()}`].split(',')
+      )
       const rules = allRulesRaw.map((raw) => {
-        const splitRule = raw.split(":")
+        const splitRule = raw.split(':')
         const maximumHits = parseInt(splitRule[0])
         const lookbackSeconds = parseInt(splitRule[1])
         return { maximumHits, lookbackSeconds }
       })
       this.rulecache[policy] = rules
     }
-
   }
 }
 
@@ -98,7 +98,7 @@ export class GggHttpUtil {
           })
           .then((response) => {
             console.log('GGG response', path, response.status)
-            console.log("ggg headers", response.headers)
+            console.log('ggg headers', response.headers)
             this.reatelimiter.recordRequest(rateLimitKey, response.headers as unknown as any)
             observer.next(response.data)
             observer.complete()
@@ -108,7 +108,9 @@ export class GggHttpUtil {
             this.reatelimiter.recordRequest(rateLimitKey, error.response.headers)
 
             if (error.response.status === 429) {
-              observer.error(new RateLimitError(parseInt(error.response.headers['retry-after']) * 1000))
+              observer.error(
+                new RateLimitError(parseInt(error.response.headers['retry-after']) * 1000)
+              )
             } else {
               observer.error(error)
             }

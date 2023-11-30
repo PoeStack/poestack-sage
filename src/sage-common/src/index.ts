@@ -31,11 +31,7 @@ import {
 import { ItemGroupingService, SageItemGroup } from './item-groups/item-grouping-service'
 import { HttpUtil } from './utils/http-util'
 
-export {
-  ItemGroupingService,
-  HttpUtil,
-  RateLimitError,
-}
+export { ItemGroupingService, HttpUtil, RateLimitError }
 
 export type {
   SageItemGroup,

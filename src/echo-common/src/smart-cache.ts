@@ -98,12 +98,29 @@ export class SmartCache<T> {
           return of(e).pipe(
             concatMap((e) => {
               return e.loadFun().pipe(
-                map((r): SmartCacheResultEvent<T> => ({ type: "result", result: r, key: e.key, timestampMs: Date.now() })),
+                map(
+                  (r): SmartCacheResultEvent<T> => ({
+                    type: 'result',
+                    result: r,
+                    key: e.key,
+                    timestampMs: Date.now()
+                  })
+                ),
                 retry({
                   delay: (error: any, retryCount: number) => {
                     if (error instanceof RateLimitError) {
-                      this.events$.next({ type: "rate-limit", key: e.key, timestampMs: Date.now(), limitExpiresMs: error.retryAfterMs })
-                      console.log("caught rate limit error, delaying", error.retryAfterMs, "attempt", retryCount)
+                      this.events$.next({
+                        type: 'rate-limit',
+                        key: e.key,
+                        timestampMs: Date.now(),
+                        limitExpiresMs: error.retryAfterMs
+                      })
+                      console.log(
+                        'caught rate limit error, delaying',
+                        error.retryAfterMs,
+                        'attempt',
+                        retryCount
+                      )
                       return timer(error.retryAfterMs)
                     }
 
@@ -111,7 +128,7 @@ export class SmartCache<T> {
                   }
                 })
               )
-            }),
+            })
           )
         })
       )

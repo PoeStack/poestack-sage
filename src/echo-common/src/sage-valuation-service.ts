@@ -40,7 +40,9 @@ export class SageValuationService {
 
   public valuation(league: string, group: SageItemGroup) {
     const key = `${group.tag}_${group.shard}_${league}`.replaceAll(' ', '_')
-    return this.cacheValuationShards.load({ key: key, maxAgeMs: 1000 * 60 * 60 }, () => this.loadInternal(key))
+    return this.cacheValuationShards.load({ key: key, maxAgeMs: 1000 * 60 * 60 }, () =>
+      this.loadInternal(key)
+    )
   }
 
   private loadInternal(key: string) {
