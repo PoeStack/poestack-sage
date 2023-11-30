@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@electron-toolkit/preload": "^2.0.0",
-    "stash-plugin": "file:../echo-plugin-examples/stash-plugin",
     "@electron-toolkit/utils": "^2.0.0",
     "@electron/remote": "^2.0.12",
     "@libsql/client": "^0.4.0-pre.2",
