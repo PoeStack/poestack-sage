@@ -1,5 +1,5 @@
 import { useStore } from '../../hooks/useStore'
-import { SubmitHandler, UseFormReturn } from 'react-hook-form'
+import { SubmitHandler } from 'react-hook-form'
 import {
   profileCharacterRef,
   profileLeagueRef,
@@ -10,18 +10,75 @@ import { Profile } from '../../store/domains/profile'
 import { Button, Checkbox, Form, Input, Label, Select, Sheet } from 'echo-common/components-v1'
 import { observer } from 'mobx-react'
 import { StashTab } from '../../store/domains/stashtab'
-import { ProfilePayload } from './types'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+import { League } from '../../store/domains/league'
+import { Character } from '../../store/domains/character'
+import { useMemo, useEffect } from 'react'
+
+type ProfilePayload = {
+  name: string
+  stashTabs: StashTab[]
+  league?: League
+  pricingLeague?: League
+  character: Character | null
+  includeEquipment?: boolean
+  includeInventory?: boolean
+}
 
 type ProfileFormProps = {
   onClose?: () => void
   profile?: Profile
-  form: UseFormReturn<ProfilePayload>
+  profileDialogOpen: boolean
 }
 
-const ProfileForm = ({ profile, onClose, form }: ProfileFormProps) => {
+const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) => {
   const { accountStore, leagueStore } = useStore()
 
   const activeAccount = accountStore.activeAccount
+
+  const schema = z.object({
+    name: z.string().min(1),
+    stashTabs: z.optional(z.array(z.instanceof(StashTab))),
+    league: z.instanceof(League),
+    pricingLeague: z.instanceof(League),
+    character: z.union([z.instanceof(Character), z.null()]),
+    includeEquipment: z.optional(z.boolean()),
+    includeInventory: z.optional(z.boolean())
+  })
+
+  const defaultFormValues = useMemo(
+    () => ({
+      name: profile?.name ?? '',
+      stashTabs: profile?.activeStashTabs ?? [],
+      league: profile?.activeLeague ?? leagueStore.leagues[0],
+      pricingLeague: profile?.activePriceLeague ?? leagueStore.leagues[0],
+      character: profile?.activeCharacter ?? null,
+      includeEquipment: profile?.includeEquipment ?? false,
+      includeInventory: profile?.includeInventory ?? false
+    }),
+    [
+      leagueStore.leagues,
+      profile?.activeCharacter,
+      profile?.activeLeague,
+      profile?.activePriceLeague,
+      profile?.activeStashTabs,
+      profile?.includeEquipment,
+      profile?.includeInventory,
+      profile?.name
+    ]
+  )
+
+  const form = useForm<ProfilePayload>({
+    defaultValues: defaultFormValues,
+    reValidateMode: 'onChange',
+    resolver: zodResolver(schema)
+  })
+
+  useEffect(() => {
+    form.reset(defaultFormValues)
+  }, [defaultFormValues, form, profileDialogOpen])
 
   const stashTabs = activeAccount.stashTabs ?? []
 
@@ -39,12 +96,10 @@ const ProfileForm = ({ profile, onClose, form }: ProfileFormProps) => {
     }
     if (profile) {
       profile.updateProfile(payload)
-      form.reset()
       onClose?.()
       return
     }
     activeAccount.addProfile(new Profile(payload))
-    form.reset()
     onClose?.()
   }
 
@@ -126,7 +181,7 @@ const ProfileForm = ({ profile, onClose, form }: ProfileFormProps) => {
                       const league = leagueStore.leagues.find((league) => league.name === value)
                       if (league) {
                         field.onChange(league)
-                        form.resetField('character')
+                        form.resetField('character', { defaultValue: null })
                         form.resetField('includeEquipment', { defaultValue: false })
                         form.resetField('includeInventory', { defaultValue: false })
                       }
@@ -190,8 +245,6 @@ const ProfileForm = ({ profile, onClose, form }: ProfileFormProps) => {
             control={form.control}
             name="character"
             render={({ field }) => {
-              console.log(form.getValues().character)
-              console.log(field.value)
               return (
                 <Form.Item>
                   <Form.Label>Character</Form.Label>
@@ -199,7 +252,6 @@ const ProfileForm = ({ profile, onClose, form }: ProfileFormProps) => {
                     disabled={!form.getValues().league}
                     value={field.value?.name ?? 'None'}
                     onValueChange={(value) => {
-                      console.log(value)
                       if (value === 'None') {
                         field.onChange(null)
                         form.resetField('includeEquipment', { defaultValue: false })

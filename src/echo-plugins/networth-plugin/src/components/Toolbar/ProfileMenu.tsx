@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState } from 'react'
 import { useStore } from '../../hooks/useStore'
 import { AlertDialog, Button, Command, Popover, Sheet } from 'echo-common/components-v1'
 import {
@@ -8,67 +8,17 @@ import {
   PlusCircleIcon,
   TrashIcon
 } from 'lucide-react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
 import ProfileForm from './ProfileForm'
 import { Profile } from '../../store/domains/profile'
-import { League } from '../../store/domains/league'
-import { Character } from '../../store/domains/character'
-import { StashTab } from '../../store/domains/stashtab'
 import { observer } from 'mobx-react'
-import { ProfilePayload } from './types'
 
 const ProfileMenu = () => {
-  const { accountStore, leagueStore } = useStore()
+  const { accountStore } = useStore()
   const activeAccount = accountStore.activeAccount
   const [menuOpen, setMenuOpen] = useState(false)
   const [selectedProfile, setSelectedProfile] = useState<Profile | undefined>()
   const [profileDialogOpen, setProfileDialogOpen] = useState(false)
   const [deleteProfileDialogOpen, setDeleteProfileDialogOpen] = useState(false)
-
-  const schema = z.object({
-    name: z.string().min(1),
-    stashTabs: z.optional(z.array(z.instanceof(StashTab))),
-    league: z.instanceof(League),
-    pricingLeague: z.instanceof(League),
-    character: z.union([z.instanceof(Character), z.null()]),
-    includeEquipment: z.optional(z.boolean()),
-    includeInventory: z.optional(z.boolean())
-  })
-
-  const defaultFormValues = useMemo(
-    () => ({
-      name: selectedProfile?.name ?? '',
-      stashTabs: selectedProfile?.activeStashTabs ?? [],
-      league: selectedProfile?.activeLeague ?? leagueStore.leagues[0],
-      pricingLeague: selectedProfile?.activePriceLeague ?? leagueStore.leagues[0],
-      character: selectedProfile?.activeCharacter ?? null,
-      includeEquipment: selectedProfile?.includeEquipment ?? false,
-      includeInventory: selectedProfile?.includeInventory ?? false
-    }),
-    [
-      leagueStore.leagues,
-      selectedProfile?.activeCharacter,
-      selectedProfile?.activeLeague,
-      selectedProfile?.activePriceLeague,
-      selectedProfile?.activeStashTabs,
-      selectedProfile?.includeEquipment,
-      selectedProfile?.includeInventory,
-      selectedProfile?.name
-    ]
-  )
-
-  const form = useForm<ProfilePayload>({
-    defaultValues: defaultFormValues,
-    mode: 'onBlur',
-    reValidateMode: 'onChange',
-    resolver: zodResolver(schema)
-  })
-
-  useEffect(() => {
-    form.reset(defaultFormValues)
-  }, [defaultFormValues, form])
 
   const hasProfiles = activeAccount.profiles && activeAccount.profiles?.length > 0
 
@@ -78,7 +28,6 @@ const ProfileMenu = () => {
       onOpenChange={(open) => {
         setProfileDialogOpen(open)
         if (!open) {
-          form.reset()
           setSelectedProfile(undefined)
         }
       }}
@@ -186,11 +135,10 @@ const ProfileMenu = () => {
           </Popover.Content>
         </Popover>
         <ProfileForm
-          form={form}
+          profileDialogOpen={profileDialogOpen}
           profile={selectedProfile}
           onClose={() => {
             setSelectedProfile(undefined)
-            form.reset()
             setProfileDialogOpen(false)
           }}
         />
