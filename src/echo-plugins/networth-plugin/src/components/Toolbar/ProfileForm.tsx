@@ -1,7 +1,5 @@
 import { useStore } from '../../hooks/useStore'
-import { useForm, SubmitHandler } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
+import { SubmitHandler, UseFormReturn } from 'react-hook-form'
 import {
   profileCharacterRef,
   profileLeagueRef,
@@ -9,62 +7,21 @@ import {
   profileStashTabRef
 } from '../../store/domains/profile'
 import { Profile } from '../../store/domains/profile'
-import {
-  Button,
-  Checkbox,
-  Dialog,
-  Form,
-  Input,
-  Label,
-  Select,
-  Sheet
-} from 'echo-common/components-v1'
-import { League } from '../../store/domains/league'
-import { Character } from '../../store/domains/character'
+import { Button, Checkbox, Form, Input, Label, Select, Sheet } from 'echo-common/components-v1'
 import { observer } from 'mobx-react'
 import { StashTab } from '../../store/domains/stashtab'
-
-type ProfilePayload = {
-  name: string
-  stashTabs: StashTab[]
-  league?: League
-  pricingLeague?: League
-  character?: Character
-  includeEquipment?: boolean
-  includeInventory?: boolean
-}
+import { ProfilePayload } from './types'
 
 type ProfileFormProps = {
   onClose?: () => void
   profile?: Profile
+  form: UseFormReturn<ProfilePayload>
 }
 
-const ProfileForm = ({ profile, onClose }: ProfileFormProps) => {
+const ProfileForm = ({ profile, onClose, form }: ProfileFormProps) => {
   const { accountStore, leagueStore } = useStore()
-  const activeAccount = accountStore.activeAccount
 
-  const schema = z.object({
-    name: z.string().min(1),
-    stashTabs: z.optional(z.array(z.instanceof(StashTab))),
-    league: z.instanceof(League),
-    pricingLeague: z.instanceof(League),
-    character: z.optional(z.instanceof(Character)),
-    includeEquipment: z.optional(z.boolean()),
-    includeInventory: z.optional(z.boolean())
-  })
-  const form = useForm<ProfilePayload>({
-    values: {
-      name: profile?.name ?? '',
-      stashTabs: profile?.activeStashTabs ?? [],
-      league: profile?.activeLeague,
-      pricingLeague: profile?.activePriceLeague,
-      character: profile?.activeCharacter,
-      includeEquipment: profile?.includeEquipment ?? false,
-      includeInventory: profile?.includeInventory ?? false
-    },
-    mode: 'onBlur',
-    resolver: zodResolver(schema)
-  })
+  const activeAccount = accountStore.activeAccount
 
   const stashTabs = activeAccount.stashTabs ?? []
 
@@ -170,8 +127,8 @@ const ProfileForm = ({ profile, onClose }: ProfileFormProps) => {
                       if (league) {
                         field.onChange(league)
                         form.resetField('character')
-                        form.resetField('includeEquipment')
-                        form.resetField('includeInventory')
+                        form.resetField('includeEquipment', { defaultValue: false })
+                        form.resetField('includeInventory', { defaultValue: false })
                       }
                     }}
                   >
@@ -229,44 +186,57 @@ const ProfileForm = ({ profile, onClose }: ProfileFormProps) => {
               )}
             />
           </div>
-
           <Form.Field
             control={form.control}
             name="character"
-            render={({ field }) => (
-              <Form.Item>
-                <Form.Label>Character</Form.Label>
-                <Select
-                  disabled={!form.getValues().league}
-                  value={field.value?.name}
-                  onValueChange={(value) => {
-                    const character = activeAccount.characters.find(
-                      (character) => character.name === value
-                    )
-                    if (character) {
-                      field.onChange(character)
-                    }
-                  }}
-                >
-                  <Form.Control>
-                    <Select.Trigger>
-                      <Select.Value placeholder="Select a character" />
-                    </Select.Trigger>
-                  </Form.Control>
-                  <Select.Content>
-                    {activeAccount.characters
-                      .filter((character) => character.league === form.getValues().league)
-                      .map((character) => {
-                        return (
-                          <Select.Item key={character.id} value={character.name}>
-                            {character.name}
-                          </Select.Item>
+            render={({ field }) => {
+              console.log(form.getValues().character)
+              console.log(field.value)
+              return (
+                <Form.Item>
+                  <Form.Label>Character</Form.Label>
+                  <Select
+                    disabled={!form.getValues().league}
+                    value={field.value?.name ?? 'None'}
+                    onValueChange={(value) => {
+                      console.log(value)
+                      if (value === 'None') {
+                        field.onChange(null)
+                        form.resetField('includeEquipment', { defaultValue: false })
+                        form.resetField('includeInventory', { defaultValue: false })
+                      } else {
+                        const character = activeAccount.characters.find(
+                          (character) => character.name === value
                         )
-                      })}
-                  </Select.Content>
-                </Select>
-              </Form.Item>
-            )}
+                        if (character) {
+                          field.onChange(character)
+                        }
+                      }
+                    }}
+                  >
+                    <Form.Control>
+                      <Select.Trigger>
+                        <Select.Value defaultValue={'None'} />
+                      </Select.Trigger>
+                    </Form.Control>
+                    <Select.Content>
+                      <Select.Item key={'character-none'} value={'None'}>
+                        None
+                      </Select.Item>
+                      {activeAccount.characters
+                        .filter((character) => character.league === form.getValues().league)
+                        .map((character) => {
+                          return (
+                            <Select.Item key={character.id} value={character.name}>
+                              {character.name}
+                            </Select.Item>
+                          )
+                        })}
+                    </Select.Content>
+                  </Select>
+                </Form.Item>
+              )
+            }}
           />
           {form.getValues().character && (
             <div className="flex flex-row gap-8 justify-center">
