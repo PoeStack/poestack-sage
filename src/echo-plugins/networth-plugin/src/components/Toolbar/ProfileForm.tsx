@@ -1,7 +1,5 @@
 import { useStore } from '../../hooks/useStore'
-import { useForm, SubmitHandler } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
+import { SubmitHandler } from 'react-hook-form'
 import {
   profileCharacterRef,
   profileLeagueRef,
@@ -9,27 +7,22 @@ import {
   profileStashTabRef
 } from '../../store/domains/profile'
 import { Profile } from '../../store/domains/profile'
-import {
-  Button,
-  Checkbox,
-  Dialog,
-  Form,
-  Input,
-  Label,
-  Select,
-  Sheet
-} from 'echo-common/components-v1'
-import { League } from '../../store/domains/league'
-import { Character } from '../../store/domains/character'
+import { Button, Checkbox, Form, Input, Label, Select, Sheet } from 'echo-common/components-v1'
 import { observer } from 'mobx-react'
 import { StashTab } from '../../store/domains/stashtab'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+import { League } from '../../store/domains/league'
+import { Character } from '../../store/domains/character'
+import { useMemo, useEffect } from 'react'
 
 type ProfilePayload = {
   name: string
   stashTabs: StashTab[]
   league?: League
   pricingLeague?: League
-  character?: Character
+  character: Character | null
   includeEquipment?: boolean
   includeInventory?: boolean
 }
@@ -37,10 +30,12 @@ type ProfilePayload = {
 type ProfileFormProps = {
   onClose?: () => void
   profile?: Profile
+  profileDialogOpen: boolean
 }
 
-const ProfileForm = ({ profile, onClose }: ProfileFormProps) => {
+const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) => {
   const { accountStore, leagueStore } = useStore()
+
   const activeAccount = accountStore.activeAccount
 
   const schema = z.object({
@@ -48,23 +43,42 @@ const ProfileForm = ({ profile, onClose }: ProfileFormProps) => {
     stashTabs: z.optional(z.array(z.instanceof(StashTab))),
     league: z.instanceof(League),
     pricingLeague: z.instanceof(League),
-    character: z.optional(z.instanceof(Character)),
+    character: z.union([z.instanceof(Character), z.null()]),
     includeEquipment: z.optional(z.boolean()),
     includeInventory: z.optional(z.boolean())
   })
-  const form = useForm<ProfilePayload>({
-    values: {
+
+  const defaultFormValues = useMemo(
+    () => ({
       name: profile?.name ?? '',
       stashTabs: profile?.activeStashTabs ?? [],
-      league: profile?.activeLeague,
-      pricingLeague: profile?.activePriceLeague,
-      character: profile?.activeCharacter,
+      league: profile?.activeLeague ?? leagueStore.leagues[0],
+      pricingLeague: profile?.activePriceLeague ?? leagueStore.leagues[0],
+      character: profile?.activeCharacter ?? null,
       includeEquipment: profile?.includeEquipment ?? false,
       includeInventory: profile?.includeInventory ?? false
-    },
-    mode: 'onBlur',
+    }),
+    [
+      leagueStore.leagues,
+      profile?.activeCharacter,
+      profile?.activeLeague,
+      profile?.activePriceLeague,
+      profile?.activeStashTabs,
+      profile?.includeEquipment,
+      profile?.includeInventory,
+      profile?.name
+    ]
+  )
+
+  const form = useForm<ProfilePayload>({
+    defaultValues: defaultFormValues,
+    reValidateMode: 'onChange',
     resolver: zodResolver(schema)
   })
+
+  useEffect(() => {
+    form.reset(defaultFormValues)
+  }, [defaultFormValues, form, profileDialogOpen])
 
   const stashTabs = activeAccount.stashTabs ?? []
 
@@ -82,12 +96,10 @@ const ProfileForm = ({ profile, onClose }: ProfileFormProps) => {
     }
     if (profile) {
       profile.updateProfile(payload)
-      form.reset()
       onClose?.()
       return
     }
     activeAccount.addProfile(new Profile(payload))
-    form.reset()
     onClose?.()
   }
 
@@ -169,9 +181,9 @@ const ProfileForm = ({ profile, onClose }: ProfileFormProps) => {
                       const league = leagueStore.leagues.find((league) => league.name === value)
                       if (league) {
                         field.onChange(league)
-                        form.resetField('character')
-                        form.resetField('includeEquipment')
-                        form.resetField('includeInventory')
+                        form.resetField('character', { defaultValue: null })
+                        form.resetField('includeEquipment', { defaultValue: false })
+                        form.resetField('includeInventory', { defaultValue: false })
                       }
                     }}
                   >
@@ -229,44 +241,54 @@ const ProfileForm = ({ profile, onClose }: ProfileFormProps) => {
               )}
             />
           </div>
-
           <Form.Field
             control={form.control}
             name="character"
-            render={({ field }) => (
-              <Form.Item>
-                <Form.Label>Character</Form.Label>
-                <Select
-                  disabled={!form.getValues().league}
-                  value={field.value?.name}
-                  onValueChange={(value) => {
-                    const character = activeAccount.characters.find(
-                      (character) => character.name === value
-                    )
-                    if (character) {
-                      field.onChange(character)
-                    }
-                  }}
-                >
-                  <Form.Control>
-                    <Select.Trigger>
-                      <Select.Value placeholder="Select a character" />
-                    </Select.Trigger>
-                  </Form.Control>
-                  <Select.Content>
-                    {activeAccount.characters
-                      .filter((character) => character.league === form.getValues().league)
-                      .map((character) => {
-                        return (
-                          <Select.Item key={character.id} value={character.name}>
-                            {character.name}
-                          </Select.Item>
+            render={({ field }) => {
+              return (
+                <Form.Item>
+                  <Form.Label>Character</Form.Label>
+                  <Select
+                    disabled={!form.getValues().league}
+                    value={field.value?.name ?? 'None'}
+                    onValueChange={(value) => {
+                      if (value === 'None') {
+                        field.onChange(null)
+                        form.resetField('includeEquipment', { defaultValue: false })
+                        form.resetField('includeInventory', { defaultValue: false })
+                      } else {
+                        const character = activeAccount.characters.find(
+                          (character) => character.name === value
                         )
-                      })}
-                  </Select.Content>
-                </Select>
-              </Form.Item>
-            )}
+                        if (character) {
+                          field.onChange(character)
+                        }
+                      }
+                    }}
+                  >
+                    <Form.Control>
+                      <Select.Trigger>
+                        <Select.Value defaultValue={'None'} />
+                      </Select.Trigger>
+                    </Form.Control>
+                    <Select.Content>
+                      <Select.Item key={'character-none'} value={'None'}>
+                        None
+                      </Select.Item>
+                      {activeAccount.characters
+                        .filter((character) => character.league === form.getValues().league)
+                        .map((character) => {
+                          return (
+                            <Select.Item key={character.id} value={character.name}>
+                              {character.name}
+                            </Select.Item>
+                          )
+                        })}
+                    </Select.Content>
+                  </Select>
+                </Form.Item>
+              )
+            }}
           />
           {form.getValues().character && (
             <div className="flex flex-row gap-8 justify-center">

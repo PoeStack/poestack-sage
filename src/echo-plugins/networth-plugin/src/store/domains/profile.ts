@@ -320,7 +320,7 @@ export class Profile extends Model({
         catchError((e: Error) => of(this.getItemsFail(e, league.name)))
       )
       .subscribe(() => {
-        // TODO: 
+        // TODO:
         // this.getItemsSuccess(stashTabsWithItems, league)
       })
   }
@@ -367,7 +367,7 @@ export class Profile extends Model({
         catchError((e: Error) => of(this.priceItemsForStashTabsFail(e)))
       )
       .subscribe((itemsWithValuations) => {
-        if(!itemsWithValuations) return
+        if (!itemsWithValuations) return
         const mergedItems = mergeItemStacks(itemsWithValuations)
         console.log('items with valuations', itemsWithValuations)
 
@@ -454,6 +454,7 @@ export class Profile extends Model({
   @modelAction
   saveSnapshot(pricedStashTabs: IStashTabSnapshot[]) {
     const { uiStateStore, accountStore, notificationStore, priceStore } = getRoot<RootStore>(this)
+  }
   //   uiStateStore.setStatusMessage('saving_snapshot');
   //   rateLimitStore.setEstimatedSnapshotTime();
   //   const snapshot: ISnapshot = {

@@ -135,6 +135,7 @@ const ProfileMenu = () => {
           </Popover.Content>
         </Popover>
         <ProfileForm
+          profileDialogOpen={profileDialogOpen}
           profile={selectedProfile}
           onClose={() => {
             setSelectedProfile(undefined)

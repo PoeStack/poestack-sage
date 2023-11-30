@@ -4,7 +4,7 @@ import { PictureInPicture2, RefreshCcw, Trash2, XCircle } from 'lucide-react'
 import { useStore } from '../../hooks/useStore'
 import { IStatusMessage } from '../../interfaces/status-message.interface'
 import { Loader2 } from 'lucide-react'
-import StatusMessageContainer from '../statusMessage/StatusMessageContainer'
+import StatusMessageContainer from '../StatusMessage/StatusMessageContainer'
 import { observer } from 'mobx-react'
 import { cn } from 'echo-common'
 
