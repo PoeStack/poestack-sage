@@ -17,7 +17,6 @@ task<Exec>("npmCleanModules") {
 
 task<Exec>("npmBuild") {
     commandLine(npm, "run", "build")
-    dependsOn(":src:echo-app:npmBuild")
     dependsOn(":src:ts-ratchet:npmBuild")
     dependsOn(":src:ggg-api:npmBuild")
     dependsOn(":src:sage-common:npmBuild")
