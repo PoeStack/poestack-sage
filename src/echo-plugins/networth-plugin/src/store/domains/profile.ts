@@ -370,19 +370,21 @@ export class Profile extends Model({
           const stash =
             valuatedStash.stashTab instanceof StashTab
               ? stashTabSnapshotStashTabRef(valuatedStash.stashTab)
-              : frozen(compactStash)
+              : compactStash.id
           const filteredTabs = new StashTabSnapshot({
             stashTab: stash,
             pricedItems: frozen(pricedStackedItems)
           })
-          // TODO:
-          return of(this.priceItemsForStashTabsSuccess(filteredTabs))
+          return of(filteredTabs)
         }),
         toArray(),
+        switchMap((filteredTabs) => {
+          return of(this.priceItemsForStashTabsSuccess(filteredTabs))
+        }),
         takeUntil(uiStateStore.cancelSnapshot),
         catchError((e: Error) => of(this.priceItemsForStashTabsFail(e)))
       )
-      .subscribe((e) => e)
+      .subscribe()
 
     // uiStateStore.setStatusMessage('pricing_items')
     // let activePriceLeague = accountStore.activeAccount.activePriceLeague
@@ -448,56 +450,33 @@ export class Profile extends Model({
   }
 
   @modelAction
-  priceItemsForStashTabsSuccess(pricedStashTabs: IStashTabSnapshot[]) {
-    const { uiStateStore, accountStore, notificationStore, priceStore } = getRoot<RootStore>(this)
+  priceItemsForStashTabsSuccess(pricedStashTabs: StashTabSnapshot[]) {
+    const { notificationStore } = getRoot<RootStore>(this)
     notificationStore.createNotification('price_stash_items', 'success')
     this.saveSnapshot(pricedStashTabs)
   }
 
   @modelAction
   priceItemsForStashTabsFail(e: Error) {
-    const { uiStateStore, accountStore, notificationStore, priceStore } = getRoot<RootStore>(this)
+    const { notificationStore } = getRoot<RootStore>(this)
     notificationStore.createNotification('price_stash_items', 'error', true, e)
     this.snapshotFail()
   }
 
   @modelAction
-  saveSnapshot(pricedStashTabs: IStashTabSnapshot[]) {
-    const { uiStateStore, accountStore, notificationStore, priceStore } = getRoot<RootStore>(this)
+  saveSnapshot(pricedStashTabs: StashTabSnapshot[]) {
+    const { uiStateStore } = getRoot<RootStore>(this)
+    uiStateStore.setStatusMessage('saving_snapshot')
+
+    const snapshotToAdd = new Snapshot({
+      stashTabSnapshots: pricedStashTabs
+    })
+
+    this.activeLeague
+
+    this.snapshots.unshift(snapshotToAdd)
+    this.snapshots = this.snapshots.slice(0, 1000)
+
+    this.snapshotSuccess()
   }
-  //   uiStateStore.setStatusMessage('saving_snapshot');
-  //   rateLimitStore.setEstimatedSnapshotTime();
-  //   const snapshot: ISnapshot = {
-  //     stashTabSnapshots: pricedStashTabs.map((p) => new StashTabSnapshot(p)),
-  //   };
-
-  //   const snapshotToAdd = new Snapshot(snapshot);
-
-  //   const activeAccountLeague = accountStore.activeAccount.accountLeagues.find(
-  //     (al) => al.leagueId === this.activeLeagueId
-  //   );
-
-  //   if (activeAccountLeague) {
-  //     const apiSnapshot = mapSnapshotToApiSnapshot(snapshotToAdd, activeAccountLeague.stashtabList);
-  //     const callback = () => {
-  //       // keep items for only 10 snapshots at all times
-  //       if (this.snapshots.length > 10) {
-  //         this.snapshots[10].stashTabSnapshots.forEach((stss) => {
-  //           stss.pricedItems = [];
-  //         });
-  //       }
-
-  //       if (rootStore.signalrStore.activeGroup) {
-  //         rootStore.signalrStore.addOwnSnapshotToActiveGroup(snapshotToAdd);
-  //       }
-  //       runInAction(() => {
-  //         this.snapshots.unshift(snapshotToAdd);
-  //         this.snapshots = this.snapshots.slice(0, 1000);
-  //       });
-  //       this.session.saveSnapshot(snapshotToAdd);
-  //       this.updateNetWorthOverlay();
-  //     };
-  //     fromStream(this.sendSnapshot(apiSnapshot, this.snapshotSuccess, this.snapshotFail, callback));
-  //   }
-  // }
 }
