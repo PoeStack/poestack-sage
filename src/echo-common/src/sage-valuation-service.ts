@@ -33,10 +33,9 @@ export class SageValuationService {
           map((vEvent) => {
             if (vEvent.type === 'result') {
               const itemValuation = vEvent?.result?.valuations?.[e?.group?.hash ?? '']
-              const timestampMs = vEvent?.result?.timestampMs
               const eItem = {
                 valuation: itemValuation,
-                timestampMs,
+                timestampMs: vEvent?.result?.timestampMs,
                 ...e
               }
               return { ...vEvent, result: eItem }
