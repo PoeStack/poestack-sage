@@ -1,7 +1,9 @@
 {
   "name": "poestack-sage",
   "description": "poestack v2",
+  "author": "PoEStack",
   "version": "1.0.0",
+  "repository": "https://github.com/PoeStack/poestack-sage",
   "main": "./out/main/index.js",
   "scripts": {
     "clean": "rimraf build/index.js out && rimraf build/index.js dist",
