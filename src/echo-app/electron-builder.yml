@@ -3,6 +3,7 @@ productName: PoeStack
 directories:
   buildResources: build
 files:
+  - 'out/**/*'
   - '!**/.vscode/*'
   - '!src/*'
   - '!electron.vite.config.{js,ts,mjs,cjs}'
@@ -14,7 +15,6 @@ asarUnpack:
 extraResources:
   - from: './src/renderer/src/locales/'
     to: './locales/'
-includeSubNodeModules: true
 win:
   executableName: PoeStack
 nsis:
