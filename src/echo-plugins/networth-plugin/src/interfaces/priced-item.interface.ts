@@ -1,33 +1,27 @@
+import { SageValuation } from 'echo-common'
 import { ICompactTab } from './stash.interface'
 
 export interface IPricedItem {
   uuid: string
-  name: string
+  tag: string | undefined
+  key: string | undefined
+  hash: string | undefined
   itemId: string
+  name: string
   typeLine: string
   frameType: number
   identified: boolean
-  total: number
-  calculated: number
-  max: number
-  elder: boolean
-  shaper: boolean
-  blighted: boolean
-  mean: number
-  median: number
-  min: number
-  mode: number
+  total: SageValuation | undefined
+  calculated: SageValuation | undefined
+  icon: string
   ilvl: number
-  stackSize: number
-  totalStacksize: number
+  tier: number
+  corrupted: boolean
   links: number
+  sockets: number
   quality: number
   level: number
-  corrupted: boolean
-  icon: string
-  sockets: number
-  variant: string
-  tier: number
+  stackSize: number
+  totalStacksize: number
   tab: ICompactTab[]
-  detailsUrl?: string
 }

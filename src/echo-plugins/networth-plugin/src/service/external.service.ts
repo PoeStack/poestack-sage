@@ -10,7 +10,8 @@ export const valuateItems = (league: string, items: PoeItem[]) => {
     map((e) => {
       return {
         data: e.data,
-        valuation: e.valuation
+        valuation: e.valuation,
+        group: e.group
       }
     })
   )

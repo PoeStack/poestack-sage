@@ -1,6 +1,7 @@
 import { computed } from 'mobx'
 import {
   detach,
+  frozen,
   getRoot,
   idProp,
   model,
@@ -34,10 +35,13 @@ import { IStashTab } from '../../interfaces/stash.interface'
 import { table } from 'console'
 import { IPricedItem } from '../../interfaces/priced-item.interface'
 import {
+  createCompactTab,
+  mapItemsToPricedItems,
   mapMapStashItemToPoeItem as mapMapStashItemsToPoeItems,
   mergeItemStacks
 } from '../../utils/item.utils'
 import { PoeItem } from 'sage-common'
+import { StashTabSnapshot, stashTabSnapshotStashTabRef } from './stashtab-snapshot'
 
 export const profileLeagueRef = rootRef<League>('nw/profileLeagueRef')
 export const profilePriceLeagueRef = rootRef<League>('nw/profilePriceLeagueRef')
@@ -218,7 +222,7 @@ export class Profile extends Model({
 
   @modelAction
   getItems(league: League) {
-    const { uiStateStore } = getRoot<RootStore>(this)
+    const { uiStateStore, accountStore } = getRoot<RootStore>(this)
 
     const selectedStashTabs = this.activeStashTabs.filter((st) => !st.deleted)
 
@@ -287,8 +291,9 @@ export class Profile extends Model({
               }
             }
 
+            const stashTab = this.activeStashTabs.find((st) => st.id === tab.parent ?? tab.id)!
             return {
-              stashTabId: tab.id,
+              stashTab: stashTab,
               items: items
             } as IStashTabItems
           })
@@ -307,7 +312,7 @@ export class Profile extends Model({
               }
             }
             const characterTab: IStashTabItems = {
-              stashTabId: 'Character',
+              stashTab: 'Equip/Inv',
               items: includedCharacterItems
             }
             stashTabsWithItems.push(characterTab)
@@ -319,10 +324,7 @@ export class Profile extends Model({
         takeUntil(uiStateStore.cancelSnapshot),
         catchError((e: Error) => of(this.getItemsFail(e, league.name)))
       )
-      .subscribe(() => {
-        // TODO:
-        // this.getItemsSuccess(stashTabsWithItems, league)
-      })
+      .subscribe()
   }
 
   @modelAction
@@ -343,7 +345,7 @@ export class Profile extends Model({
   @modelAction
   priceItemsForStashTabs(stashTabsWithItems: IStashTabItems[], league: League) {
     const { uiStateStore, accountStore, notificationStore, priceStore } = getRoot<RootStore>(this)
-
+    uiStateStore.setStatusMessage('pricing_items')
     const getValuation = from(stashTabsWithItems).pipe(
       mergeMap((stashTabWithItems) => {
         return externalService.valuateItems(league.name, stashTabWithItems.items).pipe(
@@ -351,7 +353,7 @@ export class Profile extends Model({
           map((valuation) => {
             return {
               valuation,
-              stashTabId: stashTabWithItems.stashTabId
+              stashTab: stashTabWithItems.stashTab
             }
           })
         )
@@ -359,20 +361,28 @@ export class Profile extends Model({
     )
     forkJoin([getValuation])
       .pipe(
-        mergeMap((valuatedStash) => {
+        mergeMap(([valuatedStash]) => {
           // Convert to priced items
-          valuatedStash
+          const compactStash = createCompactTab(valuatedStash.stashTab)
+          const pricedItems = mapItemsToPricedItems(valuatedStash.valuation, compactStash)
+          const pricedStackedItems = mergeItemStacks(pricedItems)
+          // We may add character stash or inventory and equipmentstash to the valid stashtablist as default for character
+          const stash =
+            valuatedStash.stashTab instanceof StashTab
+              ? stashTabSnapshotStashTabRef(valuatedStash.stashTab)
+              : frozen(compactStash)
+          const filteredTabs = new StashTabSnapshot({
+            stashTab: stash,
+            pricedItems: frozen(pricedStackedItems)
+          })
+          // TODO:
+          return of(this.priceItemsForStashTabsSuccess(filteredTabs))
         }),
+        toArray(),
         takeUntil(uiStateStore.cancelSnapshot),
         catchError((e: Error) => of(this.priceItemsForStashTabsFail(e)))
       )
-      .subscribe((itemsWithValuations) => {
-        if (!itemsWithValuations) return
-        const mergedItems = mergeItemStacks(itemsWithValuations)
-        console.log('items with valuations', itemsWithValuations)
-
-        return stashTabWithItems
-      })
+      .subscribe((e) => e)
 
     // uiStateStore.setStatusMessage('pricing_items')
     // let activePriceLeague = accountStore.activeAccount.activePriceLeague

@@ -1,7 +1,17 @@
-import { PoeItem } from 'sage-common'
+import { PoeItem, PoeItemProperty } from 'sage-common'
 import { Rarity } from '../assets/theme'
-import { IChildStashTab, ICompactTab, IStashTab } from '../interfaces/stash.interface'
+import {
+  IChildStashTab,
+  ICompactTab,
+  IStashTab,
+  IStashTabNode
+} from '../interfaces/stash.interface'
 import { v4 as uuidv4 } from 'uuid'
+import { IPricedItem } from '../interfaces/priced-item.interface'
+import { IItem } from '../interfaces/item.interface'
+import { IValuatedItem, IValuatedStash } from '../interfaces/snapshot.interface'
+import { StashTab } from '../store/domains/stashtab'
+import { SageValuation } from 'echo-common'
 
 const rarities: (keyof Rarity)[] = [
   'normal', //0
@@ -16,7 +26,7 @@ const rarities: (keyof Rarity)[] = [
   'legacy' //9
 ]
 
-export function getRarity(identifier: number): keyof Rarity {
+export const getRarity = (identifier: number): keyof Rarity => {
   if (identifier < rarities.length) {
     return rarities[identifier]
   } else {
@@ -24,15 +34,72 @@ export function getRarity(identifier: number): keyof Rarity {
   }
 }
 
-export function getRarityIdentifier(name: string): number {
+export const getRarityIdentifier = (name: string): number => {
   return rarities.indexOf(name as keyof Rarity)
 }
 
-export function parseTabNames(tabs: ICompactTab[]) {
+export const parseTabNames = (tabs: ICompactTab[]) => {
   return tabs.map((t) => t.name).join(', ')
 }
 
-const specialMapImplicits = {
+export const getItemName = (name?: string, typeline?: string) => {
+  let itemName = name || ''
+  if (typeline) {
+    itemName += ' ' + typeline
+  }
+  return itemName.replace('<<set:MS>><<set:M>><<set:S>>', '').trim()
+}
+
+export const getPropertyValue = (props: PoeItemProperty[], key: string) => {
+  const prop = props.find((t) => t.name === key)
+  const quality = prop && prop.values ? prop.values[0][0] : '0'
+  return parseInt(quality, 10)
+}
+
+export const getQuality = (props?: PoeItemProperty[]) => {
+  if (!props) return 0
+  return getPropertyValue(props, 'Quality')
+}
+
+export const getLevel = (props?: PoeItemProperty[]) => {
+  if (!props) return 0
+  return getPropertyValue(props, 'Level')
+}
+
+export const getMapTier = (props?: PoeItemProperty[]) => {
+  if (!props) return 0
+  return getPropertyValue(props, 'Map Tier')
+}
+
+export function getLinks(array: any[]) {
+  const numMapping: any = {}
+  let greatestFreq = 0
+  array.forEach((number) => {
+    numMapping[number] = (numMapping[number] || 0) + 1
+
+    if (greatestFreq < numMapping[number]) {
+      greatestFreq = numMapping[number]
+    }
+  })
+  return greatestFreq
+}
+
+const specialMapImplicitsToMapName: { [key: string]: string } = {
+  "Map contains Al-Hezmin's Citadel\nItem Quantity increases amount of Rewards Al-Hezmin drops by 20% of its value":
+    "Al-Hezmin's Map",
+  "Map contains Veritania's Citadel\nItem Quantity increases amount of Rewards Veritania drops by 20% of its value":
+    "Veritania's Map",
+  "Map contains Baran's Citadel\nItem Quantity increases amount of Rewards Baran drops by 20% of its value":
+    "Baran's Map",
+  "Map contains Drox's Citadel\nItem Quantity increases amount of Rewards Drox drops by 20% of its value":
+    "Drox's Map",
+  'Map is occupied by The Purifier': "Purifier's Map",
+  'Map is occupied by The Constrictor': "Constrictor's Map",
+  'Map is occupied by The Enslaver': "Enslaver's Map",
+  'Map is occupied by The Eradicator': "Eradicator's Map"
+}
+
+const mapStashSpecialMapsToImplicits: { [key: string]: string } = {
   'Al-Hezmin, The Hunter':
     "Map contains Al-Hezmin's Citadel\nItem Quantity increases amount of Rewards Al-Hezmin drops by 20% of its value",
   'Veritania, The Redeemer':
@@ -46,13 +113,25 @@ const specialMapImplicits = {
   'The Enslaver': 'Map is occupied by The Enslaver',
   'The Eradicator': 'Map is occupied by The Eradicator'
 }
+
+const getSpecialMapFromImplicits = (implicitMods?: string[]) => {
+  if (!implicitMods) return undefined
+  const entry = Object.entries(specialMapImplicitsToMapName).find(([key]) =>
+    implicitMods.some((implicit) => implicit.includes(key))
+  )
+  if (entry) {
+    return entry[1]
+  }
+  return undefined
+}
 const getImplicitMods = (name: string) => {
-  const entry = Object.entries(specialMapImplicits).find(([key]) => name.includes(key))
+  const entry = Object.entries(mapStashSpecialMapsToImplicits).find(([key]) => name.includes(key))
   if (entry) {
     return [entry[1]]
   }
   return undefined
 }
+
 export function mapMapStashItemToPoeItem(tab: IStashTab, league: string): PoeItem[] {
   const items = (tab.children as unknown as IChildStashTab[])?.map((st): PoeItem => {
     const specialMap = st.metadata.map.section === 'special'
@@ -93,28 +172,97 @@ export function mapMapStashItemToPoeItem(tab: IStashTab, league: string): PoeIte
   return items || []
 }
 
-export function mergeItemStacks(items: PoeItem[]) {
-  const mergedItems: PoeItem[] = []
+export const createCompactTab = (stashTab: IStashTabNode | string): ICompactTab => {
+  if (typeof stashTab !== 'string') {
+    return {
+      id: stashTab.id,
+      name: stashTab.name,
+      index: stashTab.index,
+      color: stashTab.metadata.data.colour || ''
+    }
+  }
+  return {
+    id: uuidv4(),
+    name: stashTab,
+    index: -1,
+    color: ''
+  }
+}
 
-  // items.forEach((item) => {
-  //   const clonedItem = { ...item }
-  //   const foundItem = findItem(mergedItems, clonedItem)
+export function mapItemsToPricedItems(
+  valuation: IValuatedItem[],
+  stashTab: ICompactTab
+): IPricedItem[] {
+  return valuation.map((valuatedItem) => {
+    const item = valuatedItem.data
+    const valuation = valuatedItem.valuation
 
-  //   if (!foundItem) {
-  //     mergedItems.push(clonedItem)
-  //   } else {
-  //     const foundStackIndex = mergedItems.indexOf(foundItem)
-  //     mergedItems[foundStackIndex].stackSize += item.stackSize
-  //     mergedItems[foundStackIndex].total =
-  //       mergedItems[foundStackIndex].stackSize * mergedItems[foundStackIndex].calculated
-  //     if (mergedItems[foundStackIndex].tab !== undefined && item.tab !== undefined) {
-  //       mergedItems[foundStackIndex].tab = [...mergedItems[foundStackIndex].tab, ...item.tab]
-  //       mergedItems[foundStackIndex].tab = mergedItems[foundStackIndex].tab.filter(
-  //         (v, i, a) => a.findIndex((t) => t.id === v.id) === i
-  //       )
-  //     }
-  //   }
-  // })
+    const mapTier = getMapTier(item.properties)
+    const mappedItem: IPricedItem = {
+      uuid: uuidv4(),
+      tag: valuatedItem.group?.tag,
+      key: valuatedItem.group?.key,
+      hash: valuatedItem.group?.hash,
+      itemId: item.id!,
+      name:
+        mapTier && item.frameType !== 3
+          ? getSpecialMapFromImplicits(item.implicitMods) || item.baseType!
+          : getItemName(item.name, item.frameType !== 3 ? item.typeLine : undefined),
+      typeLine: item.typeLine!,
+      frameType: item.frameType!,
+      identified: item.identified!,
+      calculated: valuation === null ? undefined : valuation,
+      total: undefined,
+      icon: item.icon!,
+      ilvl: item.ilvl!,
+      tier: mapTier,
+      corrupted: item.corrupted || false,
+      links:
+        item.sockets !== undefined && item.sockets !== null
+          ? getLinks(item.sockets.map((t) => t.group))
+          : 0,
+      sockets: item.sockets !== undefined && item.sockets !== null ? item.sockets.length : 0,
+      quality: getQuality(item.properties),
+      level: getLevel(item.properties),
+      stackSize: item.stackSize || 1,
+      totalStacksize: item.maxStackSize || 1,
+      tab: [stashTab]
+    }
+    return mappedItem
+  })
+}
+
+const calculateTotalPvsValue = (
+  stackSize: number,
+  calculated?: SageValuation
+): SageValuation | undefined => {
+  if (!calculated) return undefined
+  const totalPvs = calculated.pvs.map((percentile) => percentile * stackSize)
+  return { l: calculated.l, pvs: totalPvs }
+}
+
+export function mergeItemStacks(items: IPricedItem[]) {
+  const mergedItems: IPricedItem[] = []
+
+  items.forEach((item) => {
+    const foundItem = mergedItems.find((x) => x.hash === item.hash)
+    if (!foundItem) {
+      mergedItems.push({ ...item })
+    } else {
+      const foundIdx = mergedItems.indexOf(foundItem)
+      mergedItems[foundIdx].stackSize += item.stackSize
+      mergedItems[foundIdx].total = calculateTotalPvsValue(
+        mergedItems[foundIdx].stackSize,
+        mergedItems[foundIdx].calculated
+      )
+      if (mergedItems[foundIdx].tab !== undefined && item.tab !== undefined) {
+        mergedItems[foundIdx].tab = [...mergedItems[foundIdx].tab, ...item.tab]
+        mergedItems[foundIdx].tab = mergedItems[foundIdx].tab.filter(
+          (v, i, a) => a.findIndex((t) => t.id === v.id) === i
+        )
+      }
+    }
+  })
 
   return mergedItems
 }
