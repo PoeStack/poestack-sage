@@ -5,14 +5,14 @@ import * as process from 'process'
 import percentile from 'percentile'
 import { scanKeys } from './utils'
 
-const client = new Redis({
-  host: process.env['REDIS_URL'],
-  port: 6379,
-  tls: undefined
-})
+const client = new Redis(process.env['REDIS_URL'])
 
-AWS.config.update({ region: 'us-east-1' })
-const s3bucket = new AWS.S3()
+const s3bucket = new AWS.S3({
+  endpoint: `https://ba6907efee089553d98ee287a30bd17a.r2.cloudflarestorage.com`,
+  accessKeyId: process.env["R2_ACCESS_KEY_ID"],
+  secretAccessKey: process.env["R2_SECRET"],
+  signatureVersion: 'v4',
+});
 
 type Listing = {
   itemGroupHash: string
@@ -103,8 +103,8 @@ function writeShard(e: { key: string; valuations: GroupValuation[] }) {
   return from(
     s3bucket
       .putObject({
-        Bucket: 'sage-insights-cache',
-        Key: `v3/${e.key.replaceAll(' ', '_')}.json`,
+        Bucket: 'insights-public',
+        Key: `v4/${e.key.replaceAll(' ', '_')}.json`,
         Body: JSON.stringify(output),
         ContentType: 'application/json'
       })
@@ -114,6 +114,7 @@ function writeShard(e: { key: string; valuations: GroupValuation[] }) {
 
 scanKeys(client, 'psev6:*')
   .pipe(
+    tap((e) => console.log("starting", e)),
     mergeMap((e) => valueShard(e), 5),
     tap((e) => console.log('writing', e.key, e.valuations.length)),
     mergeMap((e) => writeShard(e), 5)

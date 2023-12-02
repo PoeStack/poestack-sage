@@ -29,7 +29,6 @@
     "@libsql/client": "^0.4.0-pre.2",
     "@types/lodash": "^4.14.199",
     "@types/object-hash": "^3.0.6",
-    "aws-sdk": "^2.1483.0",
     "dotenv": "^16.3.1",
     "drizzle-orm": "^0.29.0",
     "ioredis": "^5.3.2",

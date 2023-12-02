@@ -65,7 +65,6 @@ resultsSubject.pipe(debounceTime(3500)).subscribe((e) => {
   })
 })
 
-console.log('redis url', process.env['REDIS_URL'])
 const client = new Redis(process.env['REDIS_URL'])
 resultsSubject.subscribe((data) => {
   try {
