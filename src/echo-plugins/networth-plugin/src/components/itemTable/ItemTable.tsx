@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  Cell,
   ColumnDef,
   SortingState,
   flexRender,
@@ -10,12 +9,13 @@ import {
   getSortedRowModel,
   ColumnFiltersState,
   getFilteredRowModel,
-  VisibilityState
+  VisibilityState,
+  PaginationState
 } from '@tanstack/react-table'
-import { cn } from 'echo-common'
-import { Button, Input, Table, DropdownMenu } from 'echo-common/components-v1'
+import { Table } from 'echo-common/components-v1'
 import { TablePagination } from './TablePagination'
-import { TableViewOptions } from './TableColumnToggle'
+import { TableColumnToggle } from './TableColumnToggle'
+import DebouncedInput from '../Input/DebouncedInput'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -27,6 +27,11 @@ export const ItemTable = <TData, TValue>({ columns, data }: DataTableProps<TData
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [pagination, setPagination] = React.useState<PaginationState>({
+    pageSize: 25,
+    pageIndex: 0
+  })
+  const [globalFilter, setGlobalFilter] = React.useState('')
 
   const table = useReactTable({
     data,
@@ -38,23 +43,27 @@ export const ItemTable = <TData, TValue>({ columns, data }: DataTableProps<TData
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: setPagination,
+    onGlobalFilterChange: setGlobalFilter,
     state: {
       sorting,
       columnFilters,
-      columnVisibility
+      columnVisibility,
+      pagination,
+      globalFilter
     }
   })
 
   return (
     <div>
       <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter name..."
-          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn('name')?.setFilterValue(event.target.value)}
-          className="h-9 max-w-sm"
+        <DebouncedInput
+          value={globalFilter ?? ''}
+          onChange={(value) => setGlobalFilter(String(value))}
+          className="h-8 max-w-sm"
+          placeholder="Search all name or tab..."
         />
-        <TableViewOptions table={table} />
+        <TableColumnToggle table={table} />
       </div>
       <div className="rounded-md border">
         <Table>

@@ -6,11 +6,11 @@ import { Table } from '@tanstack/react-table'
 
 import { DropdownMenu, Button } from 'echo-common/components-v1'
 
-interface TableViewOptionsProps<TData> {
+interface TableColumnToggleProps<TData> {
   table: Table<TData>
 }
 
-export function TableViewOptions<TData>({ table }: TableViewOptionsProps<TData>) {
+export function TableColumnToggle<TData>({ table }: TableColumnToggleProps<TData>) {
   return (
     <DropdownMenu>
       <DropdownMenu.Trigger asChild>

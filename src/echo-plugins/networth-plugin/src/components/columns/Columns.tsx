@@ -10,6 +10,7 @@ import { IPricedItem } from '../../interfaces/priced-item.interface'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import { ArrowDown, ArrowUp } from 'lucide-react'
+import { TableColumnHeader } from './ColumnHeader'
 
 type PricedItem = keyof IPricedItem | 'comulative'
 
@@ -37,9 +38,13 @@ export function itemName(options: {
   const { header, accessorKey } = options
 
   return {
-    header,
+    header: ({ column }) => (
+      <TableColumnHeader column={column} title={header} className="flex justify-start" />
+    ),
     minSize: 120,
     accessorKey,
+    enableSorting: false,
+    enableGlobalFilter: true,
     cell: ({ row }) => {
       const value = row.getValue<string>(accessorKey)
       return <ItemNameCell value={value} frameType={row.original.frameType} />
@@ -73,12 +78,17 @@ export function itemTabs(options: {
   const { header, accessorKey } = options
 
   return {
-    header,
+    header: ({ column }) => (
+      <TableColumnHeader column={column} title={header} className="flex justify-start" />
+    ),
     accessorKey,
-    // eslint-disable-next-line react/display-name
+    enableSorting: false,
+    enableGlobalFilter: true,
+    accessorFn: (val) =>
+      val.tab && typeof val.tab === 'object' ? parseTabNames(val.tab || []) : '',
     cell: ({ row }) => {
-      const value = row.getValue<ICompactTab[]>(accessorKey)
-      return <ItemTabsCell tabs={value ? value : []} />
+      const value = row.getValue<string>(accessorKey)
+      return <ItemTabsCell value={value} />
     }
   }
 }
@@ -91,8 +101,12 @@ export function itemQuantity(options: {
   const { header, accessorKey, diff } = options
 
   return {
-    header: () => <div className="text-right">{header}</div>,
+    header: ({ column }) => (
+      <TableColumnHeader column={column} title={header} className="flex justify-end" />
+    ),
     accessorKey,
+    enableSorting: true,
+    enableGlobalFilter: false,
     maxSize: 80,
     cell: ({ row }) => {
       const value = row.getValue<number>(accessorKey)
@@ -115,42 +129,21 @@ export function itemValue(options: {
 
   return {
     header: ({ column }) => (
-      <div className="group">
-        <div className="flex items-center justify-end gap-1 group whitespace-nowrap">
-          {column.getCanSort() ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              // className="px-2 hidden lg:flex"
-              // className="px-2 invisible group-hover:visible"
-              className="px-2"
-              onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
-              {header}
-              {column.getIsSorted() === 'asc' ? (
-                <ArrowUp className="ml-1 h-4 w-4" />
-              ) : (
-                <ArrowDown className="ml-1 h-4 w-4" />
-              )}
-            </Button>
-          ) : (
-            <>{header}</>
-          )}
-        </div>
-      </div>
+      <TableColumnHeader column={column} title={header} className="flex justify-end" />
     ),
     accessorKey,
     enableSorting: enableSorting ?? false,
+    enableGlobalFilter: false,
     cell: ({ row, table }) => {
       let value = 0
       if (cumulative) {
-        value = row.original.total
-        // for (let i = 0; i < data.sortedRows.length; i++) {
-        //   if (data.sortedRows[i].id === row.id) {
-        //     break;
-        //   }
-        //   value += data.sortedRows[i].original.total;
-        // }
+        const sortedRows = table.getSortedRowModel().rows
+        for (let i = 0; i < sortedRows.length; i++) {
+          value += sortedRows[i].original.total
+          if (sortedRows[i].id === row.id) {
+            break
+          }
+        }
       } else if (accessorKey) {
         value = row.getValue(accessorKey)
       }
@@ -213,11 +206,10 @@ const ItemNameCell = ({ value, frameType }: ItemNameCellProps) => {
 }
 
 type ItemTabsCellProps = {
-  tabs: ICompactTab[]
+  value: string
 }
 
-const ItemTabsCell = ({ tabs }: ItemTabsCellProps) => {
-  const value = tabs ? parseTabNames(tabs) : ''
+const ItemTabsCell = ({ value }: ItemTabsCellProps) => {
   return (
     <ActionTooltip label={value} side="bottom">
       <span className="whitespace-nowrap overflow-hidden text-ellipsis">{value}</span>
