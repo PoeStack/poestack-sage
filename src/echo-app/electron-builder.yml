@@ -1,8 +1,9 @@
 appId: poestack.sage
-productName: poestack-sage
+productName: PoeStack
 directories:
   buildResources: build
 files:
+  - 'out/**/*'
   - '!**/.vscode/*'
   - '!src/*'
   - '!electron.vite.config.{js,ts,mjs,cjs}'
@@ -11,13 +12,18 @@ files:
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
 asarUnpack:
   - resources/**
+extraResources:
+  - from: './src/renderer/src/locales/'
+    to: './locales/'
 win:
-  executableName: poestack-sage
+  executableName: PoeStack
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
+  oneClick: false
+  allowToChangeInstallationDirectory: true
 mac:
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
