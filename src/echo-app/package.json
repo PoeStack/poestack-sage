@@ -7,7 +7,7 @@
   "main": "./out/main/index.js",
   "scripts": {
     "build": "npm run bump-dev-plugins && npm run typecheck && electron-vite build",
-    "preview": "electron-vite preview",
+    "preview": "IS_PREVIEW=true electron-vite preview",
     "build:linux": "npm run build && electron-builder --linux --config",
     "build:mac": "npm run build && electron-builder --mac --config",
     "build:plugins": "cd ../../ && gradlew buildPlugins",
