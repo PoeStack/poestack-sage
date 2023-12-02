@@ -1,0 +1,43 @@
+name: build/publish
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v4
+        with:
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+          node-version: "latest"
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "corretto"
+          java-version: "17"
+          cache: "gradle"
+      - name: install
+        run: ./gradlew appBuildNpmInstall
+      - name: build
+        run: ./gradlew appBuildNpmBuild
+
+      - name: Build/release Electron app
+        uses: samuelmeuli/action-electron-builder@v1
+        with:
+          # GitHub token, automatically provided to the action
+          # (No need to define this secret in the repo settings)
+          github_token: ${{ secrets.github_token }}
+          package_root: "./src/echo-app"
+
+          # If the commit is tagged with a version (e.g. "v1.0.0"),
+          # release the app after building
+          release: ${{ startsWith(github.ref, 'refs/tags/v') }}

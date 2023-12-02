@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sage-test
+spec:
+  containers:
+  - name: ps-stream-consumer
+    image: registry.digitalocean.com/poestack/sage:latest
+    command: ["node"]
+    args: ["src/insights/dist/consume-stream.js"]
+    envFrom:
+        - secretRef:
+            name: sage-secrets
+  restartPolicy: OnFailure
+
+

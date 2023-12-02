@@ -60,12 +60,14 @@ export class SageValuationService {
 
   public valuation(league: string, group: SageItemGroup) {
     const key = `${group.tag}_${group.shard}_${league}`.replaceAll(' ', '_')
-    return this.cacheValuationShards.load({ key: key }, () => this.loadInternal(key))
+    return this.cacheValuationShards.load({ key: key, maxAgeMs: 1000 * 60 * 60 }, () =>
+      this.loadInternal(key)
+    )
   }
 
   private loadInternal(key: string) {
     return this.httpUtil.get<SageValuationShard>(
-      `https://d1tuebvb7o7shd.cloudfront.net/v3/${key}.json`
+      `https://pub-1ac9e2cd6dca4bda9dc260cb6a6f7c90.r2.dev/v4/${key}.json`
     )
   }
 }

@@ -1,3 +1,4 @@
+import { RateLimitError } from './errors/rate-limit-error'
 import {
   PoeCharacter,
   PoeCharacterPassive,
@@ -30,7 +31,7 @@ import {
 import { ItemGroupingService, SageItemGroup } from './item-groups/item-grouping-service'
 import { HttpUtil } from './utils/http-util'
 
-export { ItemGroupingService, HttpUtil }
+export { ItemGroupingService, HttpUtil, RateLimitError }
 
 export type {
   SageItemGroup,

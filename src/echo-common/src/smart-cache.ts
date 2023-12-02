@@ -1,6 +1,7 @@
-import { BehaviorSubject, filter, map, Observable, of, Subject } from 'rxjs'
-import { concatMap, delay } from 'rxjs/operators'
+import { BehaviorSubject, filter, map, Observable, of, Subject, throwError, timer } from 'rxjs'
+import { catchError, concatMap, retry } from 'rxjs/operators'
 import { EchoDirService } from './echo-dir-service'
+import { RateLimitError } from 'sage-common'
 
 export type SmartCacheLoadConfig = {
   key: string
@@ -93,23 +94,53 @@ export class SmartCache<T> {
     this.workQueue$
       .pipe(
         concatMap((e) => {
-          const ratelimitDelayMs = 1000 //calculate rate limit here
-          this.events$.next({
-            type: 'rate-limit',
-            key: e.key,
-            timestampMs: Date.now(),
-            limitExpiresMs: ratelimitDelayMs
-          })
           return of(e).pipe(
-            delay(ratelimitDelayMs),
             concatMap((e) => {
-              return e.loadFun().pipe(map((r) => ({ e, r })))
+              return e.loadFun().pipe(
+                map(
+                  (r): SmartCacheResultEvent<T> => ({
+                    type: 'result',
+                    result: r,
+                    key: e.key,
+                    timestampMs: Date.now()
+                  })
+                ),
+                retry({
+                  delay: (error: any, retryCount: number) => {
+                    if (error instanceof RateLimitError) {
+                      this.events$.next({
+                        type: 'rate-limit',
+                        key: e.key,
+                        timestampMs: Date.now(),
+                        limitExpiresMs: error.retryAfterMs
+                      })
+                      console.log(
+                        'caught rate limit error, delaying',
+                        error.retryAfterMs,
+                        'attempt',
+                        retryCount
+                      )
+                      return timer(error.retryAfterMs)
+                    }
+
+                    return throwError(() => error)
+                  }
+                }),
+                catchError((error): Observable<SmartCacheErrorEvent> => of({
+                  type: "error",
+                  error: error,
+                  key: e.key,
+                  timestampMs: Date.now()
+                }))
+              )
             })
           )
         })
       )
-      .subscribe(({ e, r }) => {
-        this.events$.next({ type: 'result', result: r, key: e.key, timestampMs: Date.now() })
+      .subscribe({
+        next: (e) => {
+          this.events$.next(e)
+        }
       })
   }
 

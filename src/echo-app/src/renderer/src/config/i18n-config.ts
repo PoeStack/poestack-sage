@@ -11,7 +11,10 @@ i18next
   .use(initReactI18next)
   .init({
     backend: {
-      loadPath: './src/renderer/src/locales/{{lng}}/{{ns}}.json'
+      loadPath:
+        import.meta.env.MODE === 'development' || process.env.IS_PREVIEW === 'true'
+          ? './src/renderer/src/locales/{{lng}}/{{ns}}.json'
+          : './resources/locales/{{lng}}/{{ns}}.json'
     },
     debug: true,
     lng: 'en',

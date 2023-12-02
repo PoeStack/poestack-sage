@@ -1,3 +1,4 @@
+export * from './shadcn/alert-dialog'
 export * from './shadcn/accordion'
 export * from './shadcn/badge'
 export * from './shadcn/button'

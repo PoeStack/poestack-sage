@@ -27,14 +27,3 @@ jobs:
         run: ./gradlew npmInstall
       - name: build projects
         run: ./gradlew npmBuild
-      - name: build and publish docker
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'us-east-1'
-        run: |
-          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 604080725100.dkr.ecr.us-east-1.amazonaws.com
-          docker build -t sage .
-          docker tag sage 604080725100.dkr.ecr.us-east-1.amazonaws.com/poestack-insightsx:latest
-          docker push 604080725100.dkr.ecr.us-east-1.amazonaws.com/poestack-insightsx:latest
-
