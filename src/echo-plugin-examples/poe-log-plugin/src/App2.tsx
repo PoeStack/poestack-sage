@@ -26,7 +26,7 @@ const sub = context().poeClientLog.logEvents$.subscribe((e) => {
       )
       .subscribe((currentCharacter) => {
         context()
-          .poeValuations.withValuations('Ancestor', currentCharacter.inventory ?? [])
+          .poeValuations.withValuationsResultOnly('Ancestor', currentCharacter.inventory ?? [])
           .pipe(toArray())
           .subscribe((itemsWithValuations) => {
             console.log('items with valuations', itemsWithValuations)

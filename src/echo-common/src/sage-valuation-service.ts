@@ -3,7 +3,6 @@ import { HttpUtil, ItemGroupingService, PoeItem, SageItemGroup } from 'sage-comm
 import { EchoDirService } from './echo-dir-service'
 import { Observable, map, mergeMap, tap } from 'rxjs'
 import { validResultsWithNullish } from './smart-cache-hooks'
-import { EchoPoeItem } from './poe-stash-service'
 
 export class SageValuationService {
   private httpUtil = new HttpUtil()
@@ -15,13 +14,34 @@ export class SageValuationService {
 
   public cacheValuationShards = new SmartCache<SageValuationShard>(this.echoDir, 'sage-valuations')
 
-  public withValuations(league: string, items: PoeItem[]): Observable<EchoPoeItem> {
+  public withValuationsResultOnly(league: string, items: PoeItem[]) {
     return this.itemGroupingService.withGroup(items).pipe(
       mergeMap((e) =>
         this.itemValuation(league, e.data).pipe(
           validResultsWithNullish(),
           tap((e) => console.log('shard', e)),
           map((shard) => ({ ...e, valuation: shard?.valuations?.[e.group?.hash ?? ''] }))
+        )
+      )
+    )
+  }
+
+  public withValuations(league: string, items: PoeItem[]) {
+    return this.itemGroupingService.withGroup(items).pipe(
+      mergeMap((e) =>
+        this.itemValuation(league, e.data).pipe(
+          map((vEvent) => {
+            if (vEvent.type === 'result') {
+              const itemValuation = vEvent?.result?.valuations?.[e?.group?.hash ?? '']
+              const eItem = {
+                valuation: itemValuation,
+                timestampMs: vEvent?.result?.timestampMs,
+                ...e
+              }
+              return { ...vEvent, result: eItem }
+            }
+            return { ...vEvent, result: e }
+          })
         )
       )
     )
