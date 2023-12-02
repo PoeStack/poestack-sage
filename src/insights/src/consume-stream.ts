@@ -149,6 +149,6 @@ resultsSubject.subscribe((data) => {
 resultsSubject.subscribe((e) => console.log('got', e.stashes?.length))
 
 resultsSubject.next({
-  next_change_id: "2170425622-2162025115-2092674883-2322724226-2255546785",
+  next_change_id: '2170425622-2162025115-2092674883-2322724226-2255546785',
   stashes: []
 })
