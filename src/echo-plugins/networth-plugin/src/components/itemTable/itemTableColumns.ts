@@ -26,12 +26,12 @@ export const itemTableColumns = (): ColumnDef<IPricedItem>[] => [
   }),
   itemValue({
     accessorKey: 'total',
-    header: 'Total value',
+    header: 'Total value (c)',
     enableSorting: true
   }),
   itemValue({
     accessorKey: 'comulative',
-    header: 'Cumulative',
+    header: 'Cumulative (c)',
     cumulative: true
   })
 ]
