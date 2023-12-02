@@ -3,11 +3,7 @@ import { scanKeys } from './utils'
 import Redis from 'ioredis'
 import process from 'process'
 
-const client = new Redis({
-  host: process.env['REDIS_URL'] ?? 'localhost',
-  port: 6379,
-  tls: undefined
-})
+const client = new Redis(process.env['REDIS_URL'])
 
 const cacheLimit = 500
 const ageLimit = 1000 * 60 * 60 * 48
