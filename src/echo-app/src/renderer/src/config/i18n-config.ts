@@ -12,9 +12,9 @@ i18next
   .init({
     backend: {
       loadPath:
-        process.env.NODE_ENV !== 'production'
-          ? './resources/locales/{{lng}}/{{ns}}.json'
-          : './src/renderer/src/locales/{{lng}}/{{ns}}.json'
+        import.meta.env.MODE === 'development' || process.env.IS_PREVIEW === 'true'
+          ? './src/renderer/src/locales/{{lng}}/{{ns}}.json'
+          : './resources/locales/{{lng}}/{{ns}}.json'
     },
     debug: true,
     lng: 'en',
