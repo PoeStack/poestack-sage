@@ -11,8 +11,10 @@ export interface IPricedItem {
   typeLine: string
   frameType: number
   identified: boolean
-  total: SageValuation | undefined
-  calculated: SageValuation | undefined
+  total: number
+  calculated: number
+  valuation: SageValuation | undefined
+  totalValuation: SageValuation | undefined
   icon: string
   ilvl: number
   tier: number

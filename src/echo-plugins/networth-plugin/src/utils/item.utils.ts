@@ -9,7 +9,7 @@ import {
 import { v4 as uuidv4 } from 'uuid'
 import { IPricedItem } from '../interfaces/priced-item.interface'
 import { IItem } from '../interfaces/item.interface'
-import { IValuatedItem, IValuatedStash } from '../interfaces/snapshot.interface'
+import { IValuatedItem } from '../interfaces/snapshot.interface'
 import { StashTab } from '../store/domains/stashtab'
 import { SageValuation } from 'echo-common'
 
@@ -82,6 +82,10 @@ export function getLinks(array: any[]) {
     }
   })
   return greatestFreq
+}
+
+export function findItem<T extends IPricedItem>(array: T[], itemToFind: T) {
+  return array.find((x) => x.hash === itemToFind.hash)
 }
 
 const specialMapImplicitsToMapName: { [key: string]: string } = {
@@ -211,8 +215,10 @@ export function mapItemsToPricedItems(
       typeLine: item.typeLine!,
       frameType: item.frameType!,
       identified: item.identified!,
-      calculated: valuation === null ? undefined : valuation,
-      total: undefined,
+      total: 0,
+      calculated: 0,
+      valuation: valuation === null ? undefined : valuation,
+      totalValuation: undefined,
       icon: item.icon!,
       ilvl: item.ilvl!,
       tier: mapTier,
@@ -245,15 +251,19 @@ export function mergeItemStacks(items: IPricedItem[]) {
   const mergedItems: IPricedItem[] = []
 
   items.forEach((item) => {
-    const foundItem = mergedItems.find((x) => x.hash === item.hash)
+    const foundItem = findItem(mergedItems, item)
     if (!foundItem) {
-      mergedItems.push({ ...item })
+      mergedItems.push({
+        ...item,
+        calculated: item?.valuation?.pvs[4] || 0,
+        total: item?.valuation?.pvs[4] || 0 * item?.stackSize || 1
+      })
     } else {
       const foundIdx = mergedItems.indexOf(foundItem)
       mergedItems[foundIdx].stackSize += item.stackSize
-      mergedItems[foundIdx].total = calculateTotalPvsValue(
+      mergedItems[foundIdx].totalValuation = calculateTotalPvsValue(
         mergedItems[foundIdx].stackSize,
-        mergedItems[foundIdx].calculated
+        mergedItems[foundIdx].valuation
       )
       if (mergedItems[foundIdx].tab !== undefined && item.tab !== undefined) {
         mergedItems[foundIdx].tab = [...mergedItems[foundIdx].tab, ...item.tab]

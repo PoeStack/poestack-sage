@@ -1,32 +1,28 @@
 import {
   detach,
-  frozen,
-  getParent,
   getRefsResolvingTo,
   getRoot,
   idProp,
   model,
   Model,
   modelAction,
+  prop,
   rootRef,
   tProp,
   types
 } from 'mobx-keystone'
 import { Subject } from 'rxjs'
 import { RootStore } from './rootStore'
-import { Account } from './domains/account'
-import {
-  profileCharacterRef,
-  profileLeagueRef,
-  profilePriceLeagueRef,
-  profileStashTabRef
-} from './domains/profile'
+import { profileCharacterRef, profileLeagueRef, profileStashTabRef } from './domains/profile'
 import { Profile } from './domains/profile'
 import { accountStoreAccountRef } from './accountStore'
 import { PoeCharacter, PoePartialStashTab } from 'sage-common'
+import { ItemTableSelectionType } from '../interfaces/item-table-selection.interface'
+import { StashTab } from './domains/stashtab'
+import { computed } from 'mobx'
 
 export const statusMessageRef = rootRef<StatusMessage>('nw/statusMessageRef')
-export const safeStatusMessageRef = rootRef<StatusMessage>('nw/safeStatusMessageRef', {
+export const uiStashTabRef = rootRef<StashTab>('nw/uiStashTabRef', {
   onResolvedValueChange(ref, newNode, oldNode) {
     if (oldNode && !newNode) {
       detach(ref)
@@ -53,9 +49,17 @@ export class UiStateStore extends Model({
   isSnapshotting: tProp(false).withSetter(),
   statusMessage: tProp(types.maybe(types.model(StatusMessage))),
   itemTablePageIndex: tProp(0),
-  counter: tProp(0).withSetter()
+  counter: tProp(0).withSetter(),
+  itemTableFilterText: tProp(types.string, '').withSetter(),
+  itemTableSelection: prop<ItemTableSelectionType>('latest').withSetter(),
+  filteredStashTabsRef: tProp(types.maybe(types.array(types.ref(uiStashTabRef)))).withSetter()
 }) {
   cancelSnapshot = new Subject<boolean>()
+
+  @computed
+  get filteredStashTabs() {
+    return this.filteredStashTabsRef?.filter((x) => x.maybeCurrent).map((x) => x.maybeCurrent!)
+  }
 
   @modelAction
   setCancelSnapshot(cancel: boolean) {

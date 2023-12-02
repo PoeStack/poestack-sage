@@ -12,11 +12,10 @@ import {
   types
 } from 'mobx-keystone'
 import { League } from './league'
-import { StashTab, stashTabLeagueRef } from './stashtab'
+import { StashTab } from './stashtab'
 import { Snapshot } from './snapshot'
 import { RootStore } from '../rootStore'
 import { Character } from './character'
-import { IProfile } from '../../interfaces/profile.interface'
 import externalService from '../../service/external.service'
 import {
   catchError,
@@ -30,10 +29,8 @@ import {
   takeUntil,
   toArray
 } from 'rxjs'
-import { IStashTabItems, IStashTabSnapshot } from '../../interfaces/snapshot.interface'
+import { IStashTabItems } from '../../interfaces/snapshot.interface'
 import { IStashTab } from '../../interfaces/stash.interface'
-import { table } from 'console'
-import { IPricedItem } from '../../interfaces/priced-item.interface'
 import {
   createCompactTab,
   mapItemsToPricedItems,
@@ -41,7 +38,9 @@ import {
   mergeItemStacks
 } from '../../utils/item.utils'
 import { PoeItem } from 'sage-common'
-import { StashTabSnapshot, stashTabSnapshotStashTabRef } from './stashtab-snapshot'
+import { StashTabSnapshot } from './stashtab-snapshot'
+import { diffSnapshots, filterItems, filterSnapshotItems } from '../../utils/snapshot.utils'
+import { IPricedItem } from '../../interfaces/priced-item.interface'
 
 export const profileLeagueRef = rootRef<League>('nw/profileLeagueRef')
 export const profilePriceLeagueRef = rootRef<League>('nw/profilePriceLeagueRef')
@@ -109,6 +108,23 @@ export class Profile extends Model({
     )
   }
 
+  @computed
+  get items() {
+    const { uiStateStore } = getRoot<RootStore>(this)
+    const diffSelected = uiStateStore.itemTableSelection === 'comparison'
+    if (this.snapshots.length === 0 || (diffSelected && this.snapshots.length < 2)) {
+      return []
+    }
+    const filterText = uiStateStore.itemTableFilterText.toLowerCase()
+    if (diffSelected) {
+      return filterItems(
+        diffSnapshots(this.snapshots[1], this.snapshots[0], this.diffSnapshotPriceResolver),
+        filterText
+      )
+    }
+    return filterSnapshotItems([this.snapshots[0]], filterText, uiStateStore.filteredStashTabs)
+  }
+
   @modelAction
   updateProfile(
     profile: Pick<
@@ -135,10 +151,10 @@ export class Profile extends Model({
   snapshot() {
     // TODO: Investigate - disable takesnapshotbutton, when then profile is not valid. - We may just ignore deleted stashtabs/character and mark them in profile as deleted
     // Without a league, the player must investiagte or automatically archive the profile and create a new one? - Only with alertDialog
-    if (this.isProfileValid) return this.notifyInvalidProfile()
+    if (!this.isProfileValid) return this.notifyInvalidProfile()
 
     const { uiStateStore } = getRoot<RootStore>(this)
-    uiStateStore!.setIsSnapshotting(true)
+    uiStateStore.setIsSnapshotting(true)
     this.refreshStashTabs()
   }
 
@@ -222,7 +238,7 @@ export class Profile extends Model({
 
   @modelAction
   getItems(league: League) {
-    const { uiStateStore, accountStore } = getRoot<RootStore>(this)
+    const { uiStateStore } = getRoot<RootStore>(this)
 
     const selectedStashTabs = this.activeStashTabs.filter((st) => !st.deleted)
 
@@ -233,11 +249,8 @@ export class Profile extends Model({
     const getMainTabsWithChildren =
       selectedStashTabs.length > 0
         ? from(selectedStashTabs).pipe(
-            concatMap((tab) =>
-              externalService.getStashTabWithChildren(
-                { ...tab, metadata: tab.metadata.data },
-                league.name
-              )
+            concatMap((stashTab) =>
+              externalService.getStashTabWithChildren(stashTab as IStashTab, league.name)
             ),
             toArray()
           )
@@ -261,8 +274,8 @@ export class Profile extends Model({
           }
           uiStateStore.setStatusMessage('fetching_subtabs', undefined, 1, subTabs.length)
           const getItemsForSubTabsSource = from(subTabs).pipe(
-            concatMap((tab) =>
-              externalService.getStashTabWithChildren(tab as IStashTab, league.name, true)
+            concatMap((stashTab) =>
+              externalService.getStashTabWithChildren(stashTab as IStashTab, league.name, true)
             ),
             toArray()
           )
@@ -291,7 +304,9 @@ export class Profile extends Model({
               }
             }
 
-            const stashTab = this.activeStashTabs.find((st) => st.id === tab.parent ?? tab.id)!
+            const stashTab = this.activeStashTabs.find(
+              (st) => st.id === tab.parent || st.id === tab.id
+            )!
             return {
               stashTab: stashTab,
               items: items
@@ -329,7 +344,6 @@ export class Profile extends Model({
 
   @modelAction
   getItemsSuccess(stashTabsWithItems: IStashTabItems[], league: League) {
-    // todo: clean up, must be possible to write this in a nicer manner (perhaps a joint function for both error/success?)
     const { notificationStore } = getRoot<RootStore>(this)
     notificationStore.createNotification('get_items', 'success', undefined, undefined, league.name)
     this.priceItemsForStashTabs(stashTabsWithItems, league)
@@ -344,7 +358,7 @@ export class Profile extends Model({
 
   @modelAction
   priceItemsForStashTabs(stashTabsWithItems: IStashTabItems[], league: League) {
-    const { uiStateStore, accountStore, notificationStore, priceStore } = getRoot<RootStore>(this)
+    const { uiStateStore } = getRoot<RootStore>(this)
     uiStateStore.setStatusMessage('pricing_items')
     const getValuation = from(stashTabsWithItems).pipe(
       mergeMap((stashTabWithItems) => {
@@ -362,25 +376,19 @@ export class Profile extends Model({
     forkJoin([getValuation])
       .pipe(
         mergeMap(([valuatedStash]) => {
-          // Convert to priced items
           const compactStash = createCompactTab(valuatedStash.stashTab)
           const pricedItems = mapItemsToPricedItems(valuatedStash.valuation, compactStash)
           const pricedStackedItems = mergeItemStacks(pricedItems)
-          // We may add character stash or inventory and equipmentstash to the valid stashtablist as default for character
-          const stash =
-            valuatedStash.stashTab instanceof StashTab
-              ? stashTabSnapshotStashTabRef(valuatedStash.stashTab)
-              : compactStash.id
-          const filteredTabs = new StashTabSnapshot({
-            stashTab: stash,
+          const stashTabId =
+            valuatedStash.stashTab instanceof StashTab ? valuatedStash.stashTab.id : compactStash.id
+          const stashTabSnapshots = new StashTabSnapshot({
+            stashTabId: stashTabId,
             pricedItems: frozen(pricedStackedItems)
           })
-          return of(filteredTabs)
+          return of(stashTabSnapshots)
         }),
         toArray(),
-        switchMap((filteredTabs) => {
-          return of(this.priceItemsForStashTabsSuccess(filteredTabs))
-        }),
+        switchMap((filteredTabs) => of(this.priceItemsForStashTabsSuccess(filteredTabs))),
         takeUntil(uiStateStore.cancelSnapshot),
         catchError((e: Error) => of(this.priceItemsForStashTabsFail(e)))
       )
@@ -469,14 +477,35 @@ export class Profile extends Model({
     uiStateStore.setStatusMessage('saving_snapshot')
 
     const snapshotToAdd = new Snapshot({
-      stashTabSnapshots: pricedStashTabs
+      stashTabs: pricedStashTabs
     })
-
-    this.activeLeague
 
     this.snapshots.unshift(snapshotToAdd)
     this.snapshots = this.snapshots.slice(0, 1000)
 
     this.snapshotSuccess()
+  }
+
+  diffSnapshotPriceResolver(removedItems: IPricedItem[]) {
+    // TODO: use some flow generator function & convert PricedItem to PoeItem, that it can priced again or save the PoeItem in the PricedItem
+    return 0
+
+    if (removedItems.length === 0) return
+    const { accountStore, leagueStore } = getRoot<RootStore>(this)
+    let activePriceLeague = accountStore.activeAccount.activePriceLeague
+
+    if (!activePriceLeague) {
+      this.setActivePriceLeagueRef(profilePriceLeagueRef(leagueStore.priceLeagues[0]))
+      activePriceLeague = accountStore.activeAccount.activePriceLeague
+    }
+
+    removedItems.forEach((item) => {
+      // const lastPricedItem = findPriceForItem(prices, item)
+      // if (lastPricedItem) {
+      //   // Update reference - stackSize is already negativ
+      //   item.total = item.stackSize * lastPricedItem
+      // }
+      // yield 5
+    })
   }
 }

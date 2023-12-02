@@ -1,19 +1,23 @@
 import { map } from 'rxjs'
 import { context } from '../entry'
 import { filterNullish } from 'ts-ratchet'
-import { IStashTab } from '../interfaces/stash.interface'
+import { IStashTab, IStashTabNode } from '../interfaces/stash.interface'
 import { PoeItem } from 'sage-common'
+import { StashTab } from '../store/domains/stashtab'
 
 export const valuateItems = (league: string, items: PoeItem[]) => {
   const { poeValuations } = context()
   return poeValuations.withValuations(league, items).pipe(
     map((e) => {
-      return {
-        data: e.data,
-        valuation: e.valuation,
-        group: e.group
+      if (e.type === 'error') {
+        throw new Error(e.error)
       }
-    })
+      if (e.type === 'result') {
+        return e.result
+      }
+      return null
+    }),
+    filterNullish()
   )
 }
 

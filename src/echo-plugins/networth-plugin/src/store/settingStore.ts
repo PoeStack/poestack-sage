@@ -1,5 +1,5 @@
 import { computed } from 'mobx'
-import { detach, model, Model, modelAction, rootRef, tProp, types } from 'mobx-keystone'
+import { detach, model, Model, modelAction, prop, rootRef, tProp, types } from 'mobx-keystone'
 import { ICurrency } from '../interfaces/currency.interface'
 
 export type Currency = 'chaos' | 'divine'
@@ -8,7 +8,7 @@ export type CurrencyShort = 'c' | 'd' | 'div'
 @model('nw/currencyHeader')
 export class CurrencyHeader extends Model({
   header: tProp(types.string),
-  type: tProp(types.literal<CurrencyShort>('c'), 'c').withSetter()
+  type: prop<CurrencyShort>('c').withSetter()
 }) {}
 
 @model('nw/settingStore')
@@ -18,6 +18,11 @@ export class SettingStore extends Model({
   autoSnapshotInterval: tProp(60 * 20 * 1000), // default to 20 minutes
   priceThreshold: tProp(0),
   totalPriceThreshold: tProp(0),
+  /**
+   * Percentile:
+   * [1, 5, 7, 10, 12, 15, 18, 20, 25, 30, 40, 50, 70, 95, 99]
+   */
+  pvsToUse: tProp(4),
   currency: tProp(types.literal<Currency>('chaos'), 'chaos'),
   currencyHeaders: tProp(types.array(types.model(CurrencyHeader)), [])
 }) {

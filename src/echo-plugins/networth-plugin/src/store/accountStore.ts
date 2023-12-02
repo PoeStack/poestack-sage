@@ -147,6 +147,7 @@ export class AccountStore extends Model({
                       .filter((st) => st.leagueRef.id === league.getRefId())
                       .slice(0, 2)
                       .map((st) => profileStashTabRef(st))
+                    console.log('stashTabs: ', stashTabs.map((x) => x.getRefId()).join(', '))
 
                     const newProfile = new Profile({
                       name: generateProfileName(),

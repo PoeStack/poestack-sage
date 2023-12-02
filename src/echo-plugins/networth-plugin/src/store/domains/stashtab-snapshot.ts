@@ -10,7 +10,7 @@ export const stashTabSnapshotStashTabRef = rootRef<StashTab>('nw/stashTabSnapsho
 export class StashTabSnapshot extends Model({
   uuid: idProp,
   // The stash may be deleted. The stash can be a snapshot for a character and has no reference
-  stashTab: tProp(types.or(types.ref(stashTabSnapshotStashTabRef), types.string)),
+  stashTabId: tProp(types.string),
   value: tProp(0),
   pricedItems: tProp(types.frozen(types.unchecked<IPricedItem[]>()), () =>
     frozen<IPricedItem[]>([])

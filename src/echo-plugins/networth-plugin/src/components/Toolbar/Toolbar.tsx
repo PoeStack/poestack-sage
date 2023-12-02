@@ -12,14 +12,22 @@ type ToolbarProps = {
   isSubmitting: boolean
   isInitiating: boolean
   isSnapshotting: boolean
+  isProfileValid: boolean
+  readyToSnapshot: boolean
   statusMessage?: IStatusMessage
+  handleSnapshot: () => void
+  handleCancelSnapshot: () => void
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({
   isSubmitting,
   isInitiating,
   isSnapshotting,
-  statusMessage
+  isProfileValid,
+  readyToSnapshot,
+  statusMessage,
+  handleSnapshot,
+  handleCancelSnapshot
 }) => {
   return (
     <header className="z-50 flex border-b">
@@ -32,13 +40,23 @@ const Toolbar: React.FC<ToolbarProps> = ({
           <ProfileMenu />
         </div>
         <div className="py-2 px-2 h-full flex justify-center items-center gap-2.5">
-          <Button variant="ghost" className="border p-1 pr-1.5 rounded h-8">
+          <Button
+            variant="ghost"
+            disabled={!readyToSnapshot}
+            className="border p-1 pr-1.5 rounded h-8"
+            onClick={() => handleSnapshot()}
+          >
             <div className="flex flex-row justify-center text-xs items-center gap-1">
               <RefreshCcw className={cn('h-4 w-4', isSnapshotting && 'animate-spin')} />
               TAKE SNAPSHOT
             </div>
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => handleCancelSnapshot()}
+          >
             <XCircle className="h-4 w-4" />
           </Button>
           <Button variant="ghost" size="icon" className="h-8 w-8">
