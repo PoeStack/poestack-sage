@@ -14,7 +14,6 @@ export interface IPricedItem {
   total: number
   calculated: number
   valuation: SageValuation | undefined
-  totalValuation: SageValuation | undefined
   icon: string
   ilvl: number
   tier: number

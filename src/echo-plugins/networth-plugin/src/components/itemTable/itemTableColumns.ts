@@ -21,11 +21,13 @@ export const itemTableColumns = (): ColumnDef<IPricedItem>[] => [
   }),
   itemValue({
     accessorKey: 'calculated',
-    header: 'Price'
+    header: 'Price',
+    enableSorting: true
   }),
   itemValue({
     accessorKey: 'total',
-    header: 'Total value'
+    header: 'Total value',
+    enableSorting: true
   }),
   itemValue({
     accessorKey: 'comulative',

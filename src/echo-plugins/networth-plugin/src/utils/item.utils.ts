@@ -195,13 +195,16 @@ export const createCompactTab = (stashTab: IStashTabNode | string): ICompactTab 
 
 export function mapItemsToPricedItems(
   valuation: IValuatedItem[],
-  stashTab: ICompactTab
+  stashTab: ICompactTab,
+  pvs: number
 ): IPricedItem[] {
   return valuation.map((valuatedItem) => {
     const item = valuatedItem.data
     const valuation = valuatedItem.valuation
 
     const mapTier = getMapTier(item.properties)
+    const stackSize = item.stackSize || 1
+
     const mappedItem: IPricedItem = {
       uuid: uuidv4(),
       tag: valuatedItem.group?.tag,
@@ -215,10 +218,9 @@ export function mapItemsToPricedItems(
       typeLine: item.typeLine!,
       frameType: item.frameType!,
       identified: item.identified!,
-      total: 0,
-      calculated: 0,
+      total: valuation ? valuation.pvs[pvs] * stackSize : 0,
+      calculated: valuation ? valuation.pvs[pvs] : 0,
       valuation: valuation === null ? undefined : valuation,
-      totalValuation: undefined,
       icon: item.icon!,
       ilvl: item.ilvl!,
       tier: mapTier,
@@ -230,21 +232,12 @@ export function mapItemsToPricedItems(
       sockets: item.sockets !== undefined && item.sockets !== null ? item.sockets.length : 0,
       quality: getQuality(item.properties),
       level: getLevel(item.properties),
-      stackSize: item.stackSize || 1,
+      stackSize: stackSize,
       totalStacksize: item.maxStackSize || 1,
       tab: [stashTab]
     }
     return mappedItem
   })
-}
-
-const calculateTotalPvsValue = (
-  stackSize: number,
-  calculated?: SageValuation
-): SageValuation | undefined => {
-  if (!calculated) return undefined
-  const totalPvs = calculated.pvs.map((percentile) => percentile * stackSize)
-  return { l: calculated.l, pvs: totalPvs }
 }
 
 export function mergeItemStacks(items: IPricedItem[]) {
@@ -254,17 +247,13 @@ export function mergeItemStacks(items: IPricedItem[]) {
     const foundItem = findItem(mergedItems, item)
     if (!foundItem) {
       mergedItems.push({
-        ...item,
-        calculated: item?.valuation?.pvs[4] || 0,
-        total: item?.valuation?.pvs[4] || 0 * item?.stackSize || 1
+        ...item
       })
     } else {
       const foundIdx = mergedItems.indexOf(foundItem)
       mergedItems[foundIdx].stackSize += item.stackSize
-      mergedItems[foundIdx].totalValuation = calculateTotalPvsValue(
-        mergedItems[foundIdx].stackSize,
-        mergedItems[foundIdx].valuation
-      )
+      mergedItems[foundIdx].total =
+        mergedItems[foundIdx].stackSize * mergedItems[foundIdx].calculated
       if (mergedItems[foundIdx].tab !== undefined && item.tab !== undefined) {
         mergedItems[foundIdx].tab = [...mergedItems[foundIdx].tab, ...item.tab]
         mergedItems[foundIdx].tab = mergedItems[foundIdx].tab.filter(

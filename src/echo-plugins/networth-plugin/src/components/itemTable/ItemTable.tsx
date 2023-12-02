@@ -1,16 +1,21 @@
-'use client'
-
+import React from 'react'
 import {
   Cell,
   ColumnDef,
+  SortingState,
   flexRender,
   getCoreRowModel,
   useReactTable,
-  getPaginationRowModel
+  getPaginationRowModel,
+  getSortedRowModel,
+  ColumnFiltersState,
+  getFilteredRowModel,
+  VisibilityState
 } from '@tanstack/react-table'
 import { cn } from 'echo-common'
-
-import { Button, Table } from 'echo-common/components-v1'
+import { Button, Input, Table, DropdownMenu } from 'echo-common/components-v1'
+import { TablePagination } from './TablePagination'
+import { TableViewOptions } from './TableColumnToggle'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -19,15 +24,38 @@ interface DataTableProps<TData, TValue> {
 
 // Tutorial: https://ui.shadcn.com/docs/components/data-table
 export const ItemTable = <TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) => {
+  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel()
+    getPaginationRowModel: getPaginationRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility
+    }
   })
 
   return (
     <div>
+      <div className="flex items-center py-4">
+        <Input
+          placeholder="Filter name..."
+          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+          onChange={(event) => table.getColumn('name')?.setFilterValue(event.target.value)}
+          className="h-9 max-w-sm"
+        />
+        <TableViewOptions table={table} />
+      </div>
       <div className="rounded-md border">
         <Table>
           <Table.Header>
@@ -35,7 +63,7 @@ export const ItemTable = <TData, TValue>({ columns, data }: DataTableProps<TData
               <Table.Row key={headerGroup.id} className="divide-x">
                 {headerGroup.headers.map((header) => {
                   return (
-                    <Table.Head key={header.id} className="">
+                    <Table.Head key={header.id} className="h-10 px-[14px]">
                       {header.isPlaceholder
                         ? null
                         : flexRender(header.column.columnDef.header, header.getContext())}
@@ -70,24 +98,7 @@ export const ItemTable = <TData, TValue>({ columns, data }: DataTableProps<TData
           </Table.Body>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
-      </div>
+      <TablePagination table={table} />
     </div>
   )
 }

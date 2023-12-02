@@ -14,7 +14,8 @@ export class PriceStore extends Model({
       valuateItems(league, [{ typeLine: 'Divine Orb' }, { typeLine: 'Exalted Orb' }]).pipe(
         mergeMap((valuation) => {
           // For currencies we use the most stable divine price
-          const price = valuation.valuation?.pvs[4]
+          const { settingStore } = getRoot<RootStore>(this)
+          const price = valuation.valuation?.pvs[settingStore.pvs]
           if (price) {
             if (valuation.data.typeLine === 'Divine Orb') {
               console.log('Set divine price: ', price)

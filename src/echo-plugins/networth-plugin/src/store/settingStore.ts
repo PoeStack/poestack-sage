@@ -22,8 +22,8 @@ export class SettingStore extends Model({
    * Percentile:
    * [1, 5, 7, 10, 12, 15, 18, 20, 25, 30, 40, 50, 70, 95, 99]
    */
-  pvsToUse: tProp(4),
-  currency: tProp(types.literal<Currency>('chaos'), 'chaos'),
+  pvs: tProp(4),
+  currency: prop<Currency>('chaos'),
   currencyHeaders: tProp(types.array(types.model(CurrencyHeader)), [])
 }) {
   @computed

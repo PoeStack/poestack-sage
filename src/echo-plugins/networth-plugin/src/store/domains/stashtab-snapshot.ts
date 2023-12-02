@@ -1,8 +1,6 @@
-import { computed } from 'mobx'
-import { detach, frozen, idProp, model, Model, rootRef, tProp, types } from 'mobx-keystone'
+import { frozen, idProp, model, Model, rootRef, tProp, types } from 'mobx-keystone'
 import { IPricedItem } from '../../interfaces/priced-item.interface'
 import { StashTab } from './stashtab'
-import { ICompactTab, IStashTabNode } from '../../interfaces/stash.interface'
 
 export const stashTabSnapshotStashTabRef = rootRef<StashTab>('nw/stashTabSnapshotStashTabRef')
 
@@ -11,7 +9,7 @@ export class StashTabSnapshot extends Model({
   uuid: idProp,
   // The stash may be deleted. The stash can be a snapshot for a character and has no reference
   stashTabId: tProp(types.string),
-  value: tProp(0),
+  value: tProp(0).withSetter(),
   pricedItems: tProp(types.frozen(types.unchecked<IPricedItem[]>()), () =>
     frozen<IPricedItem[]>([])
   )

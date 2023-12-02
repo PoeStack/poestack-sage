@@ -2,13 +2,14 @@ import { ColumnDef } from '@tanstack/react-table'
 import { rarityColors, currencyChangeColors, itemColors } from '../../assets/theme'
 import { IItem } from '../../interfaces/item.interface'
 import { getRarity, parseTabNames } from '../../utils/item.utils'
-import { ActionTooltip } from 'echo-common/components-v1'
+import { ActionTooltip, Button } from 'echo-common/components-v1'
 import { ICompactTab } from '../../interfaces/stash.interface'
 import { cn } from 'echo-common'
 import { CurrencyShort } from '../../store/settingStore'
 import { IPricedItem } from '../../interfaces/priced-item.interface'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
+import { ArrowDown, ArrowUp } from 'lucide-react'
 
 type PricedItem = keyof IPricedItem | 'comulative'
 
@@ -24,7 +25,7 @@ export function itemIcon(options: {
     minSize: 100,
     cell: ({ row }) => {
       const value = row.getValue<string>(accessorKey)
-      return <ItemIconCell value={value} frameType={row.original.frameType}></ItemIconCell>
+      return <ItemIconCell value={value} frameType={row.original.frameType} />
     }
   }
 }
@@ -107,12 +108,39 @@ export function itemValue(options: {
   cumulative?: boolean
   diff?: boolean
   currencyType?: CurrencyShort
+  enableSorting?: boolean
 }): ColumnDef<IPricedItem> {
-  const { header, accessorKey, placeholder, cumulative, diff, currencyType } = options
+  const { header, accessorKey, placeholder, cumulative, diff, currencyType, enableSorting } =
+    options
 
   return {
-    header: () => <div className="text-right">{header}</div>,
+    header: ({ column }) => (
+      <div className="group">
+        <div className="flex items-center justify-end gap-1 group whitespace-nowrap">
+          {column.getCanSort() ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              // className="px-2 hidden lg:flex"
+              // className="px-2 invisible group-hover:visible"
+              className="px-2"
+              onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            >
+              {header}
+              {column.getIsSorted() === 'asc' ? (
+                <ArrowUp className="ml-1 h-4 w-4" />
+              ) : (
+                <ArrowDown className="ml-1 h-4 w-4" />
+              )}
+            </Button>
+          ) : (
+            <>{header}</>
+          )}
+        </div>
+      </div>
+    ),
     accessorKey,
+    enableSorting: enableSorting ?? false,
     cell: ({ row, table }) => {
       let value = 0
       if (cumulative) {
@@ -155,8 +183,11 @@ const ItemIconCell = ({ value, frameType }: ItemIconCellProps) => {
       }}
       className="flex justify-center items-center w-full h-full"
     >
-      <div className="flex justify-center items-center relative">
-        <img className="h-6 min-h-6 pl-[1px]" src={typeof value === 'string' ? value : ''} />
+      <div>
+        <img
+          className="block h-6 min-h-fit min-w-fit pl-[4px]"
+          src={typeof value === 'string' ? value : ''}
+        />
       </div>
     </div>
   )

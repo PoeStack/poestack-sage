@@ -358,7 +358,7 @@ export class Profile extends Model({
 
   @modelAction
   priceItemsForStashTabs(stashTabsWithItems: IStashTabItems[], league: League) {
-    const { uiStateStore } = getRoot<RootStore>(this)
+    const { uiStateStore, settingStore } = getRoot<RootStore>(this)
     uiStateStore.setStatusMessage('pricing_items')
     const getValuation = from(stashTabsWithItems).pipe(
       mergeMap((stashTabWithItems) => {
@@ -377,7 +377,11 @@ export class Profile extends Model({
       .pipe(
         mergeMap(([valuatedStash]) => {
           const compactStash = createCompactTab(valuatedStash.stashTab)
-          const pricedItems = mapItemsToPricedItems(valuatedStash.valuation, compactStash)
+          const pricedItems = mapItemsToPricedItems(
+            valuatedStash.valuation,
+            compactStash,
+            settingStore.pvs
+          )
           const pricedStackedItems = mergeItemStacks(pricedItems)
           const stashTabId =
             valuatedStash.stashTab instanceof StashTab ? valuatedStash.stashTab.id : compactStash.id
