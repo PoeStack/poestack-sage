@@ -90,12 +90,10 @@ export const PluginPage: React.FC = () => {
         <div className="flex-1 border-gray-500 w-full border-b-2"></div>
         <RouterIconNavigator location="l-sidebar-b" />
       </div>
-      <div className="h-[calc(100vh-3.5rem)] overflow-auto ml-12 pb-7">
-        <ScrollArea>
-          <Suspense fallback={<DefaultPage />}>
-            <PluginBody />
-          </Suspense>
-        </ScrollArea>
+      <div className="h-[calc(100vh-3.5rem)] relative overflow-auto ml-12 pb-7">
+        <Suspense fallback={<DefaultPage />}>
+          <PluginBody />
+        </Suspense>
       </div>
     </>
   )
