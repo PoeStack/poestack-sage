@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   ColumnDef,
   SortingState,
@@ -13,7 +13,8 @@ import {
   PaginationState,
   filterFns,
   FilterFn,
-  FilterFnOption
+  FilterFnOption,
+  Updater
 } from '@tanstack/react-table'
 import { Label, Switch, Table } from 'echo-common/components-v1'
 import { TablePagination } from './TablePagination'
@@ -42,6 +43,15 @@ const ItemTable = <TData, TValue>({
   // const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
 
+  const setPagination = useCallback(
+    (updaterOrValue: Updater<PaginationState>) => tableState.setPagination(updaterOrValue),
+    [tableState]
+  )
+  const setGlobalFilter = useCallback(
+    (updaterOrValue: Updater<string>) => tableState.setGlobalFilter(updaterOrValue),
+    [tableState]
+  )
+
   const table = useReactTable({
     data,
     columns,
@@ -52,8 +62,8 @@ const ItemTable = <TData, TValue>({
     // onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: tableState.setPagination,
-    onGlobalFilterChange: tableState.setGlobalFilter,
+    onPaginationChange: setPagination,
+    onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: globalFilterFn,
     state: {
       sorting,

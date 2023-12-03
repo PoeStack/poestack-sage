@@ -77,11 +77,11 @@ export class TableView
   setPagination(updaterOrValue: Updater<PaginationState>) {
     let pagination: PaginationState
     if (typeof updaterOrValue === 'function') {
-      pagination = updaterOrValue({ pageIndex: this.pageSize, pageSize: this.pageIndex })
+      pagination = updaterOrValue({ pageIndex: this.pageIndex, pageSize: this.pageSize })
     } else {
       pagination = updaterOrValue
     }
-    this.pageSize = pagination.pageSize
-    this.pageIndex = pagination.pageIndex
+    this.setPageSize(pagination.pageSize)
+    this.setPageIndex(pagination.pageIndex)
   }
 }

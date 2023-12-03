@@ -84,8 +84,16 @@ export function getLinks(array: any[]) {
   return greatestFreq
 }
 
-export function findItem<T extends IPricedItem>(array: T[], itemToFind: T) {
-  return array.find((x) => x.hash === itemToFind.hash)
+export function findItem<T extends IPricedItem>(array: T[], toFind: T) {
+  return array.find((x) => {
+    if (toFind.hash) {
+      return x.hash === toFind.hash
+    }
+    if (toFind.totalStacksize > 1) {
+      return x.name === toFind.name
+    }
+    return false
+  })
 }
 
 const specialMapImplicitsToMapName: { [key: string]: string } = {
