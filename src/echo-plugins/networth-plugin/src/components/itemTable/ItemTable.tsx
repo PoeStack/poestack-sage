@@ -81,7 +81,7 @@ const ItemTable = <TData, TValue>({
           value={tableState.globalFilter ?? ''}
           onChange={(value) => tableState.setGlobalFilter(String(value))}
           className="h-8 max-w-sm mr-2"
-          placeholder="Search name or tab..."
+          placeholder="Search name or tab... Regex support..." // ^((?!Chaos Orb).)*$
         />
         <TableColumnToggle table={table} />
       </div>
