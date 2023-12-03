@@ -48,7 +48,7 @@ export class EchoPluginService {
 
           const pluginEntry = module.require(path.resolve(p.path, 'entry.js'))
           const hook: EchoPluginHook = pluginEntry.default()
-          hook.start(ECHO_CONTEXT_SERVICE)
+          hook.start()
           this.plugins$.next({ key: p.key, hook: hook })
         }
 
