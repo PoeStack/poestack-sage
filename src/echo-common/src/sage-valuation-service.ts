@@ -3,7 +3,6 @@ import { HttpUtil, ItemGroupingService, PoeItem, SageItemGroup } from 'sage-comm
 import { EchoDirService } from './echo-dir-service'
 import { Observable, map, mergeMap, tap } from 'rxjs'
 import { validResultsWithNullish } from './smart-cache-hooks'
-import { EchoPoeItem } from './poe-stash-service'
 
 export class SageValuationService {
   private httpUtil = new HttpUtil()
@@ -68,7 +67,7 @@ export class SageValuationService {
 
   private loadInternal(key: string) {
     return this.httpUtil.get<SageValuationShard>(
-      `https://d1tuebvb7o7shd.cloudfront.net/v3/${key}.json`
+      `https://pub-1ac9e2cd6dca4bda9dc260cb6a6f7c90.r2.dev/v4/${key}.json`
     )
   }
 }

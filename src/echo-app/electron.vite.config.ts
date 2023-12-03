@@ -80,7 +80,7 @@ export default defineConfig({
         commonjsExternals({ externals: commonjsPackages }),
         // Do not bundle any dependencies in production
         config.mode === 'production' && externalizeDepsAndPeerDepsPlugin(),
-        i18nHotReloadPlugin()
+        config.mode !== 'production' && i18nHotReloadPlugin()
       ]
     }
   })

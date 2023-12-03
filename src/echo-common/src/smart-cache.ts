@@ -1,7 +1,6 @@
 import { BehaviorSubject, filter, map, Observable, of, Subject, throwError, timer } from 'rxjs'
-import { catchError, concatMap, delay, mergeMap, retry, retryWhen } from 'rxjs/operators'
+import { catchError, concatMap, retry } from 'rxjs/operators'
 import { EchoDirService } from './echo-dir-service'
-import { error } from 'console'
 import { RateLimitError } from 'sage-common'
 
 export type SmartCacheLoadConfig = {
@@ -126,7 +125,13 @@ export class SmartCache<T> {
 
                     return throwError(() => error)
                   }
-                })
+                }),
+                catchError((error): Observable<SmartCacheErrorEvent> => of({
+                  type: "error",
+                  error: error,
+                  key: e.key,
+                  timestampMs: Date.now()
+                }))
               )
             })
           )
