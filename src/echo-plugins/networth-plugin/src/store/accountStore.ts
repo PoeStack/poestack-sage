@@ -29,6 +29,7 @@ import { profileLeagueRef, profilePriceLeagueRef, profileStashTabRef } from './d
 import { Profile } from './domains/profile'
 import { generateProfileName } from '../utils/profile.utils'
 import { getCharacterLeagues } from '../utils/league.utils'
+import { TableView } from './domains/tableView'
 
 export const accountStoreAccountRef = rootRef<Account>('nw/accountStoreAccountRef', {
   onResolvedValueChange(ref, newNode, oldNode) {
@@ -49,7 +50,9 @@ export class AccountStore extends Model({
   get activeAccount() {
     // Once the session is initiated, the account is defined. In the meantime skeletons will hide the UI. We will disable all buttons as well
     const account = this.activeAccountRef?.maybeCurrent
-    return account ? account : new Account({ name: 'Unknown' })
+    return account
+      ? account
+      : new Account({ name: 'Unknown', networthTableView: new TableView({}) })
   }
 
   /**
@@ -74,7 +77,10 @@ export class AccountStore extends Model({
     if (foundAccount) {
       return foundAccount
     } else {
-      const newAccount = new Account({ name })
+      const newAccount = new Account({
+        name,
+        networthTableView: new TableView({ id: 'networth-table' })
+      })
       this.accounts.push(newAccount)
       return newAccount
     }
@@ -117,7 +123,7 @@ export class AccountStore extends Model({
               account.updateCharacters(characters)
 
               // TODO: Deactivate profile, when the league is deleted; Deleted stashtabs => No requests; Deleted character => No requests
-              const availableLeagues = leagueStore.leagues.filter((l) => !l.deleted).slice(0, 1)
+              const availableLeagues = leagueStore.leagues.filter((l) => !l.deleted)
               return forkJoin([
                 from(availableLeagues).pipe(
                   concatMap((league) => {

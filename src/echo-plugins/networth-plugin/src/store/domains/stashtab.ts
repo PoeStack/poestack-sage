@@ -31,7 +31,7 @@ export class StashTab extends Model({
   index: tProp(types.number),
   type: tProp(types.string),
   parent: tProp(types.maybe(types.string)),
-  folder: tProp(types.maybe(types.boolean)),
+  folder: tProp(types.maybe(types.string)),
   public: tProp(types.maybe(types.boolean)),
   metadata: tProp(types.frozen(types.unchecked<IMetaData>()), () =>
     frozen<IMetaData>({ colour: '' })

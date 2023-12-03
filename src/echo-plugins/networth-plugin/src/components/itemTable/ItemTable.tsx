@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
   ColumnDef,
   SortingState,
@@ -7,31 +7,40 @@ import {
   useReactTable,
   getPaginationRowModel,
   getSortedRowModel,
-  ColumnFiltersState,
+  // ColumnFiltersState,
   getFilteredRowModel,
   VisibilityState,
-  PaginationState
+  PaginationState,
+  filterFns,
+  FilterFn,
+  FilterFnOption
 } from '@tanstack/react-table'
-import { Table } from 'echo-common/components-v1'
+import { Label, Switch, Table } from 'echo-common/components-v1'
 import { TablePagination } from './TablePagination'
-import { TableColumnToggle } from './TableColumnToggle'
+import TableColumnToggle from './TableColumnToggle'
 import DebouncedInput from '../Input/DebouncedInput'
+import { useStore } from '../../hooks/useStore'
+import { observer } from 'mobx-react'
+import { getRarityIdentifier } from '../../utils/item.utils'
+import { IPricedItem } from '../../interfaces/priced-item.interface'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  globalFilterFn?: FilterFnOption<TData>
 }
 
 // Tutorial: https://ui.shadcn.com/docs/components/data-table
-export const ItemTable = <TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) => {
+const ItemTable = <TData, TValue>({
+  columns,
+  data,
+  globalFilterFn
+}: DataTableProps<TData, TValue>) => {
+  const { accountStore } = useStore()
+  const tableState = accountStore.activeAccount.networthTableView
   const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  // const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-  const [pagination, setPagination] = React.useState<PaginationState>({
-    pageSize: 25,
-    pageIndex: 0
-  })
-  const [globalFilter, setGlobalFilter] = React.useState('')
 
   const table = useReactTable({
     data,
@@ -40,17 +49,18 @@ export const ItemTable = <TData, TValue>({ columns, data }: DataTableProps<TData
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
+    // onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: setPagination,
-    onGlobalFilterChange: setGlobalFilter,
+    onPaginationChange: tableState.setPagination,
+    onGlobalFilterChange: tableState.setGlobalFilter,
+    globalFilterFn: globalFilterFn,
     state: {
       sorting,
-      columnFilters,
+      // columnFilters,
       columnVisibility,
-      pagination,
-      globalFilter
+      pagination: tableState.pagination,
+      globalFilter: tableState.globalFilter
     }
   })
 
@@ -58,10 +68,10 @@ export const ItemTable = <TData, TValue>({ columns, data }: DataTableProps<TData
     <div>
       <div className="flex items-center py-4">
         <DebouncedInput
-          value={globalFilter ?? ''}
-          onChange={(value) => setGlobalFilter(String(value))}
-          className="h-8 max-w-sm"
-          placeholder="Search all name or tab..."
+          value={tableState.globalFilter ?? ''}
+          onChange={(value) => tableState.setGlobalFilter(String(value))}
+          className="h-8 max-w-sm mr-2"
+          placeholder="Search name or tab..."
         />
         <TableColumnToggle table={table} />
       </div>
@@ -111,3 +121,5 @@ export const ItemTable = <TData, TValue>({ columns, data }: DataTableProps<TData
     </div>
   )
 }
+
+export default observer(ItemTable)

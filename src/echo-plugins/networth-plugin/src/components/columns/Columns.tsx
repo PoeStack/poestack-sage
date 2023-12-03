@@ -24,6 +24,7 @@ export function itemIcon(options: {
     header,
     accessorKey,
     minSize: 100,
+    enableGlobalFilter: true,
     cell: ({ row }) => {
       const value = row.getValue<string>(accessorKey)
       return <ItemIconCell value={value} frameType={row.original.frameType} />

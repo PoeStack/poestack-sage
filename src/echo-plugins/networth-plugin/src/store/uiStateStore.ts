@@ -1,12 +1,10 @@
 import {
-  detach,
   getRefsResolvingTo,
   getRoot,
   idProp,
   model,
   Model,
   modelAction,
-  prop,
   rootRef,
   tProp,
   types
@@ -17,18 +15,8 @@ import { profileCharacterRef, profileLeagueRef, profileStashTabRef } from './dom
 import { Profile } from './domains/profile'
 import { accountStoreAccountRef } from './accountStore'
 import { PoeCharacter, PoePartialStashTab } from 'sage-common'
-import { ItemTableSelectionType } from '../interfaces/item-table-selection.interface'
-import { StashTab } from './domains/stashtab'
-import { computed } from 'mobx'
 
 export const statusMessageRef = rootRef<StatusMessage>('nw/statusMessageRef')
-export const uiStashTabRef = rootRef<StashTab>('nw/uiStashTabRef', {
-  onResolvedValueChange(ref, newNode, oldNode) {
-    if (oldNode && !newNode) {
-      detach(ref)
-    }
-  }
-})
 
 @model('nw/statusMessage')
 export class StatusMessage extends Model({
@@ -47,19 +35,9 @@ export class UiStateStore extends Model({
   initiated: tProp(false).withSetter(),
   isInitiating: tProp(false).withSetter(),
   isSnapshotting: tProp(false).withSetter(),
-  statusMessage: tProp(types.maybe(types.model(StatusMessage))),
-  itemTablePageIndex: tProp(0),
-  counter: tProp(0).withSetter(),
-  itemTableFilterText: tProp(types.string, '').withSetter(),
-  itemTableSelection: prop<ItemTableSelectionType>('latest').withSetter(),
-  filteredStashTabsRef: tProp(types.maybe(types.array(types.ref(uiStashTabRef)))).withSetter()
+  statusMessage: tProp(types.maybe(types.model(StatusMessage)))
 }) {
   cancelSnapshot = new Subject<boolean>()
-
-  @computed
-  get filteredStashTabs() {
-    return this.filteredStashTabsRef?.filter((x) => x.maybeCurrent).map((x) => x.maybeCurrent!)
-  }
 
   @modelAction
   setCancelSnapshot(cancel: boolean) {
@@ -105,11 +83,6 @@ export class UiStateStore extends Model({
   @modelAction
   resetStatusMessage() {
     this.statusMessage = undefined
-  }
-
-  @modelAction
-  changeItemTablePage(index: number) {
-    this.itemTablePageIndex = index
   }
 
   /**

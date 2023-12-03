@@ -236,6 +236,11 @@ export function mapItemsToPricedItems(
       totalStacksize: item.maxStackSize || 1,
       tab: [stashTab]
     }
+
+    if (mappedItem.name === 'Chaos Orb') {
+      mappedItem.calculated = 1
+      mappedItem.total = mappedItem.stackSize
+    }
     return mappedItem
   })
 }

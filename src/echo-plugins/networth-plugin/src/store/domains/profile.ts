@@ -110,19 +110,27 @@ export class Profile extends Model({
 
   @computed
   get items() {
-    const { uiStateStore } = getRoot<RootStore>(this)
-    const diffSelected = uiStateStore.itemTableSelection === 'comparison'
+    const { accountStore } = getRoot<RootStore>(this)
+    const table = accountStore.activeAccount.networthTableView
+    const diffSelected = table.itemTableSelection === 'comparison'
     if (this.snapshots.length === 0 || (diffSelected && this.snapshots.length < 2)) {
       return []
     }
-    const filterText = uiStateStore.itemTableFilterText.toLowerCase()
+    const showPricedItems = table.showPricedItems
+    const showUnpricedItems = table.showUnpricedItems
     if (diffSelected) {
       return filterItems(
         diffSnapshots(this.snapshots[1], this.snapshots[0], this.diffSnapshotPriceResolver),
-        filterText
+        showPricedItems,
+        showUnpricedItems
       )
     }
-    return filterSnapshotItems([this.snapshots[0]], filterText, uiStateStore.filteredStashTabs)
+    return filterSnapshotItems(
+      [this.snapshots[0]],
+      showPricedItems,
+      showUnpricedItems,
+      table.filteredStashTabs
+    )
   }
 
   @modelAction
@@ -371,25 +379,32 @@ export class Profile extends Model({
             }
           })
         )
-      })
+      }),
+      toArray()
     )
     forkJoin([getValuation])
       .pipe(
-        mergeMap(([valuatedStash]) => {
-          const compactStash = createCompactTab(valuatedStash.stashTab)
-          const pricedItems = mapItemsToPricedItems(
-            valuatedStash.valuation,
-            compactStash,
-            settingStore.pvs
+        switchMap(([valuatedStashs]) => {
+          return from(valuatedStashs).pipe(
+            mergeMap((valuatedStash) => {
+              const compactStash = createCompactTab(valuatedStash.stashTab)
+              const pricedItems = mapItemsToPricedItems(
+                valuatedStash.valuation,
+                compactStash,
+                settingStore.pvs
+              )
+              const pricedStackedItems = mergeItemStacks(pricedItems)
+              const stashTabId =
+                valuatedStash.stashTab instanceof StashTab
+                  ? valuatedStash.stashTab.id
+                  : compactStash.id
+              const stashTabSnapshots = new StashTabSnapshot({
+                stashTabId: stashTabId,
+                pricedItems: frozen(pricedStackedItems)
+              })
+              return of(stashTabSnapshots)
+            })
           )
-          const pricedStackedItems = mergeItemStacks(pricedItems)
-          const stashTabId =
-            valuatedStash.stashTab instanceof StashTab ? valuatedStash.stashTab.id : compactStash.id
-          const stashTabSnapshots = new StashTabSnapshot({
-            stashTabId: stashTabId,
-            pricedItems: frozen(pricedStackedItems)
-          })
-          return of(stashTabSnapshots)
         }),
         toArray(),
         switchMap((filteredTabs) => of(this.priceItemsForStashTabsSuccess(filteredTabs))),

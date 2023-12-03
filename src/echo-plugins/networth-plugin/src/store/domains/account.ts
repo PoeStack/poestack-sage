@@ -24,6 +24,7 @@ import objectHash from 'object-hash'
 import { createLeagueHash } from '../leagueStore'
 import { ICharacterNode } from '../../interfaces/character.interface'
 import { IStashTabNode } from '../../interfaces/stash.interface'
+import { TableView } from './tableView'
 
 export const accountProfileRef = rootRef<Profile>('nw/accountProfileRef', {
   onResolvedValueChange(ref, newNode, oldNode) {
@@ -40,7 +41,8 @@ export class Account extends Model({
   characters: tProp(types.array(types.model(Character)), []),
   stashTabs: tProp(types.array(types.model(StashTab)), []),
   profiles: tProp(types.array(types.model(Profile)), []),
-  activeProfileRef: tProp(types.maybe(types.ref(accountProfileRef)))
+  activeProfileRef: tProp(types.maybe(types.ref(accountProfileRef))),
+  networthTableView: tProp(types.model(TableView)).withSetter()
 }) {
   cancelled = new Subject<boolean>()
 
@@ -92,8 +94,7 @@ export class Account extends Model({
 
   @modelAction
   setActiveProfile(profile: Profile) {
-    const { uiStateStore } = getRoot<RootStore>(this)
-    uiStateStore.changeItemTablePage(0)
+    this.networthTableView.changeItemTablePage(0)
     this.activeProfileRef = accountProfileRef(profile)
   }
 
@@ -147,37 +148,42 @@ export class Account extends Model({
 
   @modelAction
   updateLeagueStashTabs(activeApiStashTabs: PoePartialStashTab[], league: League) {
-    const activeStashTabs = activeApiStashTabs.map(
-      (stash): IStashTabNode => ({
-        hash: objectHash({ id: stash.id!, league: league.hash }),
-        id: stash.id!,
-        name: stash.name!,
-        index: stash.index!,
-        type: stash.type!,
-        parent: stash.parent,
-        folder: stash.metadata?.folder,
-        public: stash.metadata?.public,
-        leagueRef: stashTabLeagueRef(league),
-        metadata: frozen(stash.metadata!),
-        deleted: false
-      })
-    )
+    const activeStashTabs = activeApiStashTabs
+      .flatMap((stash) => stash.children || stash) // Remove folder
+      .map(
+        (stash): IStashTabNode => ({
+          hash: objectHash({ id: stash.id!, league: league.hash }),
+          id: stash.id!,
+          name: stash.name!,
+          index: stash.index!,
+          type: stash.type!,
+          parent: stash.parent,
+          folder: stash.folder,
+          public: stash.metadata?.public,
+          leagueRef: stashTabLeagueRef(league),
+          metadata: frozen(stash.metadata!),
+          deleted: false
+        })
+      )
 
-    let i = this.stashTabs.length
+    const leagueStashes = this.stashTabs.filter((stash) => stash.league === league)
+
+    let i = leagueStashes.length
     while (i--) {
-      const stash = this.stashTabs[i]
+      const stash = leagueStashes[i]
       const foundStash = activeStashTabs.find((x) => stash.hash === x.hash)
       if (foundStash) {
         // Update already existent stashtabs
         stash.updateStashTab(foundStash)
       } else {
+        const stIdx = this.stashTabs.indexOf(stash)
         if (getRefsResolvingTo(stash, profileStashTabRef).size === 0) {
           // No profile reference - safe to delete
-          console.log('Delete stashtab: ', this.stashTabs[i])
-          this.stashTabs.splice(i, 1)
+          console.log('Delete stashtab: ', this.stashTabs[stIdx])
+          this.stashTabs.splice(stIdx, 1)
         } else {
           // Mark stashtab as deleted
-          console.log('Mark stashtab as deleted: ', this.stashTabs[i])
+          console.log('Mark stashtab as deleted: ', this.stashTabs[stIdx])
           stash.setDeleted(true)
         }
       }

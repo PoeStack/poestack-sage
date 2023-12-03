@@ -60,49 +60,26 @@ export const diffSnapshots = (
   return difference
 }
 
-export const filterItems = (items: IPricedItem[], filterText: string) => {
-  const rarity = getRarityIdentifier(filterText)
-
-  let itemNameRegex = new RegExp('', 'i')
-  try {
-    // try/catch required because of filtering being an onChange event, example: typing only [ would lead to a SyntaxError
-    itemNameRegex = new RegExp(filterText, 'i')
-  } catch (error) {
-    console.error(error)
-  }
-
-  return mergeItemStacks(
-    items.filter(
-      (i) =>
-        (i.calculated > 0 && i.name.toLowerCase().includes(filterText)) ||
-        (i.tab &&
-          i.tab
-            .map((t) => t.name)
-            .join(', ')
-            .toLowerCase()
-            .includes(filterText)) ||
-        (i.calculated > 0 && rarity >= 0 && i.frameType === rarity) ||
-        itemNameRegex.test(i.name)
-    )
+export const filterItems = (
+  items: IPricedItem[],
+  showPricedItems: boolean,
+  showUnpricedItems: boolean
+) => {
+  const filteredItems = items.filter(
+    (i) => (showPricedItems && i.calculated > 0) || (showUnpricedItems && !i.calculated)
   )
+
+  return mergeItemStacks(filteredItems)
 }
 
 export const filterSnapshotItems = (
   snapshots: Snapshot[],
-  filterText: string,
+  showPricedItems: boolean,
+  showUnpricedItems: boolean,
   filteredStashTabs: StashTab[] | undefined
 ) => {
   if (snapshots.length === 0) {
     return []
-  }
-  const rarity = getRarityIdentifier(filterText)
-
-  let itemNameRegex = new RegExp('', 'i')
-  try {
-    // try/catch required because of filtering being an onChange event, example: typing only [ would lead to a SyntaxError
-    itemNameRegex = new RegExp(filterText, 'i')
-  } catch (error) {
-    console.error(error)
   }
 
   return mergeItemStacks(
@@ -114,18 +91,9 @@ export const filterSnapshotItems = (
         )
       )
       .flatMap((sts) =>
-        sts.pricedItems.data.filter(
-          (i) =>
-            (i.calculated > 0 && i.name.toLowerCase().includes(filterText)) ||
-            (i.tab &&
-              i.tab
-                .map((t) => t.name)
-                .join(', ')
-                .toLowerCase()
-                .includes(filterText)) ||
-            (i.calculated > 0 && rarity >= 0 && i.frameType === rarity) ||
-            itemNameRegex.test(i.name)
-        )
+        sts.pricedItems.data.filter((i) => {
+          return (showPricedItems && i.calculated > 0) || (showUnpricedItems && !i.calculated)
+        })
       )
   )
 }

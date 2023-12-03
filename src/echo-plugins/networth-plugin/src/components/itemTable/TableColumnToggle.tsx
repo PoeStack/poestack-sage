@@ -5,12 +5,17 @@ import { ChevronDown } from 'lucide-react'
 import { Table } from '@tanstack/react-table'
 
 import { DropdownMenu, Button } from 'echo-common/components-v1'
+import { observer } from 'mobx-react'
+import { useStore } from '../../hooks/useStore'
 
 interface TableColumnToggleProps<TData> {
   table: Table<TData>
 }
 
-export function TableColumnToggle<TData>({ table }: TableColumnToggleProps<TData>) {
+function TableColumnToggle<TData>({ table }: TableColumnToggleProps<TData>) {
+  const { accountStore } = useStore()
+  const tableState = accountStore.activeAccount.networthTableView
+
   return (
     <DropdownMenu>
       <DropdownMenu.Trigger asChild>
@@ -20,6 +25,21 @@ export function TableColumnToggle<TData>({ table }: TableColumnToggleProps<TData
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content align="end" className="w-[150px]">
+        <DropdownMenu.Label>Settings</DropdownMenu.Label>
+        <DropdownMenu.Separator />
+        <DropdownMenu.CheckboxItem
+          checked={tableState.showPricedItems}
+          onCheckedChange={(value) => tableState.setShowPricedItems(!!value)}
+        >
+          Show Priced
+        </DropdownMenu.CheckboxItem>
+        <DropdownMenu.CheckboxItem
+          checked={tableState.showUnpricedItems}
+          onCheckedChange={(value) => tableState.setShowUnpricedItems(!!value)}
+        >
+          Show Unpriced
+        </DropdownMenu.CheckboxItem>
+        <DropdownMenu.Separator />
         <DropdownMenu.Label>Toggle columns</DropdownMenu.Label>
         <DropdownMenu.Separator />
         {table
@@ -41,3 +61,5 @@ export function TableColumnToggle<TData>({ table }: TableColumnToggleProps<TData
     </DropdownMenu>
   )
 }
+
+export default observer(TableColumnToggle)

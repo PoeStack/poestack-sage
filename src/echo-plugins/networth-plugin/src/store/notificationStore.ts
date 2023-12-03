@@ -51,6 +51,10 @@ export class NotificationStore extends Model({
     this.notifications.unshift(notification)
     this.notifications = this.notifications.slice(0, 10)
 
+    if (error) {
+      console.error(error)
+    }
+
     return notification
   }
 

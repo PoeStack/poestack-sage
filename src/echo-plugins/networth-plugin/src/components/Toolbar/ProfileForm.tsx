@@ -147,21 +147,27 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
                   <Form.Label>Stash Tabs</Form.Label>
                   <Form.Control>
                     <div className="p-2 border overflow-y-scroll h-20 w-full flex flex-row flex-wrap gap-2">
-                      {stashTabs.map((stash) => (
-                        <div
-                          key={stash.id}
-                          className="rounded-full h-7 border p-2 flex-row flex items-center justify-center gap-2"
-                        >
-                          <Label htmlFor={`stash-${stash.id}`}>{stash.name}</Label>
-                          <Checkbox
-                            onCheckedChange={(value) => {
-                              handleCheckChange(!!value, stash, field.onChange)
-                            }}
-                            name={`stash-${stash.id}`}
-                            checked={form.getValues('stashTabs')?.includes(stash)}
-                          />
-                        </div>
-                      ))}
+                      {stashTabs
+                        .filter(
+                          (stash) => !stash.deleted && stash.league === form.getValues().league
+                        )
+                        .slice()
+                        .sort((a, b) => a.index - b.index)
+                        .map((stash) => (
+                          <div
+                            key={stash.id}
+                            className="rounded-full h-7 border p-2 flex-row flex items-center justify-center gap-2"
+                          >
+                            <Label htmlFor={`stash-${stash.id}`}>{stash.name}</Label>
+                            <Checkbox
+                              onCheckedChange={(value) => {
+                                handleCheckChange(!!value, stash, field.onChange)
+                              }}
+                              name={`stash-${stash.id}`}
+                              checked={form.getValues('stashTabs')?.includes(stash)}
+                            />
+                          </div>
+                        ))}
                     </div>
                   </Form.Control>
                 </Form.Item>
@@ -178,9 +184,12 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
                   <Select
                     value={field.value?.name}
                     onValueChange={(value) => {
-                      const league = leagueStore.leagues.find((league) => league.name === value)
+                      const league = leagueStore.leagues
+                        .filter((league) => !league.deleted)
+                        .find((league) => league.name === value)
                       if (league) {
                         field.onChange(league)
+                        form.resetField('stashTabs', { defaultValue: [] })
                         form.resetField('character', { defaultValue: null })
                         form.resetField('includeEquipment', { defaultValue: false })
                         form.resetField('includeInventory', { defaultValue: false })
@@ -214,9 +223,9 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
                   <Select
                     value={field.value?.name}
                     onValueChange={(value) => {
-                      const league = leagueStore.priceLeagues.find(
-                        (league) => league.name === value
-                      )
+                      const league = leagueStore.priceLeagues
+                        .filter((league) => !league.deleted)
+                        .find((league) => league.name === value)
                       if (league) {
                         field.onChange(league)
                       }
@@ -276,7 +285,10 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
                         None
                       </Select.Item>
                       {activeAccount.characters
-                        .filter((character) => character.league === form.getValues().league)
+                        .filter(
+                          (character) =>
+                            !character.deleted && character.league === form.getValues().league
+                        )
                         .map((character) => {
                           return (
                             <Select.Item key={character.id} value={character.name}>

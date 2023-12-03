@@ -10,7 +10,7 @@ export interface IStashTabNode {
   index: number
   type: string
   parent?: string
-  folder?: boolean
+  folder?: string
   public?: boolean
   metadata: Frozen<IMetaData>
   deleted: boolean
