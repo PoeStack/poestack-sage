@@ -12,8 +12,7 @@
     "syncAuth": "Sync auth with PoEStack",
     "manualAuth": "Manual auth with PoEStack",
     "welcomeUser": "Welcome {{0}} to your profile",
-    "installedPluginsTitle": "Installed Plugins",
-    "availablePluginsTitle": "Available Plugins"
+    "pluginsTitle": "Plugins"
   },
   "label": {
     "enterToken": "Enter your PoeStack token. ",
@@ -24,7 +23,6 @@
     "pluginStatus": "Status",
     "installPlugin": "Install",
     "uninstallPlugin": "Uninstall",
-    "noPluginsInstalled": "No Plugins installed",
     "noPluginsAvailable": "No Plugins available"
   },
   "body": {
