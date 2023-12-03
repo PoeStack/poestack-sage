@@ -1,19 +1,14 @@
 import { Observable } from 'rxjs'
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 
 export class HttpUtil {
   private client = axios.create({ adapter: 'http' })
 
-  public get<T>(
-    url: string,
-    config: { headers: { [key: string]: string } } = { headers: {} }
-  ): Observable<T> {
+  public get<T>(url: string, config: AxiosRequestConfig = { headers: {} }): Observable<T> {
     return new Observable((observer) => {
       console.log('firing', url)
       this.client
-        .get(url, {
-          headers: config.headers
-        })
+        .get(url, config)
         .then((response) => {
           console.log('res', url, response.status)
           observer.next(response.data)
