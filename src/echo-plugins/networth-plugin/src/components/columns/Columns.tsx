@@ -39,12 +39,10 @@ export function itemName(options: {
   const { header, accessorKey } = options
 
   return {
-    header: ({ column }) => (
-      <TableColumnHeader column={column} title={header} className="flex justify-start" />
-    ),
+    header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
     minSize: 120,
     accessorKey,
-    enableSorting: false,
+    enableSorting: true,
     enableGlobalFilter: true,
     cell: ({ row }) => {
       const value = row.getValue<string>(accessorKey)
@@ -79,11 +77,9 @@ export function itemTabs(options: {
   const { header, accessorKey } = options
 
   return {
-    header: ({ column }) => (
-      <TableColumnHeader column={column} title={header} className="flex justify-start" />
-    ),
+    header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
     accessorKey,
-    enableSorting: false,
+    enableSorting: true,
     enableGlobalFilter: true,
     accessorFn: (val) =>
       val.tab && typeof val.tab === 'object' ? parseTabNames(val.tab || []) : '',
@@ -102,9 +98,7 @@ export function itemQuantity(options: {
   const { header, accessorKey, diff } = options
 
   return {
-    header: ({ column }) => (
-      <TableColumnHeader column={column} title={header} className="flex justify-end" />
-    ),
+    header: ({ column }) => <TableColumnHeader column={column} title={header} align="right" />,
     accessorKey,
     enableSorting: true,
     enableGlobalFilter: false,
@@ -129,9 +123,7 @@ export function itemValue(options: {
     options
 
   return {
-    header: ({ column }) => (
-      <TableColumnHeader column={column} title={header} className="flex justify-end" />
-    ),
+    header: ({ column }) => <TableColumnHeader column={column} title={header} align="right" />,
     accessorKey,
     enableSorting: enableSorting ?? false,
     enableGlobalFilter: false,
