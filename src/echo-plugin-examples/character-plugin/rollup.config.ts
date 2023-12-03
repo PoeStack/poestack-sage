@@ -1,6 +1,6 @@
 import typescript from '@rollup/plugin-typescript'
 import peerDepsExternal from 'rollup-plugin-peer-deps-external'
-import type { RollupOptions } from 'rollup'
+import type { InputPluginOption, RollupOptions } from 'rollup'
 import fs from 'fs'
 import path from 'path'
 import copy from 'rollup-plugin-copy'
@@ -21,7 +21,7 @@ const config: RollupOptions = {
     plugins: [terser()]
   },
   plugins: [
-    peerDepsExternal(),
+    peerDepsExternal() as InputPluginOption,
     json({ compact: true }),
     typescript(),
     // This converts dynamic imports for locales from ../locales/${lng}/${ns}.json => ../locales/*/*.json => ../locales/en/common.json
@@ -34,7 +34,7 @@ const config: RollupOptions = {
           dest: `../../../dist_plugins/`
         }
       ],
-      hook: 'writeBundle'
+      hook: 'closeBundle'
     })
   ]
 }
