@@ -37,7 +37,7 @@ export function buildContext(contextSource: string): EchoContext {
     plugins: ECHO_PLUGIN_SERVICE,
     poeAccounts: POE_ACCOUNT_SERVICE,
     poeClientLog: POE_CLIENT_LOG_SERVICE,
-    PoeZoneTracker: POE_ZONE_TRACKER_SERVICE,
+    poeZoneTracker: POE_ZONE_TRACKER_SERVICE,
     poeStash: POE_STASH_SERVICE,
     poeValuations: SAGE_VALUATION_SERVICE,
     poeCharacters: POE_CHARCTERS_SERVICE,
