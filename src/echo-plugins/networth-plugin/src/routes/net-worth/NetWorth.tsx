@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import ToolbarContainer from '../../components/Toolbar/ToolbarContainer'
-import ItemTableContainer from '../../components/itemTable/ItemTableContainer'
 import NetWorthCard from '../../components/cards/NetWorthCard'
+import ItemTableContainer from '../../components/ItemTable/ItemTableContainer'
 
 const NetWorth = () => {
   const { accountStore, uiStateStore } = useStore()

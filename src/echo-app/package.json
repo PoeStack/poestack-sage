@@ -77,6 +77,7 @@
     "mobx-keystone": "^1.7.1",
     "mobx-react": "^9.1.0",
     "networth-plugin": "file:../echo-plugins/networth-plugin",
+    "node-stream-zip": "^1.15.0",
     "object-hash": "^3.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
