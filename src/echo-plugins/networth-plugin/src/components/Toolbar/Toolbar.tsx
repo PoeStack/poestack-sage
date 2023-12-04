@@ -1,12 +1,12 @@
 import ProfileMenu from './ProfileMenu'
 import { Button } from 'echo-common/components-v1'
-import { PictureInPicture2, RefreshCcw, Trash2, XCircle } from 'lucide-react'
-import { useStore } from '../../hooks/useStore'
+import { RefreshCcw, Trash2, XCircle } from 'lucide-react'
 import { IStatusMessage } from '../../interfaces/status-message.interface'
 import { Loader2 } from 'lucide-react'
 import StatusMessageContainer from '../StatusMessage/StatusMessageContainer'
 import { observer } from 'mobx-react'
 import { cn } from 'echo-common'
+import GlobalSettings from './GlobalSettings'
 
 type ToolbarProps = {
   isSubmitting: boolean
@@ -63,10 +63,14 @@ const Toolbar: React.FC<ToolbarProps> = ({
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>
-        <div className="py-1 px-1 h-full flex justify-center items-center">
+        {/* TODO Add overlay support */}
+        {/* <div className="py-1 px-1 h-full flex justify-center items-center">
           <Button variant="ghost" size="icon" className="h-8 w-8">
             <PictureInPicture2 className="h-4 w-4" />
           </Button>
+        </div> */}
+        <div className="py-1 px-1 h-full flex justify-center items-center">
+          <GlobalSettings />
         </div>
       </div>
     </header>

@@ -1,5 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table'
-import { itemIcon, itemName, itemQuantity, itemTabs, itemValue } from '../Columns/Columns'
+import { itemIcon, itemName, itemQuantity, itemTabs, itemValue } from '../columns/Columns'
 import { IPricedItem } from '../../interfaces/priced-item.interface'
 
 export const itemTableColumns = (): ColumnDef<IPricedItem>[] => [
