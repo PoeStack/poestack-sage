@@ -157,16 +157,14 @@ const GlobalSettings = () => {
           />
           <div className="flex py-2 flex-row gap-8 justify-center">
             <Form.Field
-              disabled={!form.getValues().lowConfidencePricing}
               control={form.control}
               name="priceThreshold"
               render={({ field: { onChange, value } }) => {
                 return (
                   <Form.Item className="flex flex-row items-center gap-2">
-                    <Form.Label>Price threshold</Form.Label>
+                    <Form.Label>Price threshold (Chaos)</Form.Label>
                     <Form.Control>
                       <Input
-                        disabled={!form.getValues().lowConfidencePricing}
                         onBlur={handleSubmit(onSubmit)}
                         onChange={(e) => {
                           if (e.target.value) {
@@ -175,7 +173,7 @@ const GlobalSettings = () => {
                             onChange(e.target.value)
                           }
                         }}
-                        value={value ? `${value} c` : value}
+                        value={value}
                         type="number"
                       />
                     </Form.Control>
@@ -184,16 +182,14 @@ const GlobalSettings = () => {
               }}
             />
             <Form.Field
-              disabled={!form.getValues().lowConfidencePricing}
               control={form.control}
               name="totalPriceThreshold"
               render={({ field: { onChange, value } }) => {
                 return (
                   <Form.Item className="flex flex-row items-center gap-2">
-                    <Form.Label>Total price threshold</Form.Label>
+                    <Form.Label>Total price threshold (Chaos)</Form.Label>
                     <Form.Control>
                       <Input
-                        disabled={!form.getValues().lowConfidencePricing}
                         onBlur={handleSubmit(onSubmit)}
                         onChange={(e) => {
                           if (e.target.value) {
@@ -202,7 +198,7 @@ const GlobalSettings = () => {
                             onChange(e.target.value)
                           }
                         }}
-                        value={value ? `${value} c` : value}
+                        value={value}
                         type="number"
                       />
                     </Form.Control>
