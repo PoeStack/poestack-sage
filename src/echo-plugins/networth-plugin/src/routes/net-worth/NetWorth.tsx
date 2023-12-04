@@ -15,11 +15,9 @@ const NetWorth = () => {
   return (
     <div className="flex flex-col h-full w-full">
       <ToolbarContainer />
-      <main className="flex-col p-2 gap-4">
-        <div className="flex flex-row">
-          <div className="grow">
-            <NetWorthCard />
-          </div>
+      <main className="flex flex-col p-2 gap-4">
+        <div className="grow">
+          <NetWorthCard />
         </div>
         <div className="flex flex-row">
           <ItemTableContainer />
