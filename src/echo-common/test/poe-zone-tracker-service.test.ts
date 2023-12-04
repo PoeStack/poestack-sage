@@ -1,12 +1,11 @@
 import { expect, test, afterEach, beforeEach } from '@jest/globals'
 import { Observable, Subject } from 'rxjs'
-
 import { Tail } from 'tail'
 import path from 'path'
 import * as fs from 'fs'
-
+import { v4 as uuidv4 } from 'uuid'
+import { jest } from '@jest/globals'
 import { PoeClientLogService } from '../src/poe-client-log-service'
-
 import { PoeZoneDelta, PoeZoneTrackerService } from '../src/poe-zone-tracker-service'
 import { EchoDirService, PoeCharacterService, SmartCacheEvent } from '../src'
 import { PoeCharacter } from 'sage-common'
@@ -19,7 +18,7 @@ let file: string
 let tail: Tail
 
 beforeEach(() => {
-  const filename = Math.floor(Math.random() * 999999999999) + '.txt'
+  const filename = uuidv4() + '.txt'
   file = path.join(process.cwd(), 'test', 'data', 'tmp', filename)
 
   if (!fs.existsSync(file)) {
@@ -35,11 +34,9 @@ afterEach(() => {
   tail.unwatch()
 })
 
-let characterSubject = new Subject<SmartCacheEvent<PoeCharacter>>()
-let charName: string
+const characterSubject = new Subject<SmartCacheEvent<PoeCharacter>>()
 
-let myObservable = (name: string): Observable<SmartCacheEvent<PoeCharacter>> => {
-  charName = name
+const myObservable = (name: string): Observable<SmartCacheEvent<PoeCharacter>> => {
   return characterSubject
 }
 
@@ -52,7 +49,7 @@ test('PoeClientLogService InstanceConnectionEventParser test', async () => {
     'character-one.json'
   )
   const val = fs.readFileSync(charFile).toString()
-  let characterone = JSON.parse(val) as SmartCacheResultEvent<PoeCharacter>
+  const characterone = JSON.parse(val) as SmartCacheResultEvent<PoeCharacter>
 
   PoeCharacterService.prototype.character = myObservable
 
@@ -64,8 +61,8 @@ test('PoeClientLogService InstanceConnectionEventParser test', async () => {
     charService
   )
 
-  let exitedZones: PoeZoneDelta[] = []
-  let enteredZones: PoeZoneDelta[] = []
+  const exitedZones: PoeZoneDelta[] = []
+  const enteredZones: PoeZoneDelta[] = []
 
   zoneTrackerService.zoneExited$.subscribe((delta) => exitedZones.push(delta))
   zoneTrackerService.zoneEntered$.subscribe((delta) => enteredZones.push(delta))
@@ -145,7 +142,9 @@ test('PoeClientLogService InstanceConnectionEventParser test', async () => {
 
   await new Promise((resolve) => setTimeout(resolve, 500))
 
-  let charactertwo = JSON.parse(JSON.stringify(characterone)) as SmartCacheResultEvent<PoeCharacter>
+  const charactertwo = JSON.parse(
+    JSON.stringify(characterone)
+  ) as SmartCacheResultEvent<PoeCharacter>
 
   if (characterone.result?.experience) {
     charactertwo.result!.experience = characterone.result.experience + 1
@@ -174,7 +173,7 @@ test('PoeClientLogService InstanceConnectionEventParser test', async () => {
   await new Promise((resolve) => setTimeout(resolve, 500))
 
   if (charactertwo.result?.level) {
-    let characterthree = JSON.parse(
+    const characterthree = JSON.parse(
       JSON.stringify(charactertwo)
     ) as SmartCacheResultEvent<PoeCharacter>
 

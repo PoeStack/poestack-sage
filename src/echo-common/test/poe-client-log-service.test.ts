@@ -2,6 +2,7 @@ import { expect, test, afterEach, beforeEach } from '@jest/globals'
 import { filter, map } from 'rxjs'
 
 import { Tail } from 'tail'
+import { v4 as uuidv4 } from 'uuid'
 import path from 'path'
 import * as fs from 'fs'
 
@@ -18,7 +19,7 @@ let file: string
 let tail: Tail
 
 beforeEach(() => {
-  const filename = Math.floor(Math.random() * 999999999999) + '.txt'
+  const filename = uuidv4() + '.txt'
   file = path.join(process.cwd(), 'test', 'data', 'tmp', filename)
 
   if (!fs.existsSync(file)) {
