@@ -9,25 +9,25 @@
         "require": "./src/index.ts"
       },
       "default": {
-        "import": "./dist/esm/index.js",
-        "require": "./dist/cjs/index.js",
-        "types": "./dist/cjs/index.d.ts"
+        "import": "./dist/esm/src/index.js",
+        "require": "./dist/cjs/src/index.js",
+        "types": "./dist/cjs/src/index.d.ts"
       }
     },
     "./components-v1": {
       "development": {
         "import": "./src/ui/components/v1/index.ts",
         "require": "./src/ui/components/v1/index.ts",
-        "types": "./dist/ui/components/v1/index.d.ts"
+        "types": "./dist/cjs/src/ui/components/v1/index.d.ts"
       },
       "default": {
-        "import": "./dist/esm/ui/components/v1/index.js",
-        "require": "./dist/cjs/ui/components/v1/index.js",
-        "types": "./dist/ui/components/v1/index.d.ts"
+        "import": "./dist/esm/src/ui/components/v1/index.js",
+        "require": "./dist/cjs/src/ui/components/v1/index.js",
+        "types": "./dist/cjs/src/ui/components/v1/index.d.ts"
       }
     }
   },
-  "main": "./dist/cjs/index.ts",
+  "main": "./dist/cjs/src/index.ts",
   "files": [
     "dist/",
     "*.d.ts"
