@@ -1,8 +1,7 @@
 import { HttpUtil, ItemGroupingService, PoePublicStashResponse } from 'sage-common'
-import { debounceTime, from, of, Subject, throttleTime } from 'rxjs'
+import { debounceTime, Subject } from 'rxjs'
 import process from 'process'
 import Redis from 'ioredis'
-import AWS from 'aws-sdk'
 
 const divineTypes = new Set(['d', 'div', 'divine'])
 const chaosTypes = new Set(['c', 'chaos'])
@@ -56,50 +55,17 @@ function loadChanges(paginationCode: string) {
   )
 }
 
-AWS.config.update({ region: 'us-east-1' })
-const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
-let storeCount = 0
-function storeKey(key: string) {
-  if (storeCount++ < 100) {
-    return
-  }
-  storeCount = 0
-
-  const params = {
-    TableName: 'RuntimeConfig',
-    Item: {
-      key: 'last-psstream-key',
-      value: key,
-      updatedAt: new Date().toISOString()
-    }
-  }
-
-  docClient.put(params, function (err, data) {
-    if (err) {
-      console.log('Error', err)
-    } else {
-      console.log('Success', data)
-    }
-  })
-}
-
 const itemGroupingService = new ItemGroupingService()
 const resultsSubject = new Subject<PoePublicStashResponse>()
 
-resultsSubject.pipe(debounceTime(200)).subscribe((e) => {
+resultsSubject.pipe(debounceTime(3500)).subscribe((e) => {
   console.log('loading', e.next_change_id)
-  storeKey(e.next_change_id)
   loadChanges(e.next_change_id).subscribe((e) => {
     resultsSubject.next(e)
   })
 })
 
-console.log('redis url', process.env['REDIS_URL'])
-const client = new Redis({
-  host: process.env['REDIS_URL'] ?? 'localhost',
-  port: 6379,
-  tls: undefined
-})
+const client = new Redis(process.env['REDIS_URL'])
 resultsSubject.subscribe((data) => {
   try {
     if (data?.stashes) {
@@ -182,14 +148,7 @@ resultsSubject.subscribe((data) => {
 
 resultsSubject.subscribe((e) => console.log('got', e.stashes?.length))
 
-from(
-  docClient.get({ TableName: 'RuntimeConfig', Key: { key: 'last-psstream-key' } }).promise()
-).subscribe((e) => {
-  console.log('got doc response', e.Item)
-  const nextKey = e.Item?.value
-
-  resultsSubject.next({
-    next_change_id: nextKey,
-    stashes: []
-  })
+resultsSubject.next({
+  next_change_id: '2170425622-2162025115-2092674883-2322724226-2255546785',
+  stashes: []
 })

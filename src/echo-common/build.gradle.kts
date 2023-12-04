@@ -4,7 +4,6 @@ val npx = rootProject.extra.get("npx")
 
 task<Exec>("npmInstall") {
     commandLine(npm, "install")
-    dependsOn(":src:ts-ratchet:npmInstall")
 }
 
 task<Exec>("npmClean") {

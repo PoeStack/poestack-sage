@@ -18,9 +18,12 @@
     "enterToken": "Enter your PoeStack token. ",
     "tokenPlaceholder": "Token",
     "pluginName": "Plugin Name",
-    "version": "Version",
-    "enabled": "Enabled",
-    "noPluginsInstalled": "No Plugins installed"
+    "pluginVersion": "Version",
+    "pluginEnabled": "Enabled",
+    "pluginStatus": "Status",
+    "installPlugin": "Install",
+    "uninstallPlugin": "Uninstall",
+    "noPluginsAvailable": "No Plugins available"
   },
   "body": {
     "default": ""

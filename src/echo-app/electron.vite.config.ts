@@ -25,7 +25,8 @@ const commonjsPackages = Array.from(
       'axios', // Adapter { https } does only work in node env
       'sqlite3',
       'tail',
-      'i18next-fs-backend'
+      'i18next-fs-backend',
+      'node-stream-zip'
     ],
     ...[
       // Do not include them or the dev serves does not work anymore
@@ -80,7 +81,7 @@ export default defineConfig({
         commonjsExternals({ externals: commonjsPackages }),
         // Do not bundle any dependencies in production
         config.mode === 'production' && externalizeDepsAndPeerDepsPlugin(),
-        i18nHotReloadPlugin()
+        config.mode !== 'production' && i18nHotReloadPlugin()
       ]
     }
   })

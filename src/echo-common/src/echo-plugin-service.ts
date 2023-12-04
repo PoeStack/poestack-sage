@@ -6,6 +6,7 @@ import path from 'path'
 import { EchoDirService } from './echo-dir-service'
 import { EchoContext } from './echo-context'
 import { ECHO_CONTEXT_SERVICE } from './echo-context-service'
+import StreamZip from 'node-stream-zip'
 
 export type EchoPluginManifest = { name: string; version: string; echoCommonVersion: string }
 
@@ -44,7 +45,7 @@ export class EchoPluginService {
           const context = buildContext('plugin')
           ECHO_CONTEXT_SERVICE.contexts['plugin'] = context
 
-          const pluginEntry = module.require(p.path)
+          const pluginEntry = module.require(path.resolve(p.path, 'entry.js'))
           const hook: EchoPluginHook = pluginEntry.default()
           hook.start()
           this.plugins$.next({ key: p.key, hook: hook })
@@ -77,25 +78,49 @@ export class EchoPluginService {
     this.plugins$.next({ key: plugin.key, enabled: !plugin.enabled })
   }
 
-  public installPlugin(plugin: EchoPlugin) {
+  private async handlePluginResponse(plugin: EchoPlugin, resp: string) {
+    const pluginPath = path.resolve(this.installedPluginsPath, `${plugin.key}`)
+    if (!fs.existsSync(pluginPath)) {
+      const zipFilePath = path.resolve(pluginPath, `${plugin.key}.zip`)
+
+      fs.mkdirSync(pluginPath)
+      fs.writeFileSync(zipFilePath, resp)
+      const pluginZip = new StreamZip.async({
+        file: zipFilePath
+      })
+      await pluginZip.extract(null, pluginPath)
+      await pluginZip.close()
+      fs.unlinkSync(zipFilePath)
+    }
+  }
+
+  public async installPlugin(plugin: EchoPlugin) {
     return this.httpUtil
       .get<string>(
         `https://raw.githubusercontent.com/PoeStack/poestack-sage/published-plugins/dist_plugins/${
           plugin.manifest!!.name
-        }.js`
+        }.zip`,
+        { responseType: 'arraybuffer' }
       )
-      .subscribe((resp) => {
-        fs.writeFileSync(path.resolve(this.installedPluginsPath, `${plugin.key}.js`), resp)
+      .subscribe(async (resp) => {
+        this.handlePluginResponse(plugin, resp)
         this.loadInstalledPlugins()
       })
+  }
+
+  public uninstallPlugin(plugin: EchoPlugin) {
+    fs.rmdirSync(path.resolve(this.installedPluginsPath, `${plugin.key}`), {
+      recursive: true
+    })
+    this.plugins$.next({ key: plugin.key, path: undefined, enabled: undefined })
+    this.loadInstalledPlugins()
   }
 
   public loadInstalledPlugins() {
     fs.readdir(this.installedPluginsPath, (_, files) => {
       files.forEach((file) => {
-        const pluginKey = file.slice(0, -3)
         const pluginPath = path.resolve(this.installedPluginsPath, file)
-        this.plugins$.next({ key: pluginKey, path: pluginPath })
+        this.plugins$.next({ key: file, path: pluginPath })
       })
     })
   }
