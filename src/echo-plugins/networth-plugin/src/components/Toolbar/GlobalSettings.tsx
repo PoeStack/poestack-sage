@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useStore } from '../../hooks/useStore'
-import { Button, Checkbox, Form, Input, Sheet } from 'echo-common/components-v1'
+import { Button, Checkbox, Form, Input, Separator, Sheet } from 'echo-common/components-v1'
 import { SettingsIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -23,8 +23,8 @@ const GlobalSettings = () => {
     autoSnapshotting: z.boolean(),
     autoSnapshotInterval: z.number().min(300000).max(86400000),
     lowConfidencePricing: z.boolean(),
-    priceThreshold: z.number(),
-    totalPriceThreshold: z.number()
+    priceThreshold: z.number().min(0),
+    totalPriceThreshold: z.number().min(0)
   })
 
   const defaultFormValues = useMemo(
@@ -90,7 +90,7 @@ const GlobalSettings = () => {
               name="autoSnapshotting"
               render={({ field: { value, onChange } }) => {
                 return (
-                  <Form.Item className="flex flex-row items-center gap-2">
+                  <Form.Item className="space-y-0 flex flex-row justify-center items-center gap-2">
                     <Form.Label>Auto Snapshotting</Form.Label>
                     <Form.Control>
                       <Checkbox
@@ -133,28 +133,29 @@ const GlobalSettings = () => {
               }}
             />
           </div>
-          <h3 className="text-md font-medium py-2">Pricing settings</h3>
-          <div className="flex flex-row gap-8 justify-center">
-            <Form.Field
-              control={form.control}
-              name="lowConfidencePricing"
-              render={({ field: { value, onChange } }) => {
-                return (
-                  <Form.Item className="flex flex-row items-center gap-2">
-                    <Form.Label>Low confidence pricing</Form.Label>
-                    <Form.Control>
-                      <Checkbox
-                        checked={value}
-                        onCheckedChange={(checked) => {
-                          onChange(checked)
-                          handleSubmit(onSubmit)
-                        }}
-                      />
-                    </Form.Control>
-                  </Form.Item>
-                )
-              }}
-            />
+          <Separator className="my-4" />
+          <h3 className="text-md font-medium pb-2">Pricing settings</h3>
+          <Form.Field
+            control={form.control}
+            name="lowConfidencePricing"
+            render={({ field: { value, onChange } }) => {
+              return (
+                <Form.Item className="space-y-0 flex flex-row items-center gap-2">
+                  <Form.Label>Low confidence pricing</Form.Label>
+                  <Form.Control>
+                    <Checkbox
+                      checked={value}
+                      onCheckedChange={(checked) => {
+                        onChange(checked)
+                        handleSubmit(onSubmit)
+                      }}
+                    />
+                  </Form.Control>
+                </Form.Item>
+              )
+            }}
+          />
+          <div className="flex py-2 flex-row gap-8 justify-center">
             <Form.Field
               disabled={!form.getValues().lowConfidencePricing}
               control={form.control}
