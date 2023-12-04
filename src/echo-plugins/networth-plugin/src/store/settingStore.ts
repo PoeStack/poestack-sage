@@ -35,4 +35,22 @@ export class SettingStore extends Model({
         return { name: 'divine', short: 'div' }
     }
   }
+
+  @modelAction
+  updateSettings(
+    settings: Pick<
+      SettingStore,
+      | 'autoSnapshotting'
+      | 'autoSnapshotInterval'
+      | 'lowConfidencePricing'
+      | 'priceThreshold'
+      | 'totalPriceThreshold'
+    >
+  ) {
+    this.autoSnapshotting = settings.autoSnapshotting
+    this.autoSnapshotInterval = settings.autoSnapshotInterval
+    this.lowConfidencePricing = settings.lowConfidencePricing
+    this.priceThreshold = settings.priceThreshold
+    this.totalPriceThreshold = settings.totalPriceThreshold
+  }
 }
