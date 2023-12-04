@@ -2,7 +2,8 @@ import React, { useEffect } from 'react'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import ToolbarContainer from '../../components/Toolbar/ToolbarContainer'
-import ItemTableContainer from '../../components/ItemTable/ItemTableContainer'
+import ItemTableContainer from '../../components/itemTable/ItemTableContainer'
+import NetWorthCard from '../../components/cards/NetWorthCard'
 
 const NetWorth = () => {
   const { accountStore, uiStateStore } = useStore()
@@ -14,8 +15,15 @@ const NetWorth = () => {
   return (
     <div className="flex flex-col h-full w-full">
       <ToolbarContainer />
-      <main className="flex-row p-2">
-        <ItemTableContainer />
+      <main className="flex-col p-2 gap-4">
+        <div className="flex flex-row">
+          <div className="grow">
+            <NetWorthCard />
+          </div>
+        </div>
+        <div className="flex flex-row">
+          <ItemTableContainer />
+        </div>
         {/* <Test /> */}
       </main>
     </div>

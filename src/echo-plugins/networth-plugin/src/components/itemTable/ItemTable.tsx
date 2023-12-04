@@ -76,7 +76,7 @@ const ItemTable = <TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex items-center pb-4">
         <DebouncedInput
           value={tableState.globalFilter ?? ''}
           onChange={(value) => tableState.setGlobalFilter(String(value))}
