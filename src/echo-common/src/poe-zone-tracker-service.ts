@@ -3,9 +3,8 @@ import {
   PoeClientLogService,
   PoeInstanceConnectionEvent
 } from './poe-client-log-service'
-import { PoeCharacter, PoeItem } from 'sage-common'
-import { Subject, Subscription, map } from 'rxjs'
-import { PoeCharacterService } from './poe-character-service'
+import { PoeItem } from 'sage-common'
+import { Subject } from 'rxjs'
 
 export class PoeZoneTrackerService {
   private logEvents$: Subject<PoeClientLogEvent>
@@ -19,19 +18,13 @@ export class PoeZoneTrackerService {
 
   public zoneTrackerErrors$ = new Subject<PoeZoneTrackerError>()
 
-  private characterSubscription?: Subscription
-
-  constructor(
-    poeClientLogService: PoeClientLogService,
-    private characterService: PoeCharacterService | undefined = undefined
-  ) {
+  constructor(poeClientLogService: PoeClientLogService) {
     this.logEvents$ = poeClientLogService.logEvents$
 
     this.instanceConnectionEventSubscribe()
     this.generatingAreaEventSubscribe()
     this.zoneEntranceEventSubscribe()
     this.npcEncounterEventSubscriber()
-    this.characterSlainEventSubscriber()
   }
 
   private instanceConnectionEventSubscribe() {
@@ -183,109 +176,11 @@ export class PoeZoneTrackerService {
       this.currentZoneDelta.doneLoadTime = event.systemUptime
       this.currentZoneDelta.deltaLoadTime = event.systemUptime - loadStart
 
-      if (this.characterService != undefined) {
-        const charName = 'BlaesendeBruno' //TODO from settings
-        this.characterSubscription = this.characterService
-          .character(charName) //TODO Find a solution to call this function to get non-stale data, probably more intelligent rate-limiter
-          .pipe(
-            map((e) => {
-              if (e.type != 'result') {
-                return
-              }
-              const char = e.result
-
-              if (char == undefined) {
-                this.zoneTrackerErrors$.next({
-                  description: 'character not found for ' + charName,
-                  time: new Date()
-                })
-                return
-              }
-              return char
-            })
-          )
-          .subscribe((char) => {
-            if (this.currentZoneDelta && char != undefined) {
-              this.currentZoneDelta.characterDelta = {
-                characterEnter: char,
-                levelUp: false,
-                death: false,
-                inventoryAdded: [],
-                inventoryRemoved: []
-              }
-
-              if (this.previousZoneDelta && this.previousZoneDelta.characterDelta?.characterEnter) {
-                this.previousZoneDelta.characterDelta.characterExit = char
-                const success = this.setCharacterDelta(
-                  this.previousZoneDelta.characterDelta.characterEnter,
-                  this.previousZoneDelta.characterDelta.characterExit,
-                  this.previousZoneDelta
-                )
-
-                if (!success) {
-                  this.characterSubscription?.unsubscribe()
-                  return
-                }
-
-                this.zoneExited$.next(this.previousZoneDelta)
-              }
-              this.zoneEntered$.next(this.currentZoneDelta)
-            }
-            this.characterSubscription?.unsubscribe()
-          })
-      } else {
-        if (this.previousZoneDelta) {
-          this.zoneExited$.next(this.previousZoneDelta)
-        }
-        this.zoneEntered$.next(this.currentZoneDelta)
+      if (this.previousZoneDelta) {
+        this.zoneExited$.next(this.previousZoneDelta)
       }
+      this.zoneEntered$.next(this.currentZoneDelta)
     })
-  }
-
-  private setCharacterDelta(
-    enter: PoeCharacter,
-    exit: PoeCharacter,
-    zoneDelta: PoeZoneDelta
-  ): boolean {
-    if (!zoneDelta.characterDelta) {
-      this.zoneTrackerErrors$.next({
-        description: 'Attempt to call setCharacterDelta without delta initialized',
-        time: new Date()
-      })
-      return false
-    }
-
-    if (enter.level && exit.level) {
-      zoneDelta.characterDelta.enterLevel = enter.level
-      zoneDelta.characterDelta.exitLevel = exit.level
-      zoneDelta.characterDelta.levelUp = exit.level > enter.level ? true : false
-    }
-
-    if (exit.experience != undefined && enter.experience != undefined) {
-      zoneDelta.characterDelta.experience = exit.experience - enter.experience
-    }
-
-    const enterMap = itemIdMap(enter.inventory ?? [])
-    const exitMap = itemIdMap(exit.inventory ?? [])
-
-    const added: PoeItem[] = []
-    const removed: PoeItem[] = []
-    enterMap.forEach((item) => {
-      if (item.id && !exitMap.has(item.id)) {
-        removed.push(item)
-      }
-    })
-
-    exitMap.forEach((item) => {
-      if (item.id && !enterMap.has(item.id)) {
-        added.push(item)
-      }
-    })
-
-    zoneDelta.characterDelta.inventoryAdded = added
-    zoneDelta.characterDelta.inventoryRemoved = removed
-
-    return true
   }
 
   private npcEncounterEventSubscriber() {
@@ -342,31 +237,6 @@ export class PoeZoneTrackerService {
       }
     })
   }
-
-  private characterSlainEventSubscriber() {
-    this.logEvents$.pipe(
-      map((e) => {
-        if (e.type != 'CharacterSlainEvent') {
-          return
-        }
-
-        if (this.currentZoneDelta == undefined) {
-          this.zoneTrackerErrors$.next({
-            description:
-              'character ' +
-              e.character +
-              ' slain without currentZone set, probably local chat turned off',
-            time: new Date()
-          })
-          return
-        }
-
-        if (e.isMyCharacter && this.currentZoneDelta.characterDelta) {
-          this.currentZoneDelta.characterDelta.death = true
-        }
-      })
-    )
-  }
 }
 
 function itemIdMap(items: PoeItem[]) {
@@ -402,31 +272,6 @@ function PoeZoneDeltaToString(delta: PoeZoneDelta) {
   if (delta.deltaTimeMs) {
     str = str + '   Time in zone:' + delta.deltaTimeMs.toString() + '\n'
   }
-  if (delta.characterDelta?.experience) {
-    str = str + '   Experience delta: ' + delta.characterDelta?.experience + '\n'
-  }
-  if (delta.characterDelta?.levelUp) {
-    str = str + '   Level up: True\n'
-  }
-
-  if ((delta.characterDelta?.inventoryAdded.length ?? 0) > 0) {
-    str =
-      str + '  ---Items added:' + delta.characterDelta!.inventoryAdded.length.toString() + '---\n'
-    delta.characterDelta!.inventoryAdded.forEach((item) => {
-      str = str + '      ' + item.typeLine + '\n'
-    })
-  }
-
-  if ((delta.characterDelta?.inventoryRemoved.length ?? 0) > 0) {
-    str =
-      str +
-      '  ---Items removed:' +
-      delta.characterDelta!.inventoryRemoved.length.toString() +
-      '---\n'
-    delta.characterDelta!.inventoryRemoved.forEach((item) => {
-      str = str + '      ' + item.typeLine + '\n'
-    })
-  }
 
   str = str + '\n'
 
@@ -446,8 +291,6 @@ export type PoeZoneInstance = {
 
 export type PoeZoneDelta = {
   poeZoneInstance: PoeZoneInstance
-
-  characterDelta?: PoeZoneDeltaCharacterDelta
 
   //Zone stats
   enterTime?: Date
@@ -470,19 +313,6 @@ export type PoeZoneDelta = {
   expeditionGwennenEncounter: boolean
   expeditionTujenEncounter: boolean
   harvestEncounter: boolean
-}
-
-export type PoeZoneDeltaCharacterDelta = {
-  characterEnter?: PoeCharacter
-  characterExit?: PoeCharacter
-  experience?: number
-  normalizedExperience?: number
-  inventoryAdded: PoeItem[]
-  inventoryRemoved: PoeItem[]
-  enterLevel?: number
-  exitLevel?: number
-  levelUp: boolean
-  death: boolean
 }
 
 export type PoeZoneTrackerError = {
