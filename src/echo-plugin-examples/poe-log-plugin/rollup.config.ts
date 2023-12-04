@@ -16,7 +16,7 @@ const config: RollupOptions = {
   external: ['fs', 'url'],
   output: {
     format: 'cjs',
-    // Create chunks for locales - We want to keep the hashes, that the module resolution beginning from echo-app does not match and return the false locals
+    // Create chunks for locales - We want to keep the hashes, that the module resolution beginning from echo-app does not match. Its way only the resolution for the actual plugin works
     dir: `./dist`,
     plugins: [terser()]
   },

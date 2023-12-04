@@ -7,5 +7,5 @@ export function translateError(e: Error) {
   if (!e.message) {
     e.message = 'notification:error.unknown_error'
   }
-  return regex.test(e.message) ? i18n.t(`${prefix}${e.message}`) : e.message
+  return regex.test(e.message) ? i18n.t(`${prefix}${e.message}` as any) : e.message
 }

@@ -3,6 +3,7 @@ import { model, Model, modelAction, tProp, types } from 'mobx-keystone'
 import { Notification } from './domains/notification'
 import { NotificationType } from '../interfaces/notification.interface'
 import { translateError } from '../utils/error.utils'
+import { NotificationPath } from '../types/resouces'
 
 @model('nw/notificationStore')
 export class NotificationStore extends Model({
@@ -29,12 +30,14 @@ export class NotificationStore extends Model({
 
   @modelAction
   createNotification(
-    key: string,
-    type: NotificationType,
+    wording: NotificationPath,
     displayAlert?: boolean,
     error?: Error,
     translateParam?: string
   ) {
+    const path = wording.split('.')
+    const type = (path.shift() || 'error') as NotificationType
+    const key = path.join('.')
     const prefix = `notification:${type}`
     const title = `${prefix}.title.${key}`
     const description = error ? translateError(error) : `${prefix}.description.${key}`

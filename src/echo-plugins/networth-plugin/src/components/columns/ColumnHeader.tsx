@@ -5,23 +5,32 @@ import { Column } from '@tanstack/react-table'
 
 import { cn } from 'echo-common'
 import { DropdownMenu, Button } from 'echo-common/components-v1'
+import { useTranslation } from 'react-i18next'
 
 interface TableColumnHeaderProps<TData, TValue> extends React.HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>
   title: string
+  titleParams?: Record<string, string>
   align: 'left' | 'right' | 'center'
 }
 
 export function TableColumnHeader<TData, TValue>({
   column,
   title,
+  titleParams,
   align,
   className
 }: TableColumnHeaderProps<TData, TValue>) {
+  const { t } = useTranslation()
+
   const alignDir =
     align === 'left' ? 'justify-start' : align === 'right' ? 'justify-end' : 'justify-center'
   if (!column.getCanSort()) {
-    return <div className={cn('flex whitespace-nowrap', alignDir, className)}>{title}</div>
+    return (
+      <div className={cn('flex whitespace-nowrap', alignDir, className)}>
+        {t(`columnTitle.${title}` as any, titleParams)}
+      </div>
+    )
   }
 
   return (
@@ -36,7 +45,7 @@ export function TableColumnHeader<TData, TValue>({
               align === 'left' ? '-mx-2' : '-mx-3'
             )}
           >
-            <span>{title}</span>
+            <span>{t(`columnTitle.${title}` as any, titleParams)}</span>
             {column.getIsSorted() === 'desc' ? (
               <ArrowDownIcon className="ml-1 h-4 w-4" />
             ) : column.getIsSorted() === 'asc' ? (
@@ -49,16 +58,16 @@ export function TableColumnHeader<TData, TValue>({
         <DropdownMenu.Content align="start">
           <DropdownMenu.Item onClick={() => column.toggleSorting(false)}>
             <ArrowUpIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-            Asc
+            {t('action.asc')}
           </DropdownMenu.Item>
           <DropdownMenu.Item onClick={() => column.toggleSorting(true)}>
             <ArrowDownIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-            Desc
+            {t('action.desc')}
           </DropdownMenu.Item>
           <DropdownMenu.Separator />
           <DropdownMenu.Item onClick={() => column.toggleVisibility(false)}>
             <EyeOffIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-            Hide
+            {t('action.hide')}
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu>

@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-r
 import { Table } from '@tanstack/react-table'
 
 import { Select, Button } from 'echo-common/components-v1'
+import { useTranslation } from 'react-i18next'
 
 interface TablePaginationProps<TData> {
   table: Table<TData>
@@ -9,19 +10,23 @@ interface TablePaginationProps<TData> {
 }
 
 export function TablePagination<TData>({ table, showSelected }: TablePaginationProps<TData>) {
+  const { t } = useTranslation()
+
   return (
     <div className="flex items-center justify-between px-2 py-4">
       {showSelected ? (
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {t('body.rowsSelected', {
+            current: table.getFilteredSelectedRowModel().rows.length,
+            of: table.getFilteredRowModel().rows.length
+          })}
         </div>
       ) : (
         <div className="flex-1" />
       )}
       <div className="flex items-center space-x-6 lg:space-x-8">
         <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Rows per page</p>
+          <p className="text-sm font-medium">{t('label.pageRows')}</p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
@@ -41,7 +46,10 @@ export function TablePagination<TData>({ table, showSelected }: TablePaginationP
           </Select>
         </div>
         <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+          {t('body.pageOf', {
+            current: table.getState().pagination.pageIndex + 1,
+            of: table.getPageCount()
+          })}
         </div>
         <div className="flex items-center space-x-2">
           <Button
@@ -50,7 +58,7 @@ export function TablePagination<TData>({ table, showSelected }: TablePaginationP
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">Go to first page</span>
+            <span className="sr-only">{t('action.firstPage')}</span>
             <ChevronsLeft className="h-4 w-4" />
           </Button>
           <Button
@@ -59,7 +67,7 @@ export function TablePagination<TData>({ table, showSelected }: TablePaginationP
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">Go to previous page</span>
+            <span className="sr-only">{t('action.prevPage')}</span>
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <Button
@@ -68,7 +76,7 @@ export function TablePagination<TData>({ table, showSelected }: TablePaginationP
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">Go to next page</span>
+            <span className="sr-only">{t('action.nextPage')}</span>
             <ChevronRight className="h-4 w-4" />
           </Button>
           <Button
@@ -77,7 +85,7 @@ export function TablePagination<TData>({ table, showSelected }: TablePaginationP
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">Go to last page</span>
+            <span className="sr-only">{t('action.lastpage')}</span>
             <ChevronsRight className="h-4 w-4" />
           </Button>
         </div>

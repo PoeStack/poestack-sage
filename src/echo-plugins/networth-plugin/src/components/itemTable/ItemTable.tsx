@@ -24,6 +24,7 @@ import { useStore } from '../../hooks/useStore'
 import { observer } from 'mobx-react'
 import { getRarityIdentifier } from '../../utils/item.utils'
 import { IPricedItem } from '../../interfaces/priced-item.interface'
+import { useTranslation } from 'react-i18next'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -37,6 +38,7 @@ const ItemTable = <TData, TValue>({
   data,
   globalFilterFn
 }: DataTableProps<TData, TValue>) => {
+  const { t } = useTranslation()
   const { accountStore } = useStore()
   const tableState = accountStore.activeAccount.networthTableView
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -81,7 +83,7 @@ const ItemTable = <TData, TValue>({
           value={tableState.globalFilter ?? ''}
           onChange={(value) => tableState.setGlobalFilter(String(value))}
           className="h-8 max-w-sm mr-2"
-          placeholder="Search name or tab... Regex support..." // ^((?!Chaos Orb).)*$
+          placeholder={t('label.searchItemsPlaceholder')} // ^((?!Chaos Orb).)*$
         />
         <TableColumnToggle table={table} />
       </div>
@@ -120,7 +122,7 @@ const ItemTable = <TData, TValue>({
             ) : (
               <Table.Row>
                 <Table.Cell colSpan={columns.length} className="h-20 text-center">
-                  No results.
+                  {t('label.noResults')}
                 </Table.Cell>
               </Table.Row>
             )}

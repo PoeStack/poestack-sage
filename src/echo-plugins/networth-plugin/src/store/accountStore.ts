@@ -92,7 +92,7 @@ export class AccountStore extends Model({
       return
     }
     uiStateStore.setIsInitiating(true)
-    uiStateStore.setStatusMessage('initializing_session')
+    uiStateStore.setStatusMessage('initializingSession')
 
     externalService
       .getProfile()
@@ -104,10 +104,10 @@ export class AccountStore extends Model({
           return forkJoin([externalService.getLeagues(), externalService.getCharacters()]).pipe(
             concatMap(([leagues, characters]) => {
               if (leagues.length === 0) {
-                throw new Error('error:no_leagues')
+                throw new Error('noLeaguesFound')
               }
               if (characters.length === 0) {
-                throw new Error('error:no_characters')
+                throw new Error('noCharactersFound')
               }
 
               const unsupportedLeagues = ['Path of Exile: Royale']
@@ -166,7 +166,7 @@ export class AccountStore extends Model({
                     this.activeAccount.addProfile(newProfile)
                     this.activeAccount.setActiveProfile(newProfile)
 
-                    uiStateStore.setStatusMessage('created_default_profile', newProfile.name)
+                    uiStateStore.setStatusMessage('createdDefaultProfile', newProfile.name)
                   }
                   return of({})
                 })
@@ -185,7 +185,7 @@ export class AccountStore extends Model({
   private initSessionSuccess() {
     const { uiStateStore, notificationStore, settingStore } = getRoot<RootStore>(this)
     uiStateStore.resetStatusMessage()
-    notificationStore.createNotification('init_session', 'success')
+    notificationStore.createNotification('success.initSession')
     uiStateStore.setIsInitiating(false)
     uiStateStore.setInitiated(true)
 
@@ -205,7 +205,7 @@ export class AccountStore extends Model({
       .subscribe()
 
     uiStateStore.resetStatusMessage()
-    notificationStore.createNotification('init_session', 'error', true, e)
+    notificationStore.createNotification('error.initSession', true, e)
     uiStateStore.setIsInitiating(false)
     uiStateStore.setInitiated(false)
     console.error(e) // TODO: Remove

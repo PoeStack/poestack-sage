@@ -1,30 +1,40 @@
 import typescript from '@rollup/plugin-typescript'
 import peerDepsExternal from 'rollup-plugin-peer-deps-external'
-import type { RollupOptions } from 'rollup'
-import * as fs from 'fs'
-import * as path from 'path'
+import type { InputPluginOption, RollupOptions } from 'rollup'
+import fs from 'fs'
+import path from 'path'
 import copy from 'rollup-plugin-copy'
+import dynamicImportVars from '@rollup/plugin-dynamic-import-vars'
+import json from '@rollup/plugin-json'
+import terser from '@rollup/plugin-terser'
+import zip from 'rollup-plugin-zip'
 
 const packageJson = JSON.parse(fs.readFileSync(path.resolve('package.json')).toString())
 
 const config: RollupOptions = {
   input: 'src/entry.tsx',
-  external: ['fs'],
+  external: ['fs', 'url'],
   output: {
-    file: `./dist/${packageJson.name}.js`,
-    format: 'cjs'
+    format: 'cjs',
+    // Create chunks for locales - We want to keep the hashes, that the module resolution beginning from echo-app does not match. Its way only the resolution for the actual plugin works
+    dir: `./dist`,
+    plugins: [terser()]
   },
   plugins: [
-    peerDepsExternal(),
+    peerDepsExternal() as InputPluginOption,
+    json({ compact: true }),
     typescript(),
+    // This converts dynamic imports for locales from ../locales/${lng}/${ns}.json => ../locales/*/*.json => ../locales/en/common.json
+    dynamicImportVars(),
+    zip({ file: `${packageJson.name}.zip` }),
     copy({
       targets: [
         {
-          src: './dist/**',
-          dest: `../../../dist_plugins`
+          src: `./dist/*.zip`,
+          dest: `../../../dist_plugins/`
         }
       ],
-      hook: 'writeBundle'
+      hook: 'closeBundle'
     })
   ]
 }
