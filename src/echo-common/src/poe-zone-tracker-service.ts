@@ -1,30 +1,25 @@
 import {
-  PoeCharacterSlainEvent,
   PoeClientLogEvent,
   PoeClientLogService,
-  PoeGeneratingAreaEvent,
-  PoeInstanceConnectionEvent,
-  PoeNPCEncounterEvent,
-  PoeZoneEntranceEvent
+  PoeInstanceConnectionEvent
 } from './poe-client-log-service'
 import { PoeCharacter, PoeItem } from 'sage-common'
-import { Subject, Subscription, filter, map } from 'rxjs'
+import { Subject, Subscription, map } from 'rxjs'
 import { PoeCharacterService } from './poe-character-service'
-import { SmartCacheResultEvent } from './smart-cache'
 
 export class PoeZoneTrackerService {
   private logEvents$: Subject<PoeClientLogEvent>
 
-  private zones: Map<string, PoeZoneInstance> = new Map<string, PoeZoneInstance>() //TODO MAKE PRIVATE
-  private currentZoneDelta?: PoeZoneDelta = undefined //TODO MAKE PRIVATE
+  private zones: Map<string, PoeZoneInstance> = new Map<string, PoeZoneInstance>()
+  private currentZoneDelta?: PoeZoneDelta = undefined
   private previousZoneDelta?: PoeZoneDelta = undefined
 
   public zoneEntered$ = new Subject<PoeZoneDelta>()
   public zoneExited$ = new Subject<PoeZoneDelta>()
 
-  private characterSubscription?: Subscription
+  public zoneTrackerErrors$ = new Subject<PoeZoneTrackerError>()
 
-  //TODO some way externally to configure if character snapshots are wanted, and frequency. Every zone, x-duration
+  private characterSubscription?: Subscription
 
   constructor(
     poeClientLogService: PoeClientLogService,
@@ -40,38 +35,38 @@ export class PoeZoneTrackerService {
   }
 
   private instanceConnectionEventSubscribe() {
-    this.logEvents$
-      .pipe(
-        filter((e) => e.type == 'InstanceConnectionEvent'),
-        map((e) => e as PoeInstanceConnectionEvent)
-      )
-      .subscribe((event) => {
-        if (this.currentZoneDelta === undefined) {
-          const zone: PoeZoneInstance = { zoneServer: event.server, zoneDeltas: [] }
-          const newZoneDelta = this.initializeZoneDelta(zone, event)
-          this.currentZoneDelta = newZoneDelta
-          return
-        }
+    this.logEvents$.subscribe((event) => {
+      if (event.type != 'InstanceConnectionEvent') {
+        return
+      }
 
-        if (!this.currentZoneDelta.enterSystemTime) {
-          //Emit as event
-          throw new Error(
-            'Something went wrong. currentZoneDelta not instansiated correctly after InstanceConnectionEvent'
-          )
-        }
-
-        const enterTime = this.currentZoneDelta.enterSystemTime
-        this.currentZoneDelta.deltaTimeMs = event.systemUptime - enterTime
-        this.currentZoneDelta.exitSystemTime = event.systemUptime
-        this.currentZoneDelta.exitTime = event.time
-
-        this.previousZoneDelta = this.currentZoneDelta
-
+      if (this.currentZoneDelta === undefined) {
         const zone: PoeZoneInstance = { zoneServer: event.server, zoneDeltas: [] }
         const newZoneDelta = this.initializeZoneDelta(zone, event)
-
         this.currentZoneDelta = newZoneDelta
-      })
+        return
+      }
+
+      if (!this.currentZoneDelta.enterSystemTime) {
+        this.zoneTrackerErrors$.next({
+          description: 'currentZoneDelta not instansiated correctly after InstanceConnectionEvent',
+          time: new Date()
+        })
+        return
+      }
+
+      const enterTime = this.currentZoneDelta.enterSystemTime
+      this.currentZoneDelta.deltaTimeMs = event.systemUptime - enterTime
+      this.currentZoneDelta.exitSystemTime = event.systemUptime
+      this.currentZoneDelta.exitTime = event.time
+
+      this.previousZoneDelta = this.currentZoneDelta
+
+      const zone: PoeZoneInstance = { zoneServer: event.server, zoneDeltas: [] }
+      const newZoneDelta = this.initializeZoneDelta(zone, event)
+
+      this.currentZoneDelta = newZoneDelta
+    })
   }
 
   private initializeZoneDelta(
@@ -97,149 +92,167 @@ export class PoeZoneTrackerService {
   }
 
   private generatingAreaEventSubscribe() {
-    this.logEvents$
-      .pipe(
-        filter((e) => e.type == 'GeneratingAreaEvent'),
-        map((e) => e as PoeGeneratingAreaEvent)
-      )
-      .subscribe((event) => {
-        if (this.currentZoneDelta === undefined) {
-          //Emit as event
-          throw new Error(
-            'Something went wrong. currentZoneDelta not instansiated correctly in GeneratingAreaEvent'
-          )
-        }
+    this.logEvents$.subscribe((event) => {
+      if (event.type != 'GeneratingAreaEvent') {
+        return
+      }
 
-        if (!this.currentZoneDelta.startLoadTime) {
-          //Emit as event
-          throw new Error(
-            'Something went wrong. currentZoneDelta.startLoadTime not set correctly in GeneratingAreaEvent'
-          )
-        }
+      if (this.currentZoneDelta === undefined) {
+        this.zoneTrackerErrors$.next({
+          description: 'currentZoneDelta not instansiated correctly in GeneratingAreaEvent',
+          time: new Date()
+        })
+        return
+      }
 
-        this.currentZoneDelta.poeZoneInstance.areaLevel = event.areaLevel
-        this.currentZoneDelta.poeZoneInstance.zoneSeed = event.seed
-        this.currentZoneDelta.poeZoneInstance.areaTag = event.areaTag
+      if (!this.currentZoneDelta.startLoadTime) {
+        this.zoneTrackerErrors$.next({
+          description: 'currentZoneDelta.startLoadTime not set correctly in GeneratingAreaEvent',
+          time: new Date()
+        })
+        return
+      }
 
-        //Determine if currentZoneDelta is a revisit of an old zone
-        //Has server, arealevel, seed, areatag and
-        let zoneHash: string =
-          this.currentZoneDelta.poeZoneInstance.zoneServer +
-          '|' +
-          this.currentZoneDelta.poeZoneInstance.areaTag +
-          '|' +
-          this.currentZoneDelta.poeZoneInstance.areaLevel.toString() +
-          '|' +
-          this.currentZoneDelta.poeZoneInstance.zoneSeed.toString()
+      this.currentZoneDelta.poeZoneInstance.areaLevel = event.areaLevel
+      this.currentZoneDelta.poeZoneInstance.zoneSeed = event.seed
+      this.currentZoneDelta.poeZoneInstance.areaTag = event.areaTag
 
-        if (
-          event.areaTag.toLowerCase().includes('hideout') ||
-          event.areaTag.toLowerCase().includes('town')
-        ) {
-          this.currentZoneDelta.poeZoneInstance.isZoneHideoutOrTown = true
-          zoneHash = zoneHash + '|' + event.time.getTime().toString()
-        } else {
-          this.currentZoneDelta.poeZoneInstance.isZoneHideoutOrTown = false
-        }
+      //Determine if currentZoneDelta is a revisit of an old zone
+      //Has server, arealevel, seed, areatag and
+      let zoneHash: string =
+        this.currentZoneDelta.poeZoneInstance.zoneServer +
+        '|' +
+        this.currentZoneDelta.poeZoneInstance.areaTag +
+        '|' +
+        this.currentZoneDelta.poeZoneInstance.areaLevel.toString() +
+        '|' +
+        this.currentZoneDelta.poeZoneInstance.zoneSeed.toString()
 
-        this.currentZoneDelta.poeZoneInstance.zoneHash = zoneHash
+      if (
+        event.areaTag.toLowerCase().includes('hideout') ||
+        event.areaTag.toLowerCase().includes('town')
+      ) {
+        this.currentZoneDelta.poeZoneInstance.isZoneHideoutOrTown = true
+        zoneHash = zoneHash + '|' + event.time.getTime().toString()
+      } else {
+        this.currentZoneDelta.poeZoneInstance.isZoneHideoutOrTown = false
+      }
 
-        const existingZone = this.zones.get(zoneHash)
-        if (existingZone) {
-          this.currentZoneDelta.poeZoneInstance = existingZone
-          //TODO IF EXISTING ZONE IS FOUND, DO SOME LOGIC BASED ON DATE TO DETERMINE IF IT IS CLOSE ENOUGH
-          existingZone.zoneDeltas.push(this.currentZoneDelta)
-          this.zones.set(zoneHash, existingZone)
-        } else {
-          this.currentZoneDelta.poeZoneInstance.zoneDeltas.push(this.currentZoneDelta)
-          this.zones.set(zoneHash, this.currentZoneDelta.poeZoneInstance)
-        }
-      })
+      this.currentZoneDelta.poeZoneInstance.zoneHash = zoneHash
+
+      const existingZone = this.zones.get(zoneHash)
+      if (existingZone) {
+        this.currentZoneDelta.poeZoneInstance = existingZone
+        //TODO IF EXISTING ZONE IS FOUND, DO SOME LOGIC BASED ON DATE TO DETERMINE IF IT IS CLOSE ENOUGH
+        existingZone.zoneDeltas.push(this.currentZoneDelta)
+        this.zones.set(zoneHash, existingZone)
+      } else {
+        this.currentZoneDelta.poeZoneInstance.zoneDeltas.push(this.currentZoneDelta)
+        this.zones.set(zoneHash, this.currentZoneDelta.poeZoneInstance)
+      }
+    })
   }
 
   private zoneEntranceEventSubscribe() {
-    this.logEvents$
-      .pipe(
-        filter((e) => e.type == 'ZoneEntranceEvent'),
-        map((e) => e as PoeZoneEntranceEvent)
-      )
-      .subscribe((event) => {
-        if (this.currentZoneDelta === undefined) {
-          //Emit as event
-          throw new Error(
-            'Something went wrong. currentZoneDelta not instansiated correctly in ZoneEntranceEvent'
-          )
-        }
+    this.logEvents$.subscribe((event) => {
+      if (event.type != 'ZoneEntranceEvent') {
+        return
+      }
 
-        if (!this.currentZoneDelta.startLoadTime) {
-          //Emit as event
-          throw new Error(
-            'Something went wrong. currentZoneDelta.startLoadTime not set correctly in ZoneEntranceEvent'
-          )
-        }
+      if (this.currentZoneDelta === undefined) {
+        this.zoneTrackerErrors$.next({
+          description: 'currentZoneDelta not instansiated correctly in ZoneEntranceEvent',
+          time: new Date()
+        })
+        return
+      }
 
-        this.currentZoneDelta.poeZoneInstance.zoneName = event.location
-        this.currentZoneDelta.enterTime = event.time
-        this.currentZoneDelta.enterSystemTime = event.systemUptime
+      if (!this.currentZoneDelta.startLoadTime) {
+        this.zoneTrackerErrors$.next({
+          description: 'currentZoneDelta.startLoadTime not set correctly in ZoneEntranceEvent',
+          time: new Date()
+        })
+        return
+      }
 
-        const loadStart = this.currentZoneDelta.startLoadTime
-        this.currentZoneDelta.doneLoadTime = event.systemUptime
-        this.currentZoneDelta.deltaLoadTime = event.systemUptime - loadStart
+      this.currentZoneDelta.poeZoneInstance.zoneName = event.location
+      this.currentZoneDelta.enterTime = event.time
+      this.currentZoneDelta.enterSystemTime = event.systemUptime
 
-        if (this.characterService != undefined) {
-          const charName = 'BlaesendeBruno' //TODO from settings
-          this.characterSubscription = this.characterService
-            .character(charName) //TODO Find a solution to call this function to get non-stale data, probably more intelligent rate-limiter
-            .pipe(
-              filter((e) => e.type == 'result'), //MAKE SURE ERRORS ARE HANDLED ASWELL. PROBABLY USE OF + ZIP TO CHECK CURRENT ZONE IS STILL THE SAME IN CASE OF RATELIMIT
-              map((e) => e as SmartCacheResultEvent<PoeCharacter>),
-              map((result) => result.result),
-              map((char) => {
-                if (char != undefined) {
-                  return char
-                } else {
-                  console.log('character found for ' + charName) //Emit this as an event
-                }
-              })
-            )
-            .subscribe((char) => {
-              if (this.currentZoneDelta && char != undefined) {
-                this.currentZoneDelta.characterDelta = {
-                  characterEnter: char,
-                  levelUp: false,
-                  death: false,
-                  inventoryAdded: [],
-                  inventoryRemoved: []
-                }
+      const loadStart = this.currentZoneDelta.startLoadTime
+      this.currentZoneDelta.doneLoadTime = event.systemUptime
+      this.currentZoneDelta.deltaLoadTime = event.systemUptime - loadStart
 
-                if (
-                  this.previousZoneDelta &&
-                  this.previousZoneDelta.characterDelta?.characterEnter
-                ) {
-                  this.previousZoneDelta.characterDelta.characterExit = char
-                  this.setCharacterDelta(
-                    this.previousZoneDelta.characterDelta.characterEnter,
-                    this.previousZoneDelta.characterDelta.characterExit,
-                    this.previousZoneDelta
-                  )
-                  this.zoneExited$.next(this.previousZoneDelta)
-                }
-                this.zoneEntered$.next(this.currentZoneDelta)
+      if (this.characterService != undefined) {
+        const charName = 'BlaesendeBruno' //TODO from settings
+        this.characterSubscription = this.characterService
+          .character(charName) //TODO Find a solution to call this function to get non-stale data, probably more intelligent rate-limiter
+          .pipe(
+            map((e) => {
+              if (e.type != 'result') {
+                return
               }
-              this.characterSubscription?.unsubscribe()
+              const char = e.result
+
+              if (char == undefined) {
+                this.zoneTrackerErrors$.next({
+                  description: 'character not found for ' + charName,
+                  time: new Date()
+                })
+                return
+              }
+              return char
             })
-        } else {
-          if (this.previousZoneDelta) {
-            this.zoneExited$.next(this.previousZoneDelta)
-          }
-          this.zoneEntered$.next(this.currentZoneDelta)
+          )
+          .subscribe((char) => {
+            if (this.currentZoneDelta && char != undefined) {
+              this.currentZoneDelta.characterDelta = {
+                characterEnter: char,
+                levelUp: false,
+                death: false,
+                inventoryAdded: [],
+                inventoryRemoved: []
+              }
+
+              if (this.previousZoneDelta && this.previousZoneDelta.characterDelta?.characterEnter) {
+                this.previousZoneDelta.characterDelta.characterExit = char
+                const success = this.setCharacterDelta(
+                  this.previousZoneDelta.characterDelta.characterEnter,
+                  this.previousZoneDelta.characterDelta.characterExit,
+                  this.previousZoneDelta
+                )
+
+                if (!success) {
+                  this.characterSubscription?.unsubscribe()
+                  return
+                }
+
+                this.zoneExited$.next(this.previousZoneDelta)
+              }
+              this.zoneEntered$.next(this.currentZoneDelta)
+            }
+            this.characterSubscription?.unsubscribe()
+          })
+      } else {
+        if (this.previousZoneDelta) {
+          this.zoneExited$.next(this.previousZoneDelta)
         }
-      })
+        this.zoneEntered$.next(this.currentZoneDelta)
+      }
+    })
   }
 
-  private setCharacterDelta(enter: PoeCharacter, exit: PoeCharacter, zoneDelta: PoeZoneDelta) {
+  private setCharacterDelta(
+    enter: PoeCharacter,
+    exit: PoeCharacter,
+    zoneDelta: PoeZoneDelta
+  ): boolean {
     if (!zoneDelta.characterDelta) {
-      throw new Error('Attempt to call setCharacterDelta without delta initialized')
+      this.zoneTrackerErrors$.next({
+        description: 'Attempt to call setCharacterDelta without delta initialized',
+        time: new Date()
+      })
+      return false
     }
 
     if (enter.level && exit.level) {
@@ -271,72 +284,80 @@ export class PoeZoneTrackerService {
 
     zoneDelta.characterDelta.inventoryAdded = added
     zoneDelta.characterDelta.inventoryRemoved = removed
+
+    return true
   }
 
   private npcEncounterEventSubscriber() {
-    this.logEvents$
-      .pipe(
-        filter((e) => e.type == 'NPCEncounterEvent'),
-        map((e) => e as PoeNPCEncounterEvent)
-      )
-      .subscribe((event) => {
-        if (this.currentZoneDelta == undefined) {
-          console.log('NPC Encountered without currentZone set, probably local chat turned off')
-          return
-        }
-        switch (event.subtype) {
-          case 'AlvaEncounterEvent':
-            this.currentZoneDelta.alvaEncounter = true
-            break
-          case 'CassiaEncounterEvent':
-            this.currentZoneDelta.blightEncounter = true
-            break
-          case 'DeliriumMirrorEvent':
-            this.currentZoneDelta.deliriumEncounter = true
-            break
-          case 'EinharEncounterEvent':
-            this.currentZoneDelta.einharEncounter = true
-            break
-          case 'HarvestEncounterEvent':
-            this.currentZoneDelta.harvestEncounter = true
-            break
-          case 'JunEncounterEvent':
-            this.currentZoneDelta.junEcounter = true
-            break
-          case 'NikoEncounterEvent':
-            this.currentZoneDelta.nikoEncounter = true
-            break
-          case 'ExpeditionDannigEncounterEvent':
-            this.currentZoneDelta.expeditionDannigEncounter = true
-            this.currentZoneDelta.expeditionEncounter = true
-            break
-          case 'ExpeditionGwennenEncounterEvent':
-            this.currentZoneDelta.expeditionGwennenEncounter = true
-            this.currentZoneDelta.expeditionEncounter = true
-            break
-          case 'ExpeditionRogEncounterEvent':
-            this.currentZoneDelta.expeditionRogEncounter = true
-            this.currentZoneDelta.expeditionEncounter = true
-            break
-          case 'ExpeditionTujenEncounterEvent':
-            this.currentZoneDelta.expeditionTujenEncounter = true
-            this.currentZoneDelta.expeditionEncounter = true
-            break
-        }
-      })
+    this.logEvents$.subscribe((event) => {
+      if (event.type != 'NPCEncounterEvent') {
+        return
+      }
+
+      if (this.currentZoneDelta == undefined) {
+        this.zoneTrackerErrors$.next({
+          description: 'NPC Encountered without currentZone set, probably local chat turned off',
+          time: new Date()
+        })
+        return
+      }
+      switch (event.subtype) {
+        case 'AlvaEncounterEvent':
+          this.currentZoneDelta.alvaEncounter = true
+          break
+        case 'CassiaEncounterEvent':
+          this.currentZoneDelta.blightEncounter = true
+          break
+        case 'DeliriumMirrorEvent':
+          this.currentZoneDelta.deliriumEncounter = true
+          break
+        case 'EinharEncounterEvent':
+          this.currentZoneDelta.einharEncounter = true
+          break
+        case 'HarvestEncounterEvent':
+          this.currentZoneDelta.harvestEncounter = true
+          break
+        case 'JunEncounterEvent':
+          this.currentZoneDelta.junEcounter = true
+          break
+        case 'NikoEncounterEvent':
+          this.currentZoneDelta.nikoEncounter = true
+          break
+        case 'ExpeditionDannigEncounterEvent':
+          this.currentZoneDelta.expeditionDannigEncounter = true
+          this.currentZoneDelta.expeditionEncounter = true
+          break
+        case 'ExpeditionGwennenEncounterEvent':
+          this.currentZoneDelta.expeditionGwennenEncounter = true
+          this.currentZoneDelta.expeditionEncounter = true
+          break
+        case 'ExpeditionRogEncounterEvent':
+          this.currentZoneDelta.expeditionRogEncounter = true
+          this.currentZoneDelta.expeditionEncounter = true
+          break
+        case 'ExpeditionTujenEncounterEvent':
+          this.currentZoneDelta.expeditionTujenEncounter = true
+          this.currentZoneDelta.expeditionEncounter = true
+          break
+      }
+    })
   }
 
   private characterSlainEventSubscriber() {
     this.logEvents$.pipe(
-      filter((e) => e.type == 'CharacterSlainEvent'),
-      map((e) => e as PoeCharacterSlainEvent),
       map((e) => {
+        if (e.type != 'CharacterSlainEvent') {
+          return
+        }
+
         if (this.currentZoneDelta == undefined) {
-          console.log(
-            'character ' +
+          this.zoneTrackerErrors$.next({
+            description:
+              'character ' +
               e.character +
-              ' slain without currentZone set, probably local chat turned off'
-          )
+              ' slain without currentZone set, probably local chat turned off',
+            time: new Date()
+          })
           return
         }
 
@@ -462,4 +483,9 @@ export type PoeZoneDeltaCharacterDelta = {
   exitLevel?: number
   levelUp: boolean
   death: boolean
+}
+
+export type PoeZoneTrackerError = {
+  description: string
+  time: Date
 }

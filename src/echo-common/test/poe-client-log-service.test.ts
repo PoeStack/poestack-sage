@@ -37,7 +37,7 @@ afterEach(() => {
 test('PoeClientLogService ZoneEnteranceEventParser test', async () => {
   const logService: PoeClientLogService = new PoeClientLogService(tail)
 
-  let eventData: PoeZoneEntranceEvent[] = []
+  const eventData: PoeZoneEntranceEvent[] = []
 
   logService.logEvents$
     .pipe(
@@ -77,7 +77,7 @@ test('PoeClientLogService ZoneEnteranceEventParser test', async () => {
 test('PoeClientLogService GeneratingAreaEventParser test', async () => {
   const logService: PoeClientLogService = new PoeClientLogService(tail)
 
-  let eventData: PoeGeneratingAreaEvent[] = []
+  const eventData: PoeGeneratingAreaEvent[] = []
 
   logService.logEvents$
     .pipe(
@@ -115,7 +115,7 @@ test('PoeClientLogService GeneratingAreaEventParser test', async () => {
 test('PoeClientLogService InstanceConnectionEventParser test', async () => {
   const logService: PoeClientLogService = new PoeClientLogService(tail)
 
-  let eventData: PoeInstanceConnectionEvent[] = []
+  const eventData: PoeInstanceConnectionEvent[] = []
 
   logService.logEvents$
     .pipe(
@@ -150,7 +150,7 @@ test('PoeClientLogService InstanceConnectionEventParser test', async () => {
 test('PoeClientLogService CharacterSlainEventParser test', async () => {
   const logService: PoeClientLogService = new PoeClientLogService(tail)
 
-  let eventData: PoeCharacterSlainEvent[] = []
+  const eventData: PoeCharacterSlainEvent[] = []
 
   logService.logEvents$
     .pipe(
@@ -213,7 +213,7 @@ test('PoeClientLogService CharacterSlainEventParser test', async () => {
 test('PoeClientLogService NPCEncounterEventParser test', async () => {
   const logService: PoeClientLogService = new PoeClientLogService(tail)
 
-  let eventData: PoeNPCEncounterEvent[] = []
+  const eventData: PoeNPCEncounterEvent[] = []
 
   logService.logEvents$
     .pipe(
