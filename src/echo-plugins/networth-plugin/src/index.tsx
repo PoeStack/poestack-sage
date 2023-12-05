@@ -8,22 +8,20 @@ import { StoreContext } from './context/store'
 import { applySnapshot, getSnapshot, registerRootStore, onSnapshot } from 'mobx-keystone'
 import Notifier from './components/Notifier/Notifier'
 import { Toaster } from 'echo-common/components-v1'
-import { initTables, getRootSnapshot, saveRootSnapshot } from './store/sqlite'
+import { initDrizzle, getRootSnapshot, saveRootSnapshot } from './db'
 
 export function createRootStore() {
   const rootStore = new RootStore({})
-  // although not strictly required, it is always a good idea to register your root stores
-  // as such, since this allows the model hook `onAttachedToRootStore` to work and other goodies
   registerRootStore(rootStore)
 
-  initTables().then(async () => {
+  initDrizzle().then(async () => {
     const data = await getRootSnapshot()
     if (data) {
       applySnapshot(rootStore, data)
     }
-  })
-  onSnapshot(rootStore, (sn) => {
-    saveRootSnapshot(sn)
+    onSnapshot(rootStore, (sn) => {
+      saveRootSnapshot(sn)
+    })
   })
 
   // we can also connect the store to the redux dev tools
