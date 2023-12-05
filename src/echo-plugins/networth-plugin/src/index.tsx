@@ -1,8 +1,13 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import NetWorth from './routes/net-worth/NetWorth'
+import { I18nextProvider } from 'react-i18next'
+import i18nInstance from './config/i18n.config'
+import { type i18n } from 'i18next'
 import { RootStore } from './store/rootStore'
 import { StoreContext } from './context/store'
 import { applySnapshot, getSnapshot, registerRootStore, onSnapshot } from 'mobx-keystone'
+import Notifier from './components/Notifier/Notifier'
+import { Toaster } from 'echo-common/components-v1'
 
 export function createRootStore() {
   const rootStore = new RootStore({})
@@ -32,9 +37,15 @@ window.rootStore = store
 
 const App = () => {
   return (
-    <StoreContext.Provider value={store}>
-      <NetWorth />
-    </StoreContext.Provider>
+    <Suspense>
+      <I18nextProvider i18n={i18nInstance as i18n}>
+        <StoreContext.Provider value={store}>
+          <NetWorth />
+          <Notifier />
+          <Toaster />
+        </StoreContext.Provider>
+      </I18nextProvider>
+    </Suspense>
   )
 }
 
@@ -43,14 +54,11 @@ export default App
 /**
   Save / Restore the state of the store while self module is hot reloaded
 */
-const module = {
-  hot: (import.meta as any).hot
-}
-if (module.hot) {
-  if (module.hot.data && module.hot.data.store) {
-    applySnapshot(store, module.hot.data.store)
+if (import.meta.hot) {
+  if (import.meta.hot.data && import.meta.hot.data.store) {
+    applySnapshot(store, import.meta.hot.data.store)
   }
-  module.hot.dispose((data: any) => {
+  import.meta.hot.dispose((data) => {
     data.store = getSnapshot(store)
   })
 }

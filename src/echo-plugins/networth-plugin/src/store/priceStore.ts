@@ -62,12 +62,12 @@ export class PriceStore extends Model({
   @modelAction
   priceItemsSuccess() {
     const { notificationStore } = getRoot<RootStore>(this)
-    notificationStore.createNotification('price_price_store_items', 'success')
+    notificationStore.createNotification('success.getPricesForLeagues')
   }
 
   @modelAction
   priceItemsFail(e: Error) {
     const { notificationStore } = getRoot<RootStore>(this)
-    notificationStore.createNotification('price_price_store_items', 'error', true, e)
+    notificationStore.createNotification('error.getPricesForLeagues', true, e)
   }
 }

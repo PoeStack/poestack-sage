@@ -214,7 +214,7 @@ export class Profile extends Model({
   snapshotSuccess() {
     const { accountStore, uiStateStore, notificationStore, settingStore } = getRoot<RootStore>(this)
     uiStateStore.resetStatusMessage()
-    notificationStore.createNotification('snapshot', 'success')
+    notificationStore.createNotification('success.snapshot')
     if (settingStore.autoSnapshotting) {
       accountStore.activeAccount.dequeueSnapshot()
       accountStore.activeAccount.queueSnapshot()
@@ -228,7 +228,7 @@ export class Profile extends Model({
   snapshotFail(e?: Error) {
     const { accountStore, uiStateStore, notificationStore, settingStore } = getRoot<RootStore>(this)
     uiStateStore.resetStatusMessage()
-    notificationStore.createNotification('snapshot', 'error', true, e)
+    notificationStore.createNotification('error.snapshot', true, e)
     if (settingStore.autoSnapshotting) {
       accountStore.activeAccount.dequeueSnapshot()
       accountStore.activeAccount.queueSnapshot()
@@ -240,7 +240,7 @@ export class Profile extends Model({
   notifyInvalidProfile() {
     const { accountStore, settingStore, uiStateStore, notificationStore } = getRoot<RootStore>(this)
     uiStateStore.resetStatusMessage()
-    notificationStore.createNotification('invalid_profile', 'error', true)
+    notificationStore.createNotification('error.invalidProfile', true)
     if (settingStore.autoSnapshotting) {
       accountStore.activeAccount.dequeueSnapshot()
       accountStore.activeAccount.queueSnapshot()
@@ -253,38 +253,33 @@ export class Profile extends Model({
     const { uiStateStore, accountStore } = getRoot<RootStore>(this)
     const league = this.activeLeague!
 
-    uiStateStore.setStatusMessage('refreshing_stash_tabs')
+    uiStateStore.setStatusMessage('fetchingStashTabs', league.name)
 
     externalService
       .getStashTabs(league.name)
       .pipe(
         mergeMap((st) => {
           accountStore.activeAccount.updateLeagueStashTabs(st, league)
-          return of(this.refreshStashTabsSuccess(league))
+          return of(this.getStashTabsSuccess(league))
         }),
         takeUntil(uiStateStore.cancelSnapshot),
-        catchError((e: Error) => of(this.refreshStashTabsFail(e, league.name)))
+        catchError((e: Error) => of(this.getStashTabsFail(e, league.name)))
       )
       .subscribe()
   }
 
   @modelAction
-  refreshStashTabsSuccess(league: League) {
+  getStashTabsSuccess(league: League) {
     const { notificationStore } = getRoot<RootStore>(this)
-    notificationStore.createNotification(
-      'refreshing_stash_tabs',
-      'success',
-      undefined,
-      undefined,
-      league.name
-    )
+    // todo: clean up, must be possible to write this in a nicer manner (perhaps a joint function for both error/success?)
+    notificationStore.createNotification('success.getStashTabs', undefined, undefined, league.name)
     this.getItems(league)
   }
 
   @modelAction
-  refreshStashTabsFail(e: Error, leagueId: string) {
+  getStashTabsFail(e: Error, league: string) {
     const { notificationStore } = getRoot<RootStore>(this)
-    notificationStore.createNotification('refreshing_stash_tabs', 'error', true, e, leagueId)
+    notificationStore.createNotification('error.getStashTabs', true, e, league)
     this.snapshotFail()
   }
 
@@ -308,7 +303,7 @@ export class Profile extends Model({
           )
         : of([])
 
-    uiStateStore.setStatusMessage('fetching_stash_tab', undefined, 1, selectedStashTabs.length)
+    uiStateStore.setStatusMessage('fetchingStashTab', undefined, 1, selectedStashTabs.length)
     forkJoin([
       getMainTabsWithChildren,
       this.activeCharacter ? externalService.getCharacter(this.activeCharacter.name) : of(null)
@@ -324,7 +319,7 @@ export class Profile extends Model({
             response[0] = combinedTabs
             return of(response)
           }
-          uiStateStore.setStatusMessage('fetching_subtabs', undefined, 1, subTabs.length)
+          uiStateStore.setStatusMessage('fetchingSubtabs', undefined, 1, subTabs.length)
           const getItemsForSubTabsSource = from(subTabs).pipe(
             concatMap((stashTab) =>
               externalService.getStashTabWithChildren(stashTab as IStashTab, league.name, true)
@@ -397,21 +392,21 @@ export class Profile extends Model({
   @modelAction
   getItemsSuccess(stashTabsWithItems: IStashTabItems[], league: League) {
     const { notificationStore } = getRoot<RootStore>(this)
-    notificationStore.createNotification('get_items', 'success', undefined, undefined, league.name)
+    notificationStore.createNotification('success.getItems', undefined, undefined, league.name)
     this.priceItemsForStashTabs(stashTabsWithItems, league)
   }
 
   @modelAction
   getItemsFail(e: Error, leagueId: string) {
     const { notificationStore } = getRoot<RootStore>(this)
-    notificationStore.createNotification('get_items', 'error', true, e, leagueId)
+    notificationStore.createNotification('error.getItems', true, e, leagueId)
     this.snapshotFail()
   }
 
   @modelAction
   priceItemsForStashTabs(stashTabsWithItems: IStashTabItems[], league: League) {
     const { uiStateStore, settingStore } = getRoot<RootStore>(this)
-    uiStateStore.setStatusMessage('pricing_items')
+    uiStateStore.setStatusMessage('pricingItems')
     const getValuation = from(stashTabsWithItems).pipe(
       mergeMap((stashTabWithItems) => {
         return externalService.valuateItems(league.name, stashTabWithItems.items).pipe(
@@ -523,21 +518,21 @@ export class Profile extends Model({
   @modelAction
   priceItemsForStashTabsSuccess(pricedStashTabs: StashTabSnapshot[]) {
     const { notificationStore } = getRoot<RootStore>(this)
-    notificationStore.createNotification('price_stash_items', 'success')
+    notificationStore.createNotification('success.priceStashItems')
     this.saveSnapshot(pricedStashTabs)
   }
 
   @modelAction
   priceItemsForStashTabsFail(e: Error) {
     const { notificationStore } = getRoot<RootStore>(this)
-    notificationStore.createNotification('price_stash_items', 'error', true, e)
+    notificationStore.createNotification('error.priceStashItems', true, e)
     this.snapshotFail()
   }
 
   @modelAction
   saveSnapshot(pricedStashTabs: StashTabSnapshot[]) {
     const { uiStateStore } = getRoot<RootStore>(this)
-    uiStateStore.setStatusMessage('saving_snapshot')
+    uiStateStore.setStatusMessage('savingSnapshot')
 
     const snapshotToAdd = new Snapshot({
       stashTabs: pricedStashTabs

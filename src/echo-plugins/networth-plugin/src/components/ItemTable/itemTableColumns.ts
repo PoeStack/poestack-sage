@@ -5,33 +5,33 @@ import { IPricedItem } from '../../interfaces/priced-item.interface'
 export const itemTableColumns = (): ColumnDef<IPricedItem>[] => [
   itemIcon({
     accessorKey: 'icon',
-    header: 'Icon'
+    header: 'icon'
   }),
   itemName({
     accessorKey: 'name',
-    header: 'Name'
+    header: 'name'
   }),
   itemTabs({
     accessorKey: 'tab',
-    header: 'Tabs'
+    header: 'tab'
   }),
   itemQuantity({
-    header: 'Quantity',
-    accessorKey: 'stackSize'
+    accessorKey: 'stackSize',
+    header: 'quantity'
   }),
   itemValue({
     accessorKey: 'calculated',
-    header: 'Price',
+    header: 'price',
     enableSorting: true
   }),
   itemValue({
     accessorKey: 'total',
-    header: 'Total value (c)',
+    header: 'total',
     enableSorting: true
   }),
   itemValue({
-    accessorKey: 'comulative',
-    header: 'Cumulative (c)',
+    accessorKey: 'cumulative',
+    header: 'cumulative',
     cumulative: true
   })
 ]

@@ -12,7 +12,7 @@ import { useStore } from '../../hooks/useStore'
 import { ArrowDown, ArrowUp } from 'lucide-react'
 import { TableColumnHeader } from './ColumnHeader'
 
-type PricedItem = keyof IPricedItem | 'comulative'
+type PricedItem = keyof IPricedItem | 'cumulative'
 
 export function itemIcon(options: {
   accessorKey: PricedItem
@@ -21,9 +21,10 @@ export function itemIcon(options: {
   const { header, accessorKey } = options
 
   return {
-    header,
+    header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
     accessorKey,
     minSize: 100,
+    enableSorting: false,
     enableGlobalFilter: true,
     cell: ({ row }) => {
       const value = row.getValue<string>(accessorKey)
@@ -123,7 +124,14 @@ export function itemValue(options: {
     options
 
   return {
-    header: ({ column }) => <TableColumnHeader column={column} title={header} align="right" />,
+    header: ({ column }) => (
+      <TableColumnHeader
+        column={column}
+        title={header}
+        titleParams={{ currency: 'c' }}
+        align="right"
+      />
+    ),
     accessorKey,
     enableSorting: enableSorting ?? false,
     enableGlobalFilter: false,

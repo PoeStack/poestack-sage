@@ -15,6 +15,7 @@ import { profileCharacterRef, profileLeagueRef, profileStashTabRef } from './dom
 import { Profile } from './domains/profile'
 import { accountStoreAccountRef } from './accountStore'
 import { PoeCharacter, PoePartialStashTab } from 'sage-common'
+import { StatusPath } from '../types/resouces'
 
 export const statusMessageRef = rootRef<StatusMessage>('nw/statusMessageRef')
 
@@ -56,13 +57,13 @@ export class UiStateStore extends Model({
 
   @modelAction
   setStatusMessage(
-    message: string,
+    message: StatusPath,
     translateParam?: string | number,
     currentCount?: number,
     totalCount?: number
   ) {
     this.statusMessage = new StatusMessage({
-      message: message,
+      message: message as unknown as string,
       translateParam: translateParam,
       currentCount: currentCount,
       totalCount: totalCount

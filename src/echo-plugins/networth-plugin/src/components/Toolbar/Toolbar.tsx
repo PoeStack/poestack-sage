@@ -7,6 +7,7 @@ import StatusMessageContainer from '../StatusMessage/StatusMessageContainer'
 import { observer } from 'mobx-react'
 import { cn } from 'echo-common'
 import GlobalSettings from './GlobalSettings'
+import { useTranslation } from 'react-i18next'
 
 type ToolbarProps = {
   isSubmitting: boolean
@@ -29,6 +30,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   handleSnapshot,
   handleCancelSnapshot
 }) => {
+  const { t } = useTranslation()
   return (
     <header className="z-50 flex border-b">
       <div className="flex flex-none flex-row items-center pl-2 space-x-2">
@@ -48,12 +50,13 @@ const Toolbar: React.FC<ToolbarProps> = ({
           >
             <div className="flex flex-row justify-center text-xs items-center gap-1">
               <RefreshCcw className={cn('h-4 w-4', isSnapshotting && 'animate-spin')} />
-              TAKE SNAPSHOT
+              {t('action.takeSnapshot')}
             </div>
           </Button>
           <Button
             variant="ghost"
             size="icon"
+            disabled={!isSnapshotting}
             className="h-8 w-8"
             onClick={() => handleCancelSnapshot()}
           >

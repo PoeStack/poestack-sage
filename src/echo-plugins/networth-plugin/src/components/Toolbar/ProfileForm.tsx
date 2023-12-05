@@ -16,6 +16,7 @@ import * as z from 'zod'
 import { League } from '../../store/domains/league'
 import { Character } from '../../store/domains/character'
 import { useMemo, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 type ProfilePayload = {
   name: string
@@ -34,6 +35,7 @@ type ProfileFormProps = {
 }
 
 const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) => {
+  const { t } = useTranslation()
   const { accountStore, leagueStore } = useStore()
 
   const activeAccount = accountStore.activeAccount
@@ -121,7 +123,9 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
   return (
     <Sheet.Content className="mt-7 overflow-y-scroll w-3/5 sm:max-w-full">
       <Sheet.Header>
-        <Sheet.Title>{profile ? `Edit Profile: ${profile.name}` : 'Add Profile'}</Sheet.Title>
+        <Sheet.Title>
+          {profile ? t('title.editProfile', { name: profile.name }) : t('title.addProfile')}
+        </Sheet.Title>
       </Sheet.Header>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
@@ -130,9 +134,9 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
             name="name"
             render={({ field }) => (
               <Form.Item>
-                <Form.Label>Profile Name *</Form.Label>
+                <Form.Label aria-required>{t('label.profileName')}</Form.Label>
                 <Form.Control>
-                  <Input {...field} placeholder="Name your profile" />
+                  <Input {...field} placeholder={t('label.selectProfilePlaceholder')} />
                 </Form.Control>
                 <Form.Message className="text-destructive" />
               </Form.Item>
@@ -144,7 +148,7 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
             render={({ field }) => {
               return (
                 <Form.Item>
-                  <Form.Label>Stash Tabs</Form.Label>
+                  <Form.Label>{t('label.stashTabs')}</Form.Label>
                   <Form.Control>
                     <div className="p-2 border overflow-y-scroll h-20 w-full flex flex-row flex-wrap gap-2">
                       {stashTabs
@@ -180,7 +184,7 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
               name="league"
               render={({ field }) => (
                 <Form.Item className="grow">
-                  <Form.Label>League *</Form.Label>
+                  <Form.Label aria-required>{t('label.league')}</Form.Label>
                   <Select
                     value={field.value?.name}
                     onValueChange={(value) => {
@@ -198,7 +202,7 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
                   >
                     <Form.Control>
                       <Select.Trigger>
-                        <Select.Value placeholder="Select a league" />
+                        <Select.Value placeholder={t('label.selectLeaguePlaceholder')} />
                       </Select.Trigger>
                     </Form.Control>
                     <Select.Content>
@@ -219,7 +223,7 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
               name="pricingLeague"
               render={({ field }) => (
                 <Form.Item className="grow">
-                  <Form.Label>Pricing League *</Form.Label>
+                  <Form.Label aria-required>{t('label.priceLeague')}</Form.Label>
                   <Select
                     value={field.value?.name}
                     onValueChange={(value) => {
@@ -233,7 +237,7 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
                   >
                     <Form.Control>
                       <Select.Trigger>
-                        <Select.Value placeholder="Select a pricing league" />
+                        <Select.Value placeholder={t('label.selectPriceLeaguePlaceholder')} />
                       </Select.Trigger>
                     </Form.Control>
                     <Select.Content>
@@ -256,7 +260,7 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
             render={({ field }) => {
               return (
                 <Form.Item>
-                  <Form.Label>Character</Form.Label>
+                  <Form.Label>{t('label.character')}</Form.Label>
                   <Select
                     disabled={!form.getValues().league}
                     value={field.value?.name ?? 'None'}
@@ -282,7 +286,7 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
                     </Form.Control>
                     <Select.Content>
                       <Select.Item key={'character-none'} value={'None'}>
-                        None
+                        {t('label.none')}
                       </Select.Item>
                       {activeAccount.characters
                         .filter(
@@ -345,7 +349,7 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
           )}
 
           <Button disabled={!form.formState.isValid} type="submit">
-            {profile ? 'Save Profile' : 'Create Profile'}
+            {profile ? t('action.saveProfile') : t('action.createProfile')}
           </Button>
         </form>
       </Form>

@@ -11,8 +11,10 @@ import {
 import ProfileForm from './ProfileForm'
 import { Profile } from '../../store/domains/profile'
 import { observer } from 'mobx-react'
+import { useTranslation } from 'react-i18next'
 
 const ProfileMenu = () => {
+  const { t } = useTranslation()
   const { accountStore } = useStore()
   const activeAccount = accountStore.activeAccount
   const [menuOpen, setMenuOpen] = useState(false)
@@ -49,9 +51,9 @@ const ProfileMenu = () => {
                 className="flex flex-row border rounded h-8 pl-2 pr-1 min-w-[100px] justify-between"
                 role="combobox"
                 aria-expanded={menuOpen}
-                aria-label="Select profile"
+                aria-label={t('label.selectProfile')}
               >
-                {activeAccount.activeProfile?.name ?? 'Add Profile'}
+                {activeAccount.activeProfile?.name ?? t('label.addProfile')}
                 {menuOpen ? (
                   <ChevronDownIcon className="ml-2 h-4 w-4" />
                 ) : (
@@ -66,10 +68,10 @@ const ProfileMenu = () => {
                 className="border rounded h-8"
                 role="combobox"
                 aria-expanded={menuOpen}
-                aria-label="Select profile"
+                aria-label={t('label.selectProfile')}
               >
                 <PlusCircleIcon className="ml-auto mr-2 h-4 w-4" />
-                Add Profile
+                {t('label.addProfile')}
               </Button>
             </Sheet.Trigger>
           )}
@@ -126,7 +128,7 @@ const ProfileMenu = () => {
                       }}
                     >
                       <PlusCircleIcon className="mr-2 h-5 w-5" />
-                      Add Profile
+                      {t('label.addProfile')}
                     </Command.Item>
                   </Sheet.Trigger>
                 </Command.Group>
@@ -152,7 +154,7 @@ const ProfileMenu = () => {
                 setDeleteProfileDialogOpen(false)
               }}
             >
-              Cancel
+              {t('action.cancel')}
             </AlertDialog.Cancel>
             <AlertDialog.Action
               onClick={() => {
@@ -163,7 +165,7 @@ const ProfileMenu = () => {
                 }
               }}
             >
-              Continue
+              {t('action.continue')}
             </AlertDialog.Action>
           </AlertDialog.Footer>
         </AlertDialog.Content>
