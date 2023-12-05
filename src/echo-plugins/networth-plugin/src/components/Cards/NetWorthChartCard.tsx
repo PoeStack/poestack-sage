@@ -8,13 +8,20 @@ import { ChevronDownIcon, ChevronRightIcon } from 'lucide-react'
 import { Collapsible, Card } from 'echo-common/components-v1'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
+import { convertToCurrency } from '../../utils/currency.utils'
 
 function NetWorthChartCard() {
   const [open, setOpen] = useState(false)
-  const { accountStore } = useStore()
+  const { accountStore, priceStore, settingStore } = useStore()
   const netWorthData = accountStore.activeAccount.activeProfile?.netWorthOverTime
-  const chartData = netWorthData?.map((item) => [item.time, item.value])
-  console.log('nw data', netWorthData)
+  const chartData = netWorthData?.map((item) => [
+    item.time,
+    convertToCurrency({
+      value: item.value,
+      toCurrency: settingStore.currency,
+      divinePrice: priceStore.divinePrice
+    })
+  ])
   const options: Highcharts.Options = {
     series: [
       {
@@ -41,7 +48,7 @@ function NetWorthChartCard() {
         tooltip: {
           pointFormat: '{point.y}',
           valueDecimals: 2,
-          valueSuffix: 'c'
+          valueSuffix: settingStore.activeCurrency.short
         },
         data: chartData
       }

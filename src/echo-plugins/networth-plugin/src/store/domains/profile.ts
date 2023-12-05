@@ -136,50 +136,45 @@ export class Profile extends Model({
 
   @computed
   get netWorthOverTime() {
-    return this.snapshots.reduce(
-      (netWorthSeries, snapshot) => {
-        const snapshotTotal = snapshot.stashTabs.reduce((total, tab) => {
-          let stashTabTotal = 0
-          tab.pricedItems.data.forEach((item) => {
-            stashTabTotal += item.total
-          })
-          return total + stashTabTotal
-        }, 0)
-        return [...netWorthSeries, { time: snapshot.created, value: snapshotTotal }]
-      },
-      [] as { time: number; value: number }[]
-    )
+    return this.snapshots
+      .slice()
+      .sort((a, b) => b.created - a.created)
+      .reduce(
+        (netWorthSeries, snapshot) => {
+          const snapshotTotal = snapshot.stashTabs.reduce((total, tab) => {
+            return total + tab.totalValue
+          }, 0)
+          return [
+            ...netWorthSeries,
+            { time: snapshot.created, value: parseFloat(snapshotTotal.toFixed(2)) }
+          ]
+        },
+        [] as { time: number; value: number }[]
+      )
   }
 
-  netWorthChange({ lastHours, latest }: { lastHours?: number; latest?: boolean }) {
+  netWorthChange(sinceUtc?: number) {
     let snapshots = this.snapshots
-    if (lastHours) {
-      const beginningTime = dayjs().subtract(lastHours, 'hour').utc().valueOf()
-      snapshots = this.snapshots.filter((snapshot) => snapshot.created >= beginningTime)
+    if (sinceUtc) {
+      snapshots = this.snapshots.filter((snapshot) => snapshot.created >= sinceUtc)
     }
-
     if (snapshots.length === 0) {
       return 0
     }
-    const latestValue = snapshots.slice(-1)[0].stashTabs.reduce((total, tab) => {
-      let stashTabTotal = 0
-      tab.pricedItems.data.forEach((item) => {
-        stashTabTotal += item.total
-      })
-      return total + stashTabTotal
+
+    const latestValue = snapshots[snapshots.length - 1].stashTabs.reduce((total, tab) => {
+      return total + tab.totalValue
     }, 0)
+
     if (snapshots.length === 1) {
-      return latestValue
+      return parseFloat(latestValue.toFixed(2))
     }
-    const initialSnapshot = latest ? snapshots[-2] : snapshots[0]
+
+    const initialSnapshot = sinceUtc ? snapshots[snapshots.length - 2] : snapshots[0]
     const initialValue = initialSnapshot.stashTabs.reduce((total, tab) => {
-      let stashTabTotal = 0
-      tab.pricedItems.data.forEach((item) => {
-        stashTabTotal += item.total
-      })
-      return total + stashTabTotal
+      return total + tab.totalValue
     }, 0)
-    return latestValue - initialValue
+    return parseFloat(latestValue.toFixed(2)) - parseFloat(initialValue.toFixed(2))
   }
 
   @modelAction

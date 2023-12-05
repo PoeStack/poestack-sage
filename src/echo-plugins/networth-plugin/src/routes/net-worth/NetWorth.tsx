@@ -5,6 +5,8 @@ import ToolbarContainer from '../../components/Toolbar/ToolbarContainer'
 import NetWorthChartCard from '../../components/Cards/NetWorthChartCard'
 import ItemTableContainer from '../../components/ItemTable/ItemTableContainer'
 import NetWorthSummaryCard from '../../components/Cards/NetWorthSummaryCard'
+import IncomeSummaryCard from '../../components/Cards/IncomeSummaryCard'
+import SnapshotSummaryCard from '../../components/Cards/SnapshotSummaryCard'
 
 const NetWorth = () => {
   const { accountStore, uiStateStore } = useStore()
@@ -17,8 +19,10 @@ const NetWorth = () => {
     <div className="flex flex-col h-full w-full">
       <ToolbarContainer />
       <main className="flex flex-col p-2 gap-4">
-        <div className="grow">
+        <div className="flex flex-row gap-4 flex-wrap">
           <NetWorthSummaryCard />
+          <IncomeSummaryCard />
+          <SnapshotSummaryCard />
         </div>
         <div className="grow">
           <NetWorthChartCard />
