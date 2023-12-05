@@ -19,7 +19,7 @@ import {
 import { Label, Switch, Table } from 'echo-common/components-v1'
 import { TablePagination } from './TablePagination'
 import TableColumnToggle from './TableColumnToggle'
-import DebouncedInput from '../Input/DebouncedInput'
+import DebouncedInput from '../DebouncedInput/DebouncedInput'
 import { useStore } from '../../hooks/useStore'
 import { observer } from 'mobx-react'
 import { getRarityIdentifier } from '../../utils/item.utils'
