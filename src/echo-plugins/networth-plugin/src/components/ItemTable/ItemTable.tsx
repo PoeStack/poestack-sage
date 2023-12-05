@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback } from 'react'
 import {
   ColumnDef,
   SortingState,
@@ -7,23 +7,18 @@ import {
   useReactTable,
   getPaginationRowModel,
   getSortedRowModel,
-  // ColumnFiltersState,
   getFilteredRowModel,
   VisibilityState,
   PaginationState,
-  filterFns,
-  FilterFn,
   FilterFnOption,
   Updater
 } from '@tanstack/react-table'
-import { Label, Switch, Table } from 'echo-common/components-v1'
+import { Table } from 'echo-common/components-v1'
 import { TablePagination } from './TablePagination'
 import TableColumnToggle from './TableColumnToggle'
 import DebouncedInput from '../DebouncedInput/DebouncedInput'
 import { useStore } from '../../hooks/useStore'
 import { observer } from 'mobx-react'
-import { getRarityIdentifier } from '../../utils/item.utils'
-import { IPricedItem } from '../../interfaces/priced-item.interface'
 import { useTranslation } from 'react-i18next'
 
 interface DataTableProps<TData, TValue> {

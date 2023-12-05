@@ -6,6 +6,7 @@ import * as schema from './schema'
 
 // @ts-ignore
 const client = window.api['@libsql/client'].createClient({
+  // TODO: Change for production
   url: 'file:../echo-plugins/networth-plugin/database.db'
 })
 
@@ -14,7 +15,7 @@ const db = drizzle(client, { schema })
 export const initDrizzle = async () => {
   // @ts-ignore
   await window.api['drizzle-orm/libsql/migrator'].migrate(db, {
-    // migrationsFolder: './migrations'
+    // TODO: Change for production
     migrationsFolder: '../echo-plugins/networth-plugin/src/db/migrations'
   })
   return db.insert(schema.rootStore).values({ id: 1, root: null }).onConflictDoNothing().execute()
