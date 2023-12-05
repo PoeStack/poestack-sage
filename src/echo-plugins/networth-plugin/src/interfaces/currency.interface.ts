@@ -1,4 +1,4 @@
 export interface ICurrency {
-  name: string
-  short: string
+  name: 'chaos' | 'divine'
+  short: 'c' | 'div'
 }

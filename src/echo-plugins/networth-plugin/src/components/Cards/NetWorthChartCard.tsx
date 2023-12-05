@@ -127,7 +127,7 @@ function NetWorthChartCard() {
                   <RadioGroup.Item value="one-day" id="one-day" className="sr-only peer w-0" />
                   <Label
                     htmlFor="one-day"
-                    className="flex flex-row items-center justify-center grow rounded-l-md border border-muted p-2 hover:bg-accent hover:text-accent-foreground text-muted-foreground hover:text-accent-foreground peer-data-[state=checked]:bg-secondary peer-data-[state=checked]:text-accent-foreground"
+                    className="flex flex-row items-center justify-center grow rounded-l-md border border-muted p-2 hover:bg-accent hover:text-accent-foreground text-muted-foreground peer-data-[state=checked]:bg-secondary peer-data-[state=checked]:text-accent-foreground"
                   >
                     Last day
                   </Label>
@@ -136,7 +136,7 @@ function NetWorthChartCard() {
                   <RadioGroup.Item value="one-week" id="one-week" className="sr-only peer w-0" />
                   <Label
                     htmlFor="one-week"
-                    className="flex flex-row items-center justify-center grow border border-muted p-2 hover:bg-accent hover:text-accent-foreground text-muted-foreground hover:text-accent-foreground peer-data-[state=checked]:bg-secondary peer-data-[state=checked]:text-accent-foreground"
+                    className="flex flex-row items-center justify-center grow border border-muted p-2 hover:bg-accent hover:text-accent-foreground text-muted-foreground peer-data-[state=checked]:bg-secondary peer-data-[state=checked]:text-accent-foreground"
                   >
                     Last week
                   </Label>
@@ -145,7 +145,7 @@ function NetWorthChartCard() {
                   <RadioGroup.Item value="one-month" id="one-month" className="sr-only peer w-0" />
                   <Label
                     htmlFor="one-month"
-                    className="flex flex-row items-center justify-center grow border border-muted p-2 hover:bg-accent hover:text-accent-foreground text-muted-foreground hover:text-accent-foreground peer-data-[state=checked]:bg-secondary peer-data-[state=checked]:text-accent-foreground"
+                    className="flex flex-row items-center justify-center grow border border-muted p-2 hover:bg-accent hover:text-accent-foreground text-muted-foreground peer-data-[state=checked]:bg-secondary peer-data-[state=checked]:text-accent-foreground"
                   >
                     Last month
                   </Label>
