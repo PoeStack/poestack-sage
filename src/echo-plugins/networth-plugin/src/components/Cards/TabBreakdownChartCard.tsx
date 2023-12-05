@@ -10,6 +10,7 @@ import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import { convertToCurrency } from '../../utils/currency.utils'
 import { useTranslation } from 'react-i18next'
+import { baseChartConfig } from './baseChartConfig'
 
 function TabBreakdownChartCard() {
   const { t } = useTranslation()
@@ -43,81 +44,25 @@ function TabBreakdownChartCard() {
     }
   })
 
-  const options: Highcharts.Options = {
+  const chartConfig: Highcharts.Options = {
+    ...baseChartConfig,
     series: Object.values(series),
-    credits: {
-      enabled: false
-    },
     chart: {
-      height: 200,
-      backgroundColor: 'hsl(var(--card))'
-    },
-    yAxis: {
-      gridLineColor: 'hsl(var(--muted-foreground))',
-      gridLineDashStyle: 'Dash',
-      lineColor: 'hsl(var(--muted-foreground))',
-      tickColor: 'hsl(var(--muted-foreground))',
-      labels: {
-        style: {
-          font: '12px Times New Roman',
-          color: 'hsl(var(--muted-foreground))'
-        }
-      },
-      title: {
-        text: undefined,
-        style: {
-          font: '14px Times New Roman',
-          color: 'hsl(var(--muted-foreground))'
-        }
-      }
-    },
-    xAxis: {
-      grid: {
-        enabled: true
-      },
-      type: 'datetime',
-      labels: {
-        style: {
-          font: '12px Times New Roman',
-          color: 'hsl(var(--muted-foreground))'
-        },
-        formatter: function () {
-          return Highcharts.dateFormat('%a %d %b %H:%M:%S', this.value as number)
-        }
-      },
-      tickAmount: 5,
-      title: {
-        style: {
-          font: '14px Times New Roman',
-          color: 'hsl(var(--muted-foreground))'
-        }
-      },
-      lineColor: 'hsl(var(--muted-foreground))',
-      tickColor: 'hsl(var(--muted-foreground))',
-      gridLineColor: 'var(--primary-foreground)',
-      gridLineDashStyle: 'Dash'
+      ...baseChartConfig.chart,
+      height: 200
     },
     title: {
       text: undefined
     },
-    legend: {
-      itemStyle: {
-        font: '14px Times New Roman',
-        color: 'hsl(var(--muted-foreground))'
-      },
-      itemHoverStyle: {
-        color: 'hsl(var(--foreground))'
+    yAxis: {
+      ...baseChartConfig.yAxis,
+      title: {
+        ...(baseChartConfig.yAxis as Highcharts.YAxisOptions).title,
+        text: undefined
       }
     },
     tooltip: {
-      borderColor: 'hsl(var(--border))',
-      borderWidth: 1,
-      backgroundColor: 'hsl(var(--card))',
-      style: {
-        fontSize: '14px',
-        fontFamily: 'Times New Roman',
-        color: 'hsl(var(--muted-foreground))'
-      },
+      ...baseChartConfig.tooltip,
       pointFormat: '{series.name}: {point.y}',
       valueDecimals: 2,
       valueSuffix: settingStore.activeCurrency.short
@@ -142,7 +87,11 @@ function TabBreakdownChartCard() {
         <Collapsible.Content>
           <Card.Content className="p-2">
             <div className="px-2">
-              <HighchartsReact highcharts={Highcharts} options={options} ref={chartComponentRef} />
+              <HighchartsReact
+                highcharts={Highcharts}
+                options={chartConfig}
+                ref={chartComponentRef}
+              />
             </div>
           </Card.Content>
         </Collapsible.Content>

@@ -11,6 +11,7 @@ import { cn } from 'echo-common'
 import { CircleDollarSign, RefreshCcw } from 'lucide-react'
 import { convertToCurrency } from '../../utils/currency.utils'
 import { useTranslation } from 'react-i18next'
+import { baseChartConfig } from './baseChartConfig'
 
 function NetWorthSummaryCard() {
   const { t } = useTranslation()
@@ -37,7 +38,8 @@ function NetWorthSummaryCard() {
     }
   }
 
-  const options: Highcharts.Options = {
+  const chartConfig: Highcharts.Options = {
+    ...baseChartConfig,
     series: [
       {
         type: 'area',
@@ -59,7 +61,7 @@ function NetWorthSummaryCard() {
         },
         marker: {
           fillColor: 'hsl(var(--muted-foreground))',
-          enabled: chartData.length < 1
+          enabled: false
         },
         states: {
           hover: {
@@ -69,42 +71,25 @@ function NetWorthSummaryCard() {
         data: chartData
       }
     ],
-    credits: {
-      enabled: false
-    },
     chart: {
+      ...baseChartConfig.chart,
       height: 60,
-      width: 100,
-      backgroundColor: 'hsl(var(--card))'
-    },
-    yAxis: {
-      visible: false
-    },
-    xAxis: {
-      visible: false
+      width: 100
     },
     title: {
       text: undefined
     },
-    legend: {
-      itemStyle: {
-        font: '14px Times New Roman',
-        color: 'hsl(var(--muted-foreground))'
-      },
-      itemHoverStyle: {
-        color: 'hsl(var(--foreground))'
-      }
+    yAxis: {
+      ...baseChartConfig.yAxis,
+      visible: false
+    },
+    xAxis: {
+      ...baseChartConfig.xAxis,
+      visible: false
     },
     tooltip: {
-      enabled: false,
-      borderColor: 'hsl(var(--border))',
-      borderWidth: 1,
-      backgroundColor: 'hsl(var(--card))',
-      style: {
-        fontSize: '14px',
-        fontFamily: 'Times New Roman',
-        color: 'hsl(var(--muted-foreground))'
-      }
+      ...baseChartConfig.tooltip,
+      enabled: false
     }
   }
 
@@ -116,7 +101,13 @@ function NetWorthSummaryCard() {
         <div className="flex flex-row items-center justify-between min-h-[64px]">
           <div className="flex flex-row items-center justify-center">
             <CircleDollarSign className="w-6 h-6" />
-            <HighchartsReact highcharts={Highcharts} options={options} ref={chartComponentRef} />
+            {chartData.length > 1 && (
+              <HighchartsReact
+                highcharts={Highcharts}
+                options={chartConfig}
+                ref={chartComponentRef}
+              />
+            )}
           </div>
           <div className="flex flex-row items-center justify-center gap-2">
             <span>{`${currentNetWorth} ${settingStore.activeCurrency.short}`}</span>
