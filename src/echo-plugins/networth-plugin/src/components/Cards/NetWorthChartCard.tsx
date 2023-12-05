@@ -9,12 +9,17 @@ import { Collapsible, Card } from 'echo-common/components-v1'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 
-function NetWorthCard() {
+function NetWorthChartCard() {
   const [open, setOpen] = useState(false)
+  const { accountStore } = useStore()
+  const netWorthData = accountStore.activeAccount.activeProfile?.netWorthOverTime
+  const chartData = netWorthData?.map((item) => [item.time, item.value])
+  console.log('nw data', netWorthData)
   const options: Highcharts.Options = {
     series: [
       {
         type: 'area',
+        showInLegend: false,
         lineColor: 'hsl(var(--muted-foreground))',
         fillOpacity: 0.5,
         fillColor: {
@@ -33,7 +38,12 @@ function NetWorthCard() {
         marker: {
           fillColor: 'hsl(var(--muted-foreground))'
         },
-        data: [1, 2, 3, 4]
+        tooltip: {
+          pointFormat: '{point.y}',
+          valueDecimals: 2,
+          valueSuffix: 'c'
+        },
+        data: chartData
       }
     ],
     credits: {
@@ -66,12 +76,17 @@ function NetWorthCard() {
       grid: {
         enabled: true
       },
+      type: 'datetime',
       labels: {
         style: {
           font: '12px Times New Roman',
           color: 'hsl(var(--muted-foreground))'
+        },
+        formatter: function () {
+          return Highcharts.dateFormat('%a %d %b %H:%M:%S', this.value as number)
         }
       },
+      tickAmount: 5,
       title: {
         style: {
           font: '14px Times New Roman',
@@ -106,8 +121,7 @@ function NetWorthCard() {
       }
     }
   }
-  // const [options, setOptions] = useState<Highcharts.Options>()
-  const { accountStore } = useStore()
+
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null)
 
   return (
@@ -135,4 +149,4 @@ function NetWorthCard() {
   )
 }
 
-export default observer(NetWorthCard)
+export default observer(NetWorthChartCard)

@@ -41,6 +41,7 @@ import { PoeItem } from 'sage-common'
 import { StashTabSnapshot } from './stashtab-snapshot'
 import { diffSnapshots, filterItems, filterSnapshotItems } from '../../utils/snapshot.utils'
 import { IPricedItem } from '../../interfaces/priced-item.interface'
+import dayjs from 'dayjs'
 
 export const profileLeagueRef = rootRef<League>('nw/profileLeagueRef')
 export const profilePriceLeagueRef = rootRef<League>('nw/profilePriceLeagueRef')
@@ -131,6 +132,54 @@ export class Profile extends Model({
       showUnpricedItems,
       table.filteredStashTabs
     )
+  }
+
+  @computed
+  get netWorthOverTime() {
+    return this.snapshots.reduce(
+      (netWorthSeries, snapshot) => {
+        const snapshotTotal = snapshot.stashTabs.reduce((total, tab) => {
+          let stashTabTotal = 0
+          tab.pricedItems.data.forEach((item) => {
+            stashTabTotal += item.total
+          })
+          return total + stashTabTotal
+        }, 0)
+        return [...netWorthSeries, { time: snapshot.created, value: snapshotTotal }]
+      },
+      [] as { time: number; value: number }[]
+    )
+  }
+
+  netWorthChange({ lastHours, latest }: { lastHours?: number; latest?: boolean }) {
+    let snapshots = this.snapshots
+    if (lastHours) {
+      const beginningTime = dayjs().subtract(lastHours, 'hour').utc().valueOf()
+      snapshots = this.snapshots.filter((snapshot) => snapshot.created >= beginningTime)
+    }
+
+    if (snapshots.length === 0) {
+      return 0
+    }
+    const latestValue = snapshots.slice(-1)[0].stashTabs.reduce((total, tab) => {
+      let stashTabTotal = 0
+      tab.pricedItems.data.forEach((item) => {
+        stashTabTotal += item.total
+      })
+      return total + stashTabTotal
+    }, 0)
+    if (snapshots.length === 1) {
+      return latestValue
+    }
+    const initialSnapshot = latest ? snapshots[-2] : snapshots[0]
+    const initialValue = initialSnapshot.stashTabs.reduce((total, tab) => {
+      let stashTabTotal = 0
+      tab.pricedItems.data.forEach((item) => {
+        stashTabTotal += item.total
+      })
+      return total + stashTabTotal
+    }, 0)
+    return latestValue - initialValue
   }
 
   @modelAction
