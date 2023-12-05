@@ -22,7 +22,9 @@
     "addProfile": "Add Profile",
     "settings": "Settings",
     "snapshotSettings": "Snapshot settings",
-    "priceSettings": "Pricing settings"
+    "priceSettings": "Pricing settings",
+    "tabBreakdownHistoryCard": "Tab breakdown history",
+    "netWorthHistoryCard": "Net worth history"
   },
   "columnTitle": {
     "icon": "Icon",
@@ -57,7 +59,10 @@
     "autoSnapshotInterval": "Auto Snapshot Interval (Minutes)",
     "lowConfidencePricing": "Low confidence pricing",
     "priceThreshold": "Price threshold (Chaos)",
-    "totalPriceThreshold": "Total price threshold (Chaos)"
+    "totalPriceThreshold": "Total price threshold (Chaos)",
+    "income": "Income",
+    "netWorth": "Net worth",
+    "snapshotCount": "Snapshot count"
   },
   "body": {
     "pageOf": "Page {{current}} of {{of}}",

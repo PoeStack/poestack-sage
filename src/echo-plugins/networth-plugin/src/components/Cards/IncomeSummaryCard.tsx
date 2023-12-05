@@ -4,8 +4,10 @@ import { useStore } from '../../hooks/useStore'
 import { TrendingUp, XCircle } from 'lucide-react'
 import { convertToCurrency } from '../../utils/currency.utils'
 import dayjs from 'dayjs'
+import { useTranslation } from 'react-i18next'
 
 function IncomeSummaryCard() {
+  const { t } = useTranslation()
   const { accountStore, priceStore, settingStore } = useStore()
   const incomeStartDate =
     dayjs(accountStore.activeAccount.activeProfile?.incomeResetAt).utc() ??
@@ -16,6 +18,7 @@ function IncomeSummaryCard() {
     divinePrice: priceStore.divinePrice
   }).toFixed(2)
 
+  // TODO i18n for message
   const incomeTimeFrameMessage = incomeStartDate.fromNow()
 
   const handleResetIncome = () => {
@@ -39,7 +42,7 @@ function IncomeSummaryCard() {
       </Card.Content>
       <Card.Footer className="border-t p-3">
         <div className="text-sm flex flex-row grow items-center justify-between">
-          <span>Income</span>
+          <span>{t('label.income')}</span>
           <span>{`Since ${incomeTimeFrameMessage}`}</span>
         </div>
       </Card.Footer>

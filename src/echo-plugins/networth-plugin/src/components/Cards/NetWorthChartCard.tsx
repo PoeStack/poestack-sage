@@ -9,8 +9,10 @@ import { Collapsible, Card } from 'echo-common/components-v1'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import { convertToCurrency } from '../../utils/currency.utils'
+import { useTranslation } from 'react-i18next'
 
 function NetWorthChartCard() {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const { accountStore, priceStore, settingStore } = useStore()
   const netWorthData = accountStore.activeAccount.activeProfile?.netWorthOverTime
@@ -135,7 +137,7 @@ function NetWorthChartCard() {
     <Collapsible open={open} onOpenChange={setOpen}>
       <Card className="grow">
         <Card.Header className="flex flex-row justify-between items-center p-3">
-          <Card.Title>Net Worth History Chart</Card.Title>
+          <Card.Title>{t('title.netWorthHistoryCard')}</Card.Title>
           <Collapsible.Trigger className="!mt-0" asChild>
             {open ? (
               <ChevronDownIcon className="h-4 w-4" />

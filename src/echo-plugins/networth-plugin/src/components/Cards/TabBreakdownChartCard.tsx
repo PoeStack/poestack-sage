@@ -9,8 +9,10 @@ import { Collapsible, Card } from 'echo-common/components-v1'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import { convertToCurrency } from '../../utils/currency.utils'
+import { useTranslation } from 'react-i18next'
 
 function TabBreakdownChartCard() {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const { accountStore, priceStore, settingStore } = useStore()
   const breakdownData = accountStore.activeAccount.activeProfile?.tabBreakdownOverTime
@@ -128,7 +130,7 @@ function TabBreakdownChartCard() {
     <Collapsible open={open} onOpenChange={setOpen}>
       <Card>
         <Card.Header className="flex flex-row justify-between items-center p-3">
-          <Card.Title>Tab breakdown history card</Card.Title>
+          <Card.Title>{t('title.tabBreakdownHistoryCard')}</Card.Title>
           <Collapsible.Trigger className="!mt-0" asChild>
             {open ? (
               <ChevronDownIcon className="h-4 w-4" />

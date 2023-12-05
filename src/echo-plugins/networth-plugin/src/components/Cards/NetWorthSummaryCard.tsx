@@ -10,8 +10,10 @@ import { useStore } from '../../hooks/useStore'
 import { cn } from 'echo-common'
 import { CircleDollarSign, RefreshCcw } from 'lucide-react'
 import { convertToCurrency } from '../../utils/currency.utils'
+import { useTranslation } from 'react-i18next'
 
 function NetWorthSummaryCard() {
+  const { t } = useTranslation()
   const { accountStore, priceStore, settingStore } = useStore()
   const netWorthData = accountStore.activeAccount.activeProfile?.netWorthOverTime ?? []
   const latestNetWorth = accountStore.activeAccount.activeProfile?.netWorthChange()
@@ -126,7 +128,7 @@ function NetWorthSummaryCard() {
       </Card.Content>
       <Card.Footer className="border-t p-3">
         <div className="text-sm flex flex-row grow items-center justify-between">
-          <span>Net worth</span>
+          <span>{t('label.netWorth')}</span>
           <span className={cn((latestNetWorth ?? 0) < 0 && 'text-destructive')}>
             {`${latestNetWorth} ${settingStore.activeCurrency.short}`}
           </span>

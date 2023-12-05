@@ -3,8 +3,10 @@ import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import { History } from 'lucide-react'
 import dayjs from 'dayjs'
+import { useTranslation } from 'react-i18next'
 
 function SnapshotSummaryCard() {
+  const { t } = useTranslation()
   const { accountStore } = useStore()
   const snapshotCount = accountStore.activeAccount.activeProfile?.snapshots.length ?? 0
   const lastSnapshot =
@@ -12,6 +14,7 @@ function SnapshotSummaryCard() {
       ? accountStore.activeAccount.activeProfile?.snapshots[snapshotCount - 1]
       : undefined
 
+  // TODO i18n the message
   const snapshotMessage = lastSnapshot ? dayjs(lastSnapshot.created).fromNow() : ''
 
   return (
@@ -28,7 +31,7 @@ function SnapshotSummaryCard() {
       </Card.Content>
       <Card.Footer className="border-t p-3">
         <div className="text-sm flex flex-row grow items-center justify-between">
-          <span>Snapshot count</span>
+          <span>{t('label.snapshotCount')}</span>
           {snapshotMessage && <span>{snapshotMessage}</span>}
         </div>
       </Card.Footer>
