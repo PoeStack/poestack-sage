@@ -6,6 +6,8 @@ import { type i18n } from 'i18next'
 import { RootStore } from './store/rootStore'
 import { StoreContext } from './context/store'
 import { applySnapshot, getSnapshot, registerRootStore, onSnapshot } from 'mobx-keystone'
+import Notifier from './components/Notifier/Notifier'
+import { Toaster } from 'echo-common/components-v1'
 
 export function createRootStore() {
   const rootStore = new RootStore({})
@@ -39,6 +41,8 @@ const App = () => {
       <I18nextProvider i18n={i18nInstance as i18n}>
         <StoreContext.Provider value={store}>
           <NetWorth />
+          <Notifier />
+          <Toaster />
         </StoreContext.Provider>
       </I18nextProvider>
     </Suspense>

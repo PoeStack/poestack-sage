@@ -100,6 +100,7 @@ export class EchoPluginService {
         `https://raw.githubusercontent.com/PoeStack/poestack-sage/published-plugins/dist_plugins/${
           plugin.manifest!!.name
         }.zip`,
+        // @ts-ignore
         { responseType: 'arraybuffer' }
       )
       .subscribe(async (resp) => {
