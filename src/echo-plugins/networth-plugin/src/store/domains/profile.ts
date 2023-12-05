@@ -133,6 +133,66 @@ export class Profile extends Model({
     )
   }
 
+  netWorthOverTime(sinceUtc?: number) {
+    let snapshots = this.snapshots.slice()
+    if (sinceUtc) {
+      snapshots = snapshots.filter((snapshot) => snapshot.created >= sinceUtc)
+    }
+    return snapshots.reduce(
+      (netWorthSeries, snapshot) => {
+        const snapshotTotal = snapshot.stashTabs.reduce((total, tab) => {
+          return total + tab.totalValue
+        }, 0)
+        return [
+          ...netWorthSeries,
+          { time: snapshot.created, value: parseFloat(snapshotTotal.toFixed(2)) }
+        ]
+      },
+      [] as { time: number; value: number }[]
+    )
+  }
+
+  @computed
+  get tabBreakdownOverTime() {
+    return this.snapshots.reduce(
+      (breakdownSeries, snapshot) => {
+        const snapshotTabs = snapshot.stashTabs.map((tab) => {
+          return {
+            time: snapshot.created,
+            value: parseFloat(tab.totalValue.toFixed(2)),
+            stashTabId: tab.stashTabId
+          }
+        })
+        return [...breakdownSeries, ...snapshotTabs]
+      },
+      [] as { time: number; value: number; stashTabId: string }[]
+    )
+  }
+
+  netWorthChange(sinceUtc?: number) {
+    let snapshots = this.snapshots
+    if (sinceUtc) {
+      snapshots = this.snapshots.filter((snapshot) => snapshot.created >= sinceUtc)
+    }
+    if (snapshots.length === 0) {
+      return 0
+    }
+
+    const latestValue = snapshots[snapshots.length - 1].stashTabs.reduce((total, tab) => {
+      return total + tab.totalValue
+    }, 0)
+
+    if (snapshots.length === 1) {
+      return parseFloat(latestValue.toFixed(2))
+    }
+
+    const initialSnapshot = sinceUtc ? snapshots[snapshots.length - 2] : snapshots[0]
+    const initialValue = initialSnapshot.stashTabs.reduce((total, tab) => {
+      return total + tab.totalValue
+    }, 0)
+    return parseFloat(latestValue.toFixed(2)) - parseFloat(initialValue.toFixed(2))
+  }
+
   @modelAction
   updateProfile(
     profile: Pick<

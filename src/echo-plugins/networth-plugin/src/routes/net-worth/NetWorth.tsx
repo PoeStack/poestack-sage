@@ -1,8 +1,13 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import ToolbarContainer from '../../components/Toolbar/ToolbarContainer'
+import NetWorthChartCard from '../../components/Cards/NetWorthChartCard'
 import ItemTableContainer from '../../components/ItemTable/ItemTableContainer'
+import NetWorthSummaryCard from '../../components/Cards/NetWorthSummaryCard'
+import IncomeSummaryCard from '../../components/Cards/IncomeSummaryCard'
+import SnapshotSummaryCard from '../../components/Cards/SnapshotSummaryCard'
+import TabBreakdownChartCard from '../../components/Cards/TabBreakdownChartCard'
 
 const NetWorth = () => {
   const { accountStore, uiStateStore } = useStore()
@@ -14,8 +19,17 @@ const NetWorth = () => {
   return (
     <div className="flex flex-col h-full w-full">
       <ToolbarContainer />
-      <main className="flex-row p-2">
-        <ItemTableContainer />
+      <main className="flex flex-col p-2 gap-4">
+        <div className="flex flex-row gap-4 flex-wrap">
+          <NetWorthSummaryCard />
+          <IncomeSummaryCard />
+          <SnapshotSummaryCard />
+        </div>
+        <NetWorthChartCard />
+        <TabBreakdownChartCard />
+        <div className="flex flex-row">
+          <ItemTableContainer />
+        </div>
         {/* <Test /> */}
       </main>
     </div>

@@ -7,37 +7,37 @@
     /* CSS: .bg-gradient { background: var(--gradient) } */
     --gradient: linear-gradient(to top left, #1fa2ff, #12d8fa, #a6ffcb);
 
-    --background: 218 65% 4.48%;
-    --foreground: 218 10% 97.8%;
+    --background: 218, 65%, 4.48%;
+    --foreground: 218, 10%, 97.8%;
 
-    --muted: 218 50% 16.8%;
-    --muted-foreground: 218 10% 55.6%;
+    --muted: 218, 50%, 16.8%;
+    --muted-foreground: 218, 10%, 55.6%;
 
-    --popover: 218 45% 7.280000000000001%;
-    --popover-foreground: 218 10% 97.8%;
+    --popover: 218, 45%, 7.280000000000001%;
+    --popover-foreground: 218, 10%, 97.8%;
 
-    --card: 218 45% 7.280000000000001%;
-    --card-foreground: 218 10% 97.8%;
+    --card: 218, 45%, 7.280000000000001%;
+    --card-foreground: 218, 10%, 97.8%;
 
-    --border: 218 50% 16.8%;
-    --input: 218 50% 16.8%;
+    --border: 218, 50%, 16.8%;
+    --input: 218, 50%, 16.8%;
 
-    --primary: 218 100% 56%;
-    --primary-foreground: 218 10% 5.6000000000000005%;
+    --primary: 218, 100%, 56%;
+    --primary-foreground: 218, 10%, 5.6000000000000005%;
 
-    --secondary: 218 50% 16.8%;
-    --secondary-foreground: 218 10% 97.8%;
+    --secondary: 218, 50%, 16.8%;
+    --secondary-foreground: 218, 10%, 97.8%;
 
-    --accent: 218 50% 16.8%;
-    --accent-foreground: 218 10% 97.8%;
+    --accent: 218, 50%, 16.8%;
+    --accent-foreground: 218, 10%, 97.8%;
 
-    --highlight: 218 50% 30%;
-    --highlight-foreground: 218 40% 70%;
+    --highlight: 218, 50%, 30%;
+    --highlight-foreground: 218, 40%, 70%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 218 10% 97.8%;
+    --destructive: 0, 62.8%, 30.6%;
+    --destructive-foreground: 218, 10%, 97.8%;
 
-    --ring: 218 100% 56%;
+    --ring: 218, 100%, 56%;
 
     --radius: 0.5rem;
   }

@@ -37,6 +37,11 @@ export class SettingStore extends Model({
   }
 
   @modelAction
+  updatePricingCurrency(currency: Currency) {
+    this.currency = currency
+  }
+
+  @modelAction
   updateSettings(
     settings: Pick<
       SettingStore,
