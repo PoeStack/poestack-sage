@@ -56,7 +56,7 @@ const DeleteSnapshots = () => {
               <Label>{`Snapshot ${dayjs(snapshot.created)
                 .utc()
                 .local()
-                .format('YYYY-MM-DDTHH:mm:ss')}, Value: ${snapshot.totalValue.toFixed(2)}`}</Label>
+                .format('YYYY-MM-DD HH:mm')}, Value: ${snapshot.totalValue.toFixed(2)} c`}</Label>
             </div>
           ))}
         </div>
