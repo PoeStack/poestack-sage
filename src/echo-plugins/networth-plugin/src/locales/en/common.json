@@ -15,7 +15,9 @@
     "yes": "Yes",
     "no": "No",
     "saveProfile": "Save Profile",
-    "createProfile": "Create Profile"
+    "createProfile": "Create Profile",
+    "selectAll": "Select all",
+    "delete": "Delete"
   },
   "title": {
     "editProfile": "Edit Profile: {{name}}",
@@ -24,7 +26,8 @@
     "snapshotSettings": "Snapshot settings",
     "priceSettings": "Pricing settings",
     "tabBreakdownHistoryCard": "Tab breakdown history",
-    "netWorthHistoryCard": "Net worth history"
+    "netWorthHistoryCard": "Net worth history",
+    "deleteSnapshots": "Delete snapshots"
   },
   "columnTitle": {
     "icon": "Icon",
