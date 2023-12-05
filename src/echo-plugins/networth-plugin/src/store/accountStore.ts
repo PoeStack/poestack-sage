@@ -1,15 +1,5 @@
 import { computed } from 'mobx'
-import {
-  detach,
-  getParent,
-  getRoot,
-  model,
-  Model,
-  modelAction,
-  rootRef,
-  tProp,
-  types
-} from 'mobx-keystone'
+import { detach, getRoot, model, Model, modelAction, rootRef, tProp, types } from 'mobx-keystone'
 import { Account } from './domains/account'
 import {
   catchError,
@@ -62,13 +52,6 @@ export class AccountStore extends Model({
   setAccounts(accounts: Account[]) {
     this.accounts = accounts
   }
-  /**
-   * Test
-   */
-  @modelAction
-  removeAccount(idx: number) {
-    this.accounts = this.accounts.splice(idx, 1)
-  }
 
   @modelAction
   addOrUpdateAccount(name: string) {
@@ -88,9 +71,8 @@ export class AccountStore extends Model({
 
   initSession() {
     const { uiStateStore, leagueStore } = getRoot<RootStore>(this)
-    if (uiStateStore.isInitiating || uiStateStore.initiated) {
-      return
-    }
+    if (uiStateStore.isInitiating || uiStateStore.initiated) return
+
     uiStateStore.setIsInitiating(true)
     uiStateStore.setStatusMessage('initializingSession')
 
@@ -208,6 +190,5 @@ export class AccountStore extends Model({
     notificationStore.createNotification('error.initSession', true, e)
     uiStateStore.setIsInitiating(false)
     uiStateStore.setInitiated(false)
-    console.error(e) // TODO: Remove
   }
 }

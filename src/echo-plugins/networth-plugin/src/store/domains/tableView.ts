@@ -1,8 +1,6 @@
 import { computed } from 'mobx'
 import {
-  clone,
   detach,
-  frozen,
   idProp,
   model,
   Model,
@@ -38,7 +36,6 @@ export class TableView
     pageIndex: tProp(0).withSetter(),
     showPricedItems: tProp(true).withSetter(),
     showUnpricedItems: tProp(false).withSetter(),
-    itemTablePageIndex: tProp(0),
     itemTableSelection: prop<ItemTableSelectionType>('latest').withSetter(),
     filteredStashTabsRef: tProp(types.maybe(types.array(types.ref(tableStashTabRef)))).withSetter()
   })
@@ -51,7 +48,7 @@ export class TableView
 
   @modelAction
   changeItemTablePage(index: number) {
-    this.itemTablePageIndex = index
+    this.pageIndex = index
   }
 
   @modelAction
