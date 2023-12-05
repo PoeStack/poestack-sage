@@ -15,7 +15,7 @@ function NetWorthSummaryCard() {
   const { t } = useTranslation()
   const { accountStore, priceStore, settingStore } = useStore()
   const netWorthData = accountStore.activeAccount.activeProfile?.netWorthOverTime() ?? []
-  const latestNetWorth = accountStore.activeAccount.activeProfile?.netWorthChange()
+  const latestNetWorth = accountStore.activeAccount.activeProfile?.netWorthChange() ?? 0
 
   const chartData = netWorthData.map((item) => [
     item.time,
@@ -118,7 +118,7 @@ function NetWorthSummaryCard() {
       <Card.Footer className="border-t p-3">
         <div className="text-sm flex flex-row grow items-center justify-between">
           <span>{t('label.netWorth')}</span>
-          <span className={cn((latestNetWorth ?? 0) < 0 && 'text-destructive')}>
+          <span className={cn((latestNetWorth ?? 0) > 0 && 'text-destructive-foreground')}>
             {`${latestNetWorth} ${settingStore.activeCurrency.short}`}
           </span>
         </div>
