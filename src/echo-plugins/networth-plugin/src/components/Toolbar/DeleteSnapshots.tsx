@@ -35,7 +35,7 @@ const DeleteSnapshots = () => {
       </Sheet.Trigger>
       <Sheet.Content className="space-y-8 mt-7 overflow-y-scroll w-3/5 sm:max-w-full ">
         <Sheet.Header>
-          <Sheet.Title>{t('title.settings')}</Sheet.Title>
+          <Sheet.Title>{t('title.deleteSnapshots')}</Sheet.Title>
         </Sheet.Header>
         <div className="flex flex-col gap-3">
           {snapshots.map((snapshot) => (
@@ -68,7 +68,7 @@ const DeleteSnapshots = () => {
             }}
             variant="outline"
           >
-            Cancel
+            {t('action.cancel')}
           </Button>
           <Button
             disabled={selectedSnapshotIds.length === snapshots.length}
@@ -77,7 +77,7 @@ const DeleteSnapshots = () => {
             }}
             variant="outline"
           >
-            Select All
+            {t('action.selectAll')}
           </Button>
           <Button
             disabled={selectedSnapshotIds.length === 0}
@@ -88,7 +88,7 @@ const DeleteSnapshots = () => {
             }}
             variant="destructive"
           >
-            {`Delete ${selectedSnapshotIds.length} snapshot(s)`}
+            {t('action.deleteSnapshots', { count: selectedSnapshotIds.length })}
           </Button>
         </Sheet.Footer>
       </Sheet.Content>
