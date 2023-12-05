@@ -33,8 +33,8 @@ const DeleteSnapshots = () => {
           <Trash2 className="h-4 w-4" />
         </Button>
       </Sheet.Trigger>
-      <Sheet.Content className="space-y-8 mt-7 overflow-y-scroll w-3/5 sm:max-w-full ">
-        <Sheet.Header>
+      <Sheet.Content className="mt-7 overflow-y-scroll w-3/5 sm:max-w-full">
+        <Sheet.Header className="pb-4">
           <Sheet.Title>{t('title.deleteSnapshots')}</Sheet.Title>
         </Sheet.Header>
         <div className="flex flex-col gap-3">
@@ -60,7 +60,7 @@ const DeleteSnapshots = () => {
             </div>
           ))}
         </div>
-        <Sheet.Footer>
+        <Sheet.Footer className="pt-6">
           <Button
             onClick={() => {
               setSelectedSnapshotIds([])
@@ -88,7 +88,7 @@ const DeleteSnapshots = () => {
             }}
             variant="destructive"
           >
-            {t('action.deleteSnapshots', { count: selectedSnapshotIds.length })}
+            {t('action.delete')}
           </Button>
         </Sheet.Footer>
       </Sheet.Content>

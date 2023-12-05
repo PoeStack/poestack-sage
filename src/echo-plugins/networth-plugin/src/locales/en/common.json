@@ -17,7 +17,7 @@
     "saveProfile": "Save Profile",
     "createProfile": "Create Profile",
     "selectAll": "Select all",
-    "deleteSnapshots": "Delete {{count}} snapshot(s)"
+    "delete": "Delete"
   },
   "title": {
     "editProfile": "Edit Profile: {{name}}",
