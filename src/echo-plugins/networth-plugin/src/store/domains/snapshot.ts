@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 import { idProp, model, Model, modelAction, tProp, types } from 'mobx-keystone'
 import { StashTabSnapshot } from './stashtab-snapshot'
+import { computed } from 'mobx'
 
 @model('nw/snapshot')
 export class Snapshot extends Model({
@@ -11,5 +12,13 @@ export class Snapshot extends Model({
   @modelAction
   addStashTabSnapshot(stashTabSnapshot: StashTabSnapshot) {
     this.stashTabs.push(stashTabSnapshot)
+  }
+
+  @computed
+  get totalValue() {
+    return this.stashTabs.reduce((total, stashTab) => {
+      total += stashTab.totalValue
+      return total
+    }, 0)
   }
 }

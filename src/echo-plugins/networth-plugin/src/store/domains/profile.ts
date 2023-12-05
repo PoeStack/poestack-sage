@@ -140,12 +140,9 @@ export class Profile extends Model({
     }
     return snapshots.reduce(
       (netWorthSeries, snapshot) => {
-        const snapshotTotal = snapshot.stashTabs.reduce((total, tab) => {
-          return total + tab.totalValue
-        }, 0)
         return [
           ...netWorthSeries,
-          { time: snapshot.created, value: parseFloat(snapshotTotal.toFixed(2)) }
+          { time: snapshot.created, value: parseFloat(snapshot.totalValue.toFixed(2)) }
         ]
       },
       [] as { time: number; value: number }[]
@@ -178,18 +175,14 @@ export class Profile extends Model({
       return 0
     }
 
-    const latestValue = snapshots[snapshots.length - 1].stashTabs.reduce((total, tab) => {
-      return total + tab.totalValue
-    }, 0)
+    const latestValue = snapshots[snapshots.length - 1].totalValue
 
     if (snapshots.length === 1) {
       return parseFloat(latestValue.toFixed(2))
     }
 
     const initialSnapshot = sinceUtc ? snapshots[snapshots.length - 2] : snapshots[0]
-    const initialValue = initialSnapshot.stashTabs.reduce((total, tab) => {
-      return total + tab.totalValue
-    }, 0)
+    const initialValue = initialSnapshot.totalValue
     return parseFloat(latestValue.toFixed(2)) - parseFloat(initialValue.toFixed(2))
   }
 
@@ -558,6 +551,14 @@ export class Profile extends Model({
     this.snapshots = this.snapshots.slice(0, 1000)
 
     this.snapshotSuccess()
+  }
+
+  @modelAction
+  deleteSnapshots(snapshotIds: string[]) {
+    const nextSnapshots = this.snapshots
+      .slice()
+      .filter((snapshot) => !snapshotIds.includes(snapshot.uuid))
+    this.snapshots = nextSnapshots
   }
 
   diffSnapshotPriceResolver(removedItems: IPricedItem[]) {
