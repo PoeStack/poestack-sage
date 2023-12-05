@@ -44,7 +44,7 @@ const ItemTableContainer: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-4 border rounded">
       <ItemTable columns={columns} data={data} globalFilterFn={fuzzyFilter} />
     </div>
   )

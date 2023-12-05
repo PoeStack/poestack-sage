@@ -1,6 +1,7 @@
 import { frozen, idProp, model, Model, rootRef, tProp, types } from 'mobx-keystone'
 import { IPricedItem } from '../../interfaces/priced-item.interface'
 import { StashTab } from './stashtab'
+import { computed } from 'mobx'
 
 export const stashTabSnapshotStashTabRef = rootRef<StashTab>('nw/stashTabSnapshotStashTabRef')
 
@@ -13,4 +14,9 @@ export class StashTabSnapshot extends Model({
   pricedItems: tProp(types.frozen(types.unchecked<IPricedItem[]>()), () =>
     frozen<IPricedItem[]>([])
   )
-}) {}
+}) {
+  @computed
+  get totalValue() {
+    return this.pricedItems.data.reduce((total, item) => total + item.total, 0)
+  }
+}
