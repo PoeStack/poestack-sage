@@ -15,10 +15,11 @@ export function createRootStore() {
   registerRootStore(rootStore)
 
   initDrizzle().then(async () => {
-    const data = await getRootSnapshot()
-    if (data) {
-      applySnapshot(rootStore, data)
-    }
+    // TODO: Fix whitelist for keys
+    // const data = await getRootSnapshot()
+    // if (data) {
+    //   applySnapshot(rootStore, data)
+    // }
     onSnapshot(rootStore, (sn) => {
       saveRootSnapshot(sn)
     })

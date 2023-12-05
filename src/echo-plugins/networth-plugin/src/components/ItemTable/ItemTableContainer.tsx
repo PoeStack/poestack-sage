@@ -44,7 +44,7 @@ const ItemTableContainer: React.FC = () => {
   }
 
   return (
-    <div className="w-full px-8 py-4 border rounded">
+    <div className="w-full px-8 py-4 border rounded-md">
       <ItemTable columns={columns} data={data} globalFilterFn={fuzzyFilter} />
     </div>
   )
