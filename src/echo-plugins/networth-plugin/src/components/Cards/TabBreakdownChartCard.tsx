@@ -1,5 +1,3 @@
-'use client'
-
 import { useRef, useState } from 'react'
 import * as Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'

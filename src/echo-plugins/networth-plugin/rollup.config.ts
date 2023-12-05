@@ -13,7 +13,7 @@ const packageJson = JSON.parse(fs.readFileSync(path.resolve('package.json')).toS
 
 const config: RollupOptions = {
   input: 'src/entry.tsx',
-  external: ['fs', 'url'],
+  external: ['fs', 'url', 'path'],
   output: {
     format: 'cjs',
     // Create chunks for locales - We want to keep the hashes, that the module resolution beginning from echo-app does not match. Its way only the resolution for the actual plugin works

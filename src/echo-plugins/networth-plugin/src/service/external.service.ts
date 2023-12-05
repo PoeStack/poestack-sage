@@ -1,9 +1,9 @@
 import { map } from 'rxjs'
-import { context } from '../entry'
 import { filterNullish } from 'ts-ratchet'
 import { IStashTab, IStashTabNode } from '../interfaces/stash.interface'
 import { PoeItem } from 'sage-common'
 import { StashTab } from '../store/domains/stashtab'
+import { context } from '../context'
 
 export const valuateItems = (league: string, items: PoeItem[]) => {
   const { poeValuations } = context()

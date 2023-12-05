@@ -1,4 +1,4 @@
-import { observer } from 'mobx-react-lite'
+import { observer } from 'mobx-react'
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useToast } from 'echo-common/components-v1'
