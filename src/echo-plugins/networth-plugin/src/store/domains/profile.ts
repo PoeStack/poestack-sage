@@ -133,9 +133,12 @@ export class Profile extends Model({
     )
   }
 
-  @computed
-  get netWorthOverTime() {
-    return this.snapshots.reduce(
+  netWorthOverTime(sinceUtc?: number) {
+    let snapshots = this.snapshots.slice()
+    if (sinceUtc) {
+      snapshots = snapshots.filter((snapshot) => snapshot.created >= sinceUtc)
+    }
+    return snapshots.reduce(
       (netWorthSeries, snapshot) => {
         const snapshotTotal = snapshot.stashTabs.reduce((total, tab) => {
           return total + tab.totalValue

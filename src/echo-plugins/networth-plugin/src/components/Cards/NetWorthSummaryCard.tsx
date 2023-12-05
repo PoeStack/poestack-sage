@@ -16,7 +16,7 @@ import { baseChartConfig } from './baseChartConfig'
 function NetWorthSummaryCard() {
   const { t } = useTranslation()
   const { accountStore, priceStore, settingStore } = useStore()
-  const netWorthData = accountStore.activeAccount.activeProfile?.netWorthOverTime ?? []
+  const netWorthData = accountStore.activeAccount.activeProfile?.netWorthOverTime() ?? []
   const latestNetWorth = accountStore.activeAccount.activeProfile?.netWorthChange()
 
   const chartData = netWorthData.map((item) => [
