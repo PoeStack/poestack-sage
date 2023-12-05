@@ -7,6 +7,7 @@ import ItemTableContainer from '../../components/ItemTable/ItemTableContainer'
 import NetWorthSummaryCard from '../../components/Cards/NetWorthSummaryCard'
 import IncomeSummaryCard from '../../components/Cards/IncomeSummaryCard'
 import SnapshotSummaryCard from '../../components/Cards/SnapshotSummaryCard'
+import TabBreakdownChartCard from '../../components/Cards/TabBreakdownChartCard'
 
 const NetWorth = () => {
   const { accountStore, uiStateStore } = useStore()
@@ -24,9 +25,8 @@ const NetWorth = () => {
           <IncomeSummaryCard />
           <SnapshotSummaryCard />
         </div>
-        <div className="grow">
-          <NetWorthChartCard />
-        </div>
+        <NetWorthChartCard />
+        <TabBreakdownChartCard />
         <div className="flex flex-row">
           <ItemTableContainer />
         </div>

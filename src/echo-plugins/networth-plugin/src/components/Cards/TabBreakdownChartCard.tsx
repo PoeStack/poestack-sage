@@ -10,49 +10,39 @@ import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import { convertToCurrency } from '../../utils/currency.utils'
 
-function NetWorthChartCard() {
+function TabBreakdownChartCard() {
   const [open, setOpen] = useState(false)
   const { accountStore, priceStore, settingStore } = useStore()
-  const netWorthData = accountStore.activeAccount.activeProfile?.netWorthOverTime
-  const chartData = netWorthData?.map((item) => [
-    item.time,
-    convertToCurrency({
-      value: item.value,
-      toCurrency: settingStore.currency,
-      divinePrice: priceStore.divinePrice
-    })
-  ])
+  const breakdownData = accountStore.activeAccount.activeProfile?.tabBreakdownOverTime
+  const series =
+    accountStore.activeAccount.activeProfile?.activeStashTabs.reduce(
+      (seriesMap, tab) => {
+        seriesMap[tab.id] = {
+          type: 'line',
+          data: [],
+          name: tab.name
+        }
+        return seriesMap
+      },
+      {} as Record<string, { type: 'line'; data: any[]; name: string }>
+    ) ?? {}
+
+  breakdownData?.forEach((item) => {
+    const tabSeries = series[item.stashTabId]
+    if (tabSeries) {
+      tabSeries.data.push([
+        item.time,
+        convertToCurrency({
+          value: item.value,
+          toCurrency: settingStore.currency,
+          divinePrice: priceStore.divinePrice
+        })
+      ])
+    }
+  })
+
   const options: Highcharts.Options = {
-    series: [
-      {
-        type: 'area',
-        showInLegend: false,
-        lineColor: 'hsl(var(--muted-foreground))',
-        fillOpacity: 0.5,
-        fillColor: {
-          linearGradient: {
-            x1: 0,
-            y1: 0,
-            x2: 0,
-            y2: 1
-          },
-          stops: [
-            [0, 'hsla(var(--muted), 1)'],
-            [0.5, 'hsla(var(--muted), 0.5)'],
-            [1, 'hsla(var(--muted), 0.2)']
-          ]
-        },
-        marker: {
-          fillColor: 'hsl(var(--muted-foreground))'
-        },
-        tooltip: {
-          pointFormat: '{point.y}',
-          valueDecimals: 2,
-          valueSuffix: settingStore.activeCurrency.short
-        },
-        data: chartData
-      }
-    ],
+    series: Object.values(series),
     credits: {
       enabled: false
     },
@@ -125,7 +115,10 @@ function NetWorthChartCard() {
         fontSize: '14px',
         fontFamily: 'Times New Roman',
         color: 'hsl(var(--muted-foreground))'
-      }
+      },
+      pointFormat: '{series.name}: {point.y}',
+      valueDecimals: 2,
+      valueSuffix: settingStore.activeCurrency.short
     }
   }
 
@@ -133,9 +126,9 @@ function NetWorthChartCard() {
 
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
-      <Card className="grow">
+      <Card>
         <Card.Header className="flex flex-row justify-between items-center p-3">
-          <Card.Title>Net Worth History Chart</Card.Title>
+          <Card.Title>Tab breakdown history card</Card.Title>
           <Collapsible.Trigger className="!mt-0" asChild>
             {open ? (
               <ChevronDownIcon className="h-4 w-4" />
@@ -156,4 +149,4 @@ function NetWorthChartCard() {
   )
 }
 
-export default observer(NetWorthChartCard)
+export default observer(TabBreakdownChartCard)

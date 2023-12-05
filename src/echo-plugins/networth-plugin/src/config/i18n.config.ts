@@ -23,7 +23,7 @@ newInstance
           // All vite backends pointing to the base directory of echo-app. We have to read it manually via fs
           if (import.meta.hot) {
             const configPath = new URL('.', import.meta.url).pathname.replace('/@fs/', '')
-            const localesPath = path.resolve(configPath, '..', 'locales', lng, `${ns}.json`)
+            const localesPath = path.join('/', configPath, '..', 'locales', lng, `${ns}.json`)
             data = JSON.parse(fs.readFileSync(localesPath, 'utf-8'))
           }
           return data

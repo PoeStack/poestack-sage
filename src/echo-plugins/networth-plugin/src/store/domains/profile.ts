@@ -41,7 +41,6 @@ import { PoeItem } from 'sage-common'
 import { StashTabSnapshot } from './stashtab-snapshot'
 import { diffSnapshots, filterItems, filterSnapshotItems } from '../../utils/snapshot.utils'
 import { IPricedItem } from '../../interfaces/priced-item.interface'
-import dayjs from 'dayjs'
 
 export const profileLeagueRef = rootRef<League>('nw/profileLeagueRef')
 export const profilePriceLeagueRef = rootRef<League>('nw/profilePriceLeagueRef')
@@ -136,21 +135,35 @@ export class Profile extends Model({
 
   @computed
   get netWorthOverTime() {
-    return this.snapshots
-      .slice()
-      .sort((a, b) => b.created - a.created)
-      .reduce(
-        (netWorthSeries, snapshot) => {
-          const snapshotTotal = snapshot.stashTabs.reduce((total, tab) => {
-            return total + tab.totalValue
-          }, 0)
-          return [
-            ...netWorthSeries,
-            { time: snapshot.created, value: parseFloat(snapshotTotal.toFixed(2)) }
-          ]
-        },
-        [] as { time: number; value: number }[]
-      )
+    return this.snapshots.reduce(
+      (netWorthSeries, snapshot) => {
+        const snapshotTotal = snapshot.stashTabs.reduce((total, tab) => {
+          return total + tab.totalValue
+        }, 0)
+        return [
+          ...netWorthSeries,
+          { time: snapshot.created, value: parseFloat(snapshotTotal.toFixed(2)) }
+        ]
+      },
+      [] as { time: number; value: number }[]
+    )
+  }
+
+  @computed
+  get tabBreakdownOverTime() {
+    return this.snapshots.reduce(
+      (breakdownSeries, snapshot) => {
+        const snapshotTabs = snapshot.stashTabs.map((tab) => {
+          return {
+            time: snapshot.created,
+            value: parseFloat(tab.totalValue.toFixed(2)),
+            stashTabId: tab.stashTabId
+          }
+        })
+        return [...breakdownSeries, ...snapshotTabs]
+      },
+      [] as { time: number; value: number; stashTabId: string }[]
+    )
   }
 
   netWorthChange(sinceUtc?: number) {
