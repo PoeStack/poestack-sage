@@ -1,6 +1,6 @@
 import ProfileMenu from './ProfileMenu'
 import { Button } from 'echo-common/components-v1'
-import { RefreshCcw, Trash2, XCircle } from 'lucide-react'
+import { RefreshCcw, XCircle } from 'lucide-react'
 import { IStatusMessage } from '../../interfaces/status-message.interface'
 import { Loader2 } from 'lucide-react'
 import StatusMessageContainer from '../StatusMessage/StatusMessageContainer'
@@ -8,6 +8,7 @@ import { observer } from 'mobx-react'
 import { cn } from 'echo-common'
 import GlobalSettings from './GlobalSettings'
 import { useTranslation } from 'react-i18next'
+import DeleteSnapshots from './DeleteSnapshots'
 
 type ToolbarProps = {
   isSubmitting: boolean
@@ -62,9 +63,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
           >
             <XCircle className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <DeleteSnapshots />
         </div>
         {/* TODO Add overlay support */}
         {/* <div className="py-1 px-1 h-full flex justify-center items-center">
