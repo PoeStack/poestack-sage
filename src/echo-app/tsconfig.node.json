@@ -10,6 +10,7 @@
   "compilerOptions": {
     "composite": true,
     "moduleResolution": "bundler",
+    "noUnusedLocals": false,
     "types": ["electron-vite/node"]
   }
 }
