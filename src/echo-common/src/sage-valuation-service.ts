@@ -76,7 +76,7 @@ export class SageValuationService {
         listings: value.l,
         pValues: value.c,
         primaryValue: value.c[2],
-        groupSummary: value.s ? { key: value.s.k, icon: value.s.i } : undefined,
+        groupSummary: value.s ? { key: value.s.k, icon: `https://web.poecdn.com/gen/image/${value.s.i}` } : undefined,
         history: {
           primaryValueDaily: value.d,
           primaryValueHourly: value.h
