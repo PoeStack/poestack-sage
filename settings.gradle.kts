@@ -21,6 +21,10 @@ File("src/echo-plugin-examples").listFiles()?.forEach {
   include("src:echo-plugin-examples:${it.name}")
 }
 
+File("src/echo-plugins").listFiles()?.forEach {
+  include("src:echo-plugins:${it.name}")
+}
+
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version("0.4.0")
 }

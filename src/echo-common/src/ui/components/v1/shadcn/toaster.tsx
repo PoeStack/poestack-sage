@@ -1,7 +1,7 @@
 'use client'
 
 import { Toast } from './toast'
-import { useToast } from '../../../hooks/use-toast'
+import { useToast } from '../hooks/use-toast'
 
 export function Toaster() {
   const { toasts } = useToast()
@@ -20,7 +20,7 @@ export function Toaster() {
           </Toast>
         )
       })}
-      <Toast.Viewport />
+      <Toast.Viewport className="space-y-2" />
     </Toast.Provider>
   )
 }
