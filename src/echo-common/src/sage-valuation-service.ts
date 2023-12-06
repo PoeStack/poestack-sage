@@ -10,7 +10,7 @@ export class SageValuationService {
   constructor(
     private echoDir: EchoDirService,
     private itemGroupingService: ItemGroupingService
-  ) {}
+  ) { }
 
   public cacheValuationShards = new SmartCache<SageValuationShard>(this.echoDir, 'sage-valuations')
 
@@ -65,19 +65,79 @@ export class SageValuationService {
     )
   }
 
+  private mapInternalToExternal(i: SageValuationShardInternal): SageValuationShard {
+    const out: SageValuationShard = {
+      metadata: i.metadata,
+      valuations: {}
+    }
+
+    Object.entries(i.valuations).forEach(([key, value]) => {
+      out.valuations[key] = {
+        listings: value.l,
+        pValues: value.c,
+        primaryValue: value.c[2],
+        groupSummary: value.s ? { key: value.s.k, icon: value.s.i } : undefined,
+        history: {
+          primaryValueDaily: value.d,
+          primaryValueHourly: value.h
+        },
+      }
+    })
+
+    return out
+  }
+
   private loadInternal(key: string) {
-    return this.httpUtil.get<SageValuationShard>(
-      `https://pub-1ac9e2cd6dca4bda9dc260cb6a6f7c90.r2.dev/v4/${key}.json`
+    return this.httpUtil.get<SageValuationShardInternal>(
+      `https://pub-1ac9e2cd6dca4bda9dc260cb6a6f7c90.r2.dev/v6/${key}.json`
+    ).pipe(
+      map((e) => this.mapInternalToExternal(e))
     )
   }
 }
 
-export type SageValuation = {
+export type SageValuationSummaryInternal = {
+  k: string
+  i: string
+}
+
+export type SageValuationInternal = {
   l: number
-  pvs: number[]
+  c: number[]
+  h: number[]
+  d: number[]
+  s: SageValuationSummaryInternal | undefined
+}
+
+export type SageValuationShardInternal = {
+  metadata: SageValuationMetadata
+  valuations: { [hash: string]: SageValuationInternal }
+}
+
+export type SageValuationMetadata = {
+  divChaosValue: number
+  timestampMs: number
+}
+
+export type SageValuationHistory = {
+  primaryValueDaily: number[]
+  primaryValueHourly: number[]
+}
+
+export type SageValuationSummary = {
+  key: string
+  icon: string
+}
+
+export type SageValuation = {
+  listings: number
+  pValues: number[]
+  primaryValue: number
+  history: SageValuationHistory
+  groupSummary?: SageValuationSummary | undefined
 }
 
 export type SageValuationShard = {
-  timestampMs: number
+  metadata: SageValuationMetadata
   valuations: { [hash: string]: SageValuation }
 }

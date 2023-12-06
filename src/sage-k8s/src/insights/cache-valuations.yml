@@ -13,6 +13,9 @@ spec:
             image: registry.digitalocean.com/poestack/sage:latest
             command: ["node"]
             args: ["src/insights/dist/cache-valuations.js"]
+            env:
+              - name: UPDATE_HISTORY_HOURLY
+                value: "true"
             envFrom:
               - secretRef:
                   name: sage-secrets
