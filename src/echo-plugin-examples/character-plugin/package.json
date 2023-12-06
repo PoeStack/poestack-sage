@@ -18,7 +18,6 @@
     "lint": "eslint ./src --fix --resolve-plugins-relative-to ../../sage-ts-tooling"
   },
   "peerDependencies": {
-    "@heroicons/react": "^2.0.18",
     "@react-rxjs/core": "^0.10.7",
     "@react-rxjs/utils": "^0.9.7",
     "echo-common": "file:../../echo-common",
@@ -27,6 +26,7 @@
     "i18next-browser-languagedetector": "^7.2.0",
     "i18next-chained-backend": "^4.6.2",
     "i18next-resources-to-backend": "^1.2.0",
+    "lucide-react": "^0.292.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^13.5.0",
