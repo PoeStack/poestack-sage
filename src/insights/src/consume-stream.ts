@@ -59,7 +59,6 @@ resultsSubject.pipe(debounceTime(3500)).subscribe((e) => {
   })
 })
 
-
 const client = new Redis(process.env['REDIS_URL'])
 
 const groupsWritten = new Set<string>()
