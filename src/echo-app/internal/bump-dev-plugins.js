@@ -31,6 +31,6 @@ fs.writeFileSync(
   * All of these plugins have HMR enabled, regardless of whether you only have the plugins folder open
   */
 export const DEV_PLUGINS = [
-  ${allActivePlugins.map((plugin) => `import('${plugin}')`).join(',\n  ')}
+  ${allActivePlugins.map((plugin) => `// @ts-ignore\n\timport('${plugin}')`).join(',\n  ')}
 ]`
 )
