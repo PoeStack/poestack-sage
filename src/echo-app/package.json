@@ -77,6 +77,7 @@
     "mobx": "^6.11.0",
     "mobx-keystone": "^1.7.1",
     "mobx-react": "^9.1.0",
+    "character-plugin": "file:../echo-plugin-examples/character-plugin",
     "networth-plugin": "file:../echo-plugins/networth-plugin",
     "node-stream-zip": "^1.15.0",
     "object-hash": "^3.0.0",
