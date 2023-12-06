@@ -12,6 +12,7 @@
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "noUnusedLocals": false,
     "baseUrl": "src",
     "paths": {
       "@gql/*": ["gql/__generated__/*"],
