@@ -42,7 +42,7 @@ export function CharacterDetail({ characterName }: CharacterDetailProps) {
           {characterItems.map((item) => (
             <Table.Row key={item.id}>
               <Table.Cell>
-                <img src={item.icon} />
+                <img width={48} src={item.icon} />
               </Table.Cell>
               <Table.Cell>{item.name}</Table.Cell>
               <Table.Cell>{item.typeLine}</Table.Cell>
