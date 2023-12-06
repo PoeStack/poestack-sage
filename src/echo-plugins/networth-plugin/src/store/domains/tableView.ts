@@ -47,7 +47,7 @@ export class TableView
         version: prop(1)
       },
       {
-        whitelist: ['showPricedItems', 'showUnpricedItems']
+        whitelist: ['id', 'showPricedItems', 'showUnpricedItems']
       }
     )
   )
