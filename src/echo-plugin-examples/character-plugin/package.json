@@ -30,6 +30,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^13.5.0",
+    "sage-common": "file:../../sage-common",
     "rxjs": "^7.8.1"
   },
   "optionalDependencies": {

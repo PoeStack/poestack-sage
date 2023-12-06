@@ -1,44 +1,26 @@
 import { useState } from 'react'
-import { context } from './entry'
+import { context } from './context'
+import { CharacterSelect } from './components/CharacterSelect'
+import { CharacterDetail } from './components/CharacterDetail'
+import { Skeleton } from 'echo-common/components-v1'
 
 const App = () => {
+  const [characterName, setCharacterName] = useState<string | undefined>()
   const { value: characterList } = context().poeCharacters.useCharacterList()
 
-  const [characterName, setCharacterName] = useState<string | null>(null)
-  const { value: character, valueAge } = context().poeCharacters.useCharacter(characterName)
+  if (!characterList) {
+    return (
+      <div className="flex flex-col h-full w-full p-4 gap-4">
+        <Skeleton className="h-8" />
+      </div>
+    )
+  }
 
   return (
     <>
-      <div className="flex h-full w-full pt-2 pl-2 pr-2">
-        <div className="flex-shrink-0 flex flex-col gap-2 h-full overflow-y-scroll pr-4">
-          {characterList?.map((c) => (
-            <div
-              key={c.id}
-              onClick={() => {
-                setCharacterName(c.name || '')
-              }}
-              className="cursor-pointer bg-accent rounded-lg p-2 flex flex-col"
-            >
-              <div className="font-semibold text-accent-foreground">{c.name}</div>
-              <div>
-                lvl {c.level} {c.class}
-              </div>
-              <div>{c.league}</div>
-            </div>
-          ))}
-        </div>
-        <div className="flex-1 flex flex-col h-full">
-          <div className="font-semibold">{character?.name}</div>
-          <div className="font-semibold">{valueAge() ? valueAge() : ''}</div>
-          <div className="flex flex-col h-full overflow-y-scroll">
-            {character &&
-              [
-                ...(character.inventory || []),
-                ...(character.equipment || []),
-                ...(character.jewels || [])
-              ].map((item) => <div key={item.id}>{item.typeLine}</div>)}
-          </div>
-        </div>
+      <div className="flex flex-col h-full w-full p-4 gap-4">
+        <CharacterSelect characters={characterList} onCharacterSelect={setCharacterName} />
+        {characterName && <CharacterDetail characterName={characterName} />}
       </div>
     </>
   )
