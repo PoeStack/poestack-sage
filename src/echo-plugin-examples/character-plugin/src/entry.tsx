@@ -2,8 +2,7 @@ import { EchoPluginHook, EchoRoute } from 'echo-common'
 import { I18nextProvider } from 'react-i18next'
 import i18nInstance from './config/i18n.config'
 import { type i18n } from 'i18next'
-// noinspection JSUnusedGlobalSymbols
-import { UsersIcon } from '@heroicons/react/24/outline'
+import { Users } from 'lucide-react'
 import App from './App'
 import { Suspense } from 'react'
 import { context } from './context'
@@ -26,7 +25,7 @@ const pluginRoute: EchoRoute = {
   navItems: [
     {
       location: 'l-sidebar-m',
-      icon: UsersIcon,
+      icon: Users,
       displayname: 'Characters'
     }
   ]
