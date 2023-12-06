@@ -1,7 +1,8 @@
-import { HttpUtil, ItemGroupingService, PoePublicStashResponse } from 'sage-common'
-import { debounceTime, Subject } from 'rxjs'
+import { HttpUtil, ItemGroupingService, PoeItem, PoePublicStashResponse, SageItemGroup } from 'sage-common'
+import { debounceTime, from, Subject } from 'rxjs'
 import process from 'process'
 import Redis from 'ioredis'
+import { twoDecimals } from './utils'
 
 const divineTypes = new Set(['d', 'div', 'divine'])
 const chaosTypes = new Set(['c', 'chaos'])
@@ -13,13 +14,6 @@ const extractCurrencyType = (currencyTypeRaw: string): string | null => {
   if (divineTypes.has(formattedType)) return 'd'
 
   return null
-}
-
-function twoDecimals(n) {
-  const log10 = n ? Math.floor(Math.log10(n)) : 0,
-    div = log10 < 0 ? Math.pow(10, 1 - log10) : 100
-
-  return Math.round(n * div) / div
 }
 
 const extractCurrencyValue = (currencyValueRaw: string): string | null => {
@@ -65,7 +59,25 @@ resultsSubject.pipe(debounceTime(3500)).subscribe((e) => {
   })
 })
 
+
 const client = new Redis(process.env['REDIS_URL'])
+
+const groupsWritten = new Set<string>()
+function writeGroup(group: SageItemGroup, item: PoeItem) {
+  if (!groupsWritten.has(group.hash)) {
+    const summary = { k: group.key, i: item.icon?.replaceAll("https://web.poecdn.com/gen/image/", "") }
+
+    const shard = parseInt(group.hash, 16) % 5
+    from(client.hset(
+      `gss:${group.tag}:${shard}`,
+      `${group.hash}`,
+      JSON.stringify(summary)
+    )).subscribe()
+
+    groupsWritten.add(group.hash)
+  }
+}
+
 resultsSubject.subscribe((data) => {
   try {
     if (data?.stashes) {
@@ -98,9 +110,17 @@ resultsSubject.subscribe((data) => {
           if (note.length > 3 && (note.includes('~b/o ') || note.includes('~price '))) {
             const group = itemGroupingService.group(item)
             if (group) {
+              writeGroup(group, item)
+
               const noteSplit = note.trim().split(' ')
-              const valueString = extractCurrencyValue(noteSplit[1])
-              const currencyType = extractCurrencyType(noteSplit[2])
+              var valueString = extractCurrencyValue(noteSplit[1])
+              var currencyType = extractCurrencyType(noteSplit[2])
+
+              //Chaos Orb override
+              if (group.hash === "dac72c76c8099a3cc512ba2d9961db84036694cc") {
+                valueString = "1"
+                currencyType = "c"
+              }
 
               if (valueString?.length && currencyType?.length) {
                 if (!toWrite[group.hash]) {
