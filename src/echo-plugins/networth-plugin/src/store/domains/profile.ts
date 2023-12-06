@@ -7,6 +7,7 @@ import {
   model,
   Model,
   modelAction,
+  prop,
   rootRef,
   tProp,
   types
@@ -41,6 +42,7 @@ import { PoeItem } from 'sage-common'
 import { StashTabSnapshot } from './stashtab-snapshot'
 import { diffSnapshots, filterItems, filterSnapshotItems } from '../../utils/snapshot.utils'
 import { IPricedItem } from '../../interfaces/priced-item.interface'
+import { PersistWrapper } from '../../utils/persist.utils'
 
 export const profileLeagueRef = rootRef<League>('nw/profileLeagueRef')
 export const profilePriceLeagueRef = rootRef<League>('nw/profilePriceLeagueRef')
@@ -54,18 +56,21 @@ export const profileStashTabRef = rootRef<StashTab>('nw/profileStashTabRef', {
 })
 
 @model('nw/profile')
-export class Profile extends Model({
-  uuid: idProp,
-  name: tProp(types.string),
-  activeLeagueRef: tProp(types.ref(profileLeagueRef)).withSetter(),
-  activePriceLeagueRef: tProp(types.ref(profilePriceLeagueRef)).withSetter(),
-  activeCharacterRef: tProp(types.maybe(types.ref(profileCharacterRef))).withSetter(),
-  activeStashTabsRef: tProp(types.array(types.ref(profileStashTabRef)), []).withSetter(),
-  snapshots: tProp(types.array(types.model(Snapshot)), []),
-  includeEquipment: tProp(false),
-  includeInventory: tProp(false),
-  incomeResetAt: tProp(types.maybe(types.number)).withSetter()
-}) {
+export class Profile extends Model(
+  ...PersistWrapper({
+    uuid: idProp,
+    name: tProp(types.string),
+    activeLeagueRef: tProp(types.ref(profileLeagueRef)).withSetter(),
+    activePriceLeagueRef: tProp(types.ref(profilePriceLeagueRef)).withSetter(),
+    activeCharacterRef: tProp(types.maybe(types.ref(profileCharacterRef))).withSetter(),
+    activeStashTabsRef: tProp(types.array(types.ref(profileStashTabRef)), []).withSetter(),
+    snapshots: tProp(types.array(types.model(Snapshot)), []),
+    includeEquipment: tProp(false),
+    includeInventory: tProp(false),
+    incomeResetAt: tProp(types.maybe(types.number)).withSetter(),
+    version: prop(1)
+  })
+) {
   @computed
   get activeLeague() {
     return this.activeLeagueRef.maybeCurrent
@@ -82,7 +87,6 @@ export class Profile extends Model({
   get activeStashTabs() {
     return this.activeStashTabsRef.filter((st) => st.maybeCurrent).map((st) => st.maybeCurrent!)
   }
-  @computed
   get isProfileValid() {
     return (
       this.activeLeagueRef.isValid &&

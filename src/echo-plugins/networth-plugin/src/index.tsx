@@ -9,6 +9,7 @@ import { applySnapshot, getSnapshot, registerRootStore, onSnapshot } from 'mobx-
 import Notifier from './components/Notifier/Notifier'
 import { Toaster } from 'echo-common/components-v1'
 import { initDrizzle, getRootSnapshot, saveRootSnapshot } from './db'
+import _ from 'lodash'
 
 export function createRootStore() {
   const rootStore = new RootStore({})
@@ -16,13 +17,11 @@ export function createRootStore() {
 
   initDrizzle().then(async () => {
     // TODO: Fix whitelist for keys
-    // const data = await getRootSnapshot()
-    // if (data) {
-    //   applySnapshot(rootStore, data)
-    // }
-    onSnapshot(rootStore, (sn) => {
-      saveRootSnapshot(sn)
-    })
+    const data = await getRootSnapshot()
+    if (data) {
+      applySnapshot(rootStore, data)
+    }
+    onSnapshot(rootStore, _.debounce(saveRootSnapshot, 500))
   })
 
   // we can also connect the store to the redux dev tools

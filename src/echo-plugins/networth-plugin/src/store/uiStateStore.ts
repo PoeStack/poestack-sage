@@ -1,10 +1,16 @@
 import {
+  FromSnapshotDefaultType,
   getRefsResolvingTo,
   getRoot,
   idProp,
   model,
   Model,
   modelAction,
+  modelIdKey,
+  ModelOptions,
+  ModelProps,
+  modelTypeKey,
+  prop,
   rootRef,
   tProp,
   types
@@ -16,6 +22,7 @@ import { Profile } from './domains/profile'
 import { accountStoreAccountRef } from './accountStore'
 import { PoeCharacter, PoePartialStashTab } from 'sage-common'
 import { StatusPath } from '../types/resouces'
+import { PersistWrapper } from '../utils/persist.utils'
 
 export const statusMessageRef = rootRef<StatusMessage>('nw/statusMessageRef')
 
@@ -29,15 +36,22 @@ export class StatusMessage extends Model({
 }) {}
 
 @model('nw/uiStateStore')
-export class UiStateStore extends Model({
-  // validated: tProp(false).withSetter(),
-  // isValidating: tProp(false).withSetter(),
-  isSubmitting: tProp(false).withSetter(),
-  initiated: tProp(false).withSetter(),
-  isInitiating: tProp(false).withSetter(),
-  isSnapshotting: tProp(false).withSetter(),
-  statusMessage: tProp(types.maybe(types.model(StatusMessage)))
-}) {
+export class UiStateStore extends Model(
+  ...PersistWrapper(
+    {
+      isSubmitting: tProp(false).withSetter(),
+      initiated: tProp(false).withSetter(),
+      isInitiating: tProp(false).withSetter(),
+      isSnapshotting: tProp(false).withSetter(),
+      statusMessage: tProp(types.maybe(types.model(StatusMessage))),
+      version: prop(1)
+    },
+    {
+      // Do not write any data
+      whitelist: []
+    }
+  )
+) {
   cancelSnapshot = new Subject<boolean>()
 
   @modelAction

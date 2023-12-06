@@ -1,5 +1,15 @@
 import { computed } from 'mobx'
-import { detach, getRoot, model, Model, modelAction, rootRef, tProp, types } from 'mobx-keystone'
+import {
+  detach,
+  getRoot,
+  model,
+  Model,
+  modelAction,
+  prop,
+  rootRef,
+  tProp,
+  types
+} from 'mobx-keystone'
 import { Account } from './domains/account'
 import {
   catchError,
@@ -20,6 +30,7 @@ import { Profile } from './domains/profile'
 import { generateProfileName } from '../utils/profile.utils'
 import { getCharacterLeagues } from '../utils/league.utils'
 import { TableView } from './domains/tableView'
+import { PersistWrapper } from '../utils/persist.utils'
 
 export const accountStoreAccountRef = rootRef<Account>('nw/accountStoreAccountRef', {
   onResolvedValueChange(ref, newNode, oldNode) {
@@ -30,10 +41,13 @@ export const accountStoreAccountRef = rootRef<Account>('nw/accountStoreAccountRe
 })
 
 @model('nw/accountStore')
-export class AccountStore extends Model({
-  accounts: tProp(types.array(types.model(Account)), []),
-  activeAccountRef: tProp(types.maybe(types.ref(accountStoreAccountRef))).withSetter()
-}) {
+export class AccountStore extends Model(
+  ...PersistWrapper({
+    accounts: tProp(types.array(types.model(Account)), []),
+    activeAccountRef: tProp(types.maybe(types.ref(accountStoreAccountRef))).withSetter(),
+    version: prop(1)
+  })
+) {
   cancelledRetry: Subject<boolean> = new Subject()
 
   @computed
