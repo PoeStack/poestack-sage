@@ -1,0 +1,53 @@
+{
+  "success": {
+    "title": {
+      "initSession": "Initialize session succeeded",
+      "getPricesForLeagues": "Retrieved prices for all leagues",
+      "snapshot": "Snapshot created successfully",
+      "getStashTabs": "Retrieved stash tabs for {{param}}",
+      "getItems": "Retrieved items for {{param}}",
+      "priceStashItems": "Items were successfully priced"
+    },
+    "description": {
+      "initSession": "A new session was successfully initiated",
+      "getPricesForLeagues": "Successfully retrieved prices for all leagues",
+      "snapshot": "A new snapshot was successfully created and saved",
+      "getStashTabs": "Stash tabs for {{param}} were successfully retrieved",
+      "getItems": "Items for {{param}} were successfully retrieved",
+      "priceStashItems": "Items in the selected stash tabs were successfully priced"
+    }
+  },
+  "error": {
+    "unknown_error": "Unknown error occurred",
+    "title": {
+      "initSession": "Initialize session failed",
+      "getPricesForLeagues": "Failed retrieving prices for leagues",
+      "snapshot": "Failed creating snapshot",
+      "invalidProfile": "Invalid profile",
+      "getStashTabs": "Failed retrieving stash tabs for {{param}}",
+      "getItems": "Failed retrieving items for {{param}}",
+      "priceStashItems": "Failed pricing items"
+    },
+    "description": {
+      "initSession": "A new session could not be initiated",
+      "getPricesForLeagues": "Failed in retrieving prices for leagues",
+      "snapshot": "The snapshot could not be created",
+      "invalidProfile": "Your selected profile is invalid. Please update your profile!",
+      "getStashTabs": "Failed in retrieving stash tabs for {{param}}",
+      "getItems": "Failed in retrieving items for {{param}}",
+      "priceStashItems": "Items in the selected stash tabs could not be priced"
+    },
+    "custom_description": {
+      "noLeaguesFound": "No leagues were found",
+      "noCharactersFound": "No characters were found"
+    }
+  },
+  "warning": {
+    "title": {},
+    "description": {}
+  },
+  "info": {
+    "title": {},
+    "description": {}
+  }
+}

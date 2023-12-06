@@ -38,8 +38,14 @@ Module['_resolveLookupPaths'] = function (request, parent) {
 
 import { contextBridge } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import * as libsqlClient from '@libsql/client'
+import * as drizzleMigrator from 'drizzle-orm/libsql/migrator'
+
 // Custom APIs for renderer
-const api = {}
+const api = {
+  '@libsql/client': libsqlClient,
+  'drizzle-orm/libsql/migrator': drizzleMigrator
+}
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise

@@ -12,6 +12,7 @@ buildscript {
 val excludedAppBuildProjects = listOf(
   "src",
   "echo-plugin-examples",
+  "echo-plugins",
   "ggg-test-env",
   "insights",
   "insights-cache-updater",

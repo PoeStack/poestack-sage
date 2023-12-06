@@ -2,7 +2,7 @@ import { QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
 import { CpuChipIcon, HomeIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import { bind } from '@react-rxjs/core'
 import { ECHO_CONTEXT_SERVICE, EchoPluginHook, cn, EchoRoute } from 'echo-common'
-import { ActionTooltip, Button } from 'echo-common/components-v1'
+import { ActionTooltip, Button, ScrollArea } from 'echo-common/components-v1'
 import React, { Suspense, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ProfilePage } from './profile-page'
@@ -90,7 +90,7 @@ export const PluginPage: React.FC = () => {
         <div className="flex-1 border-gray-500 w-full border-b-2"></div>
         <RouterIconNavigator location="l-sidebar-b" />
       </div>
-      <div className="ml-12 pb-7 pt-7 h-full">
+      <div className="h-[calc(100vh-3.5rem)] relative overflow-auto ml-12 pb-7">
         <Suspense fallback={<DefaultPage />}>
           <PluginBody />
         </Suspense>

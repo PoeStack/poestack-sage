@@ -15,7 +15,7 @@ const App = () => {
     <Suspense>
       <I18nextProvider i18n={i18n}>
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-          <div className="h-screen w-screen bg-background text-foreground">
+          <div className="h-screen w-screen max-w-full bg-background text-foreground">
             <PluginPageHeader />
             <AuthGuard>
               <PluginPage />

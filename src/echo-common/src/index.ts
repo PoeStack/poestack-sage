@@ -10,7 +10,7 @@ import { EchoDirService } from './echo-dir-service'
 import { EchoContext } from './echo-context'
 import { EchoPluginService } from './echo-plugin-service'
 import { ECHO_CONTEXT_SERVICE, EchoContextService } from './echo-context-service'
-import { SageValuationService } from './sage-valuation-service'
+import { SageValuationService, SageValuation, SageValuationShard } from './sage-valuation-service'
 import { validResults } from './smart-cache-hooks'
 
 export { cn } from './ui/lib/utils'
@@ -38,5 +38,7 @@ export type {
   EchoPluginConfigs,
   EchoPluginConfig,
   EchoRoute,
-  EchoContext
+  EchoContext,
+  SageValuation,
+  SageValuationShard
 }
