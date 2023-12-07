@@ -74,7 +74,7 @@ function TabBreakdownChartCard() {
       <Card>
         <Collapsible.Trigger className="!mt-0 cursor-pointer" asChild>
           <Card.Header className="flex flex-row justify-between items-center p-3">
-            <Card.Title>{t('title.tabBreakdownHistoryCard')}</Card.Title>
+            <Card.Title className="text-base">{t('title.tabBreakdownHistoryCard')}</Card.Title>
             {open ? (
               <ChevronDownIcon className="h-4 w-4" />
             ) : (

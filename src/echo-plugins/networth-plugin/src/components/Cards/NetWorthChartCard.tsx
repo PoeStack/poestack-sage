@@ -104,7 +104,7 @@ function NetWorthChartCard() {
       <Card className="grow">
         <Collapsible.Trigger className="!mt-0 cursor-pointer" asChild>
           <Card.Header className="flex flex-row justify-between items-center p-3">
-            <Card.Title>{t('title.netWorthHistoryCard')}</Card.Title>
+            <Card.Title className="text-base">{t('title.netWorthHistoryCard')}</Card.Title>
 
             {open ? (
               <ChevronDownIcon className="h-4 w-4" />
