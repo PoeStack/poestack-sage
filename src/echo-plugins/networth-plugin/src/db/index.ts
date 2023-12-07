@@ -3,11 +3,31 @@ import { eq } from 'drizzle-orm'
 import { RootStore } from '../store/rootStore'
 import { SnapshotOutOfModel } from 'mobx-keystone'
 import * as schema from './schema'
+import path from 'path'
+import * as os from 'os'
+import * as fs from 'fs'
 
+function getHomeDir() {
+  return path.resolve(os.homedir(), 'poestack-sage')
+}
+
+function ensureDirExists(...dirPathFragment: string[]) {
+  const resolved = path.resolve(getHomeDir(), ...dirPathFragment)
+  if (!fs.existsSync(resolved)) {
+    fs.mkdirSync(resolved, { recursive: true })
+  }
+  return resolved
+}
+
+let networthPluginPath = '../echo-plugins/networth-plugin'
+let migrationsFolder = '../echo-plugins/networth-plugin/src/db/migrations'
+if (!import.meta.env?.DEV) {
+  networthPluginPath = ensureDirExists('cache', 'plugins', 'networth-plugin')
+  migrationsFolder = ensureDirExists('plugins', 'networth-plugin', 'migrations')
+}
 // @ts-ignore
 const client = window.api['@libsql/client'].createClient({
-  // TODO: Change for production
-  url: 'file:../echo-plugins/networth-plugin/database.db'
+  url: `file:${path.join(networthPluginPath, 'database.db')}`
 })
 
 const db = drizzle(client, { schema })
@@ -15,8 +35,7 @@ const db = drizzle(client, { schema })
 export const initDrizzle = async () => {
   // @ts-ignore
   await window.api['drizzle-orm/libsql/migrator'].migrate(db, {
-    // TODO: Change for production
-    migrationsFolder: '../echo-plugins/networth-plugin/src/db/migrations'
+    migrationsFolder: migrationsFolder
   })
   return db.insert(schema.rootStore).values({ id: 1, root: null }).onConflictDoNothing().execute()
 }

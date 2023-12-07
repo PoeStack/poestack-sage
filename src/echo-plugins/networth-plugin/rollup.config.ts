@@ -7,7 +7,7 @@ import copy from 'rollup-plugin-copy'
 import dynamicImportVars from '@rollup/plugin-dynamic-import-vars'
 import json from '@rollup/plugin-json'
 import terser from '@rollup/plugin-terser'
-import zip from 'rollup-plugin-zip'
+import zipPlugin from './plugins/rollup-plugin-zip'
 
 const packageJson = JSON.parse(fs.readFileSync(path.resolve('package.json')).toString())
 
@@ -26,16 +26,17 @@ const config: RollupOptions = {
     typescript(),
     // This converts dynamic imports for locales from ../locales/${lng}/${ns}.json => ../locales/*/*.json => ../locales/en/common.json
     dynamicImportVars(),
-    zip({ file: `${packageJson.name}.zip` }),
     copy({
       targets: [
         {
-          src: `./dist/*.zip`,
-          dest: `../../../dist_plugins/`
+          src: 'src/db/migrations',
+          dest: `./dist/`
         }
       ],
-      hook: 'closeBundle'
-    })
+      hook: 'writeBundle'
+    }),
+    // This zip does not only write the bundle it includes the custom copies
+    zipPlugin({ srcDir: './dist', file: `../../../dist_plugins/${packageJson.name}.zip` })
   ]
 }
 // noinspection JSUnusedGlobalSymbols

@@ -8,6 +8,7 @@ export class EchoDirService {
   constructor() {
     this.ensureDirExists('plugins')
     this.ensureDirExists('cache')
+    this.ensureDirExists('cache', 'plugins')
   }
 
   public ensureDirExists(...dirPathFragment: string[]) {
