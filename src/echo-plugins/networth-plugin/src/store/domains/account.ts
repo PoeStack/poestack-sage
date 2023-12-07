@@ -84,8 +84,8 @@ export class Account extends Model(
 
   @modelAction
   addProfile(profile: Profile) {
-    console.log('add profile', profile)
     this.profiles.push(profile)
+    this.setActiveProfile(profile)
   }
 
   @modelAction
