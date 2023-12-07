@@ -1,4 +1,4 @@
-import { ECHO_CONTEXT_SERVICE, EchoPluginHook, EchoRoute } from 'echo-common'
+import { EchoPluginHook, EchoRoute } from 'echo-common'
 import { I18nextProvider } from 'react-i18next'
 import i18nInstance from './config/i18n.config'
 import { type i18n } from 'i18next'
@@ -6,10 +6,7 @@ import { type i18n } from 'i18next'
 import { DocumentTextIcon } from '@heroicons/react/24/outline'
 import App2 from './App2'
 import { Suspense } from 'react'
-
-export function context() {
-  return ECHO_CONTEXT_SERVICE.context('plugin')
-}
+import { context } from './context'
 
 const Root = () => {
   return (

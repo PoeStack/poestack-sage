@@ -1,8 +1,8 @@
 import { BehaviorSubject, concatMap, filter, from, map, mergeMap, tap, toArray } from 'rxjs'
-import { context } from './entry'
 import { bind } from '@react-rxjs/core'
 import { EchoPoeItem, validResults } from 'echo-common'
 import { useTranslation } from 'react-i18next'
+import { context } from './context'
 
 type SnapshotHistoryEntry = { totalValue: number; changeValue: number; items: EchoPoeItem[] }
 
