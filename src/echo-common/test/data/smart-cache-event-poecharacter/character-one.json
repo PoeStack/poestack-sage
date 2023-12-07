@@ -1,0 +1,3550 @@
+{
+  "type": "result",
+  "result": {
+    "id": "0e47d4a44434e7912ca25bba7b888cf7fb36646e70a6c3c77ae00d469e725d97",
+    "name": "characterone",
+    "realm": "pc",
+    "class": "Gladiator",
+    "league": "Standard",
+    "level": 99,
+    "experience": 3951493252,
+    "current": true,
+    "equipment": [
+      {
+        "verified": false,
+        "w": 2,
+        "h": 3,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQXJtb3Vycy9Cb2R5QXJtb3Vycy9Cb2R5U3RyRGV4MUMiLCJ3IjoyLCJoIjozLCJzY2FsZSI6MSwic2VhcmluZyI6dHJ1ZSwidGFuZ2xlZCI6dHJ1ZX1d/4df30bb97a/BodyStrDex1C.png",
+        "league": "Standard",
+        "id": "d07ae9d67fa7d0f05a8898114630110d9478e0aaf6b0c1a7bbb315068cc6a871",
+        "searing": true,
+        "tangled": true,
+        "sockets": [
+          { "group": 0, "attr": "S", "sColour": "R" },
+          { "group": 0, "attr": "D", "sColour": "G" },
+          { "group": 0, "attr": "D", "sColour": "G" },
+          { "group": 0, "attr": "S", "sColour": "R" },
+          { "group": 0, "attr": "D", "sColour": "G" },
+          { "group": 0, "attr": "D", "sColour": "G" }
+        ],
+        "name": "Pain Cloak",
+        "typeLine": "Full Dragonscale",
+        "baseType": "Full Dragonscale",
+        "identified": true,
+        "ilvl": 100,
+        "split": true,
+        "properties": [
+          { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 },
+          { "name": "Armour", "values": [["739", 1]], "displayMode": 0, "type": 16 },
+          { "name": "Evasion Rating", "values": [["587", 1]], "displayMode": 0, "type": 17 }
+        ],
+        "requirements": [
+          {
+            "name": "Level",
+            "values": [["80", 0]],
+            "displayMode": 0,
+            "type": 62,
+            "suffix": "(gem)"
+          },
+          { "name": "Str", "values": [["115", 0]], "displayMode": 1, "type": 63 },
+          { "name": "Dex", "values": [["126", 0]], "displayMode": 1, "type": 64, "suffix": "(gem)" }
+        ],
+        "implicitMods": [
+          "Pride has 27% increased Aura Effect",
+          "18% increased effect of Non-Curse Auras from your Skills"
+        ],
+        "explicitMods": [
+          "+32% chance to Suppress Spell Damage",
+          "32% increased Armour and Evasion",
+          "+127 to maximum Life",
+          "Regenerate 3.3 Life per second",
+          "+33% to Chaos Resistance",
+          "13% increased Stun and Block Recovery"
+        ],
+        "craftedMods": ["8% increased maximum Life", "8% increased maximum Mana"],
+        "frameType": 2,
+        "x": 0,
+        "y": 0,
+        "inventoryId": "BodyArmour",
+        "socketedItems": [
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9TdXBwb3J0L0xpZmVvbkhpdCIsInciOjEsImgiOjEsInNjYWxlIjoxfV0/7f577bed88/LifeonHit.png",
+            "support": true,
+            "league": "Standard",
+            "id": "bd84bb1047aed53a514bd9eba5a3ffb1d71a9101ca8b94db4be82e11da13a350",
+            "name": "",
+            "typeLine": "Life Gain on Hit Support",
+            "baseType": "Life Gain on Hit Support",
+            "identified": true,
+            "ilvl": 0,
+            "properties": [
+              { "name": "Attack, Support", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["20 (Max)", 0]], "displayMode": 0, "type": 5 },
+              {
+                "name": "Cost & Reservation Multiplier",
+                "values": [["130%", 0]],
+                "displayMode": 0
+              },
+              { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["70", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Str", "values": [["111", 0]], "displayMode": 1, "type": 63 }
+            ],
+            "secDescrText": "Supports attack skills.",
+            "explicitMods": ["54 Life gained per Enemy Hit with Supported Attacks"],
+            "descrText": "This is a Support Gem. It does not grant a bonus to your character, but to skills in sockets connected to it. Place into an item socket connected to a socket containing the Skill Gem you wish to augment. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 0,
+            "colour": "S"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9TdXBwb3J0L0dyZWF0ZXJNdWx0aXBsZVByb2plY3RpbGVzIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/c157c4f1e9/GreaterMultipleProjectiles.png",
+            "support": true,
+            "league": "Standard",
+            "id": "a0e49266c0fec850e84d29cd87e6e69d9a13e4034a7b2dec253f60e4742bceab",
+            "name": "",
+            "typeLine": "Greater Multiple Projectiles Support",
+            "baseType": "Greater Multiple Projectiles Support",
+            "identified": true,
+            "ilvl": 0,
+            "properties": [
+              { "name": "Support, Projectile", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["17", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Cost & Reservation Multiplier", "values": [["150%", 0]], "displayMode": 0 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["67", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Dex", "values": [["106", 0]], "displayMode": 1, "type": 64 }
+            ],
+            "additionalProperties": [
+              {
+                "name": "Experience",
+                "values": [["41170367/41170367", 0]],
+                "displayMode": 2,
+                "progress": 1,
+                "type": 20
+              }
+            ],
+            "nextLevelRequirements": [
+              { "name": "Level", "values": [["68", 0]], "displayMode": 0 },
+              { "name": "Dex", "values": [["108", 0]], "displayMode": 1 }
+            ],
+            "secDescrText": "Supports projectile skills.",
+            "explicitMods": [
+              "Supported Skills deal 27% less Projectile Damage",
+              "Supported Skills fire 4 additional Projectiles"
+            ],
+            "descrText": "This is a Support Gem. It does not grant a bonus to your character, but to skills in sockets connected to it. Place into an item socket connected to a socket containing the Skill Gem you wish to augment. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 1,
+            "colour": "D"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9Ub3JuYWRvU2hvdCIsInciOjEsImgiOjEsInNjYWxlIjoxfV0/7299d3edf8/TornadoShot.png",
+            "support": false,
+            "league": "Standard",
+            "id": "d85d4d841c7644b7818470fdd6c285f2f5fc7a49621bc004712a0e45aef7ede7",
+            "name": "",
+            "typeLine": "Divergent Tornado Shot",
+            "baseType": "Tornado Shot",
+            "identified": true,
+            "ilvl": 0,
+            "properties": [
+              { "name": "Attack, Projectile, Bow", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["13", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Cost", "values": [["10 Mana", 0]], "displayMode": 0 },
+              { "name": "Attack Damage", "values": [["112.6% of base", 0]], "displayMode": 0 },
+              {
+                "name": "Effectiveness of Added Damage",
+                "values": [["113%", 0]],
+                "displayMode": 0
+              },
+              { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 },
+              { "name": "", "values": [["Alternate Quality", 0]], "displayMode": 0 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["56", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Dex", "values": [["125", 0]], "displayMode": 1, "type": 64 }
+            ],
+            "additionalProperties": [
+              {
+                "name": "Experience",
+                "values": [["3655184/3655184", 0]],
+                "displayMode": 2,
+                "progress": 1,
+                "type": 20
+              }
+            ],
+            "nextLevelRequirements": [
+              { "name": "Level", "values": [["58", 0]], "displayMode": 0 },
+              { "name": "Dex", "values": [["130", 0]], "displayMode": 1 }
+            ],
+            "secDescrText": "Fires a piercing shot that travels until it reaches the targeted location. It will then fire projectiles out in all directions from that point, which will travel for a short time before disappearing.",
+            "explicitMods": ["Fires 3 secondary Projectiles", "10% increased Attack Speed"],
+            "descrText": "Place into an item socket of the right colour to gain this skill. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 2,
+            "colour": "D"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9TdXBwb3J0L0xpZmVUYXAiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/9cef38ae47/LifeTap.png",
+            "support": true,
+            "league": "Standard",
+            "id": "d1366fea09e9557e3dfba663f5f14af82c7d75fe0d398e82c9603e75ef49af6c",
+            "name": "",
+            "typeLine": "Lifetap Support",
+            "baseType": "Lifetap Support",
+            "identified": true,
+            "ilvl": 0,
+            "properties": [
+              { "name": "Support, Duration", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["8", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Cost & Reservation Multiplier", "values": [["300%", 0]], "displayMode": 0 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["33", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Str", "values": [["55", 0]], "displayMode": 1, "type": 63 }
+            ],
+            "additionalProperties": [
+              {
+                "name": "Experience",
+                "values": [["507839/507839", 0]],
+                "displayMode": 2,
+                "progress": 1,
+                "type": 20
+              }
+            ],
+            "nextLevelRequirements": [
+              { "name": "Level", "values": [["37", 0]], "displayMode": 0 },
+              { "name": "Str", "values": [["61", 0]], "displayMode": 1 }
+            ],
+            "secDescrText": "Supports any non-blessing skill. Minions cannot gain the Lifetap buff.",
+            "explicitMods": [
+              "Supported Skills Cost Life instead of Mana",
+              "Gain Lifetap after Spending a total of 64 Life on Upfront\nCosts and Effects of a Supported Skill",
+              "Supported Skills deal 13% more Damage while you have Lifetap",
+              "Lifetap lasts 4 seconds"
+            ],
+            "descrText": "This is a Support Gem. It does not grant a bonus to your character, but to skills in sockets connected to it. Place into an item socket connected to a socket containing the Skill Gem you wish to augment. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 3,
+            "colour": "S"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9TdXBwb3J0L1N1cHBvcnRQbHVzL0NoYWluUGx1cyIsInciOjEsImgiOjEsInNjYWxlIjoxfV0/b328b4615c/ChainPlus.png",
+            "support": true,
+            "league": "Standard",
+            "id": "a79d3a89f2311a757fcc0513e7eb33160854b06796d5f8696772bd1ce37aa2bf",
+            "name": "",
+            "typeLine": "Awakened Chain Support",
+            "baseType": "Awakened Chain Support",
+            "identified": true,
+            "ilvl": 0,
+            "corrupted": true,
+            "properties": [
+              { "name": "Support, Chaining, Projectile", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["5 (Max)", 0]], "displayMode": 0, "type": 5 },
+              {
+                "name": "Cost & Reservation Multiplier",
+                "values": [["150%", 0]],
+                "displayMode": 0
+              },
+              { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["80", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Dex", "values": [["126", 0]], "displayMode": 1, "type": 64 }
+            ],
+            "secDescrText": "Supports projectile skills, and any other skills that chain.",
+            "explicitMods": [
+              "Supported Skills Chain +3 times",
+              "Supported Skills deal 6% less Damage with Hits",
+              "Supported Skills have 10% increased Chaining range"
+            ],
+            "descrText": "This is a Support Gem. It does not grant a bonus to your character, but to skills in sockets connected to it. Place into an item socket connected to a socket containing the Skill Gem you wish to augment. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 4,
+            "colour": "D"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9TdXBwb3J0L0xlc3Nlck11bHRpcGxlUHJvamVjdGlsZXMiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/db32a787d3/LesserMultipleProjectiles.png",
+            "support": true,
+            "league": "Standard",
+            "id": "62503056159d1fbb163b427b96e7d39a260b89d881cc3f10df2a127f167f8ccc",
+            "name": "",
+            "typeLine": "Anomalous Lesser Multiple Projectiles Support",
+            "baseType": "Lesser Multiple Projectiles Support",
+            "identified": true,
+            "ilvl": 0,
+            "properties": [
+              { "name": "Support, Projectile", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["16", 0]], "displayMode": 0, "type": 5 },
+              {
+                "name": "Cost & Reservation Multiplier",
+                "values": [["130%", 0]],
+                "displayMode": 0
+              },
+              { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 },
+              { "name": "", "values": [["Alternate Quality", 0]], "displayMode": 0 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["58", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Dex", "values": [["93", 0]], "displayMode": 1, "type": 64 }
+            ],
+            "additionalProperties": [
+              {
+                "name": "Experience",
+                "values": [["13436884/13436884", 0]],
+                "displayMode": 2,
+                "progress": 1,
+                "type": 20
+              }
+            ],
+            "nextLevelRequirements": [
+              { "name": "Level", "values": [["61", 0]], "displayMode": 0 },
+              { "name": "Dex", "values": [["97", 0]], "displayMode": 1 }
+            ],
+            "secDescrText": "Supports projectile skills.",
+            "explicitMods": [
+              "Supported Skills deal 8% less Projectile Damage",
+              "Supported Skills have 20% reduced Mana Cost",
+              "Supported Skills have 20% reduced Life Cost",
+              "Supported Skills have 10% increased Projectile Speed",
+              "Supported Skills fire 2 additional Projectiles"
+            ],
+            "descrText": "This is a Support Gem. It does not grant a bonus to your character, but to skills in sockets connected to it. Place into an item socket connected to a socket containing the Skill Gem you wish to augment. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 5,
+            "colour": "D"
+          }
+        ]
+      },
+      {
+        "verified": false,
+        "w": 2,
+        "h": 2,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQXJtb3Vycy9Cb290cy9Ud29Ub25lZEJvb3RzMkIiLCJ3IjoyLCJoIjoyLCJzY2FsZSI6MSwic2VhcmluZyI6dHJ1ZSwidGFuZ2xlZCI6dHJ1ZX1d/f0bcc7ec51/TwoTonedBoots2B.png",
+        "league": "Standard",
+        "id": "a068da489547638e3b847f6d600c3a39a7ce271c38143738412128d56d5c996b",
+        "searing": true,
+        "tangled": true,
+        "sockets": [
+          { "group": 0, "attr": "S", "sColour": "R" },
+          { "group": 0, "attr": "S", "sColour": "R" },
+          { "group": 0, "attr": "S", "sColour": "R" },
+          { "group": 0, "attr": "S", "sColour": "R" }
+        ],
+        "name": "Carrion Spark",
+        "typeLine": "Two-Toned Boots",
+        "baseType": "Two-Toned Boots",
+        "identified": true,
+        "ilvl": 86,
+        "properties": [
+          { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 },
+          { "name": "Armour", "values": [["194", 1]], "displayMode": 0, "type": 16 },
+          { "name": "Evasion Rating", "values": [["202", 1]], "displayMode": 0, "type": 17 }
+        ],
+        "requirements": [
+          { "name": "Level", "values": [["70", 0]], "displayMode": 0, "type": 62 },
+          {
+            "name": "Str",
+            "values": [["155", 0]],
+            "displayMode": 1,
+            "type": 63,
+            "suffix": "(gem)"
+          },
+          { "name": "Dex", "values": [["68", 0]], "displayMode": 1, "type": 64, "suffix": "(gem)" },
+          { "name": "Int", "values": [["68", 0]], "displayMode": 1, "type": 65, "suffix": "(gem)" }
+        ],
+        "enchantMods": ["Regenerate 2% of Life per second if you were Hit Recently"],
+        "implicitMods": [
+          "19% increased Cooldown Recovery Rate of Travel Skills",
+          "6% increased Movement Speed"
+        ],
+        "explicitMods": [
+          "+22% chance to Suppress Spell Damage",
+          "+30 to Armour",
+          "+36 to Evasion Rating",
+          "+47% to Fire Resistance",
+          "+48% to Lightning Resistance",
+          "35% increased Movement Speed"
+        ],
+        "craftedMods": ["+70 to maximum Life"],
+        "frameType": 2,
+        "x": 0,
+        "y": 0,
+        "inventoryId": "Boots",
+        "socketedItems": [
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9IZXJhbGRPZkxpZ2h0IEdlbSIsInciOjEsImgiOjEsInNjYWxlIjoxfV0/8e500098c1/HeraldOfLight%20Gem.png",
+            "support": false,
+            "league": "Standard",
+            "id": "eea05531018e39df583e2d9c9bcf8d8b921e70aab5ab6ed8ce92a6452e658e73",
+            "name": "",
+            "typeLine": "Herald of Purity",
+            "baseType": "Herald of Purity",
+            "identified": true,
+            "ilvl": 0,
+            "properties": [
+              {
+                "name": "Spell, Herald, Minion, Duration, Physical",
+                "values": [],
+                "displayMode": 0
+              },
+              { "name": "Level", "values": [["20 (Max)", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Reservation", "values": [["25% Mana", 0]], "displayMode": 0 },
+              { "name": "Cooldown Time", "values": [["1.00 sec", 0]], "displayMode": 0 },
+              { "name": "Cast Time", "values": [["Instant", 0]], "displayMode": 0 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["70", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Str", "values": [["98", 0]], "displayMode": 1, "type": 63 },
+              { "name": "Int", "values": [["68", 0]], "displayMode": 1, "type": 65 }
+            ],
+            "secDescrText": "Grants a buff which lets you deal more physical damage. When you kill an enemy while you have this buff, this skill will summon a Sentinel of Purity, or refresh the duration and life of an existing one instead if you have the maximum number of them. The Sentinels of Purity have a single-target melee attack and an area melee attack.",
+            "explicitMods": [
+              "Base duration is 12.00 seconds",
+              "Maximum 4 Summoned Sentinels of Purity",
+              "Minions have 38% more Maximum Life",
+              "Summon a Sentinel of Purity when you Kill an Enemy",
+              "20% chance to Summon a Sentinel of Purity when you Hit a Rare or Unique Enemy",
+              "Buff grants 12% more Physical Damage",
+              "Minions deal 95% more Physical Damage"
+            ],
+            "descrText": "Place into an item socket of the right colour to gain this skill. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 0,
+            "colour": "S"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9XYXJiYW5uZXIiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/bad44cab15/Warbanner.png",
+            "support": false,
+            "league": "Standard",
+            "id": "859f6ed07f4744ffeafe07684ccda12b8ae8c2f8efac377512a72bf11f743ffe",
+            "name": "",
+            "typeLine": "War Banner",
+            "baseType": "War Banner",
+            "identified": true,
+            "ilvl": 0,
+            "properties": [
+              { "name": "AoE, Spell, Duration, Aura, Physical", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["20 (Max)", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Reservation", "values": [["10% Mana", 0]], "displayMode": 0 },
+              { "name": "Cooldown Time", "values": [["1.00 sec", 0]], "displayMode": 0 },
+              { "name": "Cast Time", "values": [["Instant", 0]], "displayMode": 0 },
+              { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["70", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Str", "values": [["155", 0]], "displayMode": 1, "type": 63 }
+            ],
+            "secDescrText": "Casting once reserves mana to carry a banner which increases the accuracy of nearby allies, and physical damage taken by nearby enemies. Gain stages by killing enemies while carrying the banner. Casting the skill again places the banner, ending the mana reservation. Once placed, it becomes more powerful for each stage gained. You cannot have multiple banners at the same time.",
+            "explicitMods": [
+              "10% increased effect of Aura",
+              "You and nearby allies gain 21% increased Accuracy Rating",
+              "Nearby Enemies take 11% increased Physical Damage",
+              "Gain 1 Stage when you Kill an Enemy while carrying the Banner",
+              "Gain Adrenaline for 0.05 seconds per Stage on Placing the Banner",
+              "Base Duration of 10.00 seconds after being Placed",
+              "+1 second to Base Placed Banner Duration per Stage",
+              "When placed, 8% increased Area of Effect per Stage",
+              "When placed, 1% increased Aura effect per Stage"
+            ],
+            "descrText": "Place into an item socket of the right colour to gain this skill. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 1,
+            "colour": "S"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9CbG9vZFNhbmRBcm1vdXJHZW0iLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/a66b8062e9/BloodSandArmourGem.png",
+            "support": false,
+            "league": "Standard",
+            "id": "a68d7a63b81c22f95502c1deee256d9f912e4fbc9cd711b383246ef79d0e3909",
+            "name": "",
+            "typeLine": "Anomalous Flesh and Stone",
+            "baseType": "Flesh and Stone",
+            "identified": true,
+            "ilvl": 0,
+            "properties": [
+              { "name": "Spell, Aura, AoE, Stance", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["20 (Max)", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Reservation", "values": [["25% Mana", 0]], "displayMode": 0 },
+              { "name": "Cooldown Time", "values": [["2.00 sec", 0]], "displayMode": 0 },
+              { "name": "Cast Time", "values": [["Instant", 0]], "displayMode": 0 },
+              { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 },
+              { "name": "", "values": [["Alternate Quality", 0]], "displayMode": 0 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["70", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Str", "values": [["98", 0]], "displayMode": 1, "type": 63 },
+              { "name": "Dex", "values": [["68", 0]], "displayMode": 1, "type": 64 }
+            ],
+            "secDescrText": "Casts an aura that affects you and nearby enemies differently depending on your stance. Using the skill again alternates between Blood Stance and Sand Stance.",
+            "explicitMods": [
+              "Nearby Enemies are Blinded while in Sand Stance\nYou take 15% less Damage from Attacks from Enemies that aren't nearby while in Sand Stance\nNearby Enemies are Maimed while in Blood Stance",
+              "50% increased Cooldown Recovery Rate",
+              "Buff grants 10% increased Evasion Rating and Armour",
+              "Enemies Maimed by this Skill take 11% increased Physical Damage"
+            ],
+            "descrText": "Place into an item socket of the right colour to gain this skill. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 2,
+            "colour": "S"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9CbG9vZFNhbmRTdGFuY2VHZW0iLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/91016572ac/BloodSandStanceGem.png",
+            "support": false,
+            "league": "Standard",
+            "id": "3ca544926fe09ad6993a604537f9f489b020456995e90a8d13eadf0c2eb83bb6",
+            "name": "",
+            "typeLine": "Anomalous Blood and Sand",
+            "baseType": "Blood and Sand",
+            "identified": true,
+            "ilvl": 0,
+            "properties": [
+              { "name": "Spell, Stance", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["6 (Max)", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Reservation", "values": [["10% Mana", 0]], "displayMode": 0 },
+              { "name": "Cooldown Time", "values": [["2.00 sec", 0]], "displayMode": 0 },
+              { "name": "Cast Time", "values": [["Instant", 0]], "displayMode": 0 },
+              { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 },
+              { "name": "", "values": [["Alternate Quality", 0]], "displayMode": 0 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["70", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Str", "values": [["98", 0]], "displayMode": 1, "type": 63 },
+              { "name": "Dex", "values": [["68", 0]], "displayMode": 1, "type": 64 }
+            ],
+            "secDescrText": "Casts a buff that grants different bonuses to melee skills depending on your stance. Using the skill again alternates between Blood Stance and Sand Stance.",
+            "explicitMods": [
+              "Melee Skills deal 15% more Area Damage while in Blood Stance",
+              "Melee Skills have 5% less Area of Effect while in Blood Stance",
+              "Melee Skills have 15% more Area of Effect while in Sand Stance",
+              "Melee Skills deal 5% less Area Damage while in Sand Stance",
+              "50% increased Cooldown Recovery Rate",
+              "20% increased Projectile Attack Damage while in Blood Stance",
+              "20% increased Projectile Speed while in Sand Stance"
+            ],
+            "descrText": "Place into an item socket of the right colour to gain this skill. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 3,
+            "colour": "S"
+          }
+        ]
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvUmluZ3MvUmluZzEiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MSwic3ludGhlc2lzZWQiOnRydWV9XQ/e5a027ea90/Ring1.png",
+        "league": "Standard",
+        "id": "7f073be2bb4b33583341da3213b04f711e7292562e3942ebae726be0066ec5c4",
+        "synthesised": true,
+        "name": "Hypnotic Whorl",
+        "typeLine": "Synthesised Iron Ring",
+        "baseType": "Iron Ring",
+        "identified": true,
+        "ilvl": 80,
+        "properties": [
+          {
+            "name": "Quality (Life and Mana Modifiers)",
+            "values": [["+20%", 1]],
+            "displayMode": 0,
+            "type": 6
+          }
+        ],
+        "requirements": [{ "name": "Level", "values": [["57", 0]], "displayMode": 0, "type": 62 }],
+        "implicitMods": ["Curse Enemies with Vulnerability on Hit"],
+        "explicitMods": [
+          "+15% to Damage over Time Multiplier",
+          "15% increased Cold Damage",
+          "+16 to maximum Energy Shield",
+          "+81 to maximum Life",
+          "+39% to Cold Resistance"
+        ],
+        "craftedMods": ["14% increased Damage"],
+        "frameType": 2,
+        "x": 0,
+        "y": 0,
+        "inventoryId": "Ring2"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 2,
+        "icon": "https://web.poecdn.com/gen/image/WzksMTQseyJmIjoiMkRJdGVtcy9GbGFza3MvQW1ldGh5c3QiLCJ3IjoxLCJoIjoyLCJzY2FsZSI6MSwibGV2ZWwiOjEsImZzIjp0cnVlfV0/f6d1ce7ee1/Amethyst.png",
+        "league": "Standard",
+        "id": "3dc64bbeff05ea86c3cbe1af1c1286c2e89a6de9f83da6193726dd2f5cc01d92",
+        "name": "",
+        "typeLine": "Dabbler's Amethyst Flask of the Rainbow",
+        "baseType": "Amethyst Flask",
+        "identified": true,
+        "ilvl": 84,
+        "properties": [
+          { "name": "Lasts {0} Seconds", "values": [["4.50", 1]], "displayMode": 3 },
+          {
+            "name": "Consumes {0} of {1} Charges on use",
+            "values": [
+              ["35", 0],
+              ["65", 0]
+            ],
+            "displayMode": 3
+          },
+          { "name": "Currently has {0} Charges", "values": [["65", 0]], "displayMode": 3 }
+        ],
+        "requirements": [{ "name": "Level", "values": [["64", 0]], "displayMode": 0, "type": 62 }],
+        "utilityMods": ["+35% to Chaos Resistance"],
+        "enchantMods": ["69% increased effect", "Gains no Charges during Effect"],
+        "explicitMods": [
+          "31% reduced Duration",
+          "25% increased effect",
+          "38% additional Elemental Resistances during Effect"
+        ],
+        "descrText": "Right click to drink. Can only hold charges while in belt. Refills as you kill monsters.",
+        "frameType": 1,
+        "x": 1,
+        "y": 0,
+        "inventoryId": "Flask"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 2,
+        "icon": "https://web.poecdn.com/gen/image/WzksMTQseyJmIjoiMkRJdGVtcy9GbGFza3Mvc3ByaW50IiwidyI6MSwiaCI6Miwic2NhbGUiOjEsImxldmVsIjoxLCJmcyI6dHJ1ZX1d/e0bf74a30f/sprint.png",
+        "league": "Standard",
+        "id": "6d8d3e116d9b91a5ee3c5afa76f542f8fdfd61a75bd0f5a7982e1e942a1d29d4",
+        "name": "",
+        "typeLine": "Alchemist's Quicksilver Flask of the Cheetah",
+        "baseType": "Quicksilver Flask",
+        "identified": true,
+        "ilvl": 100,
+        "properties": [
+          { "name": "Quality", "values": [["+24%", 1]], "displayMode": 0, "type": 6 },
+          { "name": "Lasts {0} Seconds", "values": [["6", 1]], "displayMode": 3 },
+          {
+            "name": "Consumes {0} of {1} Charges on use",
+            "values": [
+              ["30", 0],
+              ["60", 0]
+            ],
+            "displayMode": 3
+          },
+          { "name": "Currently has {0} Charges", "values": [["60", 0]], "displayMode": 3 }
+        ],
+        "requirements": [{ "name": "Level", "values": [["68", 0]], "displayMode": 0, "type": 62 }],
+        "utilityMods": ["40% increased Movement Speed"],
+        "enchantMods": ["70% increased effect", "Gains no Charges during Effect"],
+        "explicitMods": [
+          "24% reduced Duration",
+          "25% increased effect",
+          "14% increased Movement Speed during Effect"
+        ],
+        "descrText": "Right click to drink. Can only hold charges while in belt. Refills as you kill monsters.",
+        "frameType": 1,
+        "x": 2,
+        "y": 0,
+        "inventoryId": "Flask"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQW11bGV0cy9NYXN0ZXJPZkdlbXMiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/f6497cbdfe/MasterOfGems.png",
+        "league": "Standard",
+        "id": "389d7c6cf8145c651cd88cb057ac9604b1926c6f0dc7cb7780c2e03596aec814",
+        "name": "Ashes of the Stars",
+        "typeLine": "Onyx Amulet",
+        "baseType": "Onyx Amulet",
+        "identified": true,
+        "ilvl": 85,
+        "properties": [
+          {
+            "name": "Quality (Attribute Modifiers)",
+            "values": [["+20%", 1]],
+            "displayMode": 0,
+            "type": 6
+          }
+        ],
+        "requirements": [{ "name": "Level", "values": [["60", 0]], "displayMode": 0, "type": 62 }],
+        "enchantMods": ["Allocates Charisma"],
+        "implicitMods": ["+19 to all Attributes"],
+        "explicitMods": [
+          "7% increased Experience Gain of Gems",
+          "20% increased Reservation Efficiency of Skills",
+          "+1 to Level of all Skill Gems",
+          "+29% to Quality of all Skill Gems"
+        ],
+        "flavourText": [
+          "A single facet contains the wisdom\r",
+          "of countless disintegrated worlds."
+        ],
+        "frameType": 3,
+        "x": 0,
+        "y": 0,
+        "inventoryId": "Amulet"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 2,
+        "icon": "https://web.poecdn.com/gen/image/WzksMTQseyJmIjoiMkRJdGVtcy9GbGFza3MvbGlmZWZsYXNrMTEiLCJ3IjoxLCJoIjoyLCJzY2FsZSI6MSwibGV2ZWwiOjF9XQ/54ba3c70ae/lifeflask11.png",
+        "league": "Standard",
+        "id": "e9a8d2b4d2727cbb75ca35e780e6818a04aaf2a576d3fc481d159357605b012d",
+        "name": "",
+        "typeLine": "Seething Divine Life Flask of Allaying",
+        "baseType": "Divine Life Flask",
+        "identified": true,
+        "ilvl": 64,
+        "properties": [
+          { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 },
+          {
+            "name": "Recovers {0} Life over {1} Seconds",
+            "values": [
+              ["979", 1],
+              ["3.50", 0]
+            ],
+            "displayMode": 3
+          },
+          {
+            "name": "Consumes {0} of {1} Charges on use",
+            "values": [
+              ["15", 0],
+              ["45", 0]
+            ],
+            "displayMode": 3
+          },
+          { "name": "Currently has {0} Charges", "values": [["45", 0]], "displayMode": 3 }
+        ],
+        "requirements": [{ "name": "Level", "values": [["60", 0]], "displayMode": 0, "type": 62 }],
+        "explicitMods": [
+          "66% reduced Amount Recovered",
+          "Instant Recovery",
+          "Grants Immunity to Bleeding for 14 seconds if used while Bleeding\nGrants Immunity to Corrupted Blood for 14 seconds if used while affected by Corrupted Blood"
+        ],
+        "descrText": "Right click to drink. Can only hold charges while in belt. Refills as you kill monsters.",
+        "frameType": 1,
+        "x": 0,
+        "y": 0,
+        "inventoryId": "Flask"
+      },
+      {
+        "verified": false,
+        "w": 2,
+        "h": 2,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQXJtb3Vycy9HbG92ZXMvR2xvdmVzU3RyRGV4MiIsInciOjIsImgiOjIsInNjYWxlIjoxLCJzZWFyaW5nIjp0cnVlLCJ0YW5nbGVkIjp0cnVlfV0/681a227149/GlovesStrDex2.png",
+        "league": "Standard",
+        "id": "c8db13fccf329e9e458026939847d4628ea9e4f338c7d781465e716da345eded",
+        "searing": true,
+        "tangled": true,
+        "sockets": [
+          { "group": 0, "attr": "S", "sColour": "R" },
+          { "group": 0, "attr": "D", "sColour": "G" },
+          { "group": 0, "attr": "D", "sColour": "G" },
+          { "group": 0, "attr": "S", "sColour": "R" }
+        ],
+        "name": "Brood Knuckle",
+        "typeLine": "Hydrascale Gauntlets",
+        "baseType": "Hydrascale Gauntlets",
+        "identified": true,
+        "ilvl": 85,
+        "properties": [
+          { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 },
+          { "name": "Armour", "values": [["157", 1]], "displayMode": 0, "type": 16 },
+          { "name": "Evasion Rating", "values": [["157", 1]], "displayMode": 0, "type": 17 }
+        ],
+        "requirements": [
+          {
+            "name": "Level",
+            "values": [["70", 0]],
+            "displayMode": 0,
+            "type": 62,
+            "suffix": "(gem)"
+          },
+          {
+            "name": "Str",
+            "values": [["155", 0]],
+            "displayMode": 1,
+            "type": 63,
+            "suffix": "(gem)"
+          },
+          { "name": "Dex", "values": [["111", 0]], "displayMode": 1, "type": 64, "suffix": "(gem)" }
+        ],
+        "implicitMods": [
+          "+8% chance to Suppress Spell Damage",
+          "Gain 1 Rage on Hit with Attacks, no more than once every 1.2 seconds"
+        ],
+        "explicitMods": [
+          "+22% chance to Suppress Spell Damage",
+          "9% increased Armour and Evasion",
+          "+36% to Cold Resistance",
+          "+40% to Lightning Resistance",
+          "6% increased Stun and Block Recovery"
+        ],
+        "craftedMods": ["+68 to maximum Life"],
+        "frameType": 2,
+        "x": 0,
+        "y": 0,
+        "inventoryId": "Gloves",
+        "socketedItems": [
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9WYWFsR2Vtcy9WYWFsTW9sdGVuU2hlbGwiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/abf851cfba/VaalMoltenShell.png",
+            "support": false,
+            "league": "Standard",
+            "id": "b8dbfbb783a3527df4f442b8dce3421e0e7cea98e9428bf52420c1b9e8d7efda",
+            "name": "",
+            "typeLine": "Vaal Molten Shell",
+            "baseType": "Vaal Molten Shell",
+            "identified": true,
+            "ilvl": 0,
+            "corrupted": true,
+            "properties": [
+              {
+                "name": "Spell, AoE, Duration, Fire, Physical, Vaal, Guard",
+                "values": [],
+                "displayMode": 0
+              },
+              { "name": "Level", "values": [["20 (Max)", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Cost", "values": [["12 Mana", 0]], "displayMode": 0 },
+              { "name": "Cooldown Time", "values": [["4.00 sec", 0]], "displayMode": 0 },
+              { "name": "Cast Time", "values": [["Instant", 0]], "displayMode": 0 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["70", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Str", "values": [["155", 0]], "displayMode": 1, "type": 63 }
+            ],
+            "secDescrText": "Applies a buff that adds to your armour, and can take some of the damage from hits for you before being depleted. When the buff expires or is depleted, the skill deals reflected damage to enemies around you based on the total damage that was taken from the buff. Shares a cooldown with other Guard skills.",
+            "explicitMods": [
+              "Base duration is 3.00 seconds",
+              "This Skill's Cooldown does not recover during its effect",
+              "75% of Damage from Hits is taken from the Buff before your Life or Energy Shield\nBuff can take Damage equal to 10% of your Armour, up to a maximum of 5000",
+              "Reflects 3000% of Damage taken from Buff as Fire Damage when Buff expires or is depleted",
+              "Buff grants +858 to Armour"
+            ],
+            "descrText": "Place into an item socket of the right colour to gain this skill. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 0,
+            "colour": "S",
+            "hybrid": {
+              "isVaalGem": true,
+              "baseTypeName": "Molten Shell",
+              "properties": [
+                { "name": "Cooldown Time", "values": [["0.50 sec", 0]], "displayMode": 0 },
+                { "name": "Souls Per Use", "values": [["50", 0]], "displayMode": 0 },
+                { "name": "Can Store {0} Use", "values": [["1", 0]], "displayMode": 3 },
+                { "name": "Soul Gain Prevention", "values": [["14 sec", 0]], "displayMode": 0 },
+                { "name": "Cast Time", "values": [["Instant", 0]], "displayMode": 0 }
+              ],
+              "explicitMods": [
+                "Base duration is 9.00 seconds",
+                "Modifiers to Skill Effect Duration also apply to this Skill's Soul Gain Prevention",
+                "39% of Damage from Hits is taken from the Buff before your Life or Energy Shield\nBuff can take Damage equal to 20% of your Armour, up to a maximum of 10000",
+                "Reflects 9000% of Damage taken from Buff as Fire Damage each second,\nor when Buff expires or is depleted",
+                "Buff grants +858 to Armour"
+              ],
+              "secDescrText": "Applies a buff that raises your armour, and takes some of the damage from hits for you before being depleted. Each second, the skill deals reflected damage to surrounding enemies based on the damage taken by the buff in that second. When the buff is removed, the skill deals reflected damage to enemies around you based on the total damage that was taken by the buff. You cannot have the buff at the same time as any other Guard skill."
+            }
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9CbG9vZFJhZ2UiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/0a98a6bf95/BloodRage.png",
+            "support": false,
+            "league": "Standard",
+            "id": "ce840cb0821ed692ae8888444b7e7d898bdede041dda35db8175ed7fb535a53e",
+            "name": "",
+            "typeLine": "Blood Rage",
+            "baseType": "Blood Rage",
+            "identified": true,
+            "ilvl": 0,
+            "properties": [
+              { "name": "Spell, Duration, Physical", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["11", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Cost", "values": [["22 Life", 0]], "displayMode": 0 },
+              { "name": "Cooldown Time", "values": [["1.00 sec", 0]], "displayMode": 0 },
+              { "name": "Cast Time", "values": [["Instant", 0]], "displayMode": 0 },
+              { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["49", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Dex", "values": [["111", 0]], "displayMode": 1, "type": 64 }
+            ],
+            "additionalProperties": [
+              {
+                "name": "Experience",
+                "values": [["1964019/1964019", 0]],
+                "displayMode": 2,
+                "progress": 1,
+                "type": 20
+              }
+            ],
+            "nextLevelRequirements": [
+              { "name": "Level", "values": [["52", 0]], "displayMode": 0 },
+              { "name": "Dex", "values": [["117", 0]], "displayMode": 1 }
+            ],
+            "secDescrText": "Adds a buff that deals Physical Damage over time, while increasing Attack Speed and Life Leech. Killing an enemy while this buff is active refreshes the buff duration, and can grant a Frenzy Charge.",
+            "explicitMods": [
+              "Base duration is 9.00 seconds",
+              "Grants 15% increased Attack Speed",
+              "1.2% of Attack Physical Damage Leeched as Life",
+              "You take 4% of your Maximum Life per second as Physical Damage",
+              "You take 4% of your Maximum Energy Shield per second as Physical Damage",
+              "25% chance to gain a Frenzy Charge on Kill"
+            ],
+            "descrText": "Place into an item socket of the right colour to gain this skill. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 1,
+            "colour": "D"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9RdWlja0Rhc2hHZW0iLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/9b7d6a4128/QuickDashGem.png",
+            "support": false,
+            "league": "Standard",
+            "id": "6f414eb9da7ff315019d0a6a611e9cfe2813e318a8e7ce3373235dd6818ee456",
+            "name": "",
+            "typeLine": "Dash",
+            "baseType": "Dash",
+            "identified": true,
+            "ilvl": 0,
+            "properties": [
+              { "name": "Spell, Movement, Travel, Blink", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["12", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Cost", "values": [["12 Mana", 0]], "displayMode": 0 },
+              { "name": "Cooldown Time", "values": [["2.50 sec", 0]], "displayMode": 0 },
+              { "name": "Cast Time", "values": [["0.15 sec", 0]], "displayMode": 0 },
+              { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["44", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Dex", "values": [["100", 0]], "displayMode": 1, "type": 64 }
+            ],
+            "additionalProperties": [
+              {
+                "name": "Experience",
+                "values": [["2065870/2065870", 0]],
+                "displayMode": 2,
+                "progress": 1,
+                "type": 20
+              }
+            ],
+            "nextLevelRequirements": [
+              { "name": "Level", "values": [["48", 0]], "displayMode": 0 },
+              { "name": "Dex", "values": [["109", 0]], "displayMode": 1 }
+            ],
+            "secDescrText": "Performs a series of quick teleports towards a targeted location. If using the \"Attack in Place\" option, the direction is reversed. Shares a cooldown with other Blink skills.",
+            "explicitMods": [
+              "21% increased Cooldown Recovery Rate",
+              "33% increased travel distance",
+              "This Spell's Cast Speed cannot be modified"
+            ],
+            "descrText": "Place into an item socket of the right colour to gain this skill. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 2,
+            "colour": "D"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9TdXBwb3J0L0xpZmVUYXAiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/9cef38ae47/LifeTap.png",
+            "support": true,
+            "league": "Standard",
+            "id": "7bdeebd20dd21d112fb321d7a4ef0119f81a0bbb61c5f6a7567c996787783c53",
+            "name": "",
+            "typeLine": "Lifetap Support",
+            "baseType": "Lifetap Support",
+            "identified": true,
+            "ilvl": 0,
+            "properties": [
+              { "name": "Support, Duration", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["20 (Max)", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Cost & Reservation Multiplier", "values": [["300%", 0]], "displayMode": 0 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["70", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Str", "values": [["111", 0]], "displayMode": 1, "type": 63 }
+            ],
+            "secDescrText": "Supports any non-blessing skill. Minions cannot gain the Lifetap buff.",
+            "explicitMods": [
+              "Supported Skills Cost Life instead of Mana",
+              "Gain Lifetap after Spending a total of 273 Life on Upfront\nCosts and Effects of a Supported Skill",
+              "Supported Skills deal 19% more Damage while you have Lifetap",
+              "Lifetap lasts 4 seconds"
+            ],
+            "descrText": "This is a Support Gem. It does not grant a bonus to your character, but to skills in sockets connected to it. Place into an item socket connected to a socket containing the Skill Gem you wish to augment. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 3,
+            "colour": "S"
+          }
+        ]
+      },
+      {
+        "verified": false,
+        "w": 2,
+        "h": 2,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQXJtb3Vycy9IZWxtZXRzL0hlbG1ldFN0ckRleDgiLCJ3IjoyLCJoIjoyLCJzY2FsZSI6MSwic2VhcmluZyI6dHJ1ZSwidGFuZ2xlZCI6dHJ1ZX1d/99d0a9a85a/HelmetStrDex8.png",
+        "league": "Standard",
+        "id": "f57f65340eb9aceb86e186abfa5e20c0d780d29cbe333c3b719a4aca6b0ec48f",
+        "searing": true,
+        "tangled": true,
+        "sockets": [
+          { "group": 0, "attr": "I", "sColour": "B" },
+          { "group": 0, "attr": "I", "sColour": "B" },
+          { "group": 0, "attr": "S", "sColour": "R" },
+          { "group": 0, "attr": "S", "sColour": "R" }
+        ],
+        "name": "Rapture Star",
+        "typeLine": "Fluted Bascinet",
+        "baseType": "Fluted Bascinet",
+        "identified": true,
+        "ilvl": 83,
+        "properties": [
+          { "name": "Quality", "values": [["+28%", 1]], "displayMode": 0, "type": 6 },
+          { "name": "Armour", "values": [["355", 1]], "displayMode": 0, "type": 16 },
+          { "name": "Evasion Rating", "values": [["442", 1]], "displayMode": 0, "type": 17 }
+        ],
+        "requirements": [
+          {
+            "name": "Level",
+            "values": [["70", 0]],
+            "displayMode": 0,
+            "type": 62,
+            "suffix": "(gem)"
+          },
+          {
+            "name": "Str",
+            "values": [["155", 0]],
+            "displayMode": 1,
+            "type": 63,
+            "suffix": "(gem)"
+          },
+          { "name": "Dex", "values": [["68", 0]], "displayMode": 1, "type": 64, "suffix": "(gem)" },
+          { "name": "Int", "values": [["98", 0]], "displayMode": 1, "type": 65, "suffix": "(gem)" }
+        ],
+        "enchantMods": ["Tornado Shot fires an additional secondary Projectile"],
+        "implicitMods": [
+          "9% increased Mana Reservation Efficiency of Skills",
+          "30% increased Vulnerability Curse Effect"
+        ],
+        "explicitMods": [
+          "+16% chance to Suppress Spell Damage",
+          "+54 to Intelligence",
+          "+110 to Armour",
+          "+178 to Evasion Rating",
+          "+33 to maximum Life",
+          "10% increased Mana Reservation Efficiency of Skills"
+        ],
+        "craftedMods": ["+70 to maximum Life"],
+        "frameType": 2,
+        "x": 0,
+        "y": 0,
+        "inventoryId": "Helm",
+        "socketedItems": [
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9TdXBwb3J0L0VubGlnaHRlbiIsInciOjEsImgiOjEsInNjYWxlIjoxfV0/05a949e270/Enlighten.png",
+            "support": true,
+            "league": "Standard",
+            "id": "ed59ff8319d330fb995b4b9d2903883eb325692e0b5e35c3c0ac7953004857f9",
+            "name": "",
+            "typeLine": "Enlighten Support",
+            "baseType": "Enlighten Support",
+            "identified": true,
+            "ilvl": 0,
+            "corrupted": true,
+            "properties": [
+              { "name": "Exceptional, Support", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["3 (Max)", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Cost & Reservation Multiplier", "values": [["92%", 0]], "displayMode": 0 },
+              { "name": "Quality", "values": [["+16%", 1]], "displayMode": 0, "type": 6 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["45", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Int", "values": [["73", 0]], "displayMode": 1, "type": 65 }
+            ],
+            "secDescrText": "Supports any skill gem. Once this gem reaches level 2 or above, will apply a cost & reservation multiplier to supported gems. Cannot support skills that don't come from gems.",
+            "explicitMods": ["This Gem gains 80% increased Experience"],
+            "descrText": "This is a Support Gem. It does not grant a bonus to your character, but to skills in sockets connected to it. Place into an item socket connected to a socket containing the Skill Gem you wish to augment. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 0,
+            "colour": "I"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9EZWxpcml1bUdlbSIsInciOjEsImgiOjEsInNjYWxlIjoxfV0/68eb889340/DeliriumGem.png",
+            "support": false,
+            "league": "Standard",
+            "id": "ef91e98fe8a9725ae5ac7c372c1b74635aeaf434bc2baf97b6fbdb9be0524590",
+            "name": "",
+            "typeLine": "Malevolence",
+            "baseType": "Malevolence",
+            "identified": true,
+            "ilvl": 0,
+            "properties": [
+              { "name": "Aura, Spell, AoE", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["20 (Max)", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Reservation", "values": [["50% Mana", 0]], "displayMode": 0 },
+              { "name": "Cooldown Time", "values": [["1.20 sec", 0]], "displayMode": 0 },
+              { "name": "Cast Time", "values": [["Instant", 0]], "displayMode": 0 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["70", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Dex", "values": [["68", 0]], "displayMode": 1, "type": 64 },
+              { "name": "Int", "values": [["98", 0]], "displayMode": 1, "type": 65 }
+            ],
+            "secDescrText": "Casts an aura that multiplies damage over time and increases skill effect duration of you and your allies.",
+            "explicitMods": [
+              "+1.9 metres to radius",
+              "You and nearby allies deal 20% more Damage over Time",
+              "You and nearby allies have 19% increased Skill Effect Duration"
+            ],
+            "descrText": "Place into an item socket of the right colour to gain this skill. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 1,
+            "colour": "I"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9QcmlkZUF1cmFHZW0iLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/115cf1f969/PrideAuraGem.png",
+            "support": false,
+            "league": "Standard",
+            "id": "31f7a1429e6df42d6b60c53fe76030520e224d8b73b2d299c11eacebb9787e1c",
+            "name": "",
+            "typeLine": "Pride",
+            "baseType": "Pride",
+            "identified": true,
+            "ilvl": 0,
+            "corrupted": true,
+            "properties": [
+              { "name": "Spell, AoE, Aura, Physical", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["20 (Max)", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Reservation", "values": [["50% Mana", 0]], "displayMode": 0 },
+              { "name": "Cooldown Time", "values": [["1.20 sec", 0]], "displayMode": 0 },
+              { "name": "Cast Time", "values": [["Instant", 0]], "displayMode": 0 },
+              { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["70", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Str", "values": [["155", 0]], "displayMode": 1, "type": 63 }
+            ],
+            "secDescrText": "Casts an aura that causes nearby enemies to take more physical damage.",
+            "explicitMods": [
+              "+1 metre to radius",
+              "40% increased Area of Effect",
+              "Nearby Enemies take at least 19% more Physical Damage,\n raising up to 39% as they stay in the Aura for 4 seconds"
+            ],
+            "descrText": "Place into an item socket of the right colour to gain this skill. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 2,
+            "colour": "S"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9EZXRlcm1pbmF0aW9uIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/64c8ca9798/Determination.png",
+            "support": false,
+            "league": "Standard",
+            "id": "d39328b0501d8a1d88bbf1314168b5e00f255ff84fab2c38ea80e93e81b6129f",
+            "name": "",
+            "typeLine": "Determination",
+            "baseType": "Determination",
+            "identified": true,
+            "ilvl": 0,
+            "properties": [
+              { "name": "Aura, Spell, AoE, Physical", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["20 (Max)", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Reservation", "values": [["50% Mana", 0]], "displayMode": 0 },
+              { "name": "Cooldown Time", "values": [["1.20 sec", 0]], "displayMode": 0 },
+              { "name": "Cast Time", "values": [["Instant", 0]], "displayMode": 0 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["70", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Str", "values": [["155", 0]], "displayMode": 1, "type": 63 }
+            ],
+            "secDescrText": "Casts an aura that grants armour to you and your allies.",
+            "explicitMods": [
+              "+1.9 metres to radius",
+              "You and nearby allies gain 2051 additional Armour",
+              "You and nearby allies gain 49% more Armour"
+            ],
+            "descrText": "Place into an item socket of the right colour to gain this skill. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 3,
+            "colour": "S"
+          }
+        ]
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 2,
+        "icon": "https://web.poecdn.com/gen/image/WzksMTQseyJmIjoiMkRJdGVtcy9GbGFza3MvcGhhc2VmbGFzazAxIiwidyI6MSwiaCI6Miwic2NhbGUiOjEsImxldmVsIjoxLCJmcyI6dHJ1ZX1d/77b6889e71/phaseflask01.png",
+        "league": "Standard",
+        "id": "6262a020503804dcfc37cd9252a8ff1122305557ea1a401d38dc09110beffa87",
+        "name": "",
+        "typeLine": "Abecedarian's Quartz Flask of the Dove",
+        "baseType": "Quartz Flask",
+        "identified": true,
+        "ilvl": 84,
+        "properties": [
+          { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 },
+          { "name": "Lasts {0} Seconds", "values": [["5.10", 1]], "displayMode": 3 },
+          {
+            "name": "Consumes {0} of {1} Charges on use",
+            "values": [
+              ["30", 0],
+              ["60", 0]
+            ],
+            "displayMode": 3
+          },
+          { "name": "Currently has {0} Charges", "values": [["60", 0]], "displayMode": 3 }
+        ],
+        "requirements": [{ "name": "Level", "values": [["65", 0]], "displayMode": 0, "type": 62 }],
+        "utilityMods": ["+10% chance to Suppress Spell Damage", "Phasing"],
+        "enchantMods": ["69% increased effect", "Gains no Charges during Effect"],
+        "explicitMods": [
+          "35% reduced Duration",
+          "25% increased effect",
+          "17% increased Attack Speed during Effect"
+        ],
+        "descrText": "Right click to drink. Can only hold charges while in belt. Refills as you kill monsters.",
+        "frameType": 1,
+        "x": 3,
+        "y": 0,
+        "inventoryId": "Flask"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 2,
+        "icon": "https://web.poecdn.com/gen/image/WzksMTQseyJmIjoiMkRJdGVtcy9GbGFza3MvZ3Jhbml0ZSIsInciOjEsImgiOjIsInNjYWxlIjoxLCJsZXZlbCI6MSwiZnMiOnRydWV9XQ/425d5f6b4c/granite.png",
+        "league": "Standard",
+        "id": "666f2db66427d9450abf49cffe02e80fcdead569c0e420bfa8b41a4b0a044c60",
+        "name": "",
+        "typeLine": "Alchemist's Granite Flask of the Armadillo",
+        "baseType": "Granite Flask",
+        "identified": true,
+        "ilvl": 85,
+        "properties": [
+          { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 },
+          { "name": "Lasts {0} Seconds", "values": [["5.70", 1]], "displayMode": 3 },
+          {
+            "name": "Consumes {0} of {1} Charges on use",
+            "values": [
+              ["30", 0],
+              ["60", 0]
+            ],
+            "displayMode": 3
+          },
+          { "name": "Currently has {0} Charges", "values": [["60", 0]], "displayMode": 3 }
+        ],
+        "requirements": [{ "name": "Level", "values": [["67", 0]], "displayMode": 0, "type": 62 }],
+        "utilityMods": ["+1500 to Armour"],
+        "enchantMods": ["70% increased effect", "Gains no Charges during Effect"],
+        "explicitMods": [
+          "25% reduced Duration",
+          "25% increased effect",
+          "59% increased Armour during Effect"
+        ],
+        "descrText": "Right click to drink. Can only hold charges while in belt. Refills as you kill monsters.",
+        "frameType": 1,
+        "x": 4,
+        "y": 0,
+        "inventoryId": "Flask"
+      },
+      {
+        "verified": false,
+        "w": 2,
+        "h": 3,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvUXVpdmVycy9UcmlnZ2VyUXVpdmVyQmFzZSIsInciOjIsImgiOjMsInNjYWxlIjoxfV0/1f3958bdb3/TriggerQuiverBase.png",
+        "league": "Standard",
+        "id": "43b96cc4fd96f1a74f30e1b842dbdc4caf92c04b9aa8cd7a4f14bcfee24e4a0a",
+        "sockets": [
+          { "group": 0, "attr": "S", "sColour": "R" },
+          { "group": 0, "attr": "D", "sColour": "G" },
+          { "group": 0, "attr": "D", "sColour": "G" }
+        ],
+        "name": "Maloney's Mechanism",
+        "typeLine": "Ornate Quiver",
+        "baseType": "Ornate Quiver",
+        "identified": true,
+        "ilvl": 85,
+        "requirements": [
+          {
+            "name": "Level",
+            "values": [["52", 0]],
+            "displayMode": 0,
+            "type": 62,
+            "suffix": "(gem)"
+          },
+          { "name": "Str", "values": [["18", 0]], "displayMode": 1, "type": 63, "suffix": "(gem)" },
+          { "name": "Dex", "values": [["117", 0]], "displayMode": 1, "type": 64, "suffix": "(gem)" }
+        ],
+        "implicitMods": ["Has 1 Socket"],
+        "explicitMods": [
+          "Has 2 Sockets",
+          "Trigger a Socketed Bow Skill when you Attack with a Bow, with a 1 second Cooldown",
+          "12% increased Attack Speed",
+          "+66 to maximum Life",
+          "5% chance to Blind Enemies on Hit with Attacks"
+        ],
+        "flavourText": [
+          "Midnight tinkering begets midday murdering;\r",
+          "a sinister shaft surreptitiously shot slays a scoundrel.\r",
+          "I will see them again, but not until my work is done."
+        ],
+        "frameType": 3,
+        "x": 0,
+        "y": 0,
+        "inventoryId": "Offhand",
+        "socketedItems": [
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9TdXBwb3J0L01haW0iLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/dc8062db46/Maim.png",
+            "support": true,
+            "league": "Standard",
+            "id": "77248253e54cc141e78aa91e09b562b24f76488a48477796f9672ab6bed72e5a",
+            "name": "",
+            "typeLine": "Maim Support",
+            "baseType": "Maim Support",
+            "identified": true,
+            "ilvl": 0,
+            "properties": [
+              { "name": "Attack, Physical, Support", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["1", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Cost & Reservation Multiplier", "values": [["130%", 0]], "displayMode": 0 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["8", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Str", "values": [["18", 0]], "displayMode": 1, "type": 63 }
+            ],
+            "additionalProperties": [
+              {
+                "name": "Experience",
+                "values": [["3231/3231", 0]],
+                "displayMode": 2,
+                "progress": 1,
+                "type": 20
+              }
+            ],
+            "nextLevelRequirements": [
+              { "name": "Level", "values": [["10", 0]], "displayMode": 0 },
+              { "name": "Str", "values": [["21", 0]], "displayMode": 1 }
+            ],
+            "secDescrText": "Supports attack skills, or other skills that can maim enemies.",
+            "explicitMods": [
+              "Supported Skills deal 10% more Physical Damage",
+              "Supported Attacks have 30% chance to Maim on Hit",
+              "Enemies Maimed by Supported Skills take 10% increased Physical Damage"
+            ],
+            "descrText": "This is a Support Gem. It does not grant a bonus to your character, but to skills in sockets connected to it. Place into an item socket connected to a socket containing the Skill Gem you wish to augment. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 0,
+            "colour": "S"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9TdXBwb3J0L0N1bGxpbmdTdHJpa2UiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/328a156075/CullingStrike.png",
+            "support": true,
+            "league": "Standard",
+            "id": "fbcbc9e3f1966d3d33f32bee4fbe3a43bd999ab43d47663e2e55fa4a6a75a28f",
+            "name": "",
+            "typeLine": "Culling Strike Support",
+            "baseType": "Culling Strike Support",
+            "identified": true,
+            "ilvl": 0,
+            "properties": [
+              { "name": "Support", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["1", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Cost & Reservation Multiplier", "values": [["110%", 0]], "displayMode": 0 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["18", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Dex", "values": [["33", 0]], "displayMode": 1, "type": 64 }
+            ],
+            "additionalProperties": [
+              {
+                "name": "Experience",
+                "values": [["69833/69833", 0]],
+                "displayMode": 2,
+                "progress": 1,
+                "type": 20
+              }
+            ],
+            "nextLevelRequirements": [
+              { "name": "Level", "values": [["22", 0]], "displayMode": 0 },
+              { "name": "Dex", "values": [["39", 0]], "displayMode": 1 }
+            ],
+            "secDescrText": "Supports any skill that hits enemies. If enemies are left below 10% of maximum life after being hit by these skills, they will be killed.",
+            "explicitMods": [
+              "Kill Enemies that have 10% Life or lower when Hit by Supported Skills"
+            ],
+            "descrText": "This is a Support Gem. It does not grant a bonus to your character, but to skills in sockets connected to it. Place into an item socket connected to a socket containing the Skill Gem you wish to augment. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 1,
+            "colour": "D"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9GcmVuenkiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/cd16439994/Frenzy.png",
+            "support": false,
+            "league": "Standard",
+            "id": "fb7fd9481367f644a9a57154db7b9cf9bd15923d568fa7c04434b67cafada778",
+            "name": "",
+            "typeLine": "Anomalous Frenzy",
+            "baseType": "Frenzy",
+            "identified": true,
+            "ilvl": 0,
+            "properties": [
+              { "name": "Attack, Projectile, Melee, Strike, Bow", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["12", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Cost", "values": [["10 Mana", 0]], "displayMode": 0 },
+              { "name": "Attack Damage", "values": [["126.6% of base", 0]], "displayMode": 0 },
+              {
+                "name": "Effectiveness of Added Damage",
+                "values": [["127%", 0]],
+                "displayMode": 0
+              },
+              { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 },
+              { "name": "", "values": [["Alternate Quality", 0]], "displayMode": 0 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["52", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Dex", "values": [["117", 0]], "displayMode": 1, "type": 64 }
+            ],
+            "additionalProperties": [
+              {
+                "name": "Experience",
+                "values": [["2573731/2573731", 0]],
+                "displayMode": 2,
+                "progress": 1,
+                "type": 20
+              }
+            ],
+            "nextLevelRequirements": [
+              { "name": "Level", "values": [["55", 0]], "displayMode": 0 },
+              { "name": "Dex", "values": [["123", 0]], "displayMode": 1 }
+            ],
+            "secDescrText": "Performs an attack that gives the character a frenzy charge if it hits. Frenzy charges increase your attack speed.",
+            "explicitMods": [
+              "Fires an additional Projectile",
+              "5% more Attack Damage per Frenzy Charge",
+              "5% more Attack Speed per Frenzy Charge"
+            ],
+            "descrText": "Place into an item socket of the right colour to gain this skill. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 2,
+            "colour": "D"
+          }
+        ]
+      },
+      {
+        "verified": false,
+        "w": 2,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQmVsdHMvSW5qZWN0b3JCZWx0IiwidyI6MiwiaCI6MSwic2NhbGUiOjF9XQ/21ec0269de/InjectorBelt.png",
+        "league": "Standard",
+        "id": "e26a3c125a312e40ac1d0be46b05968fe301dd9afbaad150e981866477370746",
+        "name": "Mageblood",
+        "typeLine": "Heavy Belt",
+        "baseType": "Heavy Belt",
+        "identified": true,
+        "ilvl": 84,
+        "requirements": [{ "name": "Level", "values": [["44", 0]], "displayMode": 0, "type": 62 }],
+        "implicitMods": ["+35 to Strength"],
+        "explicitMods": [
+          "+47 to Dexterity",
+          "+22% to Fire Resistance",
+          "+24% to Cold Resistance",
+          "Magic Utility Flasks cannot be Used",
+          "Leftmost 4 Magic Utility Flasks constantly apply their Flask Effects to you",
+          "Magic Utility Flask Effects cannot be removed"
+        ],
+        "flavourText": ["Rivers of power course through your veins."],
+        "frameType": 3,
+        "x": 0,
+        "y": 0,
+        "inventoryId": "Belt"
+      },
+      {
+        "verified": false,
+        "w": 2,
+        "h": 3,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvV2VhcG9ucy9Ud29IYW5kV2VhcG9ucy9Cb3dzL0JvdzIiLCJ3IjoyLCJoIjozLCJzY2FsZSI6MX1d/0fcc51afcd/Bow2.png",
+        "league": "Standard",
+        "id": "c65c28fda2b64575c00a775810ab3f148d23ac18905f264f7e3a05c6e74ec8dd",
+        "influences": { "warlord": true },
+        "sockets": [
+          { "group": 0, "attr": "S", "sColour": "R" },
+          { "group": 0, "attr": "I", "sColour": "B" },
+          { "group": 0, "attr": "S", "sColour": "R" },
+          { "group": 0, "attr": "D", "sColour": "G" },
+          { "group": 0, "attr": "S", "sColour": "R" },
+          { "group": 0, "attr": "S", "sColour": "R" }
+        ],
+        "name": "Horror Nock",
+        "typeLine": "Short Bow",
+        "baseType": "Short Bow",
+        "identified": true,
+        "ilvl": 83,
+        "split": true,
+        "properties": [
+          { "name": "Bow", "values": [], "displayMode": 0 },
+          { "name": "Quality", "values": [["+27%", 1]], "displayMode": 0, "type": 6 },
+          { "name": "Physical Damage", "values": [["6-16", 0]], "displayMode": 0, "type": 9 },
+          {
+            "name": "Critical Strike Chance",
+            "values": [["5.00%", 0]],
+            "displayMode": 0,
+            "type": 12
+          },
+          { "name": "Attacks per Second", "values": [["1.55", 1]], "displayMode": 0, "type": 13 }
+        ],
+        "requirements": [
+          {
+            "name": "Level",
+            "values": [["72", 0]],
+            "displayMode": 0,
+            "type": 62,
+            "suffix": "(gem)"
+          },
+          {
+            "name": "Str",
+            "values": [["159", 0]],
+            "displayMode": 1,
+            "type": 63,
+            "suffix": "(gem)"
+          },
+          {
+            "name": "Dex",
+            "values": [["111", 0]],
+            "displayMode": 1,
+            "type": 64,
+            "suffix": "(gem)"
+          },
+          { "name": "Int", "values": [["111", 0]], "displayMode": 1, "type": 65, "suffix": "(gem)" }
+        ],
+        "enchantMods": [
+          "Quality does not increase Physical Damage",
+          "1% increased Attack Speed per 8% Quality"
+        ],
+        "explicitMods": [
+          "+1 to Level of Socketed Gems",
+          "67% increased Physical Damage over Time",
+          "+26% to Damage over Time Multiplier"
+        ],
+        "craftedMods": [
+          "Can have up to 3 Crafted Modifiers",
+          "+2 to Level of Socketed Support Gems",
+          "+19% to Physical Damage over Time Multiplier"
+        ],
+        "frameType": 2,
+        "x": 0,
+        "y": 0,
+        "inventoryId": "Weapon",
+        "socketedItems": [
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9TdXBwb3J0L0JydXRhbGl0eSIsInciOjEsImgiOjEsInNjYWxlIjoxfV0/62f8d5318d/Brutality.png",
+            "support": true,
+            "league": "Standard",
+            "id": "1e131e6f9be487d2f83e2bbd556e6f2744b01907cb0b6b8a08523d7f28e34600",
+            "name": "",
+            "typeLine": "Brutality Support",
+            "baseType": "Brutality Support",
+            "identified": true,
+            "ilvl": 0,
+            "corrupted": true,
+            "properties": [
+              { "name": "Physical, Support", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["20 (Max)", 0]], "displayMode": 0, "type": 5 },
+              {
+                "name": "Cost & Reservation Multiplier",
+                "values": [["140%", 0]],
+                "displayMode": 0
+              },
+              { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["70", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Str", "values": [["111", 0]], "displayMode": 1, "type": 63 }
+            ],
+            "secDescrText": "Supports any skill that deals damage.",
+            "explicitMods": [
+              "Supported Skills deal 39% more Physical Damage",
+              "Supported Skills deal no Chaos Damage",
+              "Supported Skills deal no Elemental Damage",
+              "Supported Skills deal 10% increased Physical Damage"
+            ],
+            "descrText": "This is a Support Gem. It does not grant a bonus to your character, but to skills in sockets connected to it. Place into an item socket connected to a socket containing the Skill Gem you wish to augment. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 0,
+            "colour": "S"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9TdXBwb3J0L0VmZmljYWN5IiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/90381ee91a/Efficacy.png",
+            "support": true,
+            "league": "Standard",
+            "id": "6300eb1bc289fc2f28ea22611a6e984a96605d68e66ab5cd6be033a15c669bf8",
+            "name": "",
+            "typeLine": "Divergent Efficacy Support",
+            "baseType": "Efficacy Support",
+            "identified": true,
+            "ilvl": 0,
+            "properties": [
+              { "name": "Support, Duration", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["20 (Max)", 0]], "displayMode": 0, "type": 5 },
+              {
+                "name": "Cost & Reservation Multiplier",
+                "values": [["130%", 0]],
+                "displayMode": 0
+              },
+              { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 },
+              { "name": "", "values": [["Alternate Quality", 0]], "displayMode": 0 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["70", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Int", "values": [["111", 0]], "displayMode": 1, "type": 65 }
+            ],
+            "secDescrText": "Supports any skill that deals damage or has a duration.",
+            "explicitMods": [
+              "Supported Skills have 10% reduced Mana Cost",
+              "Supported Skills have 10% reduced Life Cost",
+              "Supported Skills deal 24% more Damage over Time",
+              "Supported Skills have 24% increased Skill Effect Duration"
+            ],
+            "descrText": "This is a Support Gem. It does not grant a bonus to your character, but to skills in sockets connected to it. Place into an item socket connected to a socket containing the Skill Gem you wish to augment. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 1,
+            "colour": "I"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9TdXBwb3J0L0VtcG93ZXIiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/c2b1b38b15/Empower.png",
+            "support": true,
+            "league": "Standard",
+            "id": "0c4e761f135ed656cb482115529d5ae296247d61eca89bde5b4df6491c70b2d7",
+            "name": "",
+            "typeLine": "Empower Support",
+            "baseType": "Empower Support",
+            "identified": true,
+            "ilvl": 0,
+            "corrupted": true,
+            "properties": [
+              { "name": "Exceptional, Support", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["4 (Max)", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Cost & Reservation Multiplier", "values": [["130%", 0]], "displayMode": 0 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["60", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Str", "values": [["96", 0]], "displayMode": 1, "type": 63 }
+            ],
+            "secDescrText": "Supports any skill gem. Once this gem reaches level 2 or above, will raise the level of supported gems. Cannot support skills that don't come from gems.",
+            "explicitMods": ["+3 to Level of Supported Skill Gems"],
+            "descrText": "This is a Support Gem. It does not grant a bonus to your character, but to skills in sockets connected to it. Place into an item socket connected to a socket containing the Skill Gem you wish to augment. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 2,
+            "colour": "S"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9TdXBwb3J0L1N1cHBvcnRSYXBpZERlY2F5R2VtIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/bed2b2a224/SupportRapidDecayGem.png",
+            "support": true,
+            "league": "Standard",
+            "id": "8836dc2378ed78c041ce472f090010d05c6610055e4e163274496c86dbd68f69",
+            "name": "",
+            "typeLine": "Swift Affliction Support",
+            "baseType": "Swift Affliction Support",
+            "identified": true,
+            "ilvl": 0,
+            "corrupted": true,
+            "properties": [
+              { "name": "Support, Duration", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["20 (Max)", 0]], "displayMode": 0, "type": 5 },
+              {
+                "name": "Cost & Reservation Multiplier",
+                "values": [["140%", 0]],
+                "displayMode": 0
+              },
+              { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["70", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Dex", "values": [["111", 0]], "displayMode": 1, "type": 64 }
+            ],
+            "secDescrText": "Supports any skill that has a duration, or can hit enemies to inflict ailments on them.",
+            "explicitMods": [
+              "Supported Skills deal 39% more Damage over Time",
+              "Supported Skills deal 10% increased Damage over Time",
+              "25% less Duration of Supported Skills and Damaging Ailments they inflict"
+            ],
+            "descrText": "This is a Support Gem. It does not grant a bonus to your character, but to skills in sockets connected to it. Place into an item socket connected to a socket containing the Skill Gem you wish to augment. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 3,
+            "colour": "D"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9Db3JydXB0ZWRCbG9vZFN0cmVhbSIsInciOjEsImgiOjEsInNjYWxlIjoxfV0/fdc2a5d375/CorruptedBloodStream.png",
+            "support": false,
+            "league": "Standard",
+            "id": "544158eaedae24f0c69965c9460eae04d6e3ab5f77fd9eff754cc90e04fccc11",
+            "name": "",
+            "typeLine": "Anomalous Corrupting Fever",
+            "baseType": "Corrupting Fever",
+            "identified": true,
+            "ilvl": 0,
+            "corrupted": true,
+            "properties": [
+              { "name": "Spell, Duration, Physical", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["21 (Max)", 0]], "displayMode": 0, "type": 5 },
+              { "name": "Cost", "values": [["585 Life", 0]], "displayMode": 0 },
+              { "name": "Cooldown Time", "values": [["1.00 sec", 0]], "displayMode": 0 },
+              { "name": "Cast Time", "values": [["Instant", 0]], "displayMode": 0 },
+              { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 },
+              { "name": "", "values": [["Alternate Quality", 0]], "displayMode": 0 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["72", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Str", "values": [["159", 0]], "displayMode": 1, "type": 63 }
+            ],
+            "secDescrText": "Draws out your own blood to power a buff for a duration, letting this skill inflict the Corrupting Blood debuff on enemies you hit, dealing physical damage over time for a short secondary duration. The buff's duration will be refreshed if you spend enough life before it expires.",
+            "explicitMods": [
+              "Deals 379 Base Physical Damage per second",
+              "Base duration is 6.00 seconds",
+              "Base secondary duration is 1.00 seconds",
+              "10% reduced Life Cost",
+              "Buff Duration is refreshed after you spend a total of 210 Life"
+            ],
+            "descrText": "Place into an item socket of the right colour to gain this skill. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 4,
+            "colour": "S"
+          },
+          {
+            "verified": false,
+            "w": 1,
+            "h": 1,
+            "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvR2Vtcy9TdXBwb3J0L0xpZmVUYXAiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/9cef38ae47/LifeTap.png",
+            "support": true,
+            "league": "Standard",
+            "id": "9c915d44dfe89ace260911e4906552cbe7f5ab948dcfa941cfb54b157cee22b0",
+            "name": "",
+            "typeLine": "Lifetap Support",
+            "baseType": "Lifetap Support",
+            "identified": true,
+            "ilvl": 0,
+            "properties": [
+              { "name": "Support, Duration", "values": [], "displayMode": 0 },
+              { "name": "Level", "values": [["20 (Max)", 0]], "displayMode": 0, "type": 5 },
+              {
+                "name": "Cost & Reservation Multiplier",
+                "values": [["300%", 0]],
+                "displayMode": 0
+              },
+              { "name": "Quality", "values": [["+20%", 1]], "displayMode": 0, "type": 6 }
+            ],
+            "requirements": [
+              { "name": "Level", "values": [["70", 0]], "displayMode": 0, "type": 62 },
+              { "name": "Str", "values": [["111", 0]], "displayMode": 1, "type": 63 }
+            ],
+            "secDescrText": "Supports any non-blessing skill. Minions cannot gain the Lifetap buff.",
+            "explicitMods": [
+              "Supported Skills Cost Life instead of Mana",
+              "Supported Skills deal 10% increased Damage",
+              "Gain Lifetap after Spending a total of 273 Life on Upfront\nCosts and Effects of a Supported Skill",
+              "Supported Skills deal 19% more Damage while you have Lifetap",
+              "Lifetap lasts 4 seconds"
+            ],
+            "descrText": "This is a Support Gem. It does not grant a bonus to your character, but to skills in sockets connected to it. Place into an item socket connected to a socket containing the Skill Gem you wish to augment. Right click to remove from a socket.",
+            "frameType": 4,
+            "socket": 5,
+            "colour": "S"
+          }
+        ]
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvUmluZ3MvU3ludGhlc2lzUGh5c2ljYWwyIiwidyI6MSwiaCI6MSwic2NhbGUiOjEsInN5bnRoZXNpc2VkIjp0cnVlfV0/9345ce30d7/SynthesisPhysical2.png",
+        "league": "Standard",
+        "id": "de6ea0db4ef79733b4a3ae7b3cd5337f6ad8e7e3f3a79a4be1f63238de57929a",
+        "synthesised": true,
+        "name": "Circle of Guilt",
+        "typeLine": "Synthesised Iron Ring",
+        "baseType": "Iron Ring",
+        "identified": true,
+        "ilvl": 82,
+        "properties": [
+          {
+            "name": "Quality (Physical and Chaos Damage Modifiers)",
+            "values": [["+20%", 1]],
+            "displayMode": 0,
+            "type": 6
+          }
+        ],
+        "requirements": [{ "name": "Level", "values": [["52", 0]], "displayMode": 0, "type": 62 }],
+        "implicitMods": [
+          "+13 to Strength",
+          "Gain 8 Life per Enemy Hit with Attacks",
+          "14% chance to Avoid being Shocked"
+        ],
+        "explicitMods": [
+          "+17 to all Attributes",
+          "Adds 10 to 15 Physical Damage",
+          "+394 to Armour",
+          "Herald of Purity has 55% increased Buff Effect",
+          "63% increased Physical Damage while affected by Herald of Purity"
+        ],
+        "flavourText": [
+          "I feel the moral weight of what I must do to protect Wraeclast.\r",
+          "I accept my guilt without shame. It is my gift to humanity."
+        ],
+        "frameType": 3,
+        "x": 0,
+        "y": 0,
+        "inventoryId": "Ring"
+      }
+    ],
+    "inventory": [
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvQ3VycmVuY3lQb3J0YWwiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/a55c72f398/CurrencyPortal.png",
+        "stackSize": 29,
+        "maxStackSize": 40,
+        "league": "Standard",
+        "id": "9b24f87981194e6bd5febcc6c773a432dcb54ae606f82e95da6e8229b665d69c",
+        "name": "",
+        "typeLine": "Portal Scroll",
+        "baseType": "Portal Scroll",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["29/40", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": ["Creates a portal to town"],
+        "descrText": "Right click on this item to use it.",
+        "frameType": 5,
+        "x": 2,
+        "y": 0,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvQ3VycmVuY3lBZGRNb2RUb1JhcmUiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/b102771c23/CurrencyAddModToRare.png",
+        "stackSize": 1,
+        "maxStackSize": 10,
+        "league": "Standard",
+        "id": "edc9f9d47439e31265dc1af14acec5a0b94d3f87a13f5aefa4a3cc3195ea7b23",
+        "name": "",
+        "typeLine": "Exalted Orb",
+        "baseType": "Exalted Orb",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["1/10", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": ["Augments a rare item with a new random modifier"],
+        "descrText": "Right click this item then left click a rare item to apply it. Rare items can have up to six random modifiers.",
+        "frameType": 5,
+        "x": 2,
+        "y": 1,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvU2NhcmFicy9MZXNzZXJTY2FyYWJFbGRlciIsInciOjEsImgiOjEsInNjYWxlIjoxfV0/11cabe4d12/LesserScarabElder.png",
+        "stackSize": 9,
+        "maxStackSize": 10,
+        "league": "Standard",
+        "id": "b6612d8eea7facd59a51a63890243e572b90f5fbd72905e11fa11fb0b0bad0e9",
+        "name": "",
+        "typeLine": "Rusted Elder Scarab",
+        "baseType": "Rusted Elder Scarab",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["9/10", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": [
+          "Adds Elder Influence outcome to Map Area\r\n30% more Rare Elder Items found in Area"
+        ],
+        "descrText": "Can be used in a personal Map Device to add modifiers to a Map.",
+        "flavourText": [
+          "Your visions led the Azmeri down into a world left abandoned by the Vaal.\r",
+          "They cast you out, young Egrin, but the Order of the Djinn accepts you."
+        ],
+        "frameType": 0,
+        "x": 4,
+        "y": 0,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvU2NhcmFicy9MZXNzZXJTY2FyYWJCbGlnaHQiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/c35814598b/LesserScarabBlight.png",
+        "stackSize": 7,
+        "maxStackSize": 10,
+        "league": "Standard",
+        "id": "102b48140827db289edb2dc68b553c66c260c56dbf3a3d9279133153dfe9cc3b",
+        "name": "",
+        "typeLine": "Rusted Blight Scarab",
+        "baseType": "Rusted Blight Scarab",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["7/10", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": ["Area contains a Blight Encounter"],
+        "descrText": "Can be used in a personal Map Device to add modifiers to a Map.",
+        "flavourText": [
+          "We pulled you from the raging ocean, young Dhunan,\r",
+          "but we cannot return you to your home. The Order of the Djinn\r",
+          "offers you a place on Wraeclast."
+        ],
+        "frameType": 0,
+        "x": 3,
+        "y": 1,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvTWFwcy9UZW1wbGVNYXAiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/9be10cc6b3/TempleMap.png",
+        "league": "Standard",
+        "id": "90e6bd15d6fe9fa2986cf483f2b3782179d4eef410bc09b13fd462b0bdf36675",
+        "name": "",
+        "typeLine": "Chronicle of Atzoatl",
+        "baseType": "Chronicle of Atzoatl",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Area Level", "values": [["83", 0]], "displayMode": 0, "type": 34 }
+        ],
+        "additionalProperties": [
+          { "name": "Open Rooms:", "values": [], "displayMode": 0 },
+          {
+            "name": "",
+            "values": [["Catalyst of Corruption (Tier 2)", 0]],
+            "displayMode": 0,
+            "type": 49
+          },
+          { "name": "", "values": [["Cloister", 0]], "displayMode": 0, "type": 49 },
+          {
+            "name": "",
+            "values": [["Sanctum of Unity (Tier 2)", 0]],
+            "displayMode": 0,
+            "type": 49
+          },
+          { "name": "", "values": [["Armoury (Tier 2)", 0]], "displayMode": 0, "type": 49 },
+          { "name": "", "values": [["Hall of Legends (Tier 3)", 0]], "displayMode": 0, "type": 49 },
+          {
+            "name": "",
+            "values": [["Storm of Corruption (Tier 3)", 0]],
+            "displayMode": 0,
+            "type": 49
+          },
+          {
+            "name": "",
+            "values": [["Court of Sealed Death (Tier 3)", 0]],
+            "displayMode": 0,
+            "type": 49
+          },
+          {
+            "name": "",
+            "values": [["Conduit of Lightning (Tier 3)", 0]],
+            "displayMode": 0,
+            "type": 49
+          },
+          {
+            "name": "",
+            "values": [["House of the Others (Tier 3)", 0]],
+            "displayMode": 0,
+            "type": 49
+          },
+          {
+            "name": "",
+            "values": [["Hall of Offerings (Tier 2)", 0]],
+            "displayMode": 0,
+            "type": 49
+          },
+          { "name": "", "values": [["Barracks (Tier 2)", 0]], "displayMode": 0, "type": 49 },
+          { "name": "", "values": [["Apex of Atzoatl", 0]], "displayMode": 0, "type": 49 }
+        ],
+        "descrText": "Right click this item to view the Temple of Atzoatl.\r\nCan be used in a personal Map Device to open portals to the Temple of Atzoatl in the present day.",
+        "flavourText": [
+          "\"The Architects intended to research supposed 'Obelisks Beyond Time,' but the Vaal fell before the first obtained monolith was so much as measured.\" - Icius Perandus, Antiquities Collection, Crystal Shard"
+        ],
+        "frameType": 5,
+        "x": 11,
+        "y": 4,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvTWFwcy9EZWxpcml1bVNwbGludGVyIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/ae73b9445e/DeliriumSplinter.png",
+        "stackSize": 15,
+        "maxStackSize": 300,
+        "league": "Standard",
+        "id": "124cbcd0608039320e54debccd149b6575cde51900d02ceee5c4b089a333a216",
+        "name": "",
+        "typeLine": "Simulacrum Splinter",
+        "baseType": "Simulacrum Splinter",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["15/300", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "descrText": "Combine 300 Splinters to create a Simulacrum.",
+        "frameType": 5,
+        "x": 1,
+        "y": 0,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvQ3VycmVuY3lVcGdyYWRlUmFuZG9tbHkiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/eaeece27be/CurrencyUpgradeRandomly.png",
+        "stackSize": 1,
+        "maxStackSize": 20,
+        "league": "Standard",
+        "id": "a4fb6050d466f5a4cdd30abba9d731036575789e880560f2ef4e2e00a9817846",
+        "name": "",
+        "typeLine": "Orb of Chance",
+        "baseType": "Orb of Chance",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["1/20", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": ["Upgrades a normal item to a random rarity"],
+        "descrText": "Right click this item then left click a normal item to apply it.",
+        "frameType": 5,
+        "x": 1,
+        "y": 1,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvT2lscy9DbGVhck9pbCIsInciOjEsImgiOjEsInNjYWxlIjoxfV0/de298bd226/ClearOil.png",
+        "stackSize": 1,
+        "maxStackSize": 10,
+        "league": "Standard",
+        "id": "9ac96b4d5af5c85df0cb755a5c686f568e819cf34b2fcf9945ea8085095f710f",
+        "name": "",
+        "typeLine": "Clear Oil",
+        "baseType": "Clear Oil",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["1/10", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "descrText": "Can be combined with other Oils at Cassia to Enchant Rings or Amulets, or to modify Blighted Maps.",
+        "frameType": 5,
+        "x": 2,
+        "y": 2,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvT2lscy9BbWJlck9pbCIsInciOjEsImgiOjEsInNjYWxlIjoxfV0/931f4d2fdd/AmberOil.png",
+        "stackSize": 1,
+        "maxStackSize": 10,
+        "league": "Standard",
+        "id": "bd04032d269b0d0ad08be5c19967b0045813d174eed1cd9b0ab0221ce64ea376",
+        "name": "",
+        "typeLine": "Amber Oil",
+        "baseType": "Amber Oil",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["1/10", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "descrText": "Can be combined with other Oils at Cassia to Enchant Rings or Amulets, or to modify Blighted Maps.",
+        "frameType": 5,
+        "x": 2,
+        "y": 3,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvT2lscy9TZXBpYU9pbCIsInciOjEsImgiOjEsInNjYWxlIjoxfV0/580407bed5/SepiaOil.png",
+        "stackSize": 2,
+        "maxStackSize": 10,
+        "league": "Standard",
+        "id": "577da37dee304c3a5d25f4fc7d85ba801391b7eb910099978dec305874f0c3db",
+        "name": "",
+        "typeLine": "Sepia Oil",
+        "baseType": "Sepia Oil",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["2/10", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "descrText": "Can be combined with other Oils at Cassia to Enchant Rings or Amulets, or to modify Blighted Maps.",
+        "frameType": 5,
+        "x": 3,
+        "y": 2,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvQ3VycmVuY3lNYXBRdWFsaXR5IiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/c83c35bed5/CurrencyMapQuality.png",
+        "stackSize": 3,
+        "maxStackSize": 20,
+        "league": "Standard",
+        "id": "9fbcd750fe299ff76604f93836f48a4b42620520947ff6ef237e09652b46cd3f",
+        "name": "",
+        "typeLine": "Cartographer's Chisel",
+        "baseType": "Cartographer's Chisel",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["3/20", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": ["Improves the quality of a map"],
+        "descrText": "Right click this item then left click a map to apply it. Has greater effect on lower-rarity maps. The maximum quality is 20%.",
+        "frameType": 5,
+        "x": 3,
+        "y": 3,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvQ3VycmVuY3lSZXJvbGxTb2NrZXROdW1iZXJzIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/685633cb14/CurrencyRerollSocketNumbers.png",
+        "stackSize": 1,
+        "maxStackSize": 20,
+        "league": "Standard",
+        "id": "49ab48aa48c4432a869615f8c0949d7ee3b82dc11626d2027090dabd2d0033f0",
+        "name": "",
+        "typeLine": "Jeweller's Orb",
+        "baseType": "Jeweller's Orb",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["1/20", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": ["Reforges the number of sockets on an item"],
+        "descrText": "Right click this item then left click a socketed item to apply it. The item's quality increases the chances of obtaining more sockets.",
+        "frameType": 5,
+        "x": 3,
+        "y": 4,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvQ3VycmVuY3lVcGdyYWRlVG9SYXJlIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/f0dc27cd7c/CurrencyUpgradeToRare.png",
+        "stackSize": 2,
+        "maxStackSize": 20,
+        "league": "Standard",
+        "id": "1b57bd5d3385541c5081f6931636981f4ab958d67f782922a3d0d8039133d1d1",
+        "name": "",
+        "typeLine": "Orb of Alchemy",
+        "baseType": "Orb of Alchemy",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["2/20", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": ["Upgrades a normal item to a rare item"],
+        "descrText": "Right click this item then left click a normal item to apply it.",
+        "frameType": 5,
+        "x": 4,
+        "y": 3,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvQ3VycmVuY3lJZGVudGlmaWNhdGlvbiIsInciOjEsImgiOjEsInNjYWxlIjoxfV0/3a1e615322/CurrencyIdentification.png",
+        "stackSize": 6,
+        "maxStackSize": 40,
+        "league": "Standard",
+        "id": "bc4e9480d33ed242affa49f1dde713801acf8a5fd724d61dca86f6f17798dafe",
+        "name": "",
+        "typeLine": "Scroll of Wisdom",
+        "baseType": "Scroll of Wisdom",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["6/40", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": ["Identifies an item"],
+        "descrText": "Right click this item then left click an unidentified item to apply it.",
+        "frameType": 5,
+        "x": 0,
+        "y": 4,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvU2NhcmFicy9HcmVhdGVyU2NhcmFiRXhwZWRpdGlvbiIsInciOjEsImgiOjEsInNjYWxlIjoxfV0/19a2dff87d/GreaterScarabExpedition.png",
+        "stackSize": 2,
+        "maxStackSize": 10,
+        "league": "Standard",
+        "id": "e4347c666b210553b9f3441982f0e28e3764babcab7d4b3e68fbd1ad9c946f3e",
+        "name": "",
+        "typeLine": "Gilded Expedition Scarab",
+        "baseType": "Gilded Expedition Scarab",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["2/10", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": [
+          "Area contains an additional Expedition Encounter\r\nArea contains 50% increased number of Runic Monster Markers\r\n20% increased number of Explosives"
+        ],
+        "descrText": "Can be used in a personal Map Device to add modifiers to a Map.",
+        "flavourText": [
+          "We lay you to rest in the forest deep, Runesmith Revna, so that you may be\r",
+          "forever hidden from the stars which so terrified you in your final days.\r",
+          "May the secret you took to your grave be lifted from your burdens."
+        ],
+        "frameType": 0,
+        "x": 0,
+        "y": 0,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvU2NhcmFicy9HcmVhdGVyU2NhcmFiTWFwcyIsInciOjEsImgiOjEsInNjYWxlIjoxfV0/2567494a92/GreaterScarabMaps.png",
+        "stackSize": 2,
+        "maxStackSize": 10,
+        "league": "Standard",
+        "id": "9ff4bcbf9f6566801784cbb49f44002a3f2b7cfa7caef3725be10d0a03cc0d14",
+        "name": "",
+        "typeLine": "Gilded Cartography Scarab",
+        "baseType": "Gilded Cartography Scarab",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["2/10", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": ["50% increased Maps found in Area"],
+        "descrText": "Can be used in a personal Map Device to add modifiers to a Map.",
+        "flavourText": [
+          "Betucia, Bearer of the Sealing Blade, the Order of the Djinn survives\r",
+          "because of your sacrifice, but will be forever wounded by your loss."
+        ],
+        "frameType": 0,
+        "x": 0,
+        "y": 3,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvU2NhcmFicy9Ob3JtYWxTY2FyYWJIYXJiaW5nZXJzIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/640ad00ede/NormalScarabHarbingers.png",
+        "stackSize": 2,
+        "maxStackSize": 10,
+        "league": "Standard",
+        "id": "293c397b2b9a8fde619cce0fec434a05855b43f757266b199e51553ae60be2b9",
+        "name": "",
+        "typeLine": "Polished Harbinger Scarab",
+        "baseType": "Polished Harbinger Scarab",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["2/10", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": ["Area contains 3 additional Harbingers"],
+        "descrText": "Can be used in a personal Map Device to add modifiers to a Map.",
+        "flavourText": [
+          "For deciphering the language of the inscrutable ones, honoured Sarina,\r",
+          "we charge you with investigating their intent in our land."
+        ],
+        "frameType": 0,
+        "x": 0,
+        "y": 1,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvU2NhcmFicy9MZXNzZXJTY2FyYWJEaXZpbmF0aW9uIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/ac84db8246/LesserScarabDivination.png",
+        "stackSize": 2,
+        "maxStackSize": 10,
+        "league": "Standard",
+        "id": "52c72849bb8214c9602bcefa88a82ca2c5d3629386f045bf34ebb85bae5b468d",
+        "name": "",
+        "typeLine": "Rusted Divination Scarab",
+        "baseType": "Rusted Divination Scarab",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["2/10", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": ["50% more Divination Cards found in Area"],
+        "descrText": "Can be used in a personal Map Device to add modifiers to a Map.",
+        "flavourText": [
+          "You were a casualty of callous Karui warfare, ageless Narumoa, but the Order\r",
+          "mended your wounds. You are bound to us now by your own code."
+        ],
+        "frameType": 0,
+        "x": 0,
+        "y": 2,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvRXNzZW5jZS9Eb3VidDUiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/203952b786/Doubt5.png",
+        "stackSize": 1,
+        "maxStackSize": 9,
+        "league": "Standard",
+        "id": "1c02dfe551c11169ccfd8f64b384003d68ce56d8578c3c387ac74a62c40101ff",
+        "name": "",
+        "typeLine": "Screaming Essence of Doubt",
+        "baseType": "Screaming Essence of Doubt",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["1/9", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": [
+          "Upgrades a normal item to rare or reforges a rare item, guaranteeing one property",
+          "",
+          "Weapon: (326-455) to Accuracy Rating",
+          "Body Armour: (151-200) to Evasion Rating",
+          "Helmet: (121-140) to Evasion Rating",
+          "Shield: (151-225) to Evasion Rating",
+          "Other Armour: (91-105) to Evasion Rating",
+          "Quiver: (251-350) to Accuracy Rating",
+          "Amulet: (24-28)% increased Evasion Rating",
+          "Other Jewellery: (81-120) to Evasion Rating"
+        ],
+        "descrText": "Right click this item then left click a normal or rare item to apply it.",
+        "frameType": 5,
+        "x": 5,
+        "y": 3,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvQ3VycmVuY3lSZXJvbGxTb2NrZXRDb2xvdXJzIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/136314c10a/CurrencyRerollSocketColours.png",
+        "stackSize": 2,
+        "maxStackSize": 20,
+        "league": "Standard",
+        "id": "f780d8583663b834756f49aa62dc4c01d6739eb21e568dee6ff6471bf437c0a1",
+        "name": "",
+        "typeLine": "Chromatic Orb",
+        "baseType": "Chromatic Orb",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["2/20", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": ["Reforges the colour of sockets on an item"],
+        "descrText": "Right click this item then left click a socketed item to apply it.",
+        "frameType": 5,
+        "x": 5,
+        "y": 4,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvQ2F0YWx5c3RzL0ludHJpbnNpY0NhdGFseXN0IiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/107ffb799e/IntrinsicCatalyst.png",
+        "stackSize": 1,
+        "maxStackSize": 10,
+        "league": "Standard",
+        "id": "898fb5a2f85eab1625b586e678b93a2d1155ffe78c32d8ab7679d82843bec270",
+        "name": "",
+        "typeLine": "Intrinsic Catalyst",
+        "baseType": "Intrinsic Catalyst",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["1/10", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": [
+          "Adds quality that enhances Attribute modifiers on a ring, amulet or belt\r\nReplaces other quality types"
+        ],
+        "descrText": "Right click this item then left click a ring, amulet or belt to apply it. Has greater effect on lower-rarity jewellery. The maximum quality is 20%.",
+        "frameType": 5,
+        "x": 1,
+        "y": 3,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvQ2F0YWx5c3RzL1R1cmJ1bGVudENhdGFseXN0IiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/fc41fe8950/TurbulentCatalyst.png",
+        "stackSize": 1,
+        "maxStackSize": 10,
+        "league": "Standard",
+        "id": "9ec2f6296c7a107d7573c058e70f1bc89217ed91e65a631216c04322202046dc",
+        "name": "",
+        "typeLine": "Turbulent Catalyst",
+        "baseType": "Turbulent Catalyst",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["1/10", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": [
+          "Adds quality that enhances Elemental Damage modifiers on a ring, amulet or belt\r\nReplaces other quality types"
+        ],
+        "descrText": "Right click this item then left click a ring, amulet or belt to apply it. Has greater effect on lower-rarity jewellery. The maximum quality is 20%.",
+        "frameType": 5,
+        "x": 1,
+        "y": 4,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvQ3VycmVuY3lQb3J0YWwiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/a55c72f398/CurrencyPortal.png",
+        "stackSize": 24,
+        "maxStackSize": 40,
+        "league": "Standard",
+        "id": "4160bee7afe2df660c430a5077224e62a19dca2dbd8668efe8742275e692018b",
+        "name": "",
+        "typeLine": "Portal Scroll",
+        "baseType": "Portal Scroll",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["24/40", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": ["Creates a portal to town"],
+        "descrText": "Right click on this item to use it.",
+        "frameType": 5,
+        "x": 1,
+        "y": 2,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvU2NhcmFicy9MZXNzZXJTY2FyYWJFeHBlZGl0aW9uIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/e9bb9fa480/LesserScarabExpedition.png",
+        "stackSize": 10,
+        "maxStackSize": 10,
+        "league": "Standard",
+        "id": "b961a92b680dd8051af3d7a372045c54773b2b7173c5bff0349036e794619aff",
+        "name": "",
+        "typeLine": "Rusted Expedition Scarab",
+        "baseType": "Rusted Expedition Scarab",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["10/10", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": ["Area contains an additional Expedition Encounter"],
+        "descrText": "Can be used in a personal Map Device to add modifiers to a Map.",
+        "flavourText": [
+          "Your people no longer walk this continent, young Revna,\r",
+          "but the Order of the Djinn will give you a new home."
+        ],
+        "frameType": 0,
+        "x": 6,
+        "y": 0,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQW11bGV0cy9CbG9vZFNvYWtlZF9NZWRhbGxpb24iLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/2160ca2460/BloodSoaked_Medallion.png",
+        "league": "Standard",
+        "id": "9842ec026fe43c42792b98d7bf2832ad62e2434ad37f70b839c856ffb04d7540",
+        "name": "Bloodsoaked Medallion",
+        "typeLine": "Amber Amulet",
+        "baseType": "Amber Amulet",
+        "identified": true,
+        "ilvl": 69,
+        "requirements": [{ "name": "Level", "values": [["49", 0]], "displayMode": 0, "type": 62 }],
+        "implicitMods": ["+23 to Strength"],
+        "explicitMods": [
+          "42% increased Global Critical Strike Chance",
+          "+62 to maximum Life",
+          "+20% to Chaos Resistance",
+          "Every 10 seconds:\nGain 2% of Life per Enemy Hit with Attacks for 5 seconds\nGain 5% of Life per Enemy Killed for 5 seconds"
+        ],
+        "flavourText": [
+          "\"Atziri ordained that we exploit the weaknesses inherent in our slaves.\r",
+          "With relish, we did exactly as she instructed.\"\r",
+          "- Guatelitzi, Architect of Flesh"
+        ],
+        "frameType": 3,
+        "x": 2,
+        "y": 4,
+        "inventoryId": "MainInventory"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvQ3VycmVuY3lQYXNzaXZlU2tpbGxSZWZ1bmQiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/6b8ab3ff07/CurrencyPassiveSkillRefund.png",
+        "stackSize": 1,
+        "maxStackSize": 40,
+        "league": "Standard",
+        "id": "bcc82ae20ecc1a1975c8c6603bd64fb8d1fb52462cdb9c8c20db68277b7ecd2f",
+        "name": "",
+        "typeLine": "Orb of Regret",
+        "baseType": "Orb of Regret",
+        "identified": true,
+        "ilvl": 0,
+        "properties": [
+          { "name": "Stack Size", "values": [["1/40", 0]], "displayMode": 0, "type": 32 }
+        ],
+        "explicitMods": ["Grants a passive skill refund point"],
+        "descrText": "Right click on this item to use it.",
+        "frameType": 5,
+        "x": 4,
+        "y": 4,
+        "inventoryId": "MainInventory"
+      }
+    ],
+    "jewels": [
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvSmV3ZWxzL1VubmF0dXJhbEluc3RpbmN0IiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/c37fa5c2b6/UnnaturalInstinct.png",
+        "league": "Standard",
+        "id": "6f6bc5418d9c933bea90dbb329d94eb4733ec79dec9d7d94498a80511648430c",
+        "name": "Unnatural Instinct",
+        "typeLine": "Viridian Jewel",
+        "baseType": "Viridian Jewel",
+        "identified": true,
+        "ilvl": 83,
+        "properties": [
+          { "name": "Limited to", "values": [["1", 0]], "displayMode": 0 },
+          { "name": "Radius", "values": [["Small", 0]], "displayMode": 0, "type": 24 }
+        ],
+        "explicitMods": [
+          "Allocated Small Passive Skills in Radius grant nothing",
+          "Grants all bonuses of Unallocated Small Passive Skills in Radius"
+        ],
+        "descrText": "Place into an allocated Jewel Socket on the Passive Skill Tree. Right click to remove from the Socket.",
+        "flavourText": ["\"I don't know how I know, \r", "I just know that I know.\""],
+        "frameType": 3,
+        "x": 8,
+        "y": 0,
+        "inventoryId": "PassiveJewels"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvSmV3ZWxzL2Jhc2ljc3RyIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/8129ab1f4d/basicstr.png",
+        "league": "Standard",
+        "id": "e1a7ee232489b4ca7b84de5301509f8b069670c86c329cd58004e673a427a5a6",
+        "name": "Fulgent Branch",
+        "typeLine": "Crimson Jewel",
+        "baseType": "Crimson Jewel",
+        "identified": true,
+        "ilvl": 83,
+        "corrupted": true,
+        "implicitMods": ["Damage Penetrates 1% Fire Resistance"],
+        "explicitMods": [
+          "+8% to Physical Damage over Time Multiplier",
+          "6% increased Attack Speed with Staves",
+          "5% increased maximum Life",
+          "+10% to all Elemental Resistances"
+        ],
+        "descrText": "Place into an allocated Jewel Socket on the Passive Skill Tree. Right click to remove from the Socket.",
+        "frameType": 2,
+        "x": 35,
+        "y": 0,
+        "inventoryId": "PassiveJewels"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvSmV3ZWxzL1JpdmV0ZWRFeWUiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MSwic3ludGhlc2lzZWQiOnRydWV9XQ/a5986fc8bc/RivetedEye.png",
+        "league": "Standard",
+        "id": "2617865146df4fbb995bceffef852a57e0633bcd821954ea6eebfe55dc713f8f",
+        "abyssJewel": true,
+        "synthesised": true,
+        "name": "Hollow Globe",
+        "typeLine": "Synthesised Hypnotic Eye Jewel",
+        "baseType": "Hypnotic Eye Jewel",
+        "identified": true,
+        "ilvl": 75,
+        "corrupted": true,
+        "properties": [{ "name": "Abyss", "values": [], "displayMode": 0 }],
+        "requirements": [{ "name": "Level", "values": [["32", 0]], "displayMode": 0, "type": 62 }],
+        "implicitMods": ["Corrupted Blood cannot be inflicted on you"],
+        "explicitMods": [
+          "+10 to Dexterity and Intelligence",
+          "+30 to maximum Life",
+          "Gain 4% of Physical Damage as Extra Fire Damage if you've dealt a Critical Strike Recently"
+        ],
+        "descrText": "Place into an Abyssal Socket on an Item or into an allocated Jewel Socket on the Passive Skill Tree. Right click to remove from the Socket.",
+        "frameType": 2,
+        "x": 42,
+        "y": 0,
+        "inventoryId": "PassiveJewels"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvSmV3ZWxzL0VsZGVySmV3ZWwiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/278c673716/ElderJewel.png",
+        "league": "Standard",
+        "id": "4237a845beb2cae954c460d4a18bdfc06a2eb7cd9224f383a8d69c0868ea91ad",
+        "name": "Watcher's Eye",
+        "typeLine": "Prismatic Jewel",
+        "baseType": "Prismatic Jewel",
+        "identified": true,
+        "ilvl": 80,
+        "properties": [{ "name": "Limited to", "values": [["1", 0]], "displayMode": 0 }],
+        "explicitMods": [
+          "5% increased maximum Energy Shield",
+          "6% increased maximum Life",
+          "4% increased maximum Mana",
+          "+21% to Damage over Time Multiplier while affected by Malevolence",
+          "Unaffected by Elemental Weakness while affected by Purity of Elements"
+        ],
+        "descrText": "Place into an allocated Jewel Socket on the Passive Skill Tree. Right click to remove from the Socket.",
+        "flavourText": [
+          "One by one, they stood their ground against a creature \r",
+          "they had no hope of understanding, let alone defeating,\r",
+          "and one by one, they became a part of it."
+        ],
+        "frameType": 3,
+        "x": 19,
+        "y": 0,
+        "inventoryId": "PassiveJewels"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvSmV3ZWxzL05ld0dlbUJhc2UzIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/db35e60885/NewGemBase3.png",
+        "league": "Standard",
+        "id": "311b0d22d53d19ba32b77521b857e9afe283122e9c9e5ddc145e123edc2d45ce",
+        "name": "Bramble Shard",
+        "typeLine": "Large Cluster Jewel",
+        "baseType": "Large Cluster Jewel",
+        "identified": true,
+        "ilvl": 83,
+        "requirements": [{ "name": "Level", "values": [["54", 0]], "displayMode": 0, "type": 62 }],
+        "enchantMods": [
+          "Adds 8 Passive Skills",
+          "2 Added Passive Skills are Jewel Sockets",
+          "Added Small Passive Skills grant: 12% increased Physical Damage"
+        ],
+        "explicitMods": [
+          "Added Small Passive Skills also grant: +5 to Dexterity",
+          "1 Added Passive Skill is Battle-Hardened",
+          "1 Added Passive Skill is Furious Assault",
+          "1 Added Passive Skill is Master the Fundamentals"
+        ],
+        "descrText": "Place into an allocated Large Jewel Socket on the Passive Skill Tree. Added passives do not interact with jewel radiuses. Right click to remove from the Socket.",
+        "frameType": 2,
+        "x": 13,
+        "y": 0,
+        "inventoryId": "PassiveJewels"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvSmV3ZWxzL05ld0dlbUJhc2UyIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/78f6bf8356/NewGemBase2.png",
+        "league": "Standard",
+        "id": "19a02fb9c8e56e4c47c06461bd979bd1bc1c8e484dbf1954bb986d6054aa12fc",
+        "name": "Vivid Hope",
+        "typeLine": "Medium Cluster Jewel",
+        "baseType": "Medium Cluster Jewel",
+        "identified": true,
+        "ilvl": 83,
+        "requirements": [{ "name": "Level", "values": [["54", 0]], "displayMode": 0, "type": 62 }],
+        "enchantMods": [
+          "Adds 5 Passive Skills",
+          "1 Added Passive Skill is a Jewel Socket",
+          "Added Small Passive Skills grant: 10% increased Damage over Time"
+        ],
+        "explicitMods": [
+          "Added Small Passive Skills also grant: +2% to Fire Resistance",
+          "1 Added Passive Skill is Brewed for Potency",
+          "1 Added Passive Skill is Flow of Life"
+        ],
+        "descrText": "Place into an allocated Medium or Large Jewel Socket on the Passive Skill Tree. Added passives do not interact with jewel radiuses. Right click to remove from the Socket.",
+        "frameType": 2,
+        "x": 33,
+        "y": 0,
+        "inventoryId": "PassiveJewels"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvSmV3ZWxzL2Jhc2ljc3RyIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/8129ab1f4d/basicstr.png",
+        "league": "Standard",
+        "id": "a0c640eff28918a2354413a85d1bb7d6196b51f834ff4c5fd84b84212084442e",
+        "name": "Bramble Shine",
+        "typeLine": "Crimson Jewel",
+        "baseType": "Crimson Jewel",
+        "identified": true,
+        "ilvl": 83,
+        "corrupted": true,
+        "explicitMods": [
+          "+6% to Damage over Time Multiplier",
+          "7% increased maximum Life",
+          "+9% to all Elemental Resistances"
+        ],
+        "descrText": "Place into an allocated Jewel Socket on the Passive Skill Tree. Right click to remove from the Socket.",
+        "frameType": 2,
+        "x": 36,
+        "y": 0,
+        "inventoryId": "PassiveJewels"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvSmV3ZWxzL05ld0dlbUJhc2UzIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/db35e60885/NewGemBase3.png",
+        "league": "Standard",
+        "id": "233663e08a2e7560c24ea12c831e046b2c840160f3441baa66e27785831d0457",
+        "name": "Ghoul Shard",
+        "typeLine": "Large Cluster Jewel",
+        "baseType": "Large Cluster Jewel",
+        "identified": true,
+        "ilvl": 54,
+        "requirements": [{ "name": "Level", "values": [["40", 0]], "displayMode": 0, "type": 62 }],
+        "enchantMods": [
+          "Adds 8 Passive Skills",
+          "2 Added Passive Skills are Jewel Sockets",
+          "Added Small Passive Skills grant: 12% increased Physical Damage"
+        ],
+        "explicitMods": [
+          "Added Small Passive Skills also grant: +3% to Fire Resistance",
+          "1 Added Passive Skill is Battle-Hardened",
+          "1 Added Passive Skill is Furious Assault",
+          "1 Added Passive Skill is Master the Fundamentals"
+        ],
+        "descrText": "Place into an allocated Large Jewel Socket on the Passive Skill Tree. Added passives do not interact with jewel radiuses. Right click to remove from the Socket.",
+        "frameType": 2,
+        "x": 15,
+        "y": 0,
+        "inventoryId": "PassiveJewels"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvSmV3ZWxzL1B1enpsZVBpZWNlSmV3ZWxfQ2xlYW5zaW5nRmlyZSIsInciOjEsImgiOjEsInNjYWxlIjoxfV0/ddfe57ac90/PuzzlePieceJewel_CleansingFire.png",
+        "league": "Standard",
+        "id": "da4ce0c181c0afd07cf56a55b5241293d417db1cfc08cd01de43aa01f071fbe6",
+        "name": "Forbidden Flame",
+        "typeLine": "Crimson Jewel",
+        "baseType": "Crimson Jewel",
+        "identified": true,
+        "ilvl": 86,
+        "corrupted": true,
+        "properties": [{ "name": "Limited to", "values": [["1", 0]], "displayMode": 0 }],
+        "requirements": [
+          { "name": "Class:", "values": [["Duelist", 0]], "displayMode": 0, "type": 57 }
+        ],
+        "explicitMods": [
+          "Allocates First to Strike, Last to Fall if you have the matching modifier on Forbidden Flesh"
+        ],
+        "descrText": "Place into an allocated Jewel Socket on the Passive Skill Tree. Right click to remove from the Socket.",
+        "flavourText": [
+          "The minds of those studied utterly by the Cleansing Fire\r",
+          "continue to think and dream and beg for silence..."
+        ],
+        "frameType": 3,
+        "x": 18,
+        "y": 0,
+        "inventoryId": "PassiveJewels"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvSmV3ZWxzL05ld0dlbUJhc2UyIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/78f6bf8356/NewGemBase2.png",
+        "league": "Standard",
+        "id": "8ea21256981bbbf6aefb50867f8a58ccf1fd2b1efb4246debb5deafca31cfa06",
+        "name": "Cataclysm Splinter",
+        "typeLine": "Medium Cluster Jewel",
+        "baseType": "Medium Cluster Jewel",
+        "identified": true,
+        "ilvl": 83,
+        "requirements": [{ "name": "Level", "values": [["54", 0]], "displayMode": 0, "type": 62 }],
+        "enchantMods": [
+          "Adds 4 Passive Skills",
+          "1 Added Passive Skill is a Jewel Socket",
+          "Added Small Passive Skills grant: 10% increased Damage over Time"
+        ],
+        "explicitMods": [
+          "Added Small Passive Skills also grant: +2% to all Elemental Resistances",
+          "1 Added Passive Skill is Brewed for Potency",
+          "1 Added Passive Skill is Flow of Life"
+        ],
+        "descrText": "Place into an allocated Medium or Large Jewel Socket on the Passive Skill Tree. Added passives do not interact with jewel radiuses. Right click to remove from the Socket.",
+        "frameType": 2,
+        "x": 39,
+        "y": 0,
+        "inventoryId": "PassiveJewels"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvSmV3ZWxzL05ld0dlbUJhc2UyIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/78f6bf8356/NewGemBase2.png",
+        "league": "Standard",
+        "id": "6ec430db2e26e8b358fa008de0c502bc4e618aec52c226bf76d96f03f144ccbe",
+        "name": "Cataclysm Ruin",
+        "typeLine": "Medium Cluster Jewel",
+        "baseType": "Medium Cluster Jewel",
+        "identified": true,
+        "ilvl": 83,
+        "requirements": [{ "name": "Level", "values": [["54", 0]], "displayMode": 0, "type": 62 }],
+        "enchantMods": [
+          "Adds 5 Passive Skills",
+          "1 Added Passive Skill is a Jewel Socket",
+          "Added Small Passive Skills grant: 10% increased Damage over Time"
+        ],
+        "explicitMods": [
+          "Added Small Passive Skills also grant: +4% to Chaos Resistance",
+          "Added Small Passive Skills also grant: Regenerate 0.1% of Life per Second",
+          "1 Added Passive Skill is Brewed for Potency",
+          "1 Added Passive Skill is Flow of Life"
+        ],
+        "descrText": "Place into an allocated Medium or Large Jewel Socket on the Passive Skill Tree. Added passives do not interact with jewel radiuses. Right click to remove from the Socket.",
+        "frameType": 2,
+        "x": 41,
+        "y": 0,
+        "inventoryId": "PassiveJewels"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvSmV3ZWxzL1B1enpsZVBpZWNlSmV3ZWxfR3JlYXRUYW5nbGUiLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/9035b9ffd4/PuzzlePieceJewel_GreatTangle.png",
+        "league": "Standard",
+        "id": "7569181868f6a74d8c2c9aafc68d8ab6c7330c61514c999d196da16ccc166dc6",
+        "name": "Forbidden Flesh",
+        "typeLine": "Cobalt Jewel",
+        "baseType": "Cobalt Jewel",
+        "identified": true,
+        "ilvl": 86,
+        "corrupted": true,
+        "properties": [{ "name": "Limited to", "values": [["1", 0]], "displayMode": 0 }],
+        "requirements": [
+          { "name": "Class:", "values": [["Duelist", 0]], "displayMode": 0, "type": 57 }
+        ],
+        "explicitMods": [
+          "Allocates First to Strike, Last to Fall if you have the matching modifier on Forbidden Flame"
+        ],
+        "descrText": "Place into an allocated Jewel Socket on the Passive Skill Tree. Right click to remove from the Socket.",
+        "flavourText": [
+          "The bodies of those wholly subsumed by the Tangle\r",
+          "continue to merge and mutate and cry out for release..."
+        ],
+        "frameType": 3,
+        "x": 44,
+        "y": 0,
+        "inventoryId": "PassiveJewels"
+      },
+      {
+        "verified": false,
+        "w": 1,
+        "h": 1,
+        "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvSmV3ZWxzL3VuaXF1ZTciLCJ3IjoxLCJoIjoxLCJzY2FsZSI6MX1d/05e61f124f/unique7.png",
+        "league": "Standard",
+        "id": "d37a3b4a6ac2eab3619c13831dbdec9b8ab82a41898b10ee9df39aa104f04992",
+        "name": "Inspired Learning",
+        "typeLine": "Crimson Jewel",
+        "baseType": "Crimson Jewel",
+        "identified": true,
+        "ilvl": 85,
+        "properties": [
+          { "name": "Radius", "values": [["Small", 0]], "displayMode": 0, "type": 24 }
+        ],
+        "explicitMods": [
+          "With 4 Notables Allocated in Radius, When you Kill a Rare monster, you gain 1 of its Modifiers for 20 seconds"
+        ],
+        "descrText": "Place into an allocated Jewel Socket on the Passive Skill Tree. Right click to remove from the Socket.",
+        "flavourText": [
+          "If you do not learn from a won battle\r",
+          "then you have already lost the war."
+        ],
+        "frameType": 3,
+        "x": 0,
+        "y": 0,
+        "inventoryId": "PassiveJewels"
+      }
+    ],
+    "passives": {
+      "hashes": [
+        476, 758, 1325, 1572, 2491, 3533, 3644, 3651, 5233, 5743, 5935, 6204, 6230, 6289, 6712,
+        6741, 7285, 7374, 9995, 11088, 12239, 12247, 12769, 14056, 14726, 14930, 15405, 15616,
+        16775, 18302, 18901, 19609, 21974, 23027, 24865, 25831, 25933, 26196, 26270, 26564, 26712,
+        26725, 27864, 28878, 29353, 29933, 30380, 31471, 31961, 32932, 33179, 33287, 33631, 33718,
+        33740, 34009, 34031, 34171, 34207, 34400, 34513, 35288, 36949, 37326, 40867, 42911, 44202,
+        44429, 44967, 45803, 46910, 47389, 47421, 48109, 48287, 48423, 48438, 48505, 48760, 48807,
+        50422, 50570, 50862, 52575, 53118, 55190, 55485, 55676, 55854, 56359, 58218, 59306, 59928,
+        60472, 62319, 62429, 63033, 63282, 63723, 63976, 64128, 64210, 64587, 65034, 65108
+      ],
+      "hashes_ex": [
+        79, 81, 83, 85, 87, 88, 89, 90, 91, 93, 95, 118, 120, 122, 126, 128, 130, 131, 133, 134,
+        147, 148, 149, 151
+      ],
+      "mastery_effects": { "12239": 18859, "48505": 47642, "64128": 61097 },
+      "skill_overrides": {},
+      "bandit_choice": "Eramir",
+      "pantheon_major": "TheBrineKing",
+      "pantheon_minor": "Garukhan",
+      "jewel_data": {
+        "0": { "type": "JewelStr", "radius": 960 },
+        "8": { "type": "JewelDex", "radius": 960 },
+        "13": {
+          "type": "JewelPassiveTreeExpansionLarge",
+          "subgraph": {
+            "groups": {
+              "expansion_13": {
+                "proxy": "30275",
+                "nodes": ["81", "83", "85", "86", "87", "88", "89", "79", "1078"],
+                "x": -8798.67,
+                "y": -116.185,
+                "orbits": [3]
+              }
+            },
+            "nodes": {
+              "79": {
+                "skill": "53318",
+                "name": "Battle-Hardened",
+                "icon": "Art/2DArt/SkillIcons/passives/IncreasedPhysicalDamage.png",
+                "isNotable": true,
+                "stats": [
+                  "30% increased Evasion Rating and Armour",
+                  "35% increased Physical Damage"
+                ],
+                "group": "expansion_13",
+                "orbit": 3,
+                "orbitIndex": 1,
+                "out": [],
+                "in": ["89"]
+              },
+              "81": {
+                "skill": "37171",
+                "name": "Physical Damage",
+                "icon": "Art/2DArt/SkillIcons/passives/PhysicalDamagenode2.png",
+                "stats": ["+5 to Dexterity", "12% increased Physical Damage"],
+                "group": "expansion_13",
+                "orbit": 3,
+                "orbitIndex": 4,
+                "out": [],
+                "in": ["55190"]
+              },
+              "83": {
+                "skill": "2796",
+                "name": "Master the Fundamentals",
+                "icon": "Art/2DArt/SkillIcons/passives/IncreasedPhysicalDamage.png",
+                "isNotable": true,
+                "stats": [
+                  "+10% to all Elemental Resistances",
+                  "35% reduced Elemental Damage",
+                  "35% increased Physical Damage"
+                ],
+                "group": "expansion_13",
+                "orbit": 3,
+                "orbitIndex": 7,
+                "out": [],
+                "in": ["81"]
+              },
+              "85": {
+                "skill": "49080",
+                "name": "Medium Jewel Socket",
+                "icon": "Art/2DArt/SkillIcons/passives/MasteryBlank.png",
+                "isJewelSocket": true,
+                "expansionJewel": { "size": 1, "index": 0, "proxy": "25441", "parent": "55190" },
+                "stats": [],
+                "group": "expansion_13",
+                "orbit": 3,
+                "orbitIndex": 9,
+                "out": [],
+                "in": ["83"]
+              },
+              "86": {
+                "skill": "37171",
+                "name": "Physical Damage",
+                "icon": "Art/2DArt/SkillIcons/passives/PhysicalDamagenode2.png",
+                "stats": ["+5 to Dexterity", "12% increased Physical Damage"],
+                "group": "expansion_13",
+                "orbit": 3,
+                "orbitIndex": 11,
+                "out": [],
+                "in": ["85"]
+              },
+              "87": {
+                "skill": "981",
+                "name": "Furious Assault",
+                "icon": "Art/2DArt/SkillIcons/passives/IncreasedPhysicalDamage.png",
+                "isNotable": true,
+                "stats": ["8% increased Attack and Cast Speed", "25% increased Physical Damage"],
+                "group": "expansion_13",
+                "orbit": 3,
+                "orbitIndex": 12,
+                "out": [],
+                "in": ["86"]
+              },
+              "88": {
+                "skill": "37171",
+                "name": "Physical Damage",
+                "icon": "Art/2DArt/SkillIcons/passives/PhysicalDamagenode2.png",
+                "stats": ["+5 to Dexterity", "12% increased Physical Damage"],
+                "group": "expansion_13",
+                "orbit": 3,
+                "orbitIndex": 13,
+                "out": [],
+                "in": ["87"]
+              },
+              "89": {
+                "skill": "44169",
+                "name": "Medium Jewel Socket",
+                "icon": "Art/2DArt/SkillIcons/passives/MasteryBlank.png",
+                "isJewelSocket": true,
+                "expansionJewel": { "size": 1, "index": 2, "proxy": "53203", "parent": "55190" },
+                "stats": [],
+                "group": "expansion_13",
+                "orbit": 3,
+                "orbitIndex": 15,
+                "out": [],
+                "in": ["88"]
+              },
+              "1078": {
+                "skill": "58618",
+                "name": "Physical Damage Mastery",
+                "icon": "Art/2DArt/SkillIcons/passives/AltMasteryPhysicalDamage.png",
+                "isMastery": true,
+                "stats": [],
+                "group": "expansion_13",
+                "orbit": 0,
+                "orbitIndex": 0,
+                "out": [],
+                "in": []
+              }
+            }
+          }
+        },
+        "15": {
+          "type": "JewelPassiveTreeExpansionLarge",
+          "subgraph": {
+            "groups": {
+              "expansion_15": {
+                "proxy": "28650",
+                "nodes": ["118", "120", "122", "123", "124", "125", "126", "128", "1117"],
+                "x": -4938.1,
+                "y": 8386.24,
+                "orbits": [3]
+              }
+            },
+            "nodes": {
+              "118": {
+                "skill": "37171",
+                "name": "Physical Damage",
+                "icon": "Art/2DArt/SkillIcons/passives/PhysicalDamagenode2.png",
+                "stats": ["+3% to Fire Resistance", "12% increased Physical Damage"],
+                "group": "expansion_15",
+                "orbit": 3,
+                "orbitIndex": 1,
+                "out": [],
+                "in": ["2491"]
+              },
+              "120": {
+                "skill": "2796",
+                "name": "Master the Fundamentals",
+                "icon": "Art/2DArt/SkillIcons/passives/IncreasedPhysicalDamage.png",
+                "isNotable": true,
+                "stats": [
+                  "+10% to all Elemental Resistances",
+                  "35% reduced Elemental Damage",
+                  "35% increased Physical Damage"
+                ],
+                "group": "expansion_15",
+                "orbit": 3,
+                "orbitIndex": 4,
+                "out": [],
+                "in": ["118"]
+              },
+              "122": {
+                "skill": "10532",
+                "name": "Medium Jewel Socket",
+                "icon": "Art/2DArt/SkillIcons/passives/MasteryBlank.png",
+                "isJewelSocket": true,
+                "expansionJewel": { "size": 1, "index": 0, "proxy": "37898", "parent": "2491" },
+                "stats": [],
+                "group": "expansion_15",
+                "orbit": 3,
+                "orbitIndex": 7,
+                "out": [],
+                "in": ["120"]
+              },
+              "123": {
+                "skill": "37171",
+                "name": "Physical Damage",
+                "icon": "Art/2DArt/SkillIcons/passives/PhysicalDamagenode2.png",
+                "stats": ["+3% to Fire Resistance", "12% increased Physical Damage"],
+                "group": "expansion_15",
+                "orbit": 3,
+                "orbitIndex": 8,
+                "out": [],
+                "in": ["122"]
+              },
+              "124": {
+                "skill": "981",
+                "name": "Furious Assault",
+                "icon": "Art/2DArt/SkillIcons/passives/IncreasedPhysicalDamage.png",
+                "isNotable": true,
+                "stats": ["8% increased Attack and Cast Speed", "25% increased Physical Damage"],
+                "group": "expansion_15",
+                "orbit": 3,
+                "orbitIndex": 9,
+                "out": [],
+                "in": ["123"]
+              },
+              "125": {
+                "skill": "37171",
+                "name": "Physical Damage",
+                "icon": "Art/2DArt/SkillIcons/passives/PhysicalDamagenode2.png",
+                "stats": ["+3% to Fire Resistance", "12% increased Physical Damage"],
+                "group": "expansion_15",
+                "orbit": 3,
+                "orbitIndex": 11,
+                "out": [],
+                "in": ["124"]
+              },
+              "126": {
+                "skill": "46519",
+                "name": "Medium Jewel Socket",
+                "icon": "Art/2DArt/SkillIcons/passives/MasteryBlank.png",
+                "isJewelSocket": true,
+                "expansionJewel": { "size": 1, "index": 2, "proxy": "58355", "parent": "2491" },
+                "stats": [],
+                "group": "expansion_15",
+                "orbit": 3,
+                "orbitIndex": 12,
+                "out": [],
+                "in": ["125"]
+              },
+              "128": {
+                "skill": "53318",
+                "name": "Battle-Hardened",
+                "icon": "Art/2DArt/SkillIcons/passives/IncreasedPhysicalDamage.png",
+                "isNotable": true,
+                "stats": [
+                  "30% increased Evasion Rating and Armour",
+                  "35% increased Physical Damage"
+                ],
+                "group": "expansion_15",
+                "orbit": 3,
+                "orbitIndex": 15,
+                "out": [],
+                "in": ["126"]
+              },
+              "1117": {
+                "skill": "58618",
+                "name": "Physical Damage Mastery",
+                "icon": "Art/2DArt/SkillIcons/passives/AltMasteryPhysicalDamage.png",
+                "isMastery": true,
+                "stats": [],
+                "group": "expansion_15",
+                "orbit": 0,
+                "orbitIndex": 0,
+                "out": [],
+                "in": []
+              }
+            }
+          }
+        },
+        "18": { "type": "JewelStr" },
+        "19": { "type": "JewelPrismatic" },
+        "33": {
+          "type": "JewelPassiveTreeExpansionMedium",
+          "subgraph": {
+            "groups": {
+              "expansion_33": {
+                "proxy": "25441",
+                "nodes": ["90", "91", "93", "94", "95", "1090"],
+                "x": -9143.74,
+                "y": 613.015,
+                "orbits": [2]
+              }
+            },
+            "nodes": {
+              "90": {
+                "skill": "32169",
+                "name": "Damage over Time",
+                "icon": "Art/2DArt/SkillIcons/passives/DamageOverTimeNode.png",
+                "stats": ["10% increased Damage over Time", "+2% to Fire Resistance"],
+                "group": "expansion_33",
+                "orbit": 2,
+                "orbitIndex": 1,
+                "out": [],
+                "in": ["49080"]
+              },
+              "91": {
+                "skill": "34581",
+                "name": "Flow of Life",
+                "icon": "Art/2DArt/SkillIcons/passives/DamageOverTimeNotable.png",
+                "isNotable": true,
+                "stats": [
+                  "24% increased Damage over Time",
+                  "4% increased maximum Life",
+                  "Regenerate 0.6% of Life per second"
+                ],
+                "group": "expansion_33",
+                "orbit": 2,
+                "orbitIndex": 4,
+                "out": [],
+                "in": ["90"]
+              },
+              "93": {
+                "skill": "24970",
+                "name": "Small Jewel Socket",
+                "icon": "Art/2DArt/SkillIcons/passives/MasteryBlank.png",
+                "isJewelSocket": true,
+                "expansionJewel": { "size": 0, "index": 0, "proxy": "3854", "parent": "49080" },
+                "stats": [],
+                "group": "expansion_33",
+                "orbit": 2,
+                "orbitIndex": 9,
+                "out": [],
+                "in": ["91"]
+              },
+              "94": {
+                "skill": "32169",
+                "name": "Damage over Time",
+                "icon": "Art/2DArt/SkillIcons/passives/DamageOverTimeNode.png",
+                "stats": ["10% increased Damage over Time", "+2% to Fire Resistance"],
+                "group": "expansion_33",
+                "orbit": 2,
+                "orbitIndex": 12,
+                "out": [],
+                "in": ["93"]
+              },
+              "95": {
+                "skill": "4094",
+                "name": "Brewed for Potency",
+                "icon": "Art/2DArt/SkillIcons/passives/DamageOverTimeNotable.png",
+                "isNotable": true,
+                "stats": [
+                  "24% increased Damage over Time",
+                  "10% increased Flask Charges gained",
+                  "20% increased Life and Mana Recovery from Flasks"
+                ],
+                "group": "expansion_33",
+                "orbit": 2,
+                "orbitIndex": 15,
+                "out": [],
+                "in": ["94"]
+              },
+              "1090": {
+                "skill": "48978",
+                "name": "Damage over Time Multiplier Mastery",
+                "icon": "Art/2DArt/SkillIcons/passives/AltDamageOverTimeMultiplierMastery.png",
+                "isMastery": true,
+                "stats": [],
+                "group": "expansion_33",
+                "orbit": 0,
+                "orbitIndex": 0,
+                "out": [],
+                "in": []
+              }
+            }
+          }
+        },
+        "35": { "type": "JewelStr" },
+        "36": { "type": "JewelStr" },
+        "39": {
+          "type": "JewelPassiveTreeExpansionMedium",
+          "subgraph": {
+            "groups": {
+              "expansion_39": {
+                "proxy": "37898",
+                "nodes": ["134", "130", "131", "133", "1129"],
+                "x": -4532.6,
+                "y": 9088.58,
+                "orbits": [2]
+              }
+            },
+            "nodes": {
+              "130": {
+                "skill": "34581",
+                "name": "Flow of Life",
+                "icon": "Art/2DArt/SkillIcons/passives/DamageOverTimeNotable.png",
+                "isNotable": true,
+                "stats": [
+                  "24% increased Damage over Time",
+                  "4% increased maximum Life",
+                  "Regenerate 0.6% of Life per second"
+                ],
+                "group": "expansion_39",
+                "orbit": 2,
+                "orbitIndex": 3,
+                "out": [],
+                "in": ["134"]
+              },
+              "131": {
+                "skill": "23984",
+                "name": "Small Jewel Socket",
+                "icon": "Art/2DArt/SkillIcons/passives/MasteryBlank.png",
+                "isJewelSocket": true,
+                "expansionJewel": { "size": 0, "index": 0, "proxy": "48128", "parent": "10532" },
+                "stats": [],
+                "group": "expansion_39",
+                "orbit": 2,
+                "orbitIndex": 7,
+                "out": [],
+                "in": ["130"]
+              },
+              "133": {
+                "skill": "4094",
+                "name": "Brewed for Potency",
+                "icon": "Art/2DArt/SkillIcons/passives/DamageOverTimeNotable.png",
+                "isNotable": true,
+                "stats": [
+                  "24% increased Damage over Time",
+                  "10% increased Flask Charges gained",
+                  "20% increased Life and Mana Recovery from Flasks"
+                ],
+                "group": "expansion_39",
+                "orbit": 2,
+                "orbitIndex": 11,
+                "out": [],
+                "in": ["131"]
+              },
+              "134": {
+                "skill": "32169",
+                "name": "Damage over Time",
+                "icon": "Art/2DArt/SkillIcons/passives/DamageOverTimeNode.png",
+                "stats": ["10% increased Damage over Time", "+2% to all Elemental Resistances"],
+                "group": "expansion_39",
+                "orbit": 2,
+                "orbitIndex": 15,
+                "out": [],
+                "in": ["10532"]
+              },
+              "1129": {
+                "skill": "48978",
+                "name": "Damage over Time Multiplier Mastery",
+                "icon": "Art/2DArt/SkillIcons/passives/AltDamageOverTimeMultiplierMastery.png",
+                "isMastery": true,
+                "stats": [],
+                "group": "expansion_39",
+                "orbit": 0,
+                "orbitIndex": 0,
+                "out": [],
+                "in": []
+              }
+            }
+          }
+        },
+        "41": {
+          "type": "JewelPassiveTreeExpansionMedium",
+          "subgraph": {
+            "groups": {
+              "expansion_41": {
+                "proxy": "58355",
+                "nodes": ["148", "149", "151", "152", "147", "1147"],
+                "x": -5749.1,
+                "y": 8386.24,
+                "orbits": [2]
+              }
+            },
+            "nodes": {
+              "147": {
+                "skill": "4094",
+                "name": "Brewed for Potency",
+                "icon": "Art/2DArt/SkillIcons/passives/DamageOverTimeNotable.png",
+                "isNotable": true,
+                "stats": [
+                  "24% increased Damage over Time",
+                  "10% increased Flask Charges gained",
+                  "20% increased Life and Mana Recovery from Flasks"
+                ],
+                "group": "expansion_41",
+                "orbit": 2,
+                "orbitIndex": 1,
+                "out": [],
+                "in": ["152"]
+              },
+              "148": {
+                "skill": "32169",
+                "name": "Damage over Time",
+                "icon": "Art/2DArt/SkillIcons/passives/DamageOverTimeNode.png",
+                "stats": [
+                  "10% increased Damage over Time",
+                  "+4% to Chaos Resistance",
+                  "Regenerate 0.1% of Life per second"
+                ],
+                "group": "expansion_41",
+                "orbit": 2,
+                "orbitIndex": 4,
+                "out": [],
+                "in": ["46519"]
+              },
+              "149": {
+                "skill": "34581",
+                "name": "Flow of Life",
+                "icon": "Art/2DArt/SkillIcons/passives/DamageOverTimeNotable.png",
+                "isNotable": true,
+                "stats": [
+                  "24% increased Damage over Time",
+                  "4% increased maximum Life",
+                  "Regenerate 0.6% of Life per second"
+                ],
+                "group": "expansion_41",
+                "orbit": 2,
+                "orbitIndex": 7,
+                "out": [],
+                "in": ["148"]
+              },
+              "151": {
+                "skill": "61666",
+                "name": "Small Jewel Socket",
+                "icon": "Art/2DArt/SkillIcons/passives/MasteryBlank.png",
+                "isJewelSocket": true,
+                "expansionJewel": { "size": 0, "index": 0, "proxy": "35070", "parent": "46519" },
+                "stats": [],
+                "group": "expansion_41",
+                "orbit": 2,
+                "orbitIndex": 12,
+                "out": [],
+                "in": ["149"]
+              },
+              "152": {
+                "skill": "32169",
+                "name": "Damage over Time",
+                "icon": "Art/2DArt/SkillIcons/passives/DamageOverTimeNode.png",
+                "stats": [
+                  "10% increased Damage over Time",
+                  "+4% to Chaos Resistance",
+                  "Regenerate 0.1% of Life per second"
+                ],
+                "group": "expansion_41",
+                "orbit": 2,
+                "orbitIndex": 15,
+                "out": [],
+                "in": ["151"]
+              },
+              "1147": {
+                "skill": "48978",
+                "name": "Damage over Time Multiplier Mastery",
+                "icon": "Art/2DArt/SkillIcons/passives/AltDamageOverTimeMultiplierMastery.png",
+                "isMastery": true,
+                "stats": [],
+                "group": "expansion_41",
+                "orbit": 0,
+                "orbitIndex": 0,
+                "out": [],
+                "in": []
+              }
+            }
+          }
+        },
+        "42": { "type": "JewelAbyssCaster" },
+        "44": { "type": "JewelInt" }
+      }
+    },
+    "metadata": { "version": "3.22.2" }
+  },
+  "key": "characterone",
+  "timestampMs": 1701112165067
+}
