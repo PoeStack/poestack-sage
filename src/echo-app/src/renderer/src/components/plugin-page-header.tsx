@@ -1,6 +1,6 @@
-import { CSSProperties } from 'react'
+import { CSSProperties, useEffect, useState } from 'react'
 import Process from 'process'
-import { X, Minus, Maximize } from 'lucide-react'
+import { X, Minus, Maximize, Minimize } from 'lucide-react'
 
 import { getCurrentWindow } from '@electron/remote'
 import { Button } from 'echo-common/components-v1'
@@ -14,6 +14,20 @@ export function PluginPageHeader() {
 }
 
 const WindowsHeader = () => {
+  const [maximized, setMaximized] = useState(getCurrentWindow().isMaximized())
+
+  useEffect(() => {
+    const maximizeListener = () => setMaximized(true)
+    const minimizeListener = () => setMaximized(false)
+    getCurrentWindow().addListener('maximize', maximizeListener)
+    getCurrentWindow().addListener('unmaximize', minimizeListener)
+
+    return () => {
+      getCurrentWindow().removeListener('maximize', maximizeListener)
+      getCurrentWindow().removeListener('unmaximize', minimizeListener)
+    }
+  }, [])
+
   return (
     <>
       <div className="h-7" />
@@ -46,7 +60,7 @@ const WindowsHeader = () => {
               }
             }}
           >
-            <Maximize className="h-4 w-4" />
+            {maximized ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
           </Button>
           <Button
             style={{ WebkitAppRegion: 'no-drag' } as CSSProperties}
