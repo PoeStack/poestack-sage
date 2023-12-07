@@ -12,6 +12,7 @@
     "jsx": "react-jsx",
     "strict": true,
     "strictNullChecks": true,
+    "noUnusedLocals": false,
     "baseUrl": ".",
     "moduleResolution": "bundler",
     "paths": {

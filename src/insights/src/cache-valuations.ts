@@ -1,9 +1,10 @@
 import * as AWS from 'aws-sdk'
 import Redis from 'ioredis'
-import { from, groupBy, map, mergeMap, Observable, of, tap, toArray } from 'rxjs'
+import { catchError, concatMap, forkJoin, from, groupBy, map, mergeMap, Observable, of, tap, toArray } from 'rxjs'
 import * as process from 'process'
 import percentile from 'percentile'
-import { scanKeys } from './utils'
+import { scanKeys, twoDecimals } from './utils'
+import { HttpUtil } from 'sage-common'
 
 const client = new Redis(process.env['REDIS_URL'])
 
@@ -24,8 +25,11 @@ type Listing = {
 }
 
 type Valuation = {
-  pvs: number[]
+  c: number[]
   l: number
+  h: number[]
+  d: number[]
+  s?: any | undefined
 }
 
 type GroupValuation = {
@@ -35,21 +39,23 @@ type GroupValuation = {
   valuation: Valuation
 }
 
+var divChaosValue = 240
 function valueListings(listings: Listing[]): Observable<Valuation> {
   const filteredListings = listings.filter((e) => !isNaN(e.value))
   const convertedListings = filteredListings.map((e) => {
     if (e.valueCurrency === 'd') {
-      return { ...e, valueCurrency: 'c', value: e.value * 240 }
+      return { ...e, valueCurrency: 'c', value: e.value * divChaosValue }
     }
     return e
   })
   const values = convertedListings.map((e) => e.value).sort((a, b) => a - b)
   const result = percentile(
-    [1, 5, 7, 10, 12, 15, 18, 20, 25, 30, 40, 50, 70, 95, 99],
+    [5, 7, 10, 12, 15, 18, 20, 25, 30, 50],
     values
   ) as number[]
+  const mappedResults = result.map((e) => twoDecimals(e))
 
-  return of({ l: filteredListings.length, pvs: result })
+  return of({ l: filteredListings.length, c: mappedResults, h: [], d: [] })
 }
 
 function valueShard(shardKey: string): Observable<{ key: string; valuations: GroupValuation[] }> {
@@ -90,25 +96,59 @@ function valueShard(shardKey: string): Observable<{ key: string; valuations: Gro
   )
 }
 
+const httpUtil = new HttpUtil()
 function writeShard(e: { key: string; valuations: GroupValuation[] }) {
-  const output = {
-    timestampMs: Date.now(),
-    valuations: {}
-  }
+  const [tag, shard, league] = e.key.split("_")
+  const shardKey = `v6/${e.key.replaceAll(' ', '_')}.json`
 
-  for (const valuation of e.valuations) {
-    output.valuations[valuation.itemGroupHash] = valuation.valuation
-  }
+  return forkJoin({
+    currentShard: httpUtil.get(`https://pub-1ac9e2cd6dca4bda9dc260cb6a6f7c90.r2.dev/${shardKey}`).pipe(catchError((e) => of(null))),
+    shardSummary: from(client.hgetall(`gss:${tag}:${shard}`)).pipe(catchError((e) => of(null)))
+  }).pipe(
+    concatMap((source) => {
+      const currentShard: any = source.currentShard
 
-  return from(
-    s3bucket
-      .putObject({
-        Bucket: 'insights-public',
-        Key: `v4/${e.key.replaceAll(' ', '_')}.json`,
-        Body: JSON.stringify(output),
-        ContentType: 'application/json'
-      })
-      .promise()
+      const output = {
+        metadata: {
+          divineChaosValue: divChaosValue,
+          timestampMs: Date.now(),
+        },
+        valuations: {},
+      }
+
+      for (const valuation of e.valuations) {
+        const currentValuation = currentShard?.valuations[valuation.itemGroupHash]
+        if (process.env['UPDATE_HISTORY_HOURLY'] === "true") {
+          const history = currentValuation?.h ?? []
+          history.push(valuation.valuation.c[2])
+          valuation.valuation.h = history.slice(-48)
+        }
+
+        if (process.env['UPDATE_HISTORY_DAILY'] === "true") {
+          const history = currentValuation?.d ?? []
+          history.push(valuation.valuation.c[2])
+          valuation.valuation.d = history
+        }
+
+        const summary = source.shardSummary[valuation.itemGroupHash]
+        if (summary) {
+          valuation.valuation.s = JSON.parse(summary)
+        }
+
+        output.valuations[valuation.itemGroupHash] = valuation.valuation
+      }
+
+      return from(
+        s3bucket
+          .putObject({
+            Bucket: 'insights-public',
+            Key: shardKey,
+            Body: JSON.stringify(output),
+            ContentType: 'application/json'
+          })
+          .promise()
+      )
+    })
   )
 }
 

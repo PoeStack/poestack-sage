@@ -22,13 +22,20 @@ export type PoeInstanceConnectionEvent = PoeClientLogTextEvent & {
   server: string
 }
 
+export type PoeGeneratingAreaEvent = PoeClientLogTextEvent & {
+  type: 'GeneratingAreaEvent'
+  areaLevel: number
+  areaTag: string
+  seed: number
+}
+
 export type PoeNPCEventSubtype =
   | 'EinharEncounterEvent'
   | 'AlvaEncounterEvent'
   | 'NikoEncounterEvent'
   | 'CassiaEncounterEvent'
   | 'JunEncounterEvent'
-  | 'DeleriumMirrorEvent'
+  | 'DeliriumMirrorEvent'
   | 'HarvestEncounterEvent'
   | 'ExpeditionTujenEncounterEvent'
   | 'ExpeditionRogEncounterEvent'
@@ -51,6 +58,7 @@ export type PoeClientLogEvent =
   | PoeInstanceConnectionEvent
   | PoeNPCEncounterEvent
   | PoeCharacterSlainEvent
+  | PoeGeneratingAreaEvent
 
 interface PoeClientLogEventParser {
   parse(raw: string): PoeClientLogEvent | undefined
@@ -59,12 +67,13 @@ interface PoeClientLogEventParser {
 class ZoneEnteranceEventParser implements PoeClientLogEventParser {
   parse(raw: string): PoeZoneEntranceEvent | undefined {
     if (raw.includes('] : You have entered')) {
+      const split = raw.split(' ')
       return {
         type: 'ZoneEntranceEvent',
-        systemUptime: Number(raw.split(' ')[2]),
+        systemUptime: Number(split[2]),
         raw: raw,
         location: raw.slice(raw.indexOf('entered ') + 'entered '.length, -1),
-        time: new Date()
+        time: new Date(split[0] + ' ' + split[1])
       }
     }
     return undefined
@@ -74,12 +83,31 @@ class ZoneEnteranceEventParser implements PoeClientLogEventParser {
 class InstanceConnectionEventParser implements PoeClientLogEventParser {
   parse(raw: string): PoeInstanceConnectionEvent | undefined {
     if (raw.includes('] Connecting to instance server at')) {
+      const split = raw.split(' ')
       return {
         type: 'InstanceConnectionEvent',
         raw: raw,
-        systemUptime: Number(raw.split(' ')[2]),
+        systemUptime: Number(split[2]),
         server: raw.slice(raw.indexOf('at ') + 'at '.length, raw.length),
-        time: new Date()
+        time: new Date(split[0] + ' ' + split[1])
+      }
+    }
+    return undefined
+  }
+}
+
+class GeneratingAreaEventParser implements PoeClientLogEventParser {
+  parse(raw: string): PoeGeneratingAreaEvent | undefined {
+    if (raw.includes('] Generating level')) {
+      const split = raw.split(' ')
+      return {
+        type: 'GeneratingAreaEvent',
+        raw: raw,
+        systemUptime: Number(split[2]),
+        time: new Date(split[0] + ' ' + split[1]),
+        areaLevel: Number(split[9]),
+        areaTag: split[11].replaceAll('"', ''),
+        seed: Number(split[14])
       }
     }
     return undefined
@@ -97,7 +125,7 @@ const NPCEncounterMap = new Map<string, PoeNPCEventSubtype>([
 
   ['] Sister Cassia:', 'CassiaEncounterEvent'],
 
-  ['] Strange Voice:', 'DeleriumMirrorEvent'],
+  ['] Strange Voice:', 'DeliriumMirrorEvent'],
 
   ['] Oshabi:', 'HarvestEncounterEvent'],
 
@@ -111,12 +139,13 @@ class NPCEncounterEventParser implements PoeClientLogEventParser {
   parse(raw: string): PoeNPCEncounterEvent | undefined {
     for (const [key, value] of NPCEncounterMap) {
       if (raw.includes(key)) {
+        const split = raw.split(' ')
         return {
           type: 'NPCEncounterEvent',
           subtype: value,
           raw: raw,
-          systemUptime: Number(raw.split(' ')[2]),
-          time: new Date()
+          systemUptime: Number(split[2]),
+          time: new Date(split[0] + ' ' + split[1])
         }
       }
     }
@@ -133,13 +162,14 @@ class CharacterSlainEventParser implements PoeClientLogEventParser {
     const character = match == null ? null : match[1]
 
     if (character) {
+      const split = raw.split(' ')
       return {
         type: 'CharacterSlainEvent',
         raw: raw,
         character: character,
         isMyCharacter: false, // character === settingsService.currentCharacter ? true : false,
-        systemUptime: Number(raw.split(' ')[2]),
-        time: new Date()
+        systemUptime: Number(split[2]),
+        time: new Date(split[0] + ' ' + split[1])
       }
     } else if (raw.includes(' has been slain.')) {
       console.debug('Something probably went wrong, should check that out!')
@@ -161,7 +191,8 @@ export class PoeClientLogService {
     new ZoneEnteranceEventParser(),
     new InstanceConnectionEventParser(),
     new NPCEncounterEventParser(),
-    new CharacterSlainEventParser()
+    new CharacterSlainEventParser(),
+    new GeneratingAreaEventParser()
   ]
 
   constructor(tail: Tail | null = null) {

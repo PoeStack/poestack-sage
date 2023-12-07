@@ -5,6 +5,7 @@ import { PoeAccountService } from './poe-account-service'
 import { PoeCharacterService } from './poe-character-service'
 import { EchoPoeItem, PoeStashService } from './poe-stash-service'
 import { PoeClientLogService, PoeZoneEntranceEvent } from './poe-client-log-service'
+import { PoeZoneTrackerService } from './poe-zone-tracker-service'
 import { EchoPluginConfigs, EchoPluginConfig } from './echo-plugin-config'
 import { EchoDirService } from './echo-dir-service'
 import { EchoContext } from './echo-context'
@@ -23,6 +24,7 @@ export {
   PoeAccountService,
   PoeCharacterService,
   PoeClientLogService,
+  PoeZoneTrackerService,
   EchoRouter,
   EchoDirService,
   validResults,

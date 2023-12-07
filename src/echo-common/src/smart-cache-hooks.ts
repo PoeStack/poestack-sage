@@ -39,7 +39,7 @@ export function useCache<T>(
   config: SmartCacheLoadConfig,
   loadFun: () => Observable<T | null>
 ): SmartCacheHookType<T> {
-  const subject = cache.memoryCache$
+  const subject = cache.cache()
   const initalValue = subject.getValue()?.[config.key] ?? {}
   const [value, setValue] = useState(initalValue)
 
