@@ -179,13 +179,13 @@ export class Profile extends Model(
       return 0
     }
 
-    const latestValue = snapshots[snapshots.length - 1].totalValue
+    const latestValue = snapshots[0].totalValue
 
     if (snapshots.length === 1) {
       return parseFloat(latestValue.toFixed(2))
     }
 
-    const initialSnapshot = sinceUtc ? snapshots[snapshots.length - 2] : snapshots[0]
+    const initialSnapshot = sinceUtc ? snapshots[0] : snapshots[snapshots.length - 2]
     const initialValue = initialSnapshot.totalValue
     return parseFloat(latestValue.toFixed(2)) - parseFloat(initialValue.toFixed(2))
   }
