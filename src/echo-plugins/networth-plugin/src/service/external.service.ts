@@ -10,6 +10,7 @@ export const valuateItems = (league: string, items: PoeItem[]) => {
   return poeValuations.withValuations(league, items).pipe(
     map((e) => {
       if (e.type === 'error') {
+        console.log(e.error.stack)
         throw new Error(e.error)
       }
       if (e.type === 'result') {
@@ -26,6 +27,7 @@ export const getProfile = () => {
   return poeAccounts.profile().pipe(
     map((e) => {
       if (e.type === 'error') {
+        console.log(e.error.stack)
         throw new Error(e.error)
       }
       if (e.type === 'result') {
@@ -42,6 +44,7 @@ export const getLeagues = () => {
   return poeAccounts.leagues().pipe(
     map((e) => {
       if (e.type === 'error') {
+        console.log(e.error.stack)
         throw new Error(e.error)
       }
       if (e.type === 'result') {
@@ -58,6 +61,7 @@ export const getCharacters = () => {
   return poeCharacters.characterList().pipe(
     map((e) => {
       if (e.type === 'error') {
+        console.log(e.error.stack)
         throw new Error(e.error)
       }
       if (e.type === 'result') {
@@ -74,6 +78,7 @@ export const getCharacter = (character: string) => {
   return poeCharacters.character(character).pipe(
     map((e) => {
       if (e.type === 'error') {
+        console.log(e.error.stack)
         throw new Error(e.error)
       }
       if (e.type === 'result') {
@@ -90,6 +95,7 @@ export const getStashTabs = (league: string) => {
   return poeStash.stashes(league).pipe(
     map((e) => {
       if (e.type === 'error') {
+        console.log(e.error.stack)
         throw new Error(e.error)
       }
       if (e.type === 'result') {
@@ -108,6 +114,7 @@ export const getStashTabWithChildren = (stash: IStashTab, league: string, childr
   return poeStash.stashTab(league, stashId).pipe(
     map((e) => {
       if (e.type === 'error') {
+        console.log(e.error.stack)
         throw new Error(e.error)
       }
       if (e.type === 'result') {
