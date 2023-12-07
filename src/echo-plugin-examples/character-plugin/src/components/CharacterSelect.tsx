@@ -3,7 +3,6 @@ import { groupCharactersByLeague } from '../utils/groupCharactersByLeague'
 import { PoeCharacter } from 'sage-common'
 
 type CharacterSelectProps = {
-  selectedCharacter?: string
   characters: PoeCharacter[]
   onCharacterSelect: (characterName: string) => void
 }

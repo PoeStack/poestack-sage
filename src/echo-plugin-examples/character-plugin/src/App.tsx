@@ -11,6 +11,7 @@ const App = () => {
   if (!characterList) {
     return (
       <div className="flex flex-col w-full p-4 gap-4">
+        <div className="text-bold text-lg">Character Demo</div>
         <Skeleton className="h-8" />
       </div>
     )
@@ -19,6 +20,7 @@ const App = () => {
   return (
     <>
       <div className="flex flex-col w-full p-4 gap-4">
+        <div className="text-bold text-lg">Character Demo</div>
         <CharacterSelect characters={characterList} onCharacterSelect={setCharacterName} />
         {characterName && <CharacterDetail characterName={characterName} />}
       </div>
