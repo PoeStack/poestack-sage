@@ -65,17 +65,23 @@ export class SageValuationService {
     )
   }
 
-  private mapInternalToExternal(i: SageValuationShardInternal): SageValuationShard {
+  private mapInternalToExternal(internal: SageValuationShardInternal): SageValuationShard {
     const out: SageValuationShard = {
-      metadata: i.metadata,
+      metadata: internal.metadata,
       valuations: {}
     }
 
-    Object.entries(i.valuations).forEach(([key, value]) => {
+    const percentiles = [5, 7, 10, 12, 15, 18, 20, 25, 30, 50]
+    Object.entries(internal.valuations).forEach(([key, value]) => {
+      const pValues: { [k: number]: number } = {}
+      value.c.forEach((e, i) => {
+        pValues[percentiles[i]] = e
+      })
+
       out.valuations[key] = {
         listings: value.l,
-        pValues: value.c,
-        primaryValue: value.c[2],
+        primaryValue: pValues[12],
+        pValues: pValues, 
         groupSummary: value.s ? { key: value.s.k, icon: `https://web.poecdn.com/gen/image/${value.s.i}` } : undefined,
         history: {
           primaryValueDaily: value.d,
@@ -131,7 +137,7 @@ export type SageValuationSummary = {
 
 export type SageValuation = {
   listings: number
-  pValues: number[]
+  pValues: { [percentile: number]: number }
   primaryValue: number
   history: SageValuationHistory
   groupSummary?: SageValuationSummary | undefined

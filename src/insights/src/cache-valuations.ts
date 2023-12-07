@@ -120,13 +120,13 @@ function writeShard(e: { key: string; valuations: GroupValuation[] }) {
         const currentValuation = currentShard?.valuations[valuation.itemGroupHash]
         if (process.env['UPDATE_HISTORY_HOURLY'] === "true") {
           const history = currentValuation?.h ?? []
-          history.push(valuation.valuation.c[2])
+          history.push(valuation.valuation.c[3])
           valuation.valuation.h = history.slice(-48)
         }
 
         if (process.env['UPDATE_HISTORY_DAILY'] === "true") {
           const history = currentValuation?.d ?? []
-          history.push(valuation.valuation.c[2])
+          history.push(valuation.valuation.c[3])
           valuation.valuation.d = history
         }
 
