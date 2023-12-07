@@ -26,7 +26,9 @@ const commonjsPackages = Array.from(
       'sqlite3',
       'tail',
       'i18next-fs-backend',
-      'node-stream-zip'
+      'node-stream-zip',
+      '@libsql/client',
+      'libsql'
     ],
     ...[
       // Do not include them or the dev serves does not work anymore

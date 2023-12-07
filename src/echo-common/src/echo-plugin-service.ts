@@ -46,7 +46,7 @@ export class EchoPluginService {
           ECHO_CONTEXT_SERVICE.contexts['plugin'] = context
 
           const pluginEntry = module.require(path.resolve(p.path, 'entry.js'))
-          const hook: EchoPluginHook = pluginEntry.default()
+          const hook: EchoPluginHook = pluginEntry()
           hook.start()
           this.plugins$.next({ key: p.key, hook: hook })
         }

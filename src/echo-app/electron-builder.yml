@@ -15,6 +15,11 @@ asarUnpack:
 extraResources:
   - from: './src/renderer/src/locales/'
     to: './locales/'
+extraFiles:
+  - from: 'assets'
+    to: 'resources'
+    filter:
+      - '**/*'
 win:
   executableName: PoeStack
 nsis:
