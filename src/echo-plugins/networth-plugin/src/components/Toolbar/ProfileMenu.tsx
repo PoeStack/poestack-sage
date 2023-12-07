@@ -109,21 +109,25 @@ const ProfileMenu = () => {
                                 setMenuOpen(false)
                                 setProfileDialogOpen(true)
                               }}
-                              className="ml-auto"
+                              className="ml-auto hover:border-accent-foreground rounded border border-transparent h-8 w-8"
                               size="icon"
                               variant="ghost"
                             >
-                              <PencilIcon className="h-6 w-6 p-1 rounded hover:border-accent-foreground border border-transparent" />
+                              <PencilIcon className="h-4 w-4" />
                             </Button>
                           </Sheet.Trigger>
-                          <AlertDialog.Trigger
-                            onClick={() => {
-                              setSelectedProfile(profile)
-                              setDeleteProfileDialogOpen(true)
-                            }}
-                            className="ml-2 "
-                          >
-                            <TrashIcon className="h-6 w-6 p-1 rounded hover:border-accent-foreground border border-transparent" />
+                          <AlertDialog.Trigger asChild>
+                            <Button
+                              onClick={() => {
+                                setSelectedProfile(profile)
+                                setDeleteProfileDialogOpen(true)
+                              }}
+                              className="ml-2 hover:border-accent-foreground rounded border border-transparent h-8 w-8"
+                              size="icon"
+                              variant="ghost"
+                            >
+                              <TrashIcon className="h-4 w-4" />
+                            </Button>
                           </AlertDialog.Trigger>
                         </Command.Item>
                       ))}
