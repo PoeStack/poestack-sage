@@ -1,3 +1,4 @@
+import { BehaviorSubject } from 'rxjs'
 import { EchoDirService } from './echo-dir-service'
 
 export type PoeStackSettings = {
@@ -9,6 +10,8 @@ export class PoeStackSettingsService {
   constructor(private echoDir: EchoDirService) {
     if (!this.echoDir.existsJson('poe-stack-settings')) {
       this.echoDir.writeJson(['poe-stack-settings'], this.defaultPoeStackSettings)
+    } else {
+      this.getPoeStackSettings()
     }
   }
 
@@ -17,13 +20,19 @@ export class PoeStackSettingsService {
     poeClientLogPath: ''
   }
 
-  public loadPoeStackSettings(): PoeStackSettings {
-    return this.echoDir.loadJson('poe-stack-settings') ?? this.defaultPoeStackSettings
+  public poeStackSettings$ = new BehaviorSubject<PoeStackSettings>(this.defaultPoeStackSettings)
+
+  public getPoeStackSettings(): PoeStackSettings {
+    const settings =
+      this.echoDir.loadJson<PoeStackSettings>('poe-stack-settings') ?? this.defaultPoeStackSettings
+    this.poeStackSettings$.next(settings)
+    return settings
   }
 
   public writePoeStackSettings(settings: Partial<PoeStackSettings>) {
-    const mergedSettings = { ...this.loadPoeStackSettings(), ...settings }
+    const mergedSettings = { ...this.getPoeStackSettings(), ...settings }
     this.echoDir.writeJson(['poe-stack-settings'], mergedSettings)
+    this.poeStackSettings$.next(mergedSettings)
     return mergedSettings
   }
 }

@@ -24,7 +24,10 @@
     "pluginStatus": "Status",
     "installPlugin": "Install",
     "uninstallPlugin": "Uninstall",
-    "noPluginsAvailable": "No Plugins available"
+    "noPluginsAvailable": "No Plugins available",
+    "minimizeToTray": "Minimize to tray on app close",
+    "clientLogPath": "PoE log file path",
+    "chooseFile": "Choose a file"
   },
   "body": {
     "default": ""
