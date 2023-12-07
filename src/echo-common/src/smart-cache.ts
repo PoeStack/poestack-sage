@@ -64,16 +64,16 @@ export type SmartCacheStore<T> = {
 }
 
 export class SmartCache<T> {
-  public events$ = new Subject<SmartCacheEvent<T>>()
+  private events$ = new Subject<SmartCacheEvent<T>>()
   private workQueue$ = new Subject<SmartCacheLoadConfigInternal<T>>()
 
-  public memoryCache$ = new BehaviorSubject<{ [key: string]: SmartCacheStore<T> }>({})
+  private memoryCache$ = new BehaviorSubject<{ [key: string]: SmartCacheStore<T> }>({})
   private localCacheChecked: { [key: string]: boolean } = {}
 
   constructor(
     private dir: EchoDirService,
     private type: string,
-    private concurrent: boolean = true
+    concurrent: boolean = true
   ) {
     this.events$.subscribe((e) => {
       const currentStore = this.memoryCache$.value[e.key] ?? {}
@@ -92,21 +92,25 @@ export class SmartCache<T> {
       }
     })
 
-    const result$ = iif(
-      () => !concurrent,
-      this.workQueue$.pipe(concatMap(this.executeWorkload)),
-      this.workQueue$.pipe(mergeMap(this.executeWorkload, 5))
-    );
+    this.workQueue$.pipe(
+      mergeMap((e) => this.executeWorkload(e), concurrent ? 5 : 1)
+    ).subscribe({
+      next: (e) => {
+        this.events$.next(e)
+      }
+    })
+  }
 
-    result$
-      .subscribe({
-        next: (e) => {
-          this.events$.next(e)
-        }
-      })
+  public events() {
+    return this.events$
+  }
+
+  public cache() {
+    return this.memoryCache$
   }
 
   private executeWorkload(e: SmartCacheLoadConfigInternal<T>) {
+    const eventsOut = this.events$
     return of(e).pipe(
       concatMap((e) => {
         return e.loadFun().pipe(
@@ -121,7 +125,7 @@ export class SmartCache<T> {
           retry({
             delay: (error: any, retryCount: number) => {
               if (error instanceof RateLimitError) {
-                this.events$.next({
+                eventsOut?.next({
                   type: 'rate-limit',
                   key: e.key,
                   timestampMs: Date.now(),

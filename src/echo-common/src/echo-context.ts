@@ -6,6 +6,7 @@ import { PoeAccountService } from './poe-account-service'
 import { PoeCharacterService } from './poe-character-service'
 import { PoeClientLogService } from './poe-client-log-service'
 import { PoeStashService } from './poe-stash-service'
+import { PoeZoneTrackerService } from './poe-zone-tracker-service'
 import { SageValuationService } from './sage-valuation-service'
 
 export type EchoContext = {
@@ -17,6 +18,7 @@ export type EchoContext = {
   poeCharacters: PoeCharacterService
   poeClientLog: PoeClientLogService
   poeStash: PoeStashService
+  poeZoneTracker: PoeZoneTrackerService
   poeValuations: SageValuationService
   subscriptions: Subscription[]
 }

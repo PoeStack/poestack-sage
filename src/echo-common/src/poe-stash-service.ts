@@ -94,8 +94,8 @@ export class PoeStashService {
   }
 
   public useEchoItemCache(league: string): Observable<EchoPoeItem[]> {
-    const result = this.cacheStashContent.memoryCache$.pipe(
-      combineLatestWith(this.valuationApi.cacheValuationShards.memoryCache$),
+    const result = this.cacheStashContent.cache().pipe(
+      combineLatestWith(this.valuationApi.cacheValuationShards.cache()),
       mergeMap(([tabs, valuationCache]) =>
         from(Object.values(tabs).map((e) => e.lastResultEvent?.result)).pipe(
           filterNullish(),
