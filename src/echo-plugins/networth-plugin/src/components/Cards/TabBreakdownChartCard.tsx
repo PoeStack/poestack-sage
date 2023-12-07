@@ -72,7 +72,7 @@ function TabBreakdownChartCard() {
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
       <Card>
-        <Collapsible.Trigger className="!mt-0" asChild>
+        <Collapsible.Trigger className="!mt-0 cursor-pointer" asChild>
           <Card.Header className="flex flex-row justify-between items-center p-3">
             <Card.Title>{t('title.tabBreakdownHistoryCard')}</Card.Title>
             {open ? (
