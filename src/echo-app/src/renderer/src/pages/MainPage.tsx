@@ -11,6 +11,8 @@ import { PluginSettingsPage } from './PluginSettingsPage'
 import { DEV_PLUGINS } from '../dev-plugins'
 import { APP_CONTEXT, buildContext } from '../echo-context-factory'
 import { SettingsIcon } from 'lucide-react'
+import PoeStackLogo from '../assets/icon.png'
+import { PoeStackSettingsPage } from './PoeStackSettingsPage'
 
 const [useCurrentRoute] = bind(APP_CONTEXT.router.currentRoute$)
 const [useCurrentRoutes] = bind(APP_CONTEXT.router.routes$)
@@ -71,10 +73,10 @@ export const MainPage: React.FC = () => {
         {
           location: 'l-sidebar-b',
           icon: SettingsIcon,
-          displayname: 'Plugins'
+          displayname: 'Settings'
         }
       ],
-      page: PluginSettingsPage,
+      page: PoeStackSettingsPage,
       path: 'settings',
       plugin: 'sage'
     })
@@ -157,5 +159,10 @@ const RouterIconNavigator = ({ location }: { location: string }) => {
 
 const DefaultPage = () => {
   const { t } = useTranslation()
-  return <>{t('title.welcomeTo')}</>
+  return (
+    <div className="flex flex-col items-center justify-center gap-2 h-full">
+      <img src={PoeStackLogo} width={200} />
+      <h1 className="text-lg">{t('title.welcomeTo')}</h1>
+    </div>
+  )
 }
