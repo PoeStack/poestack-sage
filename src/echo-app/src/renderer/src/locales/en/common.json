@@ -12,7 +12,8 @@
     "syncAuth": "Sync auth with PoEStack",
     "manualAuth": "Manual auth with PoEStack",
     "welcomeUser": "Welcome {{0}} to your profile",
-    "pluginsTableTitle": "Plugins"
+    "pluginsTableTitle": "Plugins",
+    "poeStackSettings": "PoeStack Settings"
   },
   "label": {
     "enterToken": "Enter your PoeStack token. ",

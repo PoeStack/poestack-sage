@@ -5,16 +5,17 @@ import { ECHO_CONTEXT_SERVICE, EchoPluginHook, cn, EchoRoute } from 'echo-common
 import { ActionTooltip, Button } from 'echo-common/components-v1'
 import React, { Suspense, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ProfilePage } from './profile-page'
-import { PluginSettingsPage } from './plugin-settings-page'
+import { ProfilePage } from './ProfilePage'
+import { PluginSettingsPage } from './PluginSettingsPage'
 // @ts-ignore
 import { DEV_PLUGINS } from '../dev-plugins'
 import { APP_CONTEXT, buildContext } from '../echo-context-factory'
+import { SettingsIcon } from 'lucide-react'
 
 const [useCurrentRoute] = bind(APP_CONTEXT.router.currentRoute$)
 const [useCurrentRoutes] = bind(APP_CONTEXT.router.routes$)
 
-export const PluginPage: React.FC = () => {
+export const MainPage: React.FC = () => {
   const { router, plugins } = APP_CONTEXT
   const mounted = React.useRef(false)
 
@@ -63,6 +64,18 @@ export const PluginPage: React.FC = () => {
       ],
       page: PluginSettingsPage,
       path: 'plugin-settings',
+      plugin: 'sage'
+    })
+    router.registerRoute({
+      navItems: [
+        {
+          location: 'l-sidebar-b',
+          icon: SettingsIcon,
+          displayname: 'Plugins'
+        }
+      ],
+      page: PluginSettingsPage,
+      path: 'settings',
       plugin: 'sage'
     })
   }, [router])

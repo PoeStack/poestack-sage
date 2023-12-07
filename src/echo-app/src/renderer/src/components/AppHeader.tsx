@@ -5,7 +5,7 @@ import { X, Minus, Maximize } from 'lucide-react'
 import { getCurrentWindow } from '@electron/remote'
 import { Button } from 'echo-common/components-v1'
 
-export function PluginPageHeader() {
+export function AppHeader() {
   if (Process.platform === 'win32') {
     return <WindowsHeader />
   } else {
