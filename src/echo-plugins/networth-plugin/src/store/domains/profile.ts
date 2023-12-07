@@ -356,12 +356,10 @@ export class Profile extends Model(
         map((result) => {
           const stashTabsWithItems = result[0].map((tab) => {
             let items: PoeItem[] = []
-            if (tab.items) {
-              if (tab.type === 'MapStash') {
-                items = mapMapStashItemsToPoeItems(tab as IStashTab, league.name)
-              } else {
-                items = tab.items
-              }
+            if (tab.type === 'MapStash') {
+              items = mapMapStashItemsToPoeItems(tab as IStashTab, league.name)
+            } else if (tab.items) {
+              items = tab.items
             }
 
             const stashTab = this.activeStashTabs.find(
