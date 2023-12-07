@@ -62,7 +62,7 @@ export const Card: typeof CardRoot & {
 } = Object.assign(CardRoot, {
   Header: CardHeader,
   Footer: CardFooter,
-  Description: CardTitle,
-  Title: CardDescription,
+  Description: CardDescription,
+  Title: CardTitle,
   Content: CardContent
 })
