@@ -1,8 +1,8 @@
-import { BehaviorSubject, concatMap, filter, from, map, mergeMap, tap, toArray } from 'rxjs'
-import { context } from './entry'
+import { BehaviorSubject, concatMap, filter, mergeMap, toArray } from 'rxjs'
 import { bind } from '@react-rxjs/core'
 import { EchoPoeItem, validResults } from 'echo-common'
-import { useTranslation } from 'react-i18next'
+import { context } from './context'
+import { Card } from 'echo-common/components-v1'
 
 type SnapshotHistoryEntry = { totalValue: number; changeValue: number; items: EchoPoeItem[] }
 
@@ -26,7 +26,7 @@ const sub = context().poeClientLog.logEvents$.subscribe((e) => {
       )
       .subscribe((currentCharacter) => {
         context()
-          .poeValuations.withValuationsResultOnly('Ancestor', currentCharacter.inventory ?? [])
+          .poeValuations.withValuationsResultOnly('Standard', currentCharacter.inventory ?? [])
           .pipe(toArray())
           .subscribe((itemsWithValuations) => {
             console.log('items with valuations', itemsWithValuations)
@@ -53,35 +53,28 @@ context().subscriptions.push(sub)
 
 const [useSnapshots] = bind(snapshots, { history: [] })
 
-const App2 = () => {
+const EventValuation = () => {
   const snapshots = useSnapshots()
   return (
-    <>
-      <div>
-        <div
-          className="bg-accent px-1 py-0.5 rounded-lg pointer-cursor"
-          onClick={() => {
-            context().poeClientLog.logEvents$.next({
-              type: 'ZoneEntranceEvent',
-              location: 'Hideout or something',
-              raw: 'asdasd',
-              systemUptime: 0,
-              time: new Date()
-            })
-          }}
-        >
-          Fake Event
-        </div>
-      </div>
-      <div>
+    <div className="flex flex-col justify-center items-start gap-4">
+      <h2 className="text-md text-semibold">Current Zone</h2>
+      <div className="flex flex-row border rounded-md flex-wrap w-full p-2 gap-2 overflow-y-scroll h-72">
         {snapshots.history?.map((entry, i) => (
-          <div key={`${entry.changeValue}-${i}`}>
-            {entry.totalValue}: {entry.changeValue}
-          </div>
+          <Card key={`${entry.changeValue}-${i}`} className="h-48 w-48">
+            <Card.Header>
+              <Card.Title>{snapshots.lastZone}</Card.Title>
+            </Card.Header>
+            <Card.Content className="text-sm">
+              <ul>
+                <li>Total Value: {entry.totalValue}</li>
+                <li>Change in Value: {entry.changeValue}</li>
+              </ul>
+            </Card.Content>
+          </Card>
         ))}
       </div>
-    </>
+    </div>
   )
 }
 
-export default App2
+export default EventValuation

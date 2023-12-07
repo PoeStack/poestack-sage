@@ -21,6 +21,7 @@
     "@heroicons/react": "^2.0.18",
     "@react-rxjs/core": "^0.10.7",
     "@react-rxjs/utils": "^0.9.7",
+    "dayjs": "1.11.10",
     "echo-common": "file:../../echo-common",
     "ggg-api": "file:../../ggg-api",
     "i18next": "^23.7.6",
