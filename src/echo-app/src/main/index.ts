@@ -1,5 +1,7 @@
 import { app, BrowserWindow, shell } from 'electron'
 import path from 'path'
+import * as os from 'os'
+import * as fs from 'fs'
 import { Server } from 'http'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { initialize, enable } from '@electron/remote/main'
@@ -80,13 +82,25 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    if (server && server.listening) {
-      server?.close(() => {
+  let minimizeToTrayOnClose = process.platform === 'darwin'
+  try {
+    const settingsPath = path.resolve(os.homedir(), 'poestack-sage', 'poe-stack-settings', '.json')
+    if (fs.existsSync(settingsPath)) {
+      minimizeToTrayOnClose = JSON.parse(
+        fs.readFileSync(settingsPath).toString()
+      ).minimizeToTrayOnClose
+    }
+  } catch (e) {
+    console.log(e)
+  } finally {
+    if (!minimizeToTrayOnClose) {
+      if (server && server.listening) {
+        server?.close(() => {
+          app.quit()
+        })
+      } else {
         app.quit()
-      })
-    } else {
-      app.quit()
+      }
     }
   }
 })

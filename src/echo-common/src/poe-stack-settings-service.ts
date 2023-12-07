@@ -16,7 +16,7 @@ export class PoeStackSettingsService {
   }
 
   private defaultPoeStackSettings: PoeStackSettings = {
-    minimizeToTrayOnClose: false,
+    minimizeToTrayOnClose: true,
     poeClientLogPath: ''
   }
 
