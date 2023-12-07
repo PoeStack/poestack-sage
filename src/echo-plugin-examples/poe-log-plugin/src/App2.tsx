@@ -31,7 +31,7 @@ const sub = context().poeClientLog.logEvents$.subscribe((e) => {
           .subscribe((itemsWithValuations) => {
             console.log('items with valuations', itemsWithValuations)
             const totalVaulation = itemsWithValuations?.reduce((a, b) => {
-              return a + (b?.valuation?.pvs[3] ?? 0)
+              return a + (b?.valuation?.primaryValue ?? 0)
             }, 0)
 
             const valueDiff = totalVaulation - (snapshots.value.lastSnapshot?.totalValue ?? 0)

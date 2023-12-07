@@ -79,7 +79,7 @@ const App = () => {
                   Group: {e.group.tag} {e.group.shard} {e.group.hash}
                 </div>
               ) : null}
-              {e.valuation ? <div>Value {e.valuation?.pvs?.[5]}c</div> : null}
+              {e.valuation ? <div>Value {e.valuation?.primaryValue}c</div> : null}
               <div>
                 {e.data.properties?.map((p) => (
                   <li key={p.name}>
