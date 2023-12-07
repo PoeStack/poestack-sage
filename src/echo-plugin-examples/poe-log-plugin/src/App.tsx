@@ -1,90 +1,41 @@
-import { bind } from '@react-rxjs/core'
-import { PoeZoneEntranceEvent } from 'echo-common'
-import { BehaviorSubject, combineLatestWith, filter, interval, map } from 'rxjs'
-import { context } from './entry'
-
-const lastZone$ = new BehaviorSubject<PoeZoneEntranceEvent | null>(null)
-context()
-  .poeClientLog.logEvents$.pipe(
-    filter((e): e is PoeZoneEntranceEvent => e.type === 'ZoneEntranceEvent')
-  )
-  .subscribe(lastZone$)
-
-const zones: Array<PoeZoneInstance> = []
-let lastZoneActual: PoeZoneInstance | null = null
-
-interface PoeZoneInstance {
-  location: string
-  time: Date
-  timeDelta: number
-}
-
-export const [useCurrentZone] = bind(
-  interval(100).pipe(
-    combineLatestWith(lastZone$),
-    map(([, e]) =>
-      e
-        ? {
-            location: e.location,
-            time: e.time,
-            timeDelta: new Date().getTime() - e.time.getTime()
-          }
-        : null
-    )
-  ),
-  null
-)
+import { Button, Tabs } from 'echo-common/components-v1'
+import ZoneTracker from './ZoneTracker'
+import EventValuation from './EventValuation'
+import { context } from './context'
 
 const App = () => {
-  const currentZone = useCurrentZone()
-
-  if (!currentZone) {
-    return <>Change zone to start plugin.</>
-  }
-
-  if (!lastZoneActual) {
-    const newZone: PoeZoneInstance = {
-      location: currentZone.location,
-      time: currentZone.time,
-      timeDelta: currentZone.timeDelta
-    }
-    lastZoneActual = newZone
-  }
-
-  if (currentZone.location != lastZoneActual.location) {
-    zones.unshift(lastZoneActual)
-    console.debug(JSON.stringify(zones))
-    const newZone: PoeZoneInstance = {
-      location: currentZone.location,
-      time: currentZone.time,
-      timeDelta: currentZone.timeDelta
-    }
-    lastZoneActual = newZone
-  } else {
-    lastZoneActual = currentZone
-  }
-
   return (
-    <>
+    <div className="flex flex-col w-full p-4 gap-4">
+      <div className="text-bold text-lg">PoE Log Events Demo</div>
       <div>
-        <p>
-          At: {currentZone.time.toISOString()} | In {currentZone.location} for{' '}
-          {Math.round((currentZone.timeDelta / 1000) * 10) / 10}
-        </p>
+        <Button
+          onClick={() => {
+            context().poeClientLog.logEvents$.next({
+              type: 'ZoneEntranceEvent',
+              location: `Example Location ${Math.floor(Math.random() * 100)}`,
+              raw: 'asdasd',
+              systemUptime: 0,
+              time: new Date()
+            })
+          }}
+        >
+          Simulate ZoneEntrance Event
+        </Button>
       </div>
-      {zones.length > 0 &&
-        zones.map((zone) => (
-          <div
-            key={`${zone.location}_${zone.timeDelta}`}
-            className="flex flex-col bg-slate-300 bg-primary-surface"
-          >
-            <p>
-              At: {zone.time.toISOString()} | In {zone.location} for{' '}
-              {Math.round((zone.timeDelta / 1000) * 10) / 10}
-            </p>
-          </div>
-        ))}
-    </>
+
+      <Tabs defaultValue="zone-tracking">
+        <Tabs.List>
+          <Tabs.Trigger value="zone-tracking">Zone Tracking</Tabs.Trigger>
+          <Tabs.Trigger value="event-valuation">Valuation Tracking</Tabs.Trigger>
+        </Tabs.List>
+        <Tabs.Content value="zone-tracking">
+          <ZoneTracker />
+        </Tabs.Content>
+        <Tabs.Content value="event-valuation">
+          <EventValuation />
+        </Tabs.Content>
+      </Tabs>
+    </div>
   )
 }
 
