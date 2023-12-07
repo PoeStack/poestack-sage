@@ -54,7 +54,6 @@ export const migration = <FS, TS>(
     state = migrate(snapshot)
   }
 
-  console.log('Hydrated: ', state)
   return state
 }
 
