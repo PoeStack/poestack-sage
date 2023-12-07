@@ -7,7 +7,7 @@ import {
   profileStashTabRef
 } from '../../store/domains/profile'
 import { Profile } from '../../store/domains/profile'
-import { Button, Checkbox, Form, Input, Label, Select, Sheet } from 'echo-common/components-v1'
+import { Button, Checkbox, Form, Input, Select, Sheet } from 'echo-common/components-v1'
 import { observer } from 'mobx-react'
 import { StashTab } from '../../store/domains/stashtab'
 import { useForm } from 'react-hook-form'
@@ -17,6 +17,7 @@ import { League } from '../../store/domains/league'
 import { Character } from '../../store/domains/character'
 import { useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { StashTabMultiSelect } from './StashTabMultiSelect'
 
 type ProfilePayload = {
   name: string
@@ -82,8 +83,6 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
     form.reset(defaultFormValues)
   }, [defaultFormValues, form, profileDialogOpen])
 
-  const stashTabs = activeAccount.stashTabs ?? []
-
   const onSubmit: SubmitHandler<ProfilePayload> = (data) => {
     if (!activeAccount) return
     if (!data.league || !data.pricingLeague) return
@@ -105,20 +104,14 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
     onClose?.()
   }
 
-  const handleCheckChange = (
-    value: boolean,
-    stashTab: StashTab,
-    onChange: (values: StashTab[]) => void
-  ) => {
-    const values = form.getValues('stashTabs')
-    if (value) {
-      onChange([...values, stashTab])
-    } else {
-      const idIndex = values.indexOf(stashTab)
-      values.splice(idIndex, 1)
-      onChange(values)
-    }
-  }
+  const stashTabOptions = useMemo(
+    () =>
+      (activeAccount.stashTabs ?? [])
+        .filter((stash) => !stash.deleted && stash.league === form.getValues().league)
+        .slice()
+        .sort((a, b) => a.index - b.index),
+    [form, activeAccount.stashTabs]
+  )
 
   return (
     <Sheet.Content className="mt-7 overflow-y-scroll w-3/5 sm:max-w-full">
@@ -149,31 +142,11 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
               return (
                 <Form.Item>
                   <Form.Label>{t('label.stashTabs')}</Form.Label>
-                  <Form.Control>
-                    <div className="p-2 border overflow-y-scroll h-20 w-full flex flex-row flex-wrap gap-2">
-                      {stashTabs
-                        .filter(
-                          (stash) => !stash.deleted && stash.league === form.getValues().league
-                        )
-                        .slice()
-                        .sort((a, b) => a.index - b.index)
-                        .map((stash) => (
-                          <div
-                            key={stash.id}
-                            className="rounded-full h-7 border p-2 flex-row flex items-center justify-center gap-2"
-                          >
-                            <Label htmlFor={`stash-${stash.id}`}>{stash.name}</Label>
-                            <Checkbox
-                              onCheckedChange={(value) => {
-                                handleCheckChange(!!value, stash, field.onChange)
-                              }}
-                              name={`stash-${stash.id}`}
-                              checked={form.getValues('stashTabs')?.includes(stash)}
-                            />
-                          </div>
-                        ))}
-                    </div>
-                  </Form.Control>
+                  <StashTabMultiSelect
+                    selected={form.getValues('stashTabs')}
+                    onChange={(stashes) => field.onChange(stashes)}
+                    options={stashTabOptions}
+                  />
                 </Form.Item>
               )
             }}
