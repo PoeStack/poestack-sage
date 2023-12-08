@@ -5,16 +5,19 @@ import { ECHO_CONTEXT_SERVICE, EchoPluginHook, cn, EchoRoute } from 'echo-common
 import { ActionTooltip, Button } from 'echo-common/components-v1'
 import React, { Suspense, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ProfilePage } from './profile-page'
-import { PluginSettingsPage } from './plugin-settings-page'
+import { ProfilePage } from './ProfilePage'
+import { PluginSettingsPage } from './PluginSettingsPage'
 // @ts-ignore
 import { DEV_PLUGINS } from '../dev-plugins'
 import { APP_CONTEXT, buildContext } from '../echo-context-factory'
+import { SettingsIcon } from 'lucide-react'
+import PoeStackLogo from '../assets/icon.png'
+import { PoeStackSettingsPage } from './PoeStackSettingsPage'
 
 const [useCurrentRoute] = bind(APP_CONTEXT.router.currentRoute$)
 const [useCurrentRoutes] = bind(APP_CONTEXT.router.routes$)
 
-export const PluginPage: React.FC = () => {
+export const MainPage: React.FC = () => {
   const { router, plugins } = APP_CONTEXT
   const mounted = React.useRef(false)
 
@@ -63,6 +66,18 @@ export const PluginPage: React.FC = () => {
       ],
       page: PluginSettingsPage,
       path: 'plugin-settings',
+      plugin: 'sage'
+    })
+    router.registerRoute({
+      navItems: [
+        {
+          location: 'l-sidebar-b',
+          icon: SettingsIcon,
+          displayname: 'Settings'
+        }
+      ],
+      page: PoeStackSettingsPage,
+      path: 'settings',
       plugin: 'sage'
     })
   }, [router])
@@ -144,5 +159,10 @@ const RouterIconNavigator = ({ location }: { location: string }) => {
 
 const DefaultPage = () => {
   const { t } = useTranslation()
-  return <>{t('title.welcomeTo')}</>
+  return (
+    <div className="flex flex-col items-center justify-center gap-2 h-full">
+      <img src={PoeStackLogo} width={200} />
+      <h1 className="text-lg">{t('title.welcomeTo')}</h1>
+    </div>
+  )
 }

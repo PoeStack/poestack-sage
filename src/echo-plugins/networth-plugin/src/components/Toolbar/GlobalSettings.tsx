@@ -98,7 +98,7 @@ const GlobalSettings = () => {
                       checked={value}
                       onCheckedChange={(checked) => {
                         onChange(checked)
-                        handleSubmit(onSubmit)
+                        handleSubmit(onSubmit)()
                       }}
                     />
                   </Form.Control>
@@ -149,7 +149,7 @@ const GlobalSettings = () => {
                       checked={value}
                       onCheckedChange={(checked) => {
                         onChange(checked)
-                        handleSubmit(onSubmit)
+                        handleSubmit(onSubmit)()
                       }}
                     />
                   </Form.Control>

@@ -4,6 +4,7 @@ import { filterNullish } from 'ts-ratchet'
 import path from 'path'
 import * as os from 'os'
 import * as fs from 'fs'
+import { PoeStackSettingsService } from './poe-stack-settings-service'
 
 export type PoeClientLogTextEvent = {
   raw: string
@@ -181,8 +182,14 @@ class CharacterSlainEventParser implements PoeClientLogEventParser {
 
 //TODO TRADE PARSER?
 
+export type PoeClientLogServiceContructorParams = {
+  poeStackSettings?: PoeStackSettingsService
+  tail?: Tail | null
+}
+
 export class PoeClientLogService {
   private logTail: Tail | null = null
+  private poeStackSettings: PoeStackSettingsService | undefined
 
   public logRaw$ = new Subject<string>()
   public logEvents$ = new Subject<PoeClientLogEvent>()
@@ -195,7 +202,9 @@ export class PoeClientLogService {
     new GeneratingAreaEventParser()
   ]
 
-  constructor(tail: Tail | null = null) {
+  constructor({ poeStackSettings, tail }: PoeClientLogServiceContructorParams) {
+    this.poeStackSettings = poeStackSettings
+    this.poeStackSettings
     if (!tail) {
       const path = this.getLogFilePath()
       if (path) {
@@ -223,7 +232,9 @@ export class PoeClientLogService {
   }
 
   private getLogFilePath(): string | null {
+    const pathFromSettings = this.poeStackSettings?.getPoeStackSettings().poeClientLogPath
     const possiblePaths = [
+      ...(pathFromSettings ?? []),
       path.join(
         'C:',
         'Program Files (x86)',

@@ -6,7 +6,7 @@ import { PoeCharacterService } from './poe-character-service'
 import { EchoPoeItem, PoeStashService } from './poe-stash-service'
 import { PoeClientLogService, PoeZoneEntranceEvent } from './poe-client-log-service'
 import { PoeZoneTrackerService } from './poe-zone-tracker-service'
-import { EchoPluginConfigs, EchoPluginConfig } from './echo-plugin-config'
+import { PoeStackSettings, PoeStackSettingsService } from './poe-stack-settings-service'
 import { EchoDirService } from './echo-dir-service'
 import { EchoContext } from './echo-context'
 import { EchoPluginService } from './echo-plugin-service'
@@ -24,6 +24,7 @@ export {
   PoeAccountService,
   PoeCharacterService,
   PoeClientLogService,
+  PoeStackSettingsService,
   PoeZoneTrackerService,
   EchoRouter,
   EchoDirService,
@@ -37,8 +38,7 @@ export type {
   SmartCacheEvent,
   EchoPoeItem,
   PoeZoneEntranceEvent,
-  EchoPluginConfigs,
-  EchoPluginConfig,
+  PoeStackSettings,
   EchoRoute,
   EchoContext,
   SageValuation,

@@ -1,6 +1,6 @@
 import { SAGE_VERSION } from '../version'
 
-export function PluginPageFooter() {
+export function AppFooter() {
   return (
     <div className="bg-background brightness-75 fixed bottom-0 h-7 w-full pr-14 flex">
       <div className="flex-1"></div>

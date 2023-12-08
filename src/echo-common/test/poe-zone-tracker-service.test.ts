@@ -41,7 +41,7 @@ const myObservable = (name: string): Observable<SmartCacheEvent<PoeCharacter>> =
 }
 
 test('PoeClientLogService InstanceConnectionEventParser test', async () => {
-  const logService: PoeClientLogService = new PoeClientLogService(tail)
+  const logService: PoeClientLogService = new PoeClientLogService({ tail })
   const zoneTrackerService: PoeZoneTrackerService = new PoeZoneTrackerService(logService)
 
   const exitedZones: PoeZoneDelta[] = []

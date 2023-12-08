@@ -3,7 +3,7 @@ val npm = rootProject.extra.get("npm")
 val npx = rootProject.extra.get("npx")
 
 task<Exec>("npmInstall") {
-    commandLine(npm, "install")
+    commandLine(npm, "install", "--force")
 }
 
 task<Exec>("npmClean") {

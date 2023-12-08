@@ -1,12 +1,12 @@
 import React, { Suspense } from 'react'
 import ReactDOM from 'react-dom/client'
-import { PluginPage } from './pages/plugin-page'
+import { MainPage } from './pages/MainPage'
 import './assets/app.css'
 import { Subscribe } from '@react-rxjs/core'
-import { AuthGuard } from './pages/auth-page'
-import { PluginPageHeader } from './components/plugin-page-header'
-import { PluginPageFooter } from './components/plugin-page-footer'
-import { ThemeProvider } from './components/theme-provider'
+import { AuthGuard } from './pages/AuthPage'
+import { AppHeader } from './components/AppHeader'
+import { AppFooter } from './components/AppFooter'
+import { ThemeProvider } from './components/ThemeProvider'
 import i18n from './config/i18n-config'
 import { I18nextProvider } from 'react-i18next'
 
@@ -16,11 +16,11 @@ const App = () => {
       <I18nextProvider i18n={i18n}>
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <div className="h-screen w-screen max-w-full bg-background text-foreground">
-            <PluginPageHeader />
+            <AppHeader />
             <AuthGuard>
-              <PluginPage />
+              <MainPage />
             </AuthGuard>
-            <PluginPageFooter />
+            <AppFooter />
           </div>
         </ThemeProvider>
       </I18nextProvider>

@@ -1,12 +1,17 @@
-import { app, BrowserWindow, shell } from 'electron'
+import { app, BrowserWindow, Menu, shell, Tray } from 'electron'
 import path from 'path'
+import * as os from 'os'
+import * as fs from 'fs'
 import { Server } from 'http'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { initialize, enable } from '@electron/remote/main'
 import { createLocalServer } from '../local-server/server'
 
 let mainWindow: BrowserWindow | null
+let tray: Tray | null
 let server: Server | null
+
+const ICON_PATH = is.dev ? 'assets/icon.png' : path.join(process.resourcesPath, 'icon.png')
 
 initialize()
 
@@ -16,7 +21,7 @@ function createWindow() {
     height: 600,
     show: false,
     frame: false,
-    icon: './build/icon.png',
+    icon: ICON_PATH,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -46,8 +51,38 @@ function createWindow() {
   }
 
   mainWindow.on('closed', () => {
+    tray = createTray()
     mainWindow = null
   })
+}
+
+function createTray() {
+  const appIcon = new Tray(ICON_PATH)
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Exit',
+      click: function () {
+        if (server && server.listening) {
+          server?.close(() => {
+            app.quit()
+          })
+        } else {
+          app.quit()
+        }
+      }
+    }
+  ])
+
+  appIcon.on('click', function () {
+    if (mainWindow) {
+      mainWindow.show()
+    } else if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow()
+    }
+  })
+  appIcon.setToolTip('PoeStack Sage')
+  appIcon.setContextMenu(contextMenu)
+  return appIcon
 }
 
 app.whenReady().then(() => {
@@ -76,17 +111,32 @@ app.whenReady().then(() => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    if (tray) {
+      tray.destroy()
+    }
   })
 })
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    if (server && server.listening) {
-      server?.close(() => {
+  let minimizeToTrayOnClose = process.platform === 'darwin'
+  try {
+    const settingsPath = path.resolve(os.homedir(), 'poestack-sage', 'poe-stack-settings.json')
+    if (fs.existsSync(settingsPath)) {
+      minimizeToTrayOnClose = JSON.parse(
+        fs.readFileSync(settingsPath).toString()
+      ).minimizeToTrayOnClose
+    }
+  } catch (e) {
+    console.log(e)
+  } finally {
+    if (!minimizeToTrayOnClose || is.dev) {
+      if (server && server.listening) {
+        server?.close(() => {
+          app.quit()
+        })
+      } else {
         app.quit()
-      })
-    } else {
-      app.quit()
+      }
     }
   }
 })

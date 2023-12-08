@@ -6,6 +6,7 @@ import {
   PoeAccountService,
   PoeCharacterService,
   PoeClientLogService,
+  PoeStackSettingsService,
   PoeZoneTrackerService,
   PoeStashService,
   SageValuationService
@@ -20,7 +21,10 @@ const ECHO_ROUTER = new EchoRouter()
 export const GGG_HTTP_UTIL = new GggHttpUtil()
 const GGG_API = new GggApi(GGG_HTTP_UTIL)
 const POE_ACCOUNT_SERVICE = new PoeAccountService(ECHO_DIR, GGG_API)
-const POE_CLIENT_LOG_SERVICE = new PoeClientLogService()
+const POE_STACK_SETTING_SERVICE = new PoeStackSettingsService(ECHO_DIR)
+const POE_CLIENT_LOG_SERVICE = new PoeClientLogService({
+  poeStackSettings: POE_STACK_SETTING_SERVICE
+})
 const SAGE_VALUATION_SERVICE = new SageValuationService(ECHO_DIR, new ItemGroupingService())
 const POE_STASH_SERVICE = new PoeStashService(ECHO_DIR, GGG_API, SAGE_VALUATION_SERVICE)
 const POE_CHARCTERS_SERVICE = new PoeCharacterService(ECHO_DIR, GGG_API)
@@ -35,6 +39,7 @@ export function buildContext(contextSource: string): EchoContext {
     poeAccounts: POE_ACCOUNT_SERVICE,
     poeClientLog: POE_CLIENT_LOG_SERVICE,
     poeZoneTracker: POE_ZONE_TRACKER_SERVICE,
+    poeStackSettings: POE_STACK_SETTING_SERVICE,
     poeStash: POE_STASH_SERVICE,
     poeValuations: SAGE_VALUATION_SERVICE,
     poeCharacters: POE_CHARCTERS_SERVICE,
