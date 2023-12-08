@@ -19,7 +19,7 @@ export class PriceStore extends Model(
         mergeMap((valuation) => {
           // For currencies we use the most stable divine price
           const { settingStore } = getRoot<RootStore>(this)
-          const price = valuation.valuation?.pvs[settingStore.pvs]
+          const price = valuation.valuation?.pValues[settingStore.primaryPercentile]
           if (price) {
             if (valuation.data.typeLine === 'Divine Orb') {
               console.log('Set divine price: ', price)

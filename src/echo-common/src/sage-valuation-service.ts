@@ -10,7 +10,7 @@ export class SageValuationService {
   constructor(
     private echoDir: EchoDirService,
     private itemGroupingService: ItemGroupingService
-  ) {}
+  ) { }
 
   public cacheValuationShards = new SmartCache<SageValuationShard>(this.echoDir, 'sage-valuations')
 
@@ -35,7 +35,7 @@ export class SageValuationService {
               const itemValuation = vEvent?.result?.valuations?.[e?.group?.hash ?? '']
               const eItem = {
                 valuation: itemValuation,
-                timestampMs: vEvent?.result?.timestampMs,
+                timestampMs: Date.now(),
                 ...e
               }
               return { ...vEvent, result: eItem }
@@ -65,19 +65,85 @@ export class SageValuationService {
     )
   }
 
+  private mapInternalToExternal(internal: SageValuationShardInternal): SageValuationShard {
+    const out: SageValuationShard = {
+      metadata: internal.metadata,
+      valuations: {}
+    }
+
+    const percentiles = [5, 7, 10, 12, 15, 18, 20, 25, 30, 50]
+    Object.entries(internal.valuations).forEach(([key, value]) => {
+      const pValues: { [k: number]: number } = {}
+      value.c.forEach((e, i) => {
+        pValues[percentiles[i]] = e
+      })
+
+      out.valuations[key] = {
+        listings: value.l,
+        primaryValue: pValues[12],
+        pValues: pValues, 
+        groupSummary: value.s ? { key: value.s.k, icon: `https://web.poecdn.com/gen/image/${value.s.i}` } : undefined,
+        history: {
+          primaryValueDaily: value.d,
+          primaryValueHourly: value.h
+        },
+      }
+    })
+
+    return out
+  }
+
   private loadInternal(key: string) {
-    return this.httpUtil.get<SageValuationShard>(
-      `https://pub-1ac9e2cd6dca4bda9dc260cb6a6f7c90.r2.dev/v4/${key}.json`
+    return this.httpUtil.get<SageValuationShardInternal>(
+      `https://pub-1ac9e2cd6dca4bda9dc260cb6a6f7c90.r2.dev/v6/${key}.json`
+    ).pipe(
+      map((e) => this.mapInternalToExternal(e))
     )
   }
 }
 
-export type SageValuation = {
+export type SageValuationSummaryInternal = {
+  k: string
+  i: string
+}
+
+export type SageValuationInternal = {
   l: number
-  pvs: number[]
+  c: number[]
+  h: number[]
+  d: number[]
+  s: SageValuationSummaryInternal | undefined
+}
+
+export type SageValuationShardInternal = {
+  metadata: SageValuationMetadata
+  valuations: { [hash: string]: SageValuationInternal }
+}
+
+export type SageValuationMetadata = {
+  divChaosValue: number
+  timestampMs: number
+}
+
+export type SageValuationHistory = {
+  primaryValueDaily: number[]
+  primaryValueHourly: number[]
+}
+
+export type SageValuationSummary = {
+  key: string
+  icon: string
+}
+
+export type SageValuation = {
+  listings: number
+  pValues: { [percentile: number]: number }
+  primaryValue: number
+  history: SageValuationHistory
+  groupSummary?: SageValuationSummary | undefined
 }
 
 export type SageValuationShard = {
-  timestampMs: number
+  metadata: SageValuationMetadata
   valuations: { [hash: string]: SageValuation }
 }

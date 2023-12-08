@@ -441,7 +441,7 @@ export class Profile extends Model(
               const pricedItems = mapItemsToPricedItems(
                 valuatedStash.valuation,
                 compactStash,
-                settingStore.pvs
+                settingStore.primaryPercentile
               )
               const pricedStackedItems = mergeItemStacks(pricedItems)
               const stashTabId =

@@ -204,7 +204,7 @@ export const createCompactTab = (stashTab: IStashTabNode | string): ICompactTab 
 export function mapItemsToPricedItems(
   valuation: IValuatedItem[],
   stashTab: ICompactTab,
-  pvs: number
+  percentile: number
 ): IPricedItem[] {
   return valuation.map((valuatedItem) => {
     const item = valuatedItem.data
@@ -226,8 +226,8 @@ export function mapItemsToPricedItems(
       typeLine: item.typeLine!,
       frameType: item.frameType!,
       identified: item.identified!,
-      total: valuation ? valuation.pvs[pvs] * stackSize : 0,
-      calculated: valuation ? valuation.pvs[pvs] : 0,
+      total: valuation ? valuation.pValues[percentile] * stackSize : 0,
+      calculated: valuation ? valuation.pValues[percentile] : 0,
       valuation: valuation === null ? undefined : valuation,
       icon: item.icon!,
       ilvl: item.ilvl!,
