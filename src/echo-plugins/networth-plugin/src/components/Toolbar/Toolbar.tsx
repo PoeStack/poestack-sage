@@ -9,6 +9,7 @@ import { cn } from 'echo-common'
 import GlobalSettings from './GlobalSettings'
 import { useTranslation } from 'react-i18next'
 import DeleteSnapshots from './DeleteSnapshots'
+import ToolbarContentSkeleton from '../LoadingStates/ToolbarContentSkeleton'
 
 type ToolbarProps = {
   isSubmitting: boolean
@@ -38,43 +39,46 @@ const Toolbar: React.FC<ToolbarProps> = ({
         {(isInitiating || isSnapshotting) && <Loader2 className="animate-spin" />}
         {statusMessage && <StatusMessageContainer />}
       </div>
-      <div className="divide-x divide-solid flex flex-1 flex-row items-center justify-end">
-        <div className="py-2 px-2 h-full flex justify-center items-center gap-2.5">
-          <ProfileMenu />
-        </div>
-        <div className="py-2 px-2 h-full flex justify-center items-center gap-2.5">
-          <Button
-            variant="ghost"
-            disabled={!readyToSnapshot}
-            className="border p-1 pr-1.5 rounded h-8"
-            onClick={() => handleSnapshot()}
-          >
-            <div className="flex flex-row justify-center text-xs items-center gap-1">
-              <RefreshCcw className={cn('h-4 w-4', isSnapshotting && 'animate-spin')} />
-              {t('action.takeSnapshot')}
-            </div>
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            disabled={!isSnapshotting}
-            className="h-8 w-8"
-            onClick={() => handleCancelSnapshot()}
-          >
-            <XCircle className="h-4 w-4" />
-          </Button>
-          <DeleteSnapshots />
-        </div>
-        {/* TODO Add overlay support */}
-        {/* <div className="py-1 px-1 h-full flex justify-center items-center">
+      {isInitiating && <ToolbarContentSkeleton />}
+      {!isInitiating && (
+        <div className="divide-x divide-solid flex flex-1 flex-row items-center justify-end">
+          <div className="py-2 px-2 h-full flex justify-center items-center gap-2.5">
+            <ProfileMenu />
+          </div>
+          <div className="py-2 px-2 h-full flex justify-center items-center gap-2.5">
+            <Button
+              variant="ghost"
+              disabled={!readyToSnapshot}
+              className="border p-1 pr-1.5 rounded h-8"
+              onClick={() => handleSnapshot()}
+            >
+              <div className="flex flex-row justify-center text-xs items-center gap-1">
+                <RefreshCcw className={cn('h-4 w-4', isSnapshotting && 'animate-spin')} />
+                {t('action.takeSnapshot')}
+              </div>
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              disabled={!isSnapshotting}
+              className="h-8 w-8"
+              onClick={() => handleCancelSnapshot()}
+            >
+              <XCircle className="h-4 w-4" />
+            </Button>
+            <DeleteSnapshots />
+          </div>
+          {/* TODO Add overlay support */}
+          {/* <div className="py-1 px-1 h-full flex justify-center items-center">
           <Button variant="ghost" size="icon" className="h-8 w-8">
             <PictureInPicture2 className="h-4 w-4" />
           </Button>
         </div> */}
-        <div className="py-1 px-1 h-full flex justify-center items-center">
-          <GlobalSettings />
+          <div className="py-1 px-1 h-full flex justify-center items-center">
+            <GlobalSettings />
+          </div>
         </div>
-      </div>
+      )}
     </header>
   )
 }

@@ -102,16 +102,17 @@ function NetWorthChartCard() {
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
       <Card className="grow">
-        <Card.Header className="flex flex-row justify-between items-center p-3">
-          <Card.Title>{t('title.netWorthHistoryCard')}</Card.Title>
-          <Collapsible.Trigger className="!mt-0" asChild>
+        <Collapsible.Trigger className="!mt-0 cursor-pointer" asChild>
+          <Card.Header className="flex flex-row justify-between items-center p-3">
+            <Card.Title className="text-base">{t('title.netWorthHistoryCard')}</Card.Title>
+
             {open ? (
               <ChevronDownIcon className="h-4 w-4" />
             ) : (
               <ChevronRightIcon className="h-4 w-4" />
             )}
-          </Collapsible.Trigger>
-        </Card.Header>
+          </Card.Header>
+        </Collapsible.Trigger>
         <Collapsible.Content>
           <Card.Content className="flex flex-col p-2">
             <div className="px-2">

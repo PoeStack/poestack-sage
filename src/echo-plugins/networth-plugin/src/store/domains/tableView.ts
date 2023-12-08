@@ -13,6 +13,7 @@ import {
 import { ItemTableSelectionType } from '../../interfaces/item-table-selection.interface'
 import { StashTab } from './stashtab'
 import { OnChangeFn, PaginationState, Updater } from '@tanstack/react-table'
+import { PersistWrapper } from '../../utils/persist.utils'
 
 export const tableStashTabRef = rootRef<StashTab>('nw/tableStashTabRef', {
   onResolvedValueChange(ref, newNode, oldNode) {
@@ -29,16 +30,27 @@ interface ITableView {
 
 @model('nw/tableview')
 export class TableView
-  extends Model({
-    id: idProp,
-    globalFilter: tProp(types.string, ''),
-    pageSize: tProp(25).withSetter(),
-    pageIndex: tProp(0).withSetter(),
-    showPricedItems: tProp(true).withSetter(),
-    showUnpricedItems: tProp(false).withSetter(),
-    itemTableSelection: prop<ItemTableSelectionType>('latest').withSetter(),
-    filteredStashTabsRef: tProp(types.maybe(types.array(types.ref(tableStashTabRef)))).withSetter()
-  })
+  extends Model(
+    ...PersistWrapper(
+      {
+        id: idProp,
+        globalFilter: tProp(types.string, ''),
+        pageSize: tProp(25).withSetter(),
+        pageIndex: tProp(0).withSetter(),
+        showPricedItems: tProp(true).withSetter(),
+        showUnpricedItems: tProp(false).withSetter(),
+        itemTableSelection: prop<ItemTableSelectionType>('latest').withSetter(),
+        filteredStashTabsRef: tProp(
+          // TODO: implement
+          types.maybe(types.array(types.ref(tableStashTabRef)))
+        ).withSetter(),
+        version: prop(1)
+      },
+      {
+        whitelist: ['id', 'showPricedItems', 'showUnpricedItems']
+      }
+    )
+  )
   implements ITableView
 {
   @computed

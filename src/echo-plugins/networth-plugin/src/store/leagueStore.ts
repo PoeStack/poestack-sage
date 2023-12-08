@@ -1,19 +1,32 @@
 import { computed } from 'mobx'
-import { getRefsResolvingTo, getRoot, model, Model, modelAction, tProp, types } from 'mobx-keystone'
+import {
+  getRefsResolvingTo,
+  getRoot,
+  model,
+  Model,
+  modelAction,
+  prop,
+  tProp,
+  types
+} from 'mobx-keystone'
 import { League } from './domains/league'
 import { PoeLeague } from 'sage-common'
 import objectHash from 'object-hash'
 import { profileLeagueRef, profilePriceLeagueRef } from './domains/profile'
 import { ILeagueNode } from '../interfaces/league.interface'
+import { PersistWrapper } from '../utils/persist.utils'
 
 export const createLeagueHash = (name: string, realm: string) =>
   objectHash({ prefix: 'league', name, realm })
 
 @model('nw/leagueStore')
-export class LeagueStore extends Model({
-  leagues: tProp(types.array(types.model(League)), []),
-  priceLeagues: tProp(types.array(types.model(League)), [])
-}) {
+export class LeagueStore extends Model(
+  ...PersistWrapper({
+    leagues: tProp(types.array(types.model(League)), []),
+    priceLeagues: tProp(types.array(types.model(League)), []),
+    version: prop(1)
+  })
+) {
   @modelAction
   updateLeagues(activeApiLeagues: PoeLeague[]) {
     const activeLeagues = activeApiLeagues.map(

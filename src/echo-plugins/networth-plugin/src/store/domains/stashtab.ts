@@ -7,12 +7,14 @@ import {
   model,
   Model,
   modelAction,
+  prop,
   rootRef,
   tProp,
   types
 } from 'mobx-keystone'
 import { IMetaData, IStashTabNode } from '../../interfaces/stash.interface'
 import { League } from './league'
+import { PersistWrapper } from '../../utils/persist.utils'
 
 export const stashTabLeagueRef = rootRef<League>('nw/stashTabLeagueRef', {
   onResolvedValueChange(ref, newNode, oldNode) {
@@ -23,21 +25,24 @@ export const stashTabLeagueRef = rootRef<League>('nw/stashTabLeagueRef', {
 })
 
 @model('nw/stashTab')
-export class StashTab extends Model({
-  hash: idProp, // Id + leagueHash
-  id: tProp(types.string),
-  leagueRef: tProp(types.ref(stashTabLeagueRef)),
-  name: tProp(types.string),
-  index: tProp(types.number),
-  type: tProp(types.string),
-  parent: tProp(types.maybe(types.string)),
-  folder: tProp(types.maybe(types.string)),
-  public: tProp(types.maybe(types.boolean)),
-  metadata: tProp(types.frozen(types.unchecked<IMetaData>()), () =>
-    frozen<IMetaData>({ colour: '' })
-  ),
-  deleted: tProp(false).withSetter() // Still referenced but does not exist anymore
-}) {
+export class StashTab extends Model(
+  ...PersistWrapper({
+    hash: idProp, // Id + leagueHash
+    id: tProp(types.string),
+    leagueRef: tProp(types.ref(stashTabLeagueRef)),
+    name: tProp(types.string),
+    index: tProp(types.number),
+    type: tProp(types.string),
+    parent: tProp(types.maybe(types.string)),
+    folder: tProp(types.maybe(types.string)),
+    public: tProp(types.maybe(types.boolean)),
+    metadata: tProp(types.frozen(types.unchecked<IMetaData>()), () =>
+      frozen<IMetaData>({ colour: '' })
+    ),
+    deleted: tProp(false).withSetter(), // Still referenced but does not exist anymore
+    version: prop(1)
+  })
+) {
   @computed
   get league() {
     return this.leagueRef.maybeCurrent

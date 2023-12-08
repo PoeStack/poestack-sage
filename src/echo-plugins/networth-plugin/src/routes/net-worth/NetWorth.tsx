@@ -8,6 +8,7 @@ import NetWorthSummaryCard from '../../components/Cards/NetWorthSummaryCard'
 import IncomeSummaryCard from '../../components/Cards/IncomeSummaryCard'
 import SnapshotSummaryCard from '../../components/Cards/SnapshotSummaryCard'
 import TabBreakdownChartCard from '../../components/Cards/TabBreakdownChartCard'
+import MainContentSkeleton from '../../components/LoadingStates/MainContentSkeleton'
 
 const NetWorth = () => {
   const { accountStore, uiStateStore } = useStore()
@@ -19,19 +20,22 @@ const NetWorth = () => {
   return (
     <div className="flex flex-col h-full w-full">
       <ToolbarContainer />
-      <main className="flex flex-col p-2 gap-4">
-        <div className="flex flex-row gap-4 flex-wrap">
-          <NetWorthSummaryCard />
-          <IncomeSummaryCard />
-          <SnapshotSummaryCard />
-        </div>
-        <NetWorthChartCard />
-        <TabBreakdownChartCard />
-        <div className="flex flex-row">
-          <ItemTableContainer />
-        </div>
-        {/* <Test /> */}
-      </main>
+      {uiStateStore.isInitiating && <MainContentSkeleton />}
+      {!uiStateStore.isInitiating && (
+        <main className="flex flex-col p-2 gap-4">
+          <div className="flex flex-row gap-4 flex-wrap">
+            <NetWorthSummaryCard />
+            <IncomeSummaryCard />
+            <SnapshotSummaryCard />
+          </div>
+          <NetWorthChartCard />
+          <TabBreakdownChartCard />
+          <div className="flex flex-row">
+            <ItemTableContainer />
+          </div>
+          {/* <Test /> */}
+        </main>
+      )}
     </div>
   )
 }
