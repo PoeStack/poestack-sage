@@ -1,15 +1,25 @@
 import { computed } from 'mobx'
-import { model, Model, modelAction, tProp, types } from 'mobx-keystone'
+import { model, Model, modelAction, prop, tProp, types } from 'mobx-keystone'
 import { Notification } from './domains/notification'
 import { NotificationType } from '../interfaces/notification.interface'
 import { translateError } from '../utils/error.utils'
 import { NotificationPath } from '../types/resouces'
+import { PersistWrapper } from '../utils/persist.utils'
 
 @model('nw/notificationStore')
-export class NotificationStore extends Model({
-  notifications: tProp(types.array(types.model(Notification)), []),
-  displayed: tProp(types.array(types.string), [])
-}) {
+export class NotificationStore extends Model(
+  ...PersistWrapper(
+    {
+      notifications: tProp(types.array(types.model(Notification)), []),
+      displayed: tProp(types.array(types.string), []),
+      version: prop(1)
+    },
+    {
+      // Do not write any data
+      whitelist: []
+    }
+  )
+) {
   @computed
   get alertNotifications() {
     const alerts = this.notifications.filter((n) => n.displayAlert)

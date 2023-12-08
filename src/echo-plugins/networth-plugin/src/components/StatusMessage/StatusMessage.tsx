@@ -13,7 +13,8 @@ const StatusMessage: React.FC<StatusMessageProps> = ({ statusMessage }) => {
     <>
       {statusMessage && (
         <div className="flex flex-row items-center text-sm">{`${t(
-          `status:message.${statusMessage.message}` as unknown as any
+          `status:message.${statusMessage.message}` as unknown as any,
+          { param: statusMessage.translateParam }
         )} `}</div>
       )}
     </>

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useStore } from '../../hooks/useStore'
 import { AlertDialog, Button, Command, Popover, Sheet } from 'echo-common/components-v1'
 import {
+  Check,
   ChevronDownIcon,
   ChevronRightIcon,
   PencilIcon,
@@ -12,6 +13,7 @@ import ProfileForm from './ProfileForm'
 import { Profile } from '../../store/domains/profile'
 import { observer } from 'mobx-react'
 import { useTranslation } from 'react-i18next'
+import { cn } from 'echo-common'
 
 const ProfileMenu = () => {
   const { t } = useTranslation()
@@ -48,16 +50,18 @@ const ProfileMenu = () => {
             <Popover.Trigger asChild>
               <Button
                 variant="ghost"
-                className="flex flex-row border rounded h-8 pl-2 pr-1 min-w-[100px] justify-between"
+                className="flex flex-row border rounded h-8 pl-3 pr-2 w-[250px] justify-between"
                 role="combobox"
                 aria-expanded={menuOpen}
                 aria-label={t('label.selectProfile')}
               >
-                {activeAccount.activeProfile?.name ?? t('label.addProfile')}
+                <span className="truncate">
+                  {activeAccount.activeProfile?.name ?? t('label.addProfile')}
+                </span>
                 {menuOpen ? (
-                  <ChevronDownIcon className="ml-2 h-4 w-4" />
+                  <ChevronDownIcon className="flex-shrink-0 ml-2 h-4 w-4" />
                 ) : (
-                  <ChevronRightIcon className="ml-2 h-4 w-4" />
+                  <ChevronRightIcon className="flex-shrink-0 ml-2 h-4 w-4" />
                 )}
               </Button>
             </Popover.Trigger>
@@ -65,17 +69,17 @@ const ProfileMenu = () => {
             <Sheet.Trigger asChild>
               <Button
                 variant="ghost"
-                className="border rounded h-8"
+                className="flex flex-row border rounded h-8 pl-2 pr-1 w-[250px] justify-between"
                 role="combobox"
                 aria-expanded={menuOpen}
                 aria-label={t('label.selectProfile')}
               >
-                <PlusCircleIcon className="ml-auto mr-2 h-4 w-4" />
-                {t('label.addProfile')}
+                <PlusCircleIcon className="flex-shrink-0 ml-auto mr-2 h-4 w-4" />
+                <span className="truncate">{t('label.addProfile')}</span>
               </Button>
             </Sheet.Trigger>
           )}
-          <Popover.Content>
+          <Popover.Content className="w-[250px] p-0">
             <Command>
               {hasProfiles && (
                 <>
@@ -89,27 +93,41 @@ const ProfileMenu = () => {
                           }}
                           key={profile.uuid}
                         >
+                          <Check
+                            className={cn(
+                              'h-4 w-4 mr-2 flex-shrink-0',
+                              activeAccount.activeProfile?.uuid === profile.uuid
+                                ? 'opacity-100'
+                                : 'opacity-0'
+                            )}
+                          />
                           {profile.name}
                           <Sheet.Trigger asChild>
-                            <Button className="ml-auto" size="icon" variant="ghost">
-                              <PencilIcon
-                                onClick={() => {
-                                  setSelectedProfile(profile)
-                                  setMenuOpen(false)
-                                  setProfileDialogOpen(true)
-                                }}
-                                className="h-6 w-6 p-1 rounded hover:border-accent-foreground border border-transparent"
-                              />
+                            <Button
+                              onClick={() => {
+                                setSelectedProfile(profile)
+                                setMenuOpen(false)
+                                setProfileDialogOpen(true)
+                              }}
+                              className="ml-auto hover:border-accent-foreground rounded border border-transparent h-8 w-8"
+                              size="icon"
+                              variant="ghost"
+                            >
+                              <PencilIcon className="h-4 w-4" />
                             </Button>
                           </Sheet.Trigger>
-                          <AlertDialog.Trigger className="ml-2 ">
-                            <TrashIcon
+                          <AlertDialog.Trigger asChild>
+                            <Button
                               onClick={() => {
                                 setSelectedProfile(profile)
                                 setDeleteProfileDialogOpen(true)
                               }}
-                              className="h-6 w-6 p-1 rounded hover:border-accent-foreground border border-transparent"
-                            />
+                              className="ml-2 hover:border-accent-foreground rounded border border-transparent h-8 w-8"
+                              size="icon"
+                              variant="ghost"
+                            >
+                              <TrashIcon className="h-4 w-4" />
+                            </Button>
                           </AlertDialog.Trigger>
                         </Command.Item>
                       ))}

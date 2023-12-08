@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react'
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useToast } from 'echo-common/components-v1'
 import { useStore } from '../../hooks/useStore'
@@ -9,9 +9,12 @@ const Notifier = () => {
   const { toast } = useToast()
   const { t } = useTranslation()
 
-  const storeDisplayed = (uuid: string) => {
-    notificationStore!.addDisplayed(uuid)
-  }
+  const storeDisplayed = useCallback(
+    (uuid: string) => {
+      notificationStore!.addDisplayed(uuid)
+    },
+    [notificationStore]
+  )
 
   const alerts = notificationStore!.alertNotifications
 
@@ -24,20 +27,12 @@ const Notifier = () => {
           n.title as unknown as any,
           n.translateParam ? { param: n.translateParam } : undefined
         ),
-        description: t(n.description as unknown as any)
+        description: t(n.description as unknown as any),
+        variant: n.type === 'error' ? 'destructive' : undefined
       })
-      //   toast(
-      // () => (
-      //   <Toast
-      //     message={t(n.title, n.translateParam ? { param: n.translateParam } : undefined)}
-      //     description={t(n.description)}
-      //   />
-      // ),
-      // { type: n.type, className: classes.default }
-      //   )
       storeDisplayed(n.uuid)
     })
-  }, [alerts])
+  }, [alerts, notificationStore, storeDisplayed, t, toast])
 
   return null
 }

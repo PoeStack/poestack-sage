@@ -7,6 +7,7 @@ import {
   model,
   Model,
   modelAction,
+  prop,
   rootRef,
   tProp,
   types
@@ -25,6 +26,7 @@ import { createLeagueHash } from '../leagueStore'
 import { ICharacterNode } from '../../interfaces/character.interface'
 import { IStashTabNode } from '../../interfaces/stash.interface'
 import { TableView } from './tableView'
+import { PersistWrapper } from '../../utils/persist.utils'
 
 export const accountProfileRef = rootRef<Profile>('nw/accountProfileRef', {
   onResolvedValueChange(ref, newNode, oldNode) {
@@ -35,15 +37,18 @@ export const accountProfileRef = rootRef<Profile>('nw/accountProfileRef', {
 })
 
 @model('nw/account')
-export class Account extends Model({
-  uuid: idProp,
-  name: tProp(types.string),
-  characters: tProp(types.array(types.model(Character)), []),
-  stashTabs: tProp(types.array(types.model(StashTab)), []),
-  profiles: tProp(types.array(types.model(Profile)), []),
-  activeProfileRef: tProp(types.maybe(types.ref(accountProfileRef))),
-  networthTableView: tProp(types.model(TableView)).withSetter()
-}) {
+export class Account extends Model(
+  ...PersistWrapper({
+    uuid: idProp,
+    name: tProp(types.string),
+    characters: tProp(types.array(types.model(Character)), []),
+    stashTabs: tProp(types.array(types.model(StashTab)), []),
+    profiles: tProp(types.array(types.model(Profile)), []),
+    activeProfileRef: tProp(types.maybe(types.ref(accountProfileRef))),
+    networthTableView: tProp(types.model(TableView)).withSetter(),
+    version: prop(1)
+  })
+) {
   cancelled = new Subject<boolean>()
 
   @computed
@@ -79,8 +84,8 @@ export class Account extends Model({
 
   @modelAction
   addProfile(profile: Profile) {
-    console.log('add profile', profile)
     this.profiles.push(profile)
+    this.setActiveProfile(profile)
   }
 
   @modelAction
