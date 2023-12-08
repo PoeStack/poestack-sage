@@ -17,6 +17,7 @@ import {
 import { IItem } from '../../interfaces/item.interface'
 import { League } from './league'
 import { ICharacterNode } from '../../interfaces/character.interface'
+import { PersistWrapper } from '../../utils/persist.utils'
 
 export const characterLeagueRef = rootRef<League>('nw/characterLeagueRef', {
   onResolvedValueChange(ref, newNode, oldNode) {
@@ -27,21 +28,24 @@ export const characterLeagueRef = rootRef<League>('nw/characterLeagueRef', {
 })
 
 @model('nw/character')
-export class Character extends Model({
-  id: idProp,
-  name: tProp(types.string),
-  realm: tProp(types.string),
-  class: tProp(types.string),
-  leagueRef: tProp(types.ref(characterLeagueRef)).withSetter(),
-  level: tProp(types.number),
-  experience: tProp(types.number),
-  current: tProp(types.maybe(types.boolean)),
-  deleted: tProp(false).withSetter(),
-  test: prop<string | undefined>(),
-  inventory: prop<Frozen<IItem[]> | undefined>().withSetter(),
-  equipment: prop<Frozen<IItem[]> | undefined>().withSetter(),
-  jewels: prop<Frozen<IItem[]> | undefined>().withSetter()
-}) {
+export class Character extends Model(
+  ...PersistWrapper({
+    id: idProp,
+    name: tProp(types.string),
+    realm: tProp(types.string),
+    class: tProp(types.string),
+    leagueRef: tProp(types.ref(characterLeagueRef)).withSetter(),
+    level: tProp(types.number),
+    experience: tProp(types.number),
+    current: tProp(types.maybe(types.boolean)),
+    deleted: tProp(false).withSetter(),
+    test: prop<string | undefined>(),
+    inventory: prop<Frozen<IItem[]> | undefined>().withSetter(),
+    equipment: prop<Frozen<IItem[]> | undefined>().withSetter(),
+    jewels: prop<Frozen<IItem[]> | undefined>().withSetter(),
+    version: prop(1)
+  })
+) {
   static createPlainCharacter() {}
 
   @computed

@@ -15,7 +15,12 @@ function NetWorthSummaryCard() {
   const { t } = useTranslation()
   const { accountStore, priceStore, settingStore } = useStore()
   const netWorthData = accountStore.activeAccount.activeProfile?.netWorthOverTime() ?? []
-  const latestNetWorth = accountStore.activeAccount.activeProfile?.netWorthChange() ?? 0
+
+  const latestNetWorth = convertToCurrency({
+    value: accountStore.activeAccount.activeProfile?.netWorthChange() ?? 0,
+    toCurrency: settingStore.currency,
+    divinePrice: priceStore.divinePrice
+  }).toFixed(2)
 
   const chartData = netWorthData.map((item) => [
     item.time,
@@ -26,7 +31,7 @@ function NetWorthSummaryCard() {
     })
   ])
 
-  const currentNetWorth = chartData.length > 0 ? chartData[chartData.length - 1][1].toFixed(2) : '0'
+  const currentNetWorth = chartData.length > 0 ? chartData[0][1].toFixed(2) : '0'
 
   const handleToggleCurrency = () => {
     if (settingStore.currency === 'chaos') {
@@ -118,7 +123,7 @@ function NetWorthSummaryCard() {
       <Card.Footer className="border-t p-3">
         <div className="text-sm flex flex-row grow items-center justify-between">
           <span>{t('label.netWorth')}</span>
-          <span className={cn((latestNetWorth ?? 0) > 0 && 'text-destructive-foreground')}>
+          <span className={cn((+latestNetWorth ?? 0) > 0 && 'text-destructive-foreground')}>
             {`${latestNetWorth} ${settingStore.activeCurrency.short}`}
           </span>
         </div>

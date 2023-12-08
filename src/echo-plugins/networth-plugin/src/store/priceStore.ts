@@ -1,14 +1,18 @@
 import { reaction } from 'mobx'
-import { getRoot, model, Model, modelAction, tProp, types } from 'mobx-keystone'
+import { getRoot, model, Model, modelAction, prop, tProp, types } from 'mobx-keystone'
 import { valuateItems } from '../service/external.service'
 import { RootStore } from './rootStore'
 import { catchError, interval, mergeMap, of, switchMap, toArray } from 'rxjs'
+import { PersistWrapper } from '../utils/persist.utils'
 
 @model('nw/priceStore')
-export class PriceStore extends Model({
-  exaltedPrice: tProp(types.number, 0).withSetter(),
-  divinePrice: tProp(types.number, 0).withSetter()
-}) {
+export class PriceStore extends Model(
+  ...PersistWrapper({
+    exaltedPrice: tProp(types.number, 0).withSetter(),
+    divinePrice: tProp(types.number, 0).withSetter(),
+    version: prop(1)
+  })
+) {
   onAttachedToRootStore() {
     const getItemObserable = (league: string) =>
       valuateItems(league, [{ typeLine: 'Divine Orb' }, { typeLine: 'Exalted Orb' }]).pipe(
