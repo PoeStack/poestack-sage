@@ -1,18 +1,18 @@
-import fs from 'fs'
 import { PoeItem } from '../ggg/poe-api-models'
 import { ItemUtils } from './item-utils'
 import objectHash from 'object-hash'
 import { compasses } from './compasses'
 import { from, map } from 'rxjs'
-import { group } from 'console'
 
-export type SageItemGroup = { key: string; tag: string; hash: string; shard: number }
+export type SageItemGroup = { key: string; tag: string; hash: string; shard: number, unsafeHashProperties: any }
 
 export class ItemGroupingService {
   private readonly pricingHandlers: ItemGroupIdentifier[] = []
 
   constructor() {
     this.pricingHandlers.push(
+      new InscribedUltimatumGroupIndentifier(),
+      new RewardMapGroupIdentifier(),
       new WatchersEyeGroupIdentifier(),
       new TimelessJewelGroupIdentifier(),
       new TattooGroupIdentifier(),
@@ -60,7 +60,7 @@ export class ItemGroupingService {
         )
 
         const shard = parseInt(hash, 16) % 5
-        return { key: internalGroup.key, tag: internalGroup.tag, hash: hash, shard: shard }
+        return { key: internalGroup.key, tag: internalGroup.tag, hash: hash, shard: shard, unsafeHashProperties: internalGroup.hashProperties }
       }
     }
 
@@ -77,6 +77,31 @@ interface InternalGroup {
 
 export interface ItemGroupIdentifier {
   group: (item: PoeItem) => InternalGroup | null
+}
+
+export class InscribedUltimatumGroupIndentifier implements ItemGroupIdentifier {
+  group(item: PoeItem): InternalGroup | null {
+    if (item.baseType === "Inscribed Ultimatum") {
+      const challenge = item.properties?.filter((prop) => prop.name === 'Challenge')?.[0]
+        ?.values?.[0]?.[0]
+      const reward = item.properties?.filter((prop) => prop.name?.startsWith("Reward"))?.[0]
+        ?.values?.[0]?.[0]
+      const sacrifice = item.properties?.filter((prop) => prop.name?.startsWith("Requires Sacrifice"))?.[0]
+        ?.values?.[0]?.[0]
+
+      const group: InternalGroup = {
+        key: `${reward}`,
+        tag: 'inscribed ultimatum',
+        hashProperties: {
+          challenge: challenge,
+          reward: reward,
+          sacrifice: sacrifice
+        }
+      }
+      return group
+    }
+    return null
+  }
 }
 
 export class TimelessJewelGroupIdentifier implements ItemGroupIdentifier {
@@ -267,7 +292,7 @@ export class MemoryGroupIdentifier implements ItemGroupIdentifier {
     if (
       typeLine &&
       item.descrText ===
-        'Right-click on this, then left click on a completed Map on your Atlas to apply this Memory.'
+      'Right-click on this, then left click on a completed Map on your Atlas to apply this Memory.'
     ) {
       return {
         key: typeLine,
@@ -323,9 +348,9 @@ export class GemGroupIdentifier implements ItemGroupIdentifier {
   group(item: PoeItem): InternalGroup | null {
     if (
       item.descrText ===
-        'Place into an item socket of the right colour to gain this skill. Right click to remove from a socket.' ||
+      'Place into an item socket of the right colour to gain this skill. Right click to remove from a socket.' ||
       item.descrText ===
-        'This is a Support Gem. It does not grant a bonus to your character, but to skills in sockets connected to it. Place into an item socket connected to a socket containing the Active Skill Gem you wish to augment. Right click to remove from a socket.'
+      'This is a Support Gem. It does not grant a bonus to your character, but to skills in sockets connected to it. Place into an item socket connected to a socket containing the Active Skill Gem you wish to augment. Right click to remove from a socket.'
     ) {
       const typeLine = item.typeLine!!.toLowerCase()
       const quality = this.convertQToRange(
@@ -579,6 +604,31 @@ export class IncubatorGroupIdentifier implements ItemGroupIdentifier {
         }
       }
     }
+    return null
+  }
+}
+
+export class RewardMapGroupIdentifier implements ItemGroupIdentifier {
+
+  group(item: PoeItem): InternalGroup | null {
+    const mapTier = item.properties?.filter((prop) => prop.name === 'Map Tier')?.[0]
+      ?.values?.[0]?.[0]
+    const reward = item.properties?.filter((prop) => prop.name === 'Reward')?.[0]
+      ?.values?.[0]?.[0]
+
+    if (mapTier && reward && item.name) {
+      return {
+        key: `${item.name} ${item.typeLine}`,
+        tag: 'reward map',
+        hashProperties: {
+          map: item.typeLine,
+          mapTier: mapTier,
+          reward: reward,
+          mods: item.explicitMods
+        }
+      }
+    }
+
     return null
   }
 }

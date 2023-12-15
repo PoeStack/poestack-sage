@@ -49,6 +49,18 @@ function loadChanges(paginationCode: string) {
   )
 }
 
+
+function loadKey() {
+  return httpUtil.get<{ psapi: string }>(
+    `https://www.pathofexile.com/api/trade/data/change-ids`,
+    {
+      headers: {
+        'User-Agent': 'OAuth poestack/1.0.0 (contact: zgherridge@gmail.com)'
+      }
+    }
+  )
+}
+
 const itemGroupingService = new ItemGroupingService()
 const resultsSubject = new Subject<PoePublicStashResponse>()
 
@@ -64,7 +76,11 @@ const client = new Redis(process.env['REDIS_URL'])
 const groupsWritten = new Set<string>()
 function writeGroup(group: SageItemGroup, item: PoeItem) {
   if (!groupsWritten.has(group.hash)) {
-    const summary = { k: group.key, i: item.icon?.replaceAll("https://web.poecdn.com/gen/image/", "") }
+    const summary = {
+      k: group.key,
+      i: item.icon?.replaceAll("https://web.poecdn.com/gen/image/", ""),
+      p: group.unsafeHashProperties
+    }
 
     const shard = parseInt(group.hash, 16) % 5
     from(client.hset(
@@ -167,7 +183,10 @@ resultsSubject.subscribe((data) => {
 
 resultsSubject.subscribe((e) => console.log('got', e.stashes?.length))
 
-resultsSubject.next({
-  next_change_id: '2170425622-2162025115-2092674883-2322724226-2255546785',
-  stashes: []
+loadKey().subscribe((key) => {
+  resultsSubject.next({
+    next_change_id: key.psapi,
+    stashes: []
+  })
 })
+

@@ -44,10 +44,11 @@ function valueListings(listings: Listing[]): Observable<Valuation> {
   const filteredListings = listings.filter((e) => !isNaN(e.value))
   const convertedListings = filteredListings.map((e) => {
     if (e.valueCurrency === 'd') {
-      return { ...e, valueCurrency: 'c', value: e.value * divChaosValue }
+      //return { ...e, valueCurrency: 'c', value: e.value * divChaosValue }
+      return null
     }
     return e
-  })
+  }).filter((e) => !!e)
   const values = convertedListings.map((e) => e.value).sort((a, b) => a - b)
   const result = percentile(
     [5, 7, 10, 12, 15, 18, 20, 25, 30, 50],
