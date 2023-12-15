@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: insights-cache-summaries
+spec:
+  schedule: "0 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: cache-consumer
+            image: registry.digitalocean.com/poestack/sage:latest
+            command: ["node"]
+            args: ["src/insights/dist/cache-summaries.js"]
+            envFrom:
+              - secretRef:
+                  name: sage-secrets
+          restartPolicy: OnFailure
+

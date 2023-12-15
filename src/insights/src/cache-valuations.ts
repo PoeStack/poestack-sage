@@ -29,7 +29,6 @@ type Valuation = {
   l: number
   h: number[]
   d: number[]
-  s?: any | undefined
 }
 
 type GroupValuation = {
@@ -100,7 +99,7 @@ function valueShard(shardKey: string): Observable<{ key: string; valuations: Gro
 const httpUtil = new HttpUtil()
 function writeShard(e: { key: string; valuations: GroupValuation[] }) {
   const [tag, shard, league] = e.key.split("_")
-  const shardKey = `v6/${e.key.replaceAll(' ', '_')}.json`
+  const shardKey = `v7/valuations/${e.key.replaceAll(' ', '_')}.json`
 
   return forkJoin({
     currentShard: httpUtil.get(`https://pub-1ac9e2cd6dca4bda9dc260cb6a6f7c90.r2.dev/${shardKey}`).pipe(catchError((e) => of(null))),
@@ -129,11 +128,6 @@ function writeShard(e: { key: string; valuations: GroupValuation[] }) {
           const history = currentValuation?.d ?? []
           history.push(valuation.valuation.c[3])
           valuation.valuation.d = history
-        }
-
-        const summary = source.shardSummary[valuation.itemGroupHash]
-        if (summary) {
-          valuation.valuation.s = JSON.parse(summary)
         }
 
         output.valuations[valuation.itemGroupHash] = valuation.valuation
