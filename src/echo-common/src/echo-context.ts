@@ -9,6 +9,7 @@ import { PoeStashService } from './poe-stash-service'
 import { PoeStackSettingsService } from './poe-stack-settings-service'
 import { PoeZoneTrackerService } from './poe-zone-tracker-service'
 import { SageValuationService } from './sage-valuation-service'
+import { SageItemGroupService } from './sage-item-group-service'
 
 export type EchoContext = {
   source: string
@@ -22,5 +23,6 @@ export type EchoContext = {
   poeStash: PoeStashService
   poeZoneTracker: PoeZoneTrackerService
   poeValuations: SageValuationService
+  itemGroups: SageItemGroupService
   subscriptions: Subscription[]
 }

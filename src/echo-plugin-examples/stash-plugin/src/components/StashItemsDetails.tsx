@@ -1,56 +1,34 @@
 import { Button, Input, Popover, Table, useToast } from 'echo-common/components-v1'
 import { Info } from 'lucide-react'
-import { tap, toArray } from 'rxjs'
-import { validResults } from 'echo-common'
-import { context } from '../context'
 import { PoePartialStashTab } from 'sage-common'
 import { useEffect, useState } from 'react'
+import { context } from '../context'
+import { mergeMap, toArray } from 'rxjs'
+import { bind } from '@react-rxjs/core'
+import { validResults } from 'echo-common'
 
 type StashItemsDetailsProps = {
   league: string
   selectedStash: PoePartialStashTab
 }
 
+const [useStashItems] = bind(
+  (league: string, stash: string) =>
+    context()
+      .poeStash.stashTab(league, stash)
+      .pipe(
+        validResults(),
+        mergeMap((r) => context().poeValuations.withValuationsResultOnly(league, r?.items ?? [])),
+        toArray()
+      ),
+  null
+)
+
 export function StashItemsDetails({ league, selectedStash }: StashItemsDetailsProps) {
   const [searchString, setSearchString] = useState('')
   const { toast } = useToast()
 
-  useEffect(() => {
-    context()
-      .poeStash.snapshot(league, [selectedStash.id!!])
-      .pipe(
-        tap((e) => {
-          console.log(e)
-          if (e.type === 'rate-limit') {
-            toast({
-              id: `toast-${Date.now()}`,
-              title: 'Rate Limit Error',
-              description: `${e.type}, ${Date.now() + e.limitExpiresMs}`
-            })
-          } else if (e.type === 'error') {
-            toast({ id: `toast-${Date.now()}`, title: 'Info', description: `${e.type} ${e.error}` })
-          }
-        }),
-        validResults(),
-        toArray()
-      )
-      .subscribe()
-  }, [league, selectedStash, toast])
-
-  const stashItems = context()
-    .poeStash.usePoeStashItems(league)
-    .filter((e) => e.stash?.id === selectedStash.id)
-    .filter(
-      (e) =>
-        !searchString.length || e.data.typeLine?.toLowerCase().includes(searchString.toLowerCase())
-    )
-    .sort(
-      (a, b) =>
-        new Date(b.stash?.loadedAtTimestamp || 0).getTime() -
-        new Date(a.stash?.loadedAtTimestamp || 0).getTime()
-    )
-
-  console.log(stashItems)
+  const items = useStashItems('Affliction', selectedStash.id ?? '')
 
   return (
     <div className="flex-1 flex flex-col h-full gap-4 pt-4">
@@ -75,18 +53,18 @@ export function StashItemsDetails({ league, selectedStash }: StashItemsDetailsPr
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {stashItems.map(({ data: item, group, valuation }) => (
-            <Table.Row key={item.id}>
+          {items?.map((item) => (
+            <Table.Row key={item.data.id}>
               <Table.Cell>
-                <img width={48} src={item.icon} />
+                <img width={48} src={item.data.icon} />
               </Table.Cell>
               <Table.Cell>
                 <div className="flex flex-col">
-                  {item.name && <span>{item.name}</span>}
-                  {item.typeLine && <span>{item.typeLine}</span>}
+                  {item.data.name && <span>{item.data.name}</span>}
+                  {item.data.typeLine && <span>{item.data.typeLine}</span>}
                 </div>
               </Table.Cell>
-              <Table.Cell>{valuation && `${valuation?.pvs?.[5]} c`}</Table.Cell>
+              <Table.Cell>{item.valuation && `${item.valuation?.primaryValue} c`}</Table.Cell>
               <Table.Cell>
                 <Popover>
                   <Popover.Trigger>
@@ -96,12 +74,10 @@ export function StashItemsDetails({ league, selectedStash }: StashItemsDetailsPr
                   </Popover.Trigger>
                   <Popover.Content className="p-2">
                     <ul className="text-sm">
-                      {group && (
-                        <li className="text-sm">
-                          Group: {`${group.tag} ${group.shard} ${group.hash}`}
-                        </li>
+                      {item.group && (
+                        <li className="text-sm">Group: {`${item.group.tag} ${item.group.hash}`}</li>
                       )}
-                      {item.properties?.map((p) => {
+                      {item.group?.unsafeHashProperties.properties?.map((p: any) => {
                         console.log(p)
                         return (
                           <li key={p.name}>

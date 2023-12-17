@@ -1,8 +1,16 @@
-import { HttpUtil, ItemGroupingService, PoeItem, PoePublicStashResponse, SageItemGroup } from 'sage-common'
+import {
+  HttpUtil,
+  ItemGroupingService,
+  PoeItem,
+  PoePublicStashResponse,
+  SageItemGroup
+} from 'sage-common'
 import { debounceTime, from, Subject } from 'rxjs'
 import process from 'process'
+import fs from 'fs'
 import Redis from 'ioredis'
 import { twoDecimals } from './utils'
+import { parseInt } from 'lodash'
 
 const divineTypes = new Set(['d', 'div', 'divine'])
 const chaosTypes = new Set(['c', 'chaos'])
@@ -49,16 +57,12 @@ function loadChanges(paginationCode: string) {
   )
 }
 
-
 function loadKey() {
-  return httpUtil.get<{ psapi: string }>(
-    `https://www.pathofexile.com/api/trade/data/change-ids`,
-    {
-      headers: {
-        'User-Agent': 'OAuth poestack/1.0.0 (contact: zgherridge@gmail.com)'
-      }
+  return httpUtil.get<{ psapi: string }>(`https://www.pathofexile.com/api/trade/data/change-ids`, {
+    headers: {
+      'User-Agent': 'OAuth poestack/1.0.0 (contact: zgherridge@gmail.com)'
     }
-  )
+  })
 }
 
 const itemGroupingService = new ItemGroupingService()
@@ -78,16 +82,11 @@ function writeGroup(group: SageItemGroup, item: PoeItem) {
   if (!groupsWritten.has(group.hash)) {
     const summary = {
       k: group.key,
-      i: item.icon?.replaceAll("https://web.poecdn.com/gen/image/", ""),
+      i: item.icon?.replaceAll('https://web.poecdn.com/gen/image/', ''),
       p: group.unsafeHashProperties
     }
 
-    const shard = parseInt(group.hash, 16) % 5
-    from(client.hset(
-      `gss:${group.tag}:${shard}`,
-      `${group.hash}`,
-      JSON.stringify(summary)
-    )).subscribe()
+    from(client.hset(`igs:${group.tag}`, `${group.hash}`, JSON.stringify(summary))).subscribe()
 
     groupsWritten.add(group.hash)
   }
@@ -96,6 +95,10 @@ function writeGroup(group: SageItemGroup, item: PoeItem) {
 resultsSubject.subscribe((data) => {
   try {
     if (data?.stashes) {
+      if (process.env.DUMP_STREAM === 'true') {
+        fs.writeFileSync(`out/${Date.now()}.json`, JSON.stringify(data, null, 4))
+      }
+
       const dateMs = Date.now()
       const dateTruncatedMins = Math.round(dateMs / 1000 / 60)
       let updates = 0
@@ -132,9 +135,9 @@ resultsSubject.subscribe((data) => {
               var currencyType = extractCurrencyType(noteSplit[2])
 
               //Chaos Orb override
-              if (group.hash === "dac72c76c8099a3cc512ba2d9961db84036694cc") {
-                valueString = "1"
-                currencyType = "c"
+              if (group.hash === 'dac72c76c8099a3cc512ba2d9961db84036694cc') {
+                valueString = '1'
+                currencyType = 'c'
               }
 
               if (valueString?.length && currencyType?.length) {
@@ -155,10 +158,10 @@ resultsSubject.subscribe((data) => {
         }
 
         for (const [itemGroupHashString, data] of Object.entries(toWrite)) {
+          const shard = parseInt(itemGroupHashString, 16) % 11
           updates++
-          const shard = parseInt(itemGroupHashString, 16) % 5
           multi.hset(
-            `psev6:${data.tag}:${shard}:${stashData.league}`,
+            `psev9:${data.tag}:${stashData.league}:${shard}`,
             `${itemGroupHashString}:${stashData.accountName}`,
             `${dateTruncatedMins},${data.stackSize},${data.value},${data.currencyType}`
           )
@@ -189,4 +192,3 @@ loadKey().subscribe((key) => {
     stashes: []
   })
 })
-
