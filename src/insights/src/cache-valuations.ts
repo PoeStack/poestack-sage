@@ -53,7 +53,7 @@ type GroupValuation = {
   valuation: Valuation
 }
 
-var divValues: { [league: string]: Valuation } = {}
+let divValues: { [league: string]: Valuation } = {}
 function valueListings(league: string, listings: Listing[]): Valuation {
   const divChaosValue = divValues[league]?.c[3]
   const filteredListings = listings.filter((e) => !isNaN(e.value))

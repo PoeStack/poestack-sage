@@ -131,8 +131,8 @@ resultsSubject.subscribe((data) => {
               writeGroup(group, item)
 
               const noteSplit = note.trim().split(' ')
-              var valueString = extractCurrencyValue(noteSplit[1])
-              var currencyType = extractCurrencyType(noteSplit[2])
+              let valueString = extractCurrencyValue(noteSplit[1])
+              let currencyType = extractCurrencyType(noteSplit[2])
 
               //Chaos Orb override
               if (group.hash === 'dac72c76c8099a3cc512ba2d9961db84036694cc') {

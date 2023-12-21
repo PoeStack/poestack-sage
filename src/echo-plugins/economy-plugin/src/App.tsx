@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { context } from './context'
-import { Button, Input, Popover, Select, Table, useToast } from 'echo-common/components-v1'
+import { Select, Table } from 'echo-common/components-v1'
 
 const App = () => {
   const tags = ['Currency', 'Reward Map']
@@ -28,7 +28,7 @@ const App = () => {
               <Select.Group>
                 <Select.Label>Tags</Select.Label>
                 {tags.map((tag) => {
-                  return <Select.Item value={tag}>{tag}</Select.Item>
+                  return <Select.Item key={tag} value={tag}>{tag}</Select.Item>
                 })}
               </Select.Group>
             </Select.Content>
