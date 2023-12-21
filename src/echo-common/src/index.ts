@@ -13,6 +13,7 @@ import { EchoPluginService } from './echo-plugin-service'
 import { ECHO_CONTEXT_SERVICE, EchoContextService } from './echo-context-service'
 import { SageValuationService, SageValuation, SageValuationShard } from './sage-valuation-service'
 import { validResults } from './smart-cache-hooks'
+import { SageItemGroupService } from './sage-item-group-service'
 
 export { cn } from './ui/lib/utils'
 
@@ -27,6 +28,7 @@ export {
   PoeStackSettingsService,
   PoeZoneTrackerService,
   EchoRouter,
+  SageItemGroupService,
   EchoDirService,
   validResults,
   EchoContextService,

@@ -29,7 +29,7 @@ export const migration = <FS, TS>(
   snapshot: AnySnapshot,
   options: IOptions<FS, TS> = {}
 ): AnySnapshot => {
-  let { whitelist, blacklist, migrate } = options
+  const { whitelist, blacklist, migrate } = options
 
   if (whitelist || blacklist) {
     const whitelistSet = new Set(whitelist || [])

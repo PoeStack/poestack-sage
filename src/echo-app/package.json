@@ -32,13 +32,6 @@
     "@heroicons/react": "^2.0.18",
     "@hookform/resolvers": "^3.3.2",
     "@libsql/client": "^0.4.0-pre.2",
-    "@libsql/darwin-arm64": "0.2.0-pre.4",
-    "@libsql/darwin-x64": "0.2.0-pre.4",
-    "@libsql/linux-arm64-gnu": "0.2.0-pre.4",
-    "@libsql/linux-arm64-musl": "0.2.0-pre.4",
-    "@libsql/linux-x64-gnu": "0.2.0-pre.4",
-    "@libsql/linux-x64-musl": "0.2.0-pre.4",
-    "@libsql/win32-x64-msvc": "0.2.0-pre.4",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-checkbox": "^1.0.4",
@@ -86,7 +79,6 @@
     "mobx": "^6.11.0",
     "mobx-keystone": "^1.7.1",
     "mobx-react": "^9.1.0",
-    "networth-plugin": "file:../echo-plugins/networth-plugin",
     "node-stream-zip": "^1.15.0",
     "object-hash": "^3.0.0",
     "react": "^18.2.0",
@@ -142,6 +134,13 @@
   },
   "optionalDependencies": {
     "@rollup/rollup-darwin-x64": "^4.3.0",
+    "@libsql/darwin-arm64": "0.2.0-pre.4",
+    "@libsql/darwin-x64": "0.2.0-pre.4",
+    "@libsql/linux-arm64-gnu": "0.2.0-pre.4",
+    "@libsql/linux-arm64-musl": "0.2.0-pre.4",
+    "@libsql/linux-x64-gnu": "0.2.0-pre.4",
+    "@libsql/linux-x64-musl": "0.2.0-pre.4",
+    "@libsql/win32-x64-msvc": "0.2.0-pre.4",
     "dmg-license": "^1.0.11"
   }
 }

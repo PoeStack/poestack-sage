@@ -5,7 +5,7 @@ import process from 'process'
 
 const client = new Redis(process.env['REDIS_URL'])
 
-const cacheLimit = 500
+const cacheLimit = 5000
 const ageLimit = 1000 * 60 * 60 * 48
 
 function cleanShard(shard: string) {
@@ -44,8 +44,8 @@ function cleanShard(shard: string) {
   )
 }
 
-scanKeys(client, 'psev6:*')
-  .pipe(concatMap((shard) => cleanShard(shard)))
+scanKeys(client, 'psev*')
+  .pipe(mergeMap((shard) => cleanShard(shard), 10))
   .subscribe({
     complete: () => {
       client.disconnect(false)
