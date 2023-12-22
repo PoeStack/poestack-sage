@@ -38,6 +38,7 @@ export class SageItemGroupService {
 
     Object.entries(internal.summaries).forEach(([k, v]) => {
       out.summaries[k] = {
+        hash: k,
         key: v.k,
         icon: `https://web.poecdn.com/gen/image/${v.i}`,
         sortProperty: v.v,
@@ -56,6 +57,7 @@ export class SageItemGroupService {
 }
 
 export type SageItemGroupSummary = {
+  hash: string
   key: string
   icon: string
   unsafeHashProperties: { [key: string]: any }

@@ -1,15 +1,38 @@
 import { useState } from 'react'
 import { context } from './context'
 import { Select, Table } from 'echo-common/components-v1'
+import { bind } from '@react-rxjs/core'
+import { validResults } from 'echo-common'
+import { forkJoin, from, map, mergeMap, of, toArray } from 'rxjs'
+
+
+const [useSummaries, summaries$] = bind(
+  (tag: string) =>
+    context().itemGroups.summary(tag).pipe(
+      validResults(),
+      mergeMap((s) => from(Object.values(s.summaries))),
+      mergeMap((s) => {
+        return forkJoin({
+          summary: of(s),
+          valuation: context().poeValuations.valuationRaw("Affliction", tag).pipe(
+            validResults(),
+            map((e) => e?.valuations?.[s.hash])
+          )
+        })
+      }),
+      toArray()
+    ),
+  null
+)
+
 
 const App = () => {
   const tags = ['Currency', 'Reward Map']
   const [selectedTag, setSelectedTag] = useState('currency')
-  const { value: summary } = context().itemGroups.useSummary(selectedTag)
+  const summaries = useSummaries(selectedTag)
 
-  const sortedSummaries = Object.entries(summary?.summaries ?? {})
-  sortedSummaries.sort((a, b) => {
-    return b[1]?.sortProperty?.['Affliction'] - a[1]?.sortProperty?.['Affliction']
+  summaries?.sort((a, b) => {
+    return b.summary?.sortProperty?.['Affliction'] - a.summary?.sortProperty?.['Affliction']
   })
 
   return (
@@ -41,19 +64,24 @@ const App = () => {
                 <Table.Head></Table.Head>
                 <Table.Head>Name</Table.Head>
                 <Table.Head>Hash</Table.Head>
+                <Table.Head>Value (C)</Table.Head>
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {sortedSummaries.map(([k, v]) => (
-                <Table.Row key={k}>
+              {summaries?.map((s) => (
+                <Table.Row key={s.summary.hash}>
                   <Table.Cell>
-                    <img width={48} src={v.icon} />
+                    <img width={48} src={s.summary.icon} />
                   </Table.Cell>
                   <Table.Cell>
-                    <div className="flex flex-col">{v.key && <span>{v.key}</span>}</div>
+                    <div className="flex flex-col">{s.summary.key && <span>{s.summary.key}</span>}</div>
                   </Table.Cell>
                   <Table.Cell>
-                    <div className="flex flex-col">{v.key && <span>{k}</span>}</div>
+                    <div className="flex flex-col">{s.summary.hash && <span>{s.summary.hash}</span>}</div>
+                  </Table.Cell>
+
+                  <Table.Cell>
+                    <div className="flex flex-col">{s.valuation?.primaryValue && <span>{s.valuation.primaryValue}</span>}</div>
                   </Table.Cell>
                 </Table.Row>
               ))}

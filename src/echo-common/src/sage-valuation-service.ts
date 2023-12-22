@@ -65,6 +65,14 @@ export class SageValuationService {
     )
   }
 
+
+  public valuationRaw(league: string, tag: string) {
+    const key = `${league}/${tag}`.replaceAll(' ', '_').toLowerCase()
+    return this.cacheValuationShards.load({ key: key, maxAgeMs: 1000 * 60 * 60 }, () =>
+      this.loadInternal(key)
+    )
+  }
+
   private mapInternalToExternal(internal: SageValuationShardInternal): SageValuationShard {
     const out: SageValuationShard = {
       meta: internal.metadata,
