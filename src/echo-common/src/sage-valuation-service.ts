@@ -3,6 +3,7 @@ import { HttpUtil, ItemGroupingService, PoeItem, SageItemGroup } from 'sage-comm
 import { EchoDirService } from './echo-dir-service'
 import { Observable, map, mergeMap, tap } from 'rxjs'
 import { validResultsWithNullish } from './smart-cache-hooks'
+import { EchoPoeItem } from './poe-stash-service'
 
 export class SageValuationService {
   private httpUtil = new HttpUtil()
@@ -33,9 +34,8 @@ export class SageValuationService {
           map((vEvent) => {
             if (vEvent.type === 'result') {
               const itemValuation = vEvent?.result?.valuations?.[e?.group?.hash ?? '']
-              const eItem = {
+              const eItem: EchoPoeItem = {
                 valuation: itemValuation,
-                timestampMs: Date.now(),
                 ...e
               }
               return { ...vEvent, result: eItem }

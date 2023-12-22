@@ -1,7 +1,7 @@
 import { Button, Input, Popover, Table, useToast } from 'echo-common/components-v1'
 import { Info } from 'lucide-react'
 import { PoePartialStashTab } from 'sage-common'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { context } from '../context'
 import { mergeMap, toArray } from 'rxjs'
 import { bind } from '@react-rxjs/core'
@@ -28,7 +28,7 @@ export function StashItemsDetails({ league, selectedStash }: StashItemsDetailsPr
   const [searchString, setSearchString] = useState('')
   const { toast } = useToast()
 
-  const items = useStashItems('Affliction', selectedStash.id ?? '')
+  const items = useStashItems(league, selectedStash.id ?? '')
 
   return (
     <div className="flex-1 flex flex-col h-full gap-4 pt-4">

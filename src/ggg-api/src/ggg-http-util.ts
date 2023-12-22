@@ -105,11 +105,14 @@ export class GggHttpUtil {
           })
           .catch((error) => {
             console.log('GGG response - error')
-            this.reatelimiter.recordRequest(rateLimitKey, error.response.headers)
+
+            if (error?.response?.headers) {
+              this.reatelimiter.recordRequest(rateLimitKey, error.response.headers)
+            }
 
             if (error.response.status === 429) {
               observer.error(
-                new RateLimitError(parseInt(error.response.headers['retry-after']) * 1000)
+                new RateLimitError(parseInt(error?.response.headers?.['retry-after'] ?? "10") * 1000)
               )
             } else {
               observer.error(error)
