@@ -12,7 +12,7 @@ export class PoeStashService {
   constructor(
     private echoDir: EchoDirService,
     private gggApi: GggApi
-  ) {}
+  ) { }
 
   public stashTab(league: string, stashId: string, config?: SmartCacheConfig) {
     return this.cacheStashContent.load(
@@ -39,6 +39,6 @@ export type EchoPoeItem = {
   data: PoeItem
   character?: PoeCharacter | null | undefined
   stash?: PoeStashTab | null | undefined
-  group?: SageItemGroup | null | undefined
+  group?: { primaryGroup: SageItemGroup } | null | undefined
   valuation?: SageValuation | null | undefined
 }

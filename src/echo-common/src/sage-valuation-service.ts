@@ -21,7 +21,7 @@ export class SageValuationService {
         this.itemValuation(league, e.data).pipe(
           validResultsWithNullish(),
           tap((e) => console.log('shard', e)),
-          map((shard) => ({ ...e, valuation: shard?.valuations?.[e.group?.hash ?? ''] }))
+          map((shard) => ({ ...e, valuation: shard?.valuations?.[e.group?.primaryGroup?.hash ?? ''] }))
         )
       )
     )
@@ -33,7 +33,7 @@ export class SageValuationService {
         this.itemValuation(league, e.data).pipe(
           map((vEvent) => {
             if (vEvent.type === 'result') {
-              const itemValuation = vEvent?.result?.valuations?.[e?.group?.hash ?? '']
+              const itemValuation = vEvent?.result?.valuations?.[e?.group?.primaryGroup?.hash ?? '']
               const eItem: EchoPoeItem = {
                 valuation: itemValuation,
                 ...e
@@ -53,7 +53,7 @@ export class SageValuationService {
   ): Observable<SmartCacheEvent<SageValuationShard>> {
     const group = this.itemGroupingService.group(item)
     if (group) {
-      return this.valuation(league, group)
+      return this.valuation(league, group?.primaryGroup)
     }
     return SmartCache.emptyResult()
   }

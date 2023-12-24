@@ -26,8 +26,6 @@
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false"
   },
   "dependencies": {
-    "economy-plugin": "file:../echo-plugins/economy-plugin",
-    "tft-bulk-plugin": "file:../echo-plugins/tft-bulk-plugin",
     "@electron-toolkit/preload": "^2.0.0",
     "@electron-toolkit/utils": "^2.0.0",
     "@electron/remote": "^2.0.12",

@@ -75,9 +75,9 @@ export function StashItemsDetails({ league, selectedStash }: StashItemsDetailsPr
                   <Popover.Content className="p-2">
                     <ul className="text-sm">
                       {item.group && (
-                        <li className="text-sm">Group: {`${item.group.tag} ${item.group.hash}`}</li>
+                        <li className="text-sm">Group: {`${item.group?.primaryGroup?.tag} ${item.group?.primaryGroup?.hash}`}</li>
                       )}
-                      {item.group?.unsafeHashProperties.properties?.map((p: any) => {
+                      {item.group?.primaryGroup?.unsafeHashProperties.properties?.map((p: any) => {
                         console.log(p)
                         return (
                           <li key={p.name}>

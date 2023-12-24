@@ -128,29 +128,29 @@ resultsSubject.subscribe((data) => {
           if (note.length > 3 && (note.includes('~b/o ') || note.includes('~price '))) {
             const group = itemGroupingService.group(item)
             if (group) {
-              writeGroup(group, item)
+              writeGroup(group?.primaryGroup, item)
 
               const noteSplit = note.trim().split(' ')
               let valueString = extractCurrencyValue(noteSplit[1])
               let currencyType = extractCurrencyType(noteSplit[2])
 
               //Chaos Orb override
-              if (group.hash === 'dac72c76c8099a3cc512ba2d9961db84036694cc') {
+              if (group?.primaryGroup?.hash === 'dac72c76c8099a3cc512ba2d9961db84036694cc') {
                 valueString = '1'
                 currencyType = 'c'
               }
 
               if (valueString?.length && currencyType?.length) {
-                if (!toWrite[group.hash]) {
-                  toWrite[group.hash] = {
+                if (!toWrite[group?.primaryGroup?.hash]) {
+                  toWrite[group?.primaryGroup?.hash] = {
                     stackSize: 0,
                     value: valueString,
                     currencyType: currencyType,
-                    tag: group.tag
+                    tag: group?.primaryGroup?.tag
                   }
                 }
 
-                const doc = toWrite[group.hash]
+                const doc = toWrite[group?.primaryGroup?.hash]
                 doc.stackSize = doc.stackSize + (item.stackSize ?? 1)
               }
             }
