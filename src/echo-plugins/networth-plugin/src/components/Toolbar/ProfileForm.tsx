@@ -104,13 +104,14 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
     onClose?.()
   }
 
+  const selectedLeague = form.getValues().league
   const stashTabOptions = useMemo(
     () =>
       (activeAccount.stashTabs ?? [])
-        .filter((stash) => !stash.deleted && stash.league === form.getValues().league)
+        .filter((stash) => !stash.deleted && stash.league === selectedLeague)
         .slice()
         .sort((a, b) => a.index - b.index),
-    [form, activeAccount.stashTabs]
+    [activeAccount.stashTabs, selectedLeague]
   )
 
   return (
