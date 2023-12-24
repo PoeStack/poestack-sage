@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useStore } from '../../hooks/useStore'
-import { Button, Checkbox, Form, Input, Separator, Sheet } from 'echo-common/components-v1'
+import { Button, Checkbox, Form, Input, Separator, Dialog } from 'echo-common/components-v1'
 import { SettingsIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -23,7 +23,10 @@ const GlobalSettings = () => {
 
   const schema = z.object({
     autoSnapshotting: z.boolean(),
-    autoSnapshotInterval: z.number().min(300000).max(86400000),
+    autoSnapshotInterval: z
+      .number()
+      .min(5 * 60 * 1000)
+      .max(24 * 60 * 60 * 1000),
     lowConfidencePricing: z.boolean(),
     priceThreshold: z.number().min(0),
     totalPriceThreshold: z.number().min(0)
@@ -69,21 +72,21 @@ const GlobalSettings = () => {
   }, [defaultFormValues, form, settingsSheetOpen])
 
   return (
-    <Sheet
+    <Dialog
       open={settingsSheetOpen}
       onOpenChange={(open) => {
         setSettingsSheetOpen(open)
       }}
     >
-      <Sheet.Trigger asChild>
+      <Dialog.Trigger asChild>
         <Button variant="ghost" size="icon" className="h-8 w-8">
           <SettingsIcon className="h-4 w-4" />
         </Button>
-      </Sheet.Trigger>
-      <Sheet.Content className="mt-7 overflow-y-scroll w-3/5 sm:max-w-full">
-        <Sheet.Header>
-          <Sheet.Title>{t('title.settings')}</Sheet.Title>
-        </Sheet.Header>
+      </Dialog.Trigger>
+      <Dialog.Content>
+        <Dialog.Header>
+          <Dialog.Title>{t('title.settings')}</Dialog.Title>
+        </Dialog.Header>
         <Form {...form}>
           <h3 className="text-md font-medium py-2">{t('title.snapshotSettings')}</h3>
           <Form.Field
@@ -106,35 +109,33 @@ const GlobalSettings = () => {
               )
             }}
           />
-          <div className="flex py-2 flex-row gap-8 justify-center">
-            <Form.Field
-              disabled={!form.getValues().autoSnapshotting}
-              control={form.control}
-              name="autoSnapshotInterval"
-              render={({ field: { onChange, value } }) => {
-                return (
-                  <Form.Item className="flex flex-row items-center gap-2">
-                    <Form.Label>{t('label.autoSnapshotInterval')}</Form.Label>
-                    <Form.Control>
-                      <Input
-                        disabled={!form.getValues().autoSnapshotting}
-                        onBlur={handleSubmit(onSubmit)}
-                        onChange={(e) => {
-                          if (e.target.value) {
-                            onChange(parseInt(e.target.value) * 60000)
-                          } else {
-                            onChange(e.target.value)
-                          }
-                        }}
-                        value={value ? value / 60000 : value}
-                        type="number"
-                      />
-                    </Form.Control>
-                  </Form.Item>
-                )
-              }}
-            />
-          </div>
+          <Form.Field
+            disabled={!form.getValues().autoSnapshotting}
+            control={form.control}
+            name="autoSnapshotInterval"
+            render={({ field: { onChange, value } }) => {
+              return (
+                <Form.Item>
+                  <Form.Label>{t('label.autoSnapshotInterval')}</Form.Label>
+                  <Form.Control>
+                    <Input
+                      disabled={!form.getValues().autoSnapshotting}
+                      onBlur={handleSubmit(onSubmit)}
+                      onChange={(e) => {
+                        if (e.target.value) {
+                          onChange(parseInt(e.target.value) * 60000)
+                        } else {
+                          onChange(e.target.value)
+                        }
+                      }}
+                      value={value ? value / 60000 : value}
+                      type="number"
+                    />
+                  </Form.Control>
+                </Form.Item>
+              )
+            }}
+          />
           <Separator className="my-4" />
           <h3 className="text-md font-medium pb-2">{t('title.priceSettings')}</h3>
           <Form.Field
@@ -210,8 +211,8 @@ const GlobalSettings = () => {
             />
           </div>
         </Form>
-      </Sheet.Content>
-    </Sheet>
+      </Dialog.Content>
+    </Dialog>
   )
 }
 

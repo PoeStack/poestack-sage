@@ -7,7 +7,7 @@ import {
   profileStashTabRef
 } from '../../store/domains/profile'
 import { Profile } from '../../store/domains/profile'
-import { Button, Checkbox, Form, Input, Select, Sheet } from 'echo-common/components-v1'
+import { Button, Checkbox, Form, Input, Select, Dialog } from 'echo-common/components-v1'
 import { observer } from 'mobx-react'
 import { StashTab } from '../../store/domains/stashtab'
 import { useForm } from 'react-hook-form'
@@ -115,12 +115,12 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
   )
 
   return (
-    <Sheet.Content className="mt-7 overflow-y-scroll w-3/5 sm:max-w-full">
-      <Sheet.Header>
-        <Sheet.Title>
+    <Dialog.Content>
+      <Dialog.Header>
+        <Dialog.Title>
           {profile ? t('title.editProfile', { name: profile.name }) : t('title.addProfile')}
-        </Sheet.Title>
-      </Sheet.Header>
+        </Dialog.Title>
+      </Dialog.Header>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           <Form.Field
@@ -327,7 +327,7 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
           </Button>
         </form>
       </Form>
-    </Sheet.Content>
+    </Dialog.Content>
   )
 }
 
