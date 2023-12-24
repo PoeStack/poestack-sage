@@ -18,6 +18,8 @@ import { Character } from '../../store/domains/character'
 import { useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StashTabMultiSelect } from './StashTabMultiSelect'
+import { generateProfileName } from '../../utils/profile.utils'
+import { DicesIcon } from 'lucide-react'
 
 type ProfilePayload = {
   name: string
@@ -53,7 +55,7 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
 
   const defaultFormValues = useMemo(
     () => ({
-      name: profile?.name ?? '',
+      name: profile?.name ?? generateProfileName(),
       stashTabs: profile?.activeStashTabs ?? [],
       league: profile?.activeLeague ?? leagueStore.leagues[0],
       pricingLeague: profile?.activePriceLeague ?? leagueStore.leagues[0],
@@ -132,7 +134,22 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
               <Form.Item>
                 <Form.Label aria-required>{t('label.profileName')}</Form.Label>
                 <Form.Control>
-                  <Input {...field} placeholder={t('label.selectProfilePlaceholder')} />
+                  <div className="relative flex items-center">
+                    <Input
+                      {...field}
+                      className="pr-10"
+                      placeholder={t('label.selectProfilePlaceholder')}
+                    />
+                    <Button
+                      className="right-0 absolute"
+                      onClick={() => form.setValue('name', generateProfileName())}
+                      variant="ghost"
+                      size="icon"
+                      type="button"
+                    >
+                      <DicesIcon className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </Form.Control>
                 <Form.Message />
               </Form.Item>
