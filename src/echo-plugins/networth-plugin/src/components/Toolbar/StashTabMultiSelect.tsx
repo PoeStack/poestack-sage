@@ -47,7 +47,7 @@ const StashTabMultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps
 
     return (
       <Popover open={open} onOpenChange={setOpen} modal={true}>
-        <Form.Control id="stashSelectControl">
+        <Form.Control>
           <Popover.Trigger asChild className={className}>
             <Button
               ref={ref}
@@ -97,7 +97,7 @@ const StashTabMultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps
             </Button>
           </Popover.Trigger>
         </Form.Control>
-        <Popover.Content className="w-full p-0">
+        <Popover.Content className="p-0 w-[var(--radix-popover-trigger-width)]">
           <Command className={className}>
             <Command.Input placeholder={t('label.searchPlaceholder')} />
             <Command.Empty>No item found.</Command.Empty>
