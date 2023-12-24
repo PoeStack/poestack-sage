@@ -13,7 +13,11 @@ import dayjs from 'dayjs'
 
 type StartDateOption = { label: 'all-time' | 'one-month' | 'one-week' | 'one-day'; value?: number }
 
-function NetWorthChartCard() {
+interface NetWorthChartCardProps {
+  className?: string
+}
+
+const NetWorthChartCard: React.FC<NetWorthChartCardProps> = ({ className }) => {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [startingDate, setStartingDate] = useState<StartDateOption>({ label: 'all-time' })
@@ -100,8 +104,8 @@ function NetWorthChartCard() {
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null)
 
   return (
-    <Collapsible open={open} onOpenChange={setOpen}>
-      <Card className="grow">
+    <Collapsible open={open} onOpenChange={setOpen} className={className}>
+      <Card className="w-full">
         <Collapsible.Trigger className="!mt-0 cursor-pointer" asChild>
           <Card.Header className="flex flex-row justify-between items-center p-3">
             <Card.Title className="text-base">{t('title.netWorthHistoryCard')}</Card.Title>

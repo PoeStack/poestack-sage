@@ -6,7 +6,11 @@ import { convertToCurrency } from '../../utils/currency.utils'
 import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
 
-function IncomeSummaryCard() {
+interface IncomeSummaryCardProps {
+  className?: string
+}
+
+const IncomeSummaryCard: React.FC<IncomeSummaryCardProps> = ({ className }) => {
   const { t } = useTranslation()
   const { accountStore, priceStore, settingStore } = useStore()
   const incomeStartDate =
@@ -26,7 +30,7 @@ function IncomeSummaryCard() {
   }
 
   return (
-    <Card className="min-w-[300px] grow">
+    <Card className={className}>
       <Card.Content className="p-2 py-1">
         <div className="flex flex-row items-center justify-between min-h-[64px]">
           <div className="flex flex-row items-center justify-center">

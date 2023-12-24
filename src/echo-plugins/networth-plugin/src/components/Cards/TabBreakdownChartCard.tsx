@@ -10,7 +10,11 @@ import { convertToCurrency } from '../../utils/currency.utils'
 import { useTranslation } from 'react-i18next'
 import { baseChartConfig } from './baseChartConfig'
 
-function TabBreakdownChartCard() {
+interface TabBreakdownChartCardProps {
+  className?: string
+}
+
+const TabBreakdownChartCard: React.FC<TabBreakdownChartCardProps> = ({ className }) => {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const { accountStore, priceStore, settingStore } = useStore()
@@ -70,8 +74,8 @@ function TabBreakdownChartCard() {
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null)
 
   return (
-    <Collapsible open={open} onOpenChange={setOpen}>
-      <Card>
+    <Collapsible open={open} onOpenChange={setOpen} className={className}>
+      <Card className="w-full">
         <Collapsible.Trigger className="!mt-0 cursor-pointer" asChild>
           <Card.Header className="flex flex-row justify-between items-center p-3">
             <Card.Title className="text-base">{t('title.tabBreakdownHistoryCard')}</Card.Title>

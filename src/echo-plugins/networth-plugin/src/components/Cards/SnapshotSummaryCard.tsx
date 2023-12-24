@@ -5,7 +5,11 @@ import { History } from 'lucide-react'
 import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
 
-function SnapshotSummaryCard() {
+interface SnapshotSummaryCardProps {
+  className?: string
+}
+
+const SnapshotSummaryCard: React.FC<SnapshotSummaryCardProps> = ({ className }) => {
   const { t } = useTranslation()
   const { accountStore } = useStore()
   const snapshotCount = accountStore.activeAccount.activeProfile?.snapshots.length ?? 0
@@ -18,7 +22,7 @@ function SnapshotSummaryCard() {
   const snapshotMessage = lastSnapshot ? dayjs(lastSnapshot.created).fromNow() : ''
 
   return (
-    <Card className="min-w-[300px] grow">
+    <Card className={className}>
       <Card.Content className="p-3 py-1">
         <div className="flex flex-row items-center justify-between min-h-[64px]">
           <div className="flex flex-row items-center justify-center">

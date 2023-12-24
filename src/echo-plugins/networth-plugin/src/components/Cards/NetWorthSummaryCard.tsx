@@ -11,7 +11,11 @@ import { convertToCurrency } from '../../utils/currency.utils'
 import { useTranslation } from 'react-i18next'
 import { baseChartConfig } from './baseChartConfig'
 
-function NetWorthSummaryCard() {
+interface NetWorthSummaryCardProps {
+  className?: string
+}
+
+const NetWorthSummaryCard: React.FC<NetWorthSummaryCardProps> = ({ className }) => {
   const { t } = useTranslation()
   const { accountStore, priceStore, settingStore } = useStore()
   const netWorthData = accountStore.activeAccount.activeProfile?.netWorthOverTime() ?? []
@@ -99,7 +103,7 @@ function NetWorthSummaryCard() {
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null)
 
   return (
-    <Card className="min-w-[300px] grow">
+    <Card className={className}>
       <Card.Content className="p-3 py-1">
         <div className="flex flex-row items-center justify-between min-h-[64px]">
           <div className="flex flex-row items-center justify-center">
