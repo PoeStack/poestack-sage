@@ -93,7 +93,7 @@ export class Account extends Model(
     const profileIndex = this.profiles.findIndex((profile) => profile.uuid === profileId)
     console.log('delete', profileIndex)
     if (profileIndex > -1) {
-      this.profiles = this.profiles.splice(profileIndex, 1)
+      this.profiles.splice(profileIndex, 1)
     }
   }
 
