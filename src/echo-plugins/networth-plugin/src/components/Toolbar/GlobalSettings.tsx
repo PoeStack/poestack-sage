@@ -19,23 +19,27 @@ type SettingsPayload = {
 const GlobalSettings = () => {
   const { t } = useTranslation()
   const { settingStore } = useStore()
-  const [settingsSheetOpen, setSettingsSheetOpen] = useState(false)
+  const [settingsDialogOpen, setSettingsDialogOpen] = useState(false)
 
   const schema = z.object({
     autoSnapshotting: z.boolean(),
-    autoSnapshotInterval: z
-      .number()
-      .min(5 * 60 * 1000)
-      .max(24 * 60 * 60 * 1000),
+    autoSnapshotInterval: z.optional(
+      z.coerce
+        .number()
+        .min(5)
+        .max(24 * 60)
+    ),
     lowConfidencePricing: z.boolean(),
-    priceThreshold: z.number().min(0),
-    totalPriceThreshold: z.number().min(0)
+    priceThreshold: z.coerce.number().min(0),
+    totalPriceThreshold: z.coerce.number().min(0)
   })
 
   const defaultFormValues = useMemo(
     () => ({
       autoSnapshotting: settingStore.autoSnapshotting ?? false,
-      autoSnapshotInterval: settingStore.autoSnapshotInterval ?? 20,
+      autoSnapshotInterval: settingStore.autoSnapshotInterval
+        ? settingStore.autoSnapshotInterval / (60 * 1000)
+        : 20,
       lowConfidencePricing: settingStore.lowConfidencePricing ?? false,
       priceThreshold: settingStore.priceThreshold ?? 0,
       totalPriceThreshold: settingStore.totalPriceThreshold ?? 0
@@ -51,31 +55,31 @@ const GlobalSettings = () => {
 
   const onSubmit = (data: SettingsPayload) => {
     settingStore.updateSettings({
-      autoSnapshotInterval: data.autoSnapshotInterval,
+      autoSnapshotInterval: data.autoSnapshotInterval * 60 * 1000,
       autoSnapshotting: data.autoSnapshotting,
       lowConfidencePricing: data.lowConfidencePricing,
       priceThreshold: data.priceThreshold,
       totalPriceThreshold: data.totalPriceThreshold
     })
+    setSettingsDialogOpen(false)
   }
 
   const form = useForm<SettingsPayload>({
     defaultValues: defaultFormValues,
     reValidateMode: 'onChange',
+    mode: 'all',
     resolver: zodResolver(schema)
   })
 
-  const { handleSubmit } = form
-
   useEffect(() => {
     form.reset(defaultFormValues)
-  }, [defaultFormValues, form, settingsSheetOpen])
+  }, [defaultFormValues, form, settingsDialogOpen])
 
   return (
     <Dialog
-      open={settingsSheetOpen}
+      open={settingsDialogOpen}
       onOpenChange={(open) => {
-        setSettingsSheetOpen(open)
+        setSettingsDialogOpen(open)
       }}
     >
       <Dialog.Trigger asChild>
@@ -88,96 +92,21 @@ const GlobalSettings = () => {
           <Dialog.Title>{t('title.settings')}</Dialog.Title>
         </Dialog.Header>
         <Form {...form}>
-          <h3 className="text-md font-medium py-2">{t('title.snapshotSettings')}</h3>
-          <Form.Field
-            control={form.control}
-            name="autoSnapshotting"
-            render={({ field: { value, onChange } }) => {
-              return (
-                <Form.Item className="space-y-0 flex flex-row items-center gap-2">
-                  <Form.Label>{t('label.autoSnapshot')}</Form.Label>
-                  <Form.Control>
-                    <Checkbox
-                      checked={value}
-                      onCheckedChange={(checked) => {
-                        onChange(checked)
-                        handleSubmit(onSubmit)()
-                      }}
-                    />
-                  </Form.Control>
-                </Form.Item>
-              )
-            }}
-          />
-          <Form.Field
-            disabled={!form.getValues().autoSnapshotting}
-            control={form.control}
-            name="autoSnapshotInterval"
-            render={({ field: { onChange, value } }) => {
-              return (
-                <Form.Item>
-                  <Form.Label>{t('label.autoSnapshotInterval')}</Form.Label>
-                  <Form.Control>
-                    <Input
-                      disabled={!form.getValues().autoSnapshotting}
-                      onBlur={handleSubmit(onSubmit)}
-                      onChange={(e) => {
-                        if (e.target.value) {
-                          onChange(parseInt(e.target.value) * 60000)
-                        } else {
-                          onChange(e.target.value)
-                        }
-                      }}
-                      value={value ? value / 60000 : value}
-                      type="number"
-                    />
-                  </Form.Control>
-                </Form.Item>
-              )
-            }}
-          />
-          <Separator className="my-4" />
-          <h3 className="text-md font-medium pb-2">{t('title.priceSettings')}</h3>
-          <Form.Field
-            control={form.control}
-            name="lowConfidencePricing"
-            render={({ field: { value, onChange } }) => {
-              return (
-                <Form.Item className="space-y-0 flex flex-row items-center gap-2">
-                  <Form.Label>{t('label.lowConfidencePricing')}</Form.Label>
-                  <Form.Control>
-                    <Checkbox
-                      checked={value}
-                      onCheckedChange={(checked) => {
-                        onChange(checked)
-                        handleSubmit(onSubmit)()
-                      }}
-                    />
-                  </Form.Control>
-                </Form.Item>
-              )
-            }}
-          />
-          <div className="flex py-2 flex-row gap-8 justify-center">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <h3 className="text-md font-medium py-2">{t('title.snapshotSettings')}</h3>
             <Form.Field
               control={form.control}
-              name="priceThreshold"
-              render={({ field: { onChange, value } }) => {
+              name="autoSnapshotting"
+              render={({ field: { value, onChange } }) => {
                 return (
-                  <Form.Item className="flex flex-row items-center gap-2">
-                    <Form.Label>{t('label.priceThreshold')}</Form.Label>
+                  <Form.Item className="space-y-0 flex flex-row items-center gap-2">
+                    <Form.Label>{t('label.autoSnapshot')}</Form.Label>
                     <Form.Control>
-                      <Input
-                        onBlur={handleSubmit(onSubmit)}
-                        onChange={(e) => {
-                          if (e.target.value) {
-                            onChange(parseInt(e.target.value))
-                          } else {
-                            onChange(e.target.value)
-                          }
+                      <Checkbox
+                        checked={value}
+                        onCheckedChange={(checked) => {
+                          onChange(checked)
                         }}
-                        value={value}
-                        type="number"
                       />
                     </Form.Control>
                   </Form.Item>
@@ -185,31 +114,89 @@ const GlobalSettings = () => {
               }}
             />
             <Form.Field
+              disabled={!form.getValues().autoSnapshotting}
               control={form.control}
-              name="totalPriceThreshold"
-              render={({ field: { onChange, value } }) => {
+              name="autoSnapshotInterval"
+              render={({ field }) => {
                 return (
-                  <Form.Item className="flex flex-row items-center gap-2">
-                    <Form.Label>{t('label.totalPriceThreshold')}</Form.Label>
+                  <Form.Item>
+                    <Form.Label>{t('label.autoSnapshotInterval')}</Form.Label>
                     <Form.Control>
-                      <Input
-                        onBlur={handleSubmit(onSubmit)}
-                        onChange={(e) => {
-                          if (e.target.value) {
-                            onChange(parseInt(e.target.value))
-                          } else {
-                            onChange(e.target.value)
-                          }
-                        }}
-                        value={value}
-                        type="number"
-                      />
+                      <Input type="number" {...field} />
                     </Form.Control>
+                    <Form.Message className="text-destructive" />
                   </Form.Item>
                 )
               }}
             />
-          </div>
+            <Separator className="my-4" />
+            <h3 className="text-md font-medium pb-2">{t('title.priceSettings')}</h3>
+            <Form.Field
+              control={form.control}
+              name="lowConfidencePricing"
+              render={({ field: { value, onChange } }) => {
+                return (
+                  <Form.Item className="space-y-0 flex flex-row items-center gap-2">
+                    <Form.Label>{t('label.lowConfidencePricing')}</Form.Label>
+                    <Form.Control>
+                      <Checkbox
+                        checked={value}
+                        onCheckedChange={(checked) => {
+                          onChange(checked)
+                        }}
+                      />
+                    </Form.Control>
+                    <Form.Message className="text-destructive" />
+                  </Form.Item>
+                )
+              }}
+            />
+            <div className="flex py-2 flex-row gap-8 justify-center">
+              <Form.Field
+                control={form.control}
+                name="priceThreshold"
+                render={({ field }) => {
+                  return (
+                    <Form.Item className="flex flex-row items-center gap-2">
+                      <Form.Label>{t('label.priceThreshold')}</Form.Label>
+                      <Form.Control>
+                        <Input type="number" {...field} />
+                      </Form.Control>
+                    </Form.Item>
+                  )
+                }}
+              />
+              <Form.Field
+                control={form.control}
+                name="totalPriceThreshold"
+                render={({ field }) => {
+                  return (
+                    <Form.Item className="flex flex-row items-center gap-2">
+                      <Form.Label>{t('label.totalPriceThreshold')}</Form.Label>
+                      <Form.Control>
+                        <Input type="number" {...field} />
+                      </Form.Control>
+                      <Form.Message className="text-destructive" />
+                    </Form.Item>
+                  )
+                }}
+              />
+            </div>
+            <Dialog.Footer>
+              <Button
+                onClick={() => {
+                  setSettingsDialogOpen(false)
+                }}
+                variant="outline"
+                type="button"
+              >
+                {t('action.cancel')}
+              </Button>
+              <Button disabled={!form.formState.isValid} type="submit">
+                {t('action.save')}
+              </Button>
+            </Dialog.Footer>
+          </form>
         </Form>
       </Dialog.Content>
     </Dialog>

@@ -67,6 +67,7 @@ const DeleteSnapshots = () => {
               setDeleteSnapshotsSheetOpen(false)
             }}
             variant="outline"
+            type="button"
           >
             {t('action.cancel')}
           </Button>
@@ -76,6 +77,7 @@ const DeleteSnapshots = () => {
               setSelectedSnapshotIds(snapshots.map((snapshot) => snapshot.uuid))
             }}
             variant="outline"
+            type="button"
           >
             {t('action.selectAll')}
           </Button>

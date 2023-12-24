@@ -76,6 +76,7 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
   const form = useForm<ProfilePayload>({
     defaultValues: defaultFormValues,
     reValidateMode: 'onChange',
+    mode: 'all',
     resolver: zodResolver(schema)
   })
 
@@ -321,10 +322,20 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
               />
             </div>
           )}
-
-          <Button disabled={!form.formState.isValid} type="submit">
-            {profile ? t('action.saveProfile') : t('action.createProfile')}
-          </Button>
+          <Dialog.Footer>
+            <Button
+              onClick={() => {
+                onClose?.()
+              }}
+              variant="outline"
+              type="button"
+            >
+              {t('action.cancel')}
+            </Button>
+            <Button disabled={!form.formState.isValid} type="submit">
+              {profile ? t('action.saveProfile') : t('action.createProfile')}
+            </Button>
+          </Dialog.Footer>
         </form>
       </Form>
     </Dialog.Content>

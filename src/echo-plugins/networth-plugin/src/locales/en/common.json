@@ -65,7 +65,9 @@
     "totalPriceThreshold": "Total price threshold (Chaos)",
     "income": "Income",
     "netWorth": "Net worth",
-    "snapshotCount": "Snapshot count"
+    "snapshotCount": "Snapshot count",
+    "selectPlaceholder": "Select ...",
+    "searchPlaceholder": "Search ..."
   },
   "body": {
     "pageOf": "Page {{current}} of {{of}}",

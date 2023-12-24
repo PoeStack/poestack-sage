@@ -4,6 +4,7 @@ import { Check, ChevronsUpDown, X } from 'lucide-react'
 import { cn } from 'echo-common'
 import { Badge, Button, Command, Form, Popover } from 'echo-common/components-v1'
 import { StashTab } from '../../store/domains/stashtab'
+import { useTranslation } from 'react-i18next'
 
 export type OptionType = StashTab
 
@@ -17,6 +18,7 @@ interface MultiSelectProps {
 
 const StashTabMultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
   ({ options, selected, onChange, className, ...props }, ref) => {
+    const { t } = useTranslation()
     const [open, setOpen] = React.useState(false)
 
     const handleUnselect = (item: StashTab) => {
@@ -26,7 +28,7 @@ const StashTabMultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps
     // on delete key press, remove last selected item
     React.useEffect(() => {
       const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Backspace' && selected.length > 0) {
+        if (open && e.key === 'Backspace' && selected.length > 0) {
           onChange(selected.filter((_, index) => index !== selected.length - 1))
         }
 
@@ -41,11 +43,11 @@ const StashTabMultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps
       return () => {
         document.removeEventListener('keydown', handleKeyDown)
       }
-    }, [onChange, selected])
+    }, [onChange, open, selected])
 
     return (
       <Popover open={open} onOpenChange={setOpen} modal={true}>
-        <Form.Control>
+        <Form.Control id="stashSelectControl">
           <Popover.Trigger asChild className={className}>
             <Button
               ref={ref}
@@ -87,7 +89,9 @@ const StashTabMultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps
                     </Button>
                   </Badge>
                 ))}
-                {selected.length === 0 && <span>{props.placeholder ?? 'Select ...'}</span>}
+                {selected.length === 0 && (
+                  <span>{props.placeholder ?? t('label.selectPlaceholder')}</span>
+                )}
               </div>
               <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
             </Button>
@@ -95,7 +99,7 @@ const StashTabMultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps
         </Form.Control>
         <Popover.Content className="w-full p-0">
           <Command className={className}>
-            <Command.Input placeholder="Search ..." />
+            <Command.Input placeholder={t('label.searchPlaceholder')} />
             <Command.Empty>No item found.</Command.Empty>
             <Command.List>
               <Command.Group>
