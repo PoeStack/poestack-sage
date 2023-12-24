@@ -68,6 +68,7 @@ const GlobalSettings = () => {
     defaultValues: defaultFormValues,
     reValidateMode: 'onChange',
     mode: 'all',
+    delayError: 500, // Do not show error when canceled
     resolver: zodResolver(schema)
   })
 
@@ -124,7 +125,7 @@ const GlobalSettings = () => {
                     <Form.Control>
                       <Input type="number" {...field} />
                     </Form.Control>
-                    <Form.Message className="text-destructive" />
+                    <Form.Message />
                   </Form.Item>
                 )
               }}
@@ -146,7 +147,7 @@ const GlobalSettings = () => {
                         }}
                       />
                     </Form.Control>
-                    <Form.Message className="text-destructive" />
+                    <Form.Message />
                   </Form.Item>
                 )
               }}
@@ -176,7 +177,7 @@ const GlobalSettings = () => {
                       <Form.Control>
                         <Input type="number" {...field} />
                       </Form.Control>
-                      <Form.Message className="text-destructive" />
+                      <Form.Message />
                     </Form.Item>
                   )
                 }}

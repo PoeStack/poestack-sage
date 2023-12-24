@@ -77,6 +77,7 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
     defaultValues: defaultFormValues,
     reValidateMode: 'onChange',
     mode: 'all',
+    delayError: 500, // Do not show error when canceled
     resolver: zodResolver(schema)
   })
 
@@ -133,7 +134,7 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
                 <Form.Control>
                   <Input {...field} placeholder={t('label.selectProfilePlaceholder')} />
                 </Form.Control>
-                <Form.Message className="text-destructive" />
+                <Form.Message />
               </Form.Item>
             )}
           />
