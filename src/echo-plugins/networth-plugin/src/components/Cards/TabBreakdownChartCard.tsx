@@ -51,7 +51,7 @@ const TabBreakdownChartCard: React.FC<TabBreakdownChartCardProps> = ({ className
     series: Object.values(series),
     chart: {
       ...baseChartConfig.chart,
-      height: 200
+      height: 234
     },
     title: {
       text: undefined
