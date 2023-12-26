@@ -1,12 +1,10 @@
 import { Select } from 'echo-common/components-v1'
-import { context } from '../context'
 
 type LeagueSelectProps = {
   onLeagueSelect: (characterName: string) => void
 }
 
 export function LeagueSelect({ onLeagueSelect }: LeagueSelectProps) {
-
   const leagues = ['Affliction', 'Standard']
   return (
     <Select onValueChange={onLeagueSelect}>

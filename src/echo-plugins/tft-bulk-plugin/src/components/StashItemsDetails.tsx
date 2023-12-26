@@ -1,12 +1,11 @@
 import { EchoPoeItem } from 'echo-common'
-import { Button, Input, Popover, Table, useToast } from 'echo-common/components-v1'
-import { PoePartialStashTab } from 'sage-common'
+import { Table } from 'echo-common/components-v1'
+import { useTftFilteredItems } from '../hooks/tft-items'
 
-type StashItemsDetailsProps = {
-  items: EchoPoeItem[]
-}
 
-export function StashItemsDetails({ items }: StashItemsDetailsProps) {
+export function StashItemsDetails() {
+  const items = useTftFilteredItems()
+
   return (
     <div className="flex-1 flex flex-col h-full gap-4 pt-4">
       <Table>
@@ -15,7 +14,8 @@ export function StashItemsDetails({ items }: StashItemsDetailsProps) {
             <Table.Head></Table.Head>
             <Table.Head>Name</Table.Head>
             <Table.Head>Value</Table.Head>
-            <Table.Head></Table.Head>
+            <Table.Head>Quantity</Table.Head>
+            <Table.Head>Total</Table.Head>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -31,6 +31,8 @@ export function StashItemsDetails({ items }: StashItemsDetailsProps) {
                 </div>
               </Table.Cell>
               <Table.Cell>{item.valuation && `${item.valuation?.primaryValue} c`}</Table.Cell>
+              <Table.Cell>{item.totalQuantity}</Table.Cell>
+              <Table.Cell>{item.totalQuantity * (item.valuation?.primaryValue ?? 0)}</Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
