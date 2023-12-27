@@ -13,13 +13,14 @@ import {
   FilterFnOption,
   Updater
 } from '@tanstack/react-table'
-import { Table } from 'echo-common/components-v1'
+import { Button, Table } from 'echo-common/components-v1'
 import { TablePagination } from './TablePagination'
 import TableColumnToggle from './TableColumnToggle'
 import DebouncedInput from '../DebouncedInput/DebouncedInput'
 import { useStore } from '../../hooks/useStore'
 import { observer } from 'mobx-react'
 import { useTranslation } from 'react-i18next'
+import { DeleteIcon, SearchIcon } from 'lucide-react'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -82,8 +83,24 @@ const ItemTable = <TData, TValue>({
         <DebouncedInput
           value={tableState.globalFilter ?? ''}
           onChange={(value) => tableState.setGlobalFilter(String(value))}
-          className="h-8 max-w-sm mr-2"
+          className="h-8 max-w-sm px-8"
           placeholder={t('label.searchItemsPlaceholder')} // ^((?!Chaos Orb).)*$
+          startIcon={
+            <div className="p-2">
+              <SearchIcon className="h-4 w-4" />
+            </div>
+          }
+          endIcon={
+            <Button
+              onClick={() => tableState.setGlobalFilter('')}
+              variant="ghost"
+              size="icon"
+              type="button"
+              className="h-8 w-8"
+            >
+              <DeleteIcon className="h-4 w-4" />
+            </Button>
+          }
         />
         <TableColumnToggle table={table} />
       </div>

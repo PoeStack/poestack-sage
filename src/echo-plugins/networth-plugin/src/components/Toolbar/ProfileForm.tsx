@@ -134,22 +134,20 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
               <Form.Item>
                 <Form.Label aria-required>{t('label.profileName')}</Form.Label>
                 <Form.Control>
-                  <div className="relative flex items-center">
-                    <Input
-                      {...field}
-                      className="pr-10"
-                      placeholder={t('label.selectProfilePlaceholder')}
-                    />
-                    <Button
-                      className="right-0 absolute"
-                      onClick={() => form.setValue('name', generateProfileName())}
-                      variant="ghost"
-                      size="icon"
-                      type="button"
-                    >
-                      <DicesIcon className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  <Input
+                    {...field}
+                    placeholder={t('label.selectProfilePlaceholder')}
+                    endIcon={
+                      <Button
+                        onClick={() => form.setValue('name', generateProfileName())}
+                        variant="ghost"
+                        size="icon"
+                        type="button"
+                      >
+                        <DicesIcon className="h-4 w-4" />
+                      </Button>
+                    }
+                  />
                 </Form.Control>
                 <Form.Message />
               </Form.Item>
