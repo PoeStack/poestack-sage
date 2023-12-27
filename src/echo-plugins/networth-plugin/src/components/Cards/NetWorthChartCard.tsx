@@ -6,10 +6,10 @@ import { ChevronDownIcon, ChevronRightIcon } from 'lucide-react'
 import { Collapsible, Card, RadioGroup, Label } from 'echo-common/components-v1'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
-import { convertToCurrency } from '../../utils/currency.utils'
 import { useTranslation } from 'react-i18next'
 import { baseChartConfig } from './baseChartConfig'
 import dayjs from 'dayjs'
+import { profile } from 'console'
 
 type StartDateOption = { label: 'all-time' | 'one-month' | 'one-week' | 'one-day'; value?: number }
 
@@ -20,38 +20,13 @@ interface NetWorthChartCardProps {
 const NetWorthChartCard: React.FC<NetWorthChartCardProps> = ({ className }) => {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
-  const [startingDate, setStartingDate] = useState<StartDateOption>({ label: 'all-time' })
-  const { accountStore, priceStore, settingStore } = useStore()
-  const netWorthData = accountStore.activeAccount.activeProfile?.netWorthOverTime(
-    startingDate.value
-  )
+  const { accountStore, settingStore, uiStateStore } = useStore()
+  const activeProfile = accountStore.activeAccount.activeProfile
 
   const handleStartDateSelect = (option: StartDateOption['label']) => {
     const nextOption: StartDateOption = { label: option }
-    switch (option) {
-      case 'one-month':
-        nextOption.value = dayjs().subtract(1, 'month').utc().valueOf()
-        return
-      case 'one-week':
-        nextOption.value = dayjs().subtract(1, 'week').utc().valueOf()
-        return
-      case 'one-day':
-        nextOption.value = dayjs().subtract(1, 'day').utc().valueOf()
-        return
-      case 'all-time':
-      default:
-    }
-    setStartingDate(nextOption)
+    uiStateStore.setChartTimeSpan(nextOption.label)
   }
-
-  const chartData = netWorthData?.map((item) => [
-    item.time,
-    convertToCurrency({
-      value: item.value,
-      toCurrency: settingStore.currency,
-      divinePrice: priceStore.divinePrice
-    })
-  ])
 
   const chartConfig: Highcharts.Options = {
     ...baseChartConfig,
@@ -82,7 +57,7 @@ const NetWorthChartCard: React.FC<NetWorthChartCardProps> = ({ className }) => {
           valueDecimals: 2,
           valueSuffix: settingStore.activeCurrency.short
         },
-        data: chartData
+        data: activeProfile?.chartData
       }
     ],
     chart: {
@@ -126,7 +101,10 @@ const NetWorthChartCard: React.FC<NetWorthChartCardProps> = ({ className }) => {
                 ref={chartComponentRef}
               />
             </div>
-            <RadioGroup defaultValue={startingDate.label} onValueChange={handleStartDateSelect}>
+            <RadioGroup
+              defaultValue={uiStateStore.chartTimeSpan}
+              onValueChange={handleStartDateSelect}
+            >
               <div className="flex flex-row border rounded-md">
                 <div className="grow">
                   <RadioGroup.Item value="one-day" id="one-day" className="sr-only peer w-0" />

@@ -2,9 +2,9 @@ import { Button, Card } from 'echo-common/components-v1'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import { TrendingUp, XCircle } from 'lucide-react'
-import { convertToCurrency } from '../../utils/currency.utils'
 import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
+import CurrencyDisplay from '../CurrencyDisplay/CurrencyDisplay'
 
 interface IncomeSummaryCardProps {
   className?: string
@@ -13,20 +13,16 @@ interface IncomeSummaryCardProps {
 const IncomeSummaryCard: React.FC<IncomeSummaryCardProps> = ({ className }) => {
   const { t } = useTranslation()
   const { accountStore, priceStore, settingStore } = useStore()
+  const activeProfile = accountStore.activeAccount.activeProfile
   const incomeStartDate =
-    dayjs(accountStore.activeAccount.activeProfile?.incomeResetAt).utc() ??
-    dayjs().subtract(1, 'hour').utc()
-  const latestNetWorthChange = convertToCurrency({
-    value: accountStore.activeAccount.activeProfile?.netWorthChange(incomeStartDate.valueOf()) ?? 0,
-    toCurrency: settingStore.currency,
-    divinePrice: priceStore.divinePrice
-  }).toFixed(2)
+    dayjs.utc(accountStore.activeAccount.activeProfile?.incomeResetAt) ??
+    dayjs.utc().subtract(1, 'hour')
 
   // TODO i18n for message
   const incomeTimeFrameMessage = incomeStartDate.fromNow()
 
   const handleResetIncome = () => {
-    accountStore.activeAccount.activeProfile?.setIncomeResetAt(dayjs().utc().valueOf())
+    accountStore.activeAccount.activeProfile?.setIncomeResetAt(dayjs.utc().valueOf())
   }
 
   return (
@@ -37,7 +33,16 @@ const IncomeSummaryCard: React.FC<IncomeSummaryCardProps> = ({ className }) => {
             <TrendingUp className="w-6 h-6" />
           </div>
           <div className="flex flex-row items-center justify-center gap-2">
-            <span>{`${latestNetWorthChange} ${settingStore.activeCurrency.short} / hr`}</span>
+            <span className="flex flex-row items-center justify-center gap-1">
+              <CurrencyDisplay
+                value={activeProfile?.income}
+                valueShort={false}
+                toCurrency={settingStore.currency}
+                divinePrice={priceStore.divinePrice}
+                iconHeight={1.5}
+              />
+              {'/ hr'}
+            </span>
             <Button size="icon" variant="ghost" onClick={handleResetIncome}>
               <XCircle className="w-4 h-4" />
             </Button>

@@ -5,6 +5,7 @@ import { PersistWrapper } from '../utils/persist.utils'
 
 export type Currency = 'chaos' | 'divine'
 export type CurrencyShort = 'c' | 'd' | 'div'
+export type CurrencySwitch = 'chaos' | 'divine' | 'both'
 
 @model('nw/currencyHeader')
 export class CurrencyHeader extends Model({
@@ -20,12 +21,8 @@ export class SettingStore extends Model(
     autoSnapshotInterval: tProp(60 * 20 * 1000), // default to 20 minutes
     priceThreshold: tProp(0),
     totalPriceThreshold: tProp(0),
-    /**
-     * Percentile:
-     * [1, 5, 7, 10, 12, 15, 18, 20, 25, 30, 40, 50, 70, 95, 99]
-     */
     primaryPercentile: tProp(12),
-    currency: prop<Currency>('chaos'),
+    currency: prop<CurrencySwitch>('both'),
     currencyHeaders: tProp(types.array(types.model(CurrencyHeader)), []),
     version: prop(1)
   })
@@ -37,11 +34,13 @@ export class SettingStore extends Model(
         return { name: 'chaos', short: 'c' }
       case 'divine':
         return { name: 'divine', short: 'div' }
+      case 'both':
+        return { name: 'divine', short: 'div' }
     }
   }
 
   @modelAction
-  updatePricingCurrency(currency: Currency) {
+  updatePricingCurrency(currency: CurrencySwitch) {
     this.currency = currency
   }
 

@@ -22,7 +22,8 @@ export const itemTableColumns = (): ColumnDef<IPricedItem>[] => [
   itemValue({
     accessorKey: 'calculated',
     header: 'price',
-    enableSorting: true
+    enableSorting: true,
+    toCurrency: 'chaos'
   }),
   itemValue({
     accessorKey: 'total',

@@ -2,14 +2,14 @@ import { useRef } from 'react'
 import * as Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 
-import { Button, Card } from 'echo-common/components-v1'
+import { Button, Card, Tooltip } from 'echo-common/components-v1'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import { cn } from 'echo-common'
 import { CircleDollarSign, RefreshCcw } from 'lucide-react'
-import { convertToCurrency } from '../../utils/currency.utils'
 import { useTranslation } from 'react-i18next'
 import { baseChartConfig } from './baseChartConfig'
+import CurrencyDisplay from '../CurrencyDisplay/CurrencyDisplay'
 
 interface NetWorthSummaryCardProps {
   className?: string
@@ -18,28 +18,21 @@ interface NetWorthSummaryCardProps {
 const NetWorthSummaryCard: React.FC<NetWorthSummaryCardProps> = ({ className }) => {
   const { t } = useTranslation()
   const { accountStore, priceStore, settingStore } = useStore()
-  const netWorthData = accountStore.activeAccount.activeProfile?.netWorthOverTime() ?? []
+  const activeProfile = accountStore.activeAccount.activeProfile
 
-  const latestNetWorth = convertToCurrency({
-    value: accountStore.activeAccount.activeProfile?.netWorthChange() ?? 0,
-    toCurrency: settingStore.currency,
-    divinePrice: priceStore.divinePrice
-  }).toFixed(2)
-
-  const chartData = netWorthData.map((item) => [
-    item.time,
-    convertToCurrency({
-      value: item.value,
-      toCurrency: settingStore.currency,
-      divinePrice: priceStore.divinePrice
-    })
-  ])
-
-  const currentNetWorth = chartData.length > 0 ? chartData[0][1].toFixed(2) : '0'
+  const getNextCurrency = () => {
+    switch (settingStore.currency) {
+      case 'chaos':
+        return 'Switch to chaos/divine'
+      case 'both':
+        return 'Switch to chaos'
+    }
+    return 'Switch to chaos'
+  }
 
   const handleToggleCurrency = () => {
     if (settingStore.currency === 'chaos') {
-      settingStore.updatePricingCurrency('divine')
+      settingStore.updatePricingCurrency('both')
     } else {
       settingStore.updatePricingCurrency('chaos')
     }
@@ -75,7 +68,7 @@ const NetWorthSummaryCard: React.FC<NetWorthSummaryCardProps> = ({ className }) 
             enabled: false
           }
         },
-        data: chartData
+        data: activeProfile?.sparklineChartData
       }
     ],
     chart: {
@@ -108,7 +101,7 @@ const NetWorthSummaryCard: React.FC<NetWorthSummaryCardProps> = ({ className }) 
         <div className="flex flex-row items-center justify-between min-h-[64px]">
           <div className="flex flex-row items-center justify-center">
             <CircleDollarSign className="w-6 h-6" />
-            {chartData.length > 1 && (
+            {activeProfile?.sparklineChartData && activeProfile.sparklineChartData.length > 1 && (
               <HighchartsReact
                 highcharts={Highcharts}
                 options={chartConfig}
@@ -117,19 +110,38 @@ const NetWorthSummaryCard: React.FC<NetWorthSummaryCardProps> = ({ className }) 
             )}
           </div>
           <div className="flex flex-row items-center justify-center gap-2">
-            <span>{`${currentNetWorth} ${settingStore.activeCurrency.short}`}</span>
-            <Button onClick={handleToggleCurrency} size="icon" variant="ghost">
-              <RefreshCcw className="w-4 h-4" />
-            </Button>
+            <CurrencyDisplay
+              value={activeProfile?.netWorthValue}
+              valueShort={false}
+              toCurrency={settingStore.currency}
+              divinePrice={priceStore.divinePrice}
+              iconHeight={1.5}
+            />
+            <Tooltip.Provider>
+              <Tooltip delayDuration={50} disableHoverableContent={false}>
+                <Tooltip.Trigger asChild>
+                  <Button onClick={handleToggleCurrency} size="icon" variant="ghost">
+                    <RefreshCcw className="w-4 h-4" />
+                  </Button>
+                </Tooltip.Trigger>
+                <Tooltip.Content>
+                  <p className="font-semibold text-sm">{getNextCurrency()}</p>
+                </Tooltip.Content>
+              </Tooltip>
+            </Tooltip.Provider>
           </div>
         </div>
       </Card.Content>
       <Card.Footer className="border-t p-3">
         <div className="text-sm flex flex-row grow items-center justify-between">
           <span>{t('label.netWorth')}</span>
-          <span className={cn((+latestNetWorth ?? 0) > 0 && 'text-destructive-foreground')}>
-            {`${latestNetWorth} ${settingStore.activeCurrency.short}`}
-          </span>
+          <CurrencyDisplay
+            value={activeProfile?.lastSnapshotChange}
+            valueShort={false}
+            toCurrency={settingStore.currency}
+            divinePrice={priceStore.divinePrice}
+            showChange
+          />
         </div>
       </Card.Footer>
     </Card>

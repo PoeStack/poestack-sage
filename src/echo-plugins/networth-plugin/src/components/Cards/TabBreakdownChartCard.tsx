@@ -6,7 +6,6 @@ import { ChevronDownIcon, ChevronRightIcon } from 'lucide-react'
 import { Collapsible, Card } from 'echo-common/components-v1'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
-import { convertToCurrency } from '../../utils/currency.utils'
 import { useTranslation } from 'react-i18next'
 import { baseChartConfig } from './baseChartConfig'
 
@@ -17,38 +16,11 @@ interface TabBreakdownChartCardProps {
 const TabBreakdownChartCard: React.FC<TabBreakdownChartCardProps> = ({ className }) => {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
-  const { accountStore, priceStore, settingStore } = useStore()
-  const breakdownData = accountStore.activeAccount.activeProfile?.tabBreakdownOverTime
-  const series =
-    accountStore.activeAccount.activeProfile?.activeStashTabs.reduce(
-      (seriesMap, tab) => {
-        seriesMap[tab.id] = {
-          type: 'line',
-          data: [],
-          name: tab.name
-        }
-        return seriesMap
-      },
-      {} as Record<string, { type: 'line'; data: any[]; name: string }>
-    ) ?? {}
-
-  breakdownData?.forEach((item) => {
-    const tabSeries = series[item.stashTabId]
-    if (tabSeries) {
-      tabSeries.data.push([
-        item.time,
-        convertToCurrency({
-          value: item.value,
-          toCurrency: settingStore.currency,
-          divinePrice: priceStore.divinePrice
-        })
-      ])
-    }
-  })
+  const { accountStore, settingStore } = useStore()
 
   const chartConfig: Highcharts.Options = {
     ...baseChartConfig,
-    series: Object.values(series),
+    series: accountStore.activeAccount.activeProfile?.tabChartData,
     chart: {
       ...baseChartConfig.chart,
       height: 234

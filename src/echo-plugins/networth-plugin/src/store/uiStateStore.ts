@@ -1,15 +1,10 @@
 import {
-  FromSnapshotDefaultType,
   getRefsResolvingTo,
   getRoot,
   idProp,
   model,
   Model,
   modelAction,
-  modelIdKey,
-  ModelOptions,
-  ModelProps,
-  modelTypeKey,
   prop,
   rootRef,
   tProp,
@@ -23,6 +18,7 @@ import { accountStoreAccountRef } from './accountStore'
 import { PoeCharacter, PoePartialStashTab } from 'sage-common'
 import { StatusPath } from '../types/resouces'
 import { PersistWrapper } from '../utils/persist.utils'
+import { TimespanType } from '../interfaces/timespan.type'
 
 export const statusMessageRef = rootRef<StatusMessage>('nw/statusMessageRef')
 
@@ -44,6 +40,7 @@ export class UiStateStore extends Model(
       isInitiating: tProp(false).withSetter(),
       isSnapshotting: tProp(false).withSetter(),
       statusMessage: tProp(types.maybe(types.model(StatusMessage))),
+      chartTimeSpan: prop<TimespanType>('all-time').withSetter(),
       version: prop(1)
     },
     {

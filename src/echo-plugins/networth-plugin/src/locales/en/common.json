@@ -35,8 +35,8 @@
     "tab": "Tabs",
     "quantity": "Quantity",
     "price": "Price",
-    "total": "Total value ({{currency}})",
-    "cumulative": "Cumulative ({{currency}})"
+    "total": "Total value",
+    "cumulative": "Cumulative"
   },
   "label": {
     "pageRows": "Rows per page",

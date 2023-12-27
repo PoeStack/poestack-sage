@@ -1,13 +1,14 @@
 import { ColumnDef } from '@tanstack/react-table'
-import { rarityColors, currencyChangeColors, itemColors } from '../../assets/theme'
+import { rarityColors, currencyChangeColors } from '../../assets/theme'
 import { getRarity, parseTabNames } from '../../utils/item.utils'
 import { ActionTooltip } from 'echo-common/components-v1'
 import { cn } from 'echo-common'
-import { CurrencyShort } from '../../store/settingStore'
+import { CurrencySwitch } from '../../store/settingStore'
 import { IPricedItem } from '../../interfaces/priced-item.interface'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import { TableColumnHeader } from './ColumnHeader'
+import CurrencyDisplay from '../CurrencyDisplay/CurrencyDisplay'
 
 type PricedItem = keyof IPricedItem | 'cumulative'
 
@@ -111,24 +112,15 @@ export function itemQuantity(options: {
 export function itemValue(options: {
   accessorKey: PricedItem
   header: string
-  placeholder?: string
   cumulative?: boolean
-  diff?: boolean
-  currencyType?: CurrencyShort
+  showChange?: boolean
+  toCurrency?: 'chaos' | 'divine' | 'both'
   enableSorting?: boolean
 }): ColumnDef<IPricedItem> {
-  const { header, accessorKey, placeholder, cumulative, diff, currencyType, enableSorting } =
-    options
+  const { header, accessorKey, cumulative, showChange, toCurrency, enableSorting } = options
 
   return {
-    header: ({ column }) => (
-      <TableColumnHeader
-        column={column}
-        title={header}
-        titleParams={{ currency: 'c' }}
-        align="right"
-      />
-    ),
+    header: ({ column }) => <TableColumnHeader column={column} title={header} align="right" />,
     accessorKey,
     enableSorting: enableSorting ?? false,
     enableGlobalFilter: false,
@@ -146,14 +138,7 @@ export function itemValue(options: {
         value = row.getValue(accessorKey)
       }
 
-      return (
-        <ItemValueCell
-          value={value}
-          placeholder={placeholder}
-          diff={diff}
-          currencyType={currencyType}
-        />
-      )
+      return <ItemValueCell value={value} showChange={showChange} toCurrency={toCurrency} />
     }
   }
 }
@@ -238,43 +223,21 @@ const ItemQuantityCell = ({ quantity, diff }: ItemQuantityCellProps) => {
 type ItemValueCellProps = {
   value: number
   editable?: boolean
-  placeholder?: string
-  diff?: boolean
-  currencyType?: CurrencyShort
+  showChange?: boolean
+  toCurrency?: CurrencySwitch
 }
 
-const ItemValueCellComponent = ({ value, placeholder, diff, currencyType }: ItemValueCellProps) => {
+const ItemValueCellComponent = ({ value, showChange, toCurrency }: ItemValueCellProps) => {
   const { priceStore } = useStore()
 
-  const tryParseNumber = (value: boolean | string | number, diff?: boolean) => {
-    if (typeof value === 'number') {
-      let calculatedValue = value
-      if (currencyType === 'd' && priceStore.divinePrice) {
-        calculatedValue = calculatedValue / priceStore.divinePrice
-      }
-      return `${diff && calculatedValue > 0 ? '+ ' : ''}${calculatedValue.toFixed(2)}`
-    } else {
-      return value
-    }
-  }
-
   return (
-    <div className="text-right">
-      {value ? (
-        <span
-          style={{ color: itemColors.chaosOrb }}
-          className={cn(
-            `pr-1 font-bold`,
-            diff && value > 0 && `text-[${currencyChangeColors.positive}]`,
-            diff && value < 0 && `text-[${currencyChangeColors.negative}]`
-          )}
-        >
-          {value ? tryParseNumber(value, diff) : placeholder}
-        </span>
-      ) : (
-        <span className="pr-1">{placeholder}</span>
-      )}
-    </div>
+    <CurrencyDisplay
+      value={value}
+      divinePrice={priceStore.divinePrice}
+      showChange={showChange}
+      toCurrency={toCurrency}
+      className="text-right"
+    />
   )
 }
 
