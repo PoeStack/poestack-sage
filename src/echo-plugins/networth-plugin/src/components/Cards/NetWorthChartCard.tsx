@@ -1,15 +1,13 @@
 import { useRef, useState } from 'react'
 import * as Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
-import { ChevronDownIcon, ChevronRightIcon } from 'lucide-react'
+import { ChevronDownIcon, ChevronRightIcon, LineChartIcon } from 'lucide-react'
 
 import { Collapsible, Card, RadioGroup, Label } from 'echo-common/components-v1'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import { useTranslation } from 'react-i18next'
 import { baseChartConfig } from './baseChartConfig'
-import dayjs from 'dayjs'
-import { profile } from 'console'
 
 type StartDateOption = { label: 'all-time' | 'one-month' | 'one-week' | 'one-day'; value?: number }
 
@@ -83,7 +81,10 @@ const NetWorthChartCard: React.FC<NetWorthChartCardProps> = ({ className }) => {
       <Card className="w-full">
         <Collapsible.Trigger className="!mt-0 cursor-pointer" asChild>
           <Card.Header className="flex flex-row justify-between items-center p-3">
-            <Card.Title className="text-base">{t('title.netWorthHistoryCard')}</Card.Title>
+            <div className="flex flex-row items-center">
+              <LineChartIcon />
+              <Card.Title className="text-base pl-2">{t('title.netWorthHistoryCard')}</Card.Title>
+            </div>
 
             {open ? (
               <ChevronDownIcon className="h-4 w-4" />

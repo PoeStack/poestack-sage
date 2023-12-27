@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import * as Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
-import { ChevronDownIcon, ChevronRightIcon } from 'lucide-react'
+import { ChevronDownIcon, ChevronRightIcon, LineChartIcon } from 'lucide-react'
 
 import { Collapsible, Card } from 'echo-common/components-v1'
 import { observer } from 'mobx-react'
@@ -50,7 +50,12 @@ const TabBreakdownChartCard: React.FC<TabBreakdownChartCardProps> = ({ className
       <Card className="w-full">
         <Collapsible.Trigger className="!mt-0 cursor-pointer" asChild>
           <Card.Header className="flex flex-row justify-between items-center p-3">
-            <Card.Title className="text-base">{t('title.tabBreakdownHistoryCard')}</Card.Title>
+            <div className="flex flex-row items-center">
+              <LineChartIcon />
+              <Card.Title className="text-base pl-2">
+                {t('title.tabBreakdownHistoryCard')}
+              </Card.Title>
+            </div>
             {open ? (
               <ChevronDownIcon className="h-4 w-4" />
             ) : (
