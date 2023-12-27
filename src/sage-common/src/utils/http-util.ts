@@ -15,6 +15,7 @@ export class HttpUtil {
           observer.complete()
         })
         .catch((error) => {
+          console.log('http util error for', url, error)
           observer.error(error)
           observer.complete()
         })

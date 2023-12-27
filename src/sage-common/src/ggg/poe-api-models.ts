@@ -37,6 +37,7 @@ export type PoeItem = {
   abyssJewel?: boolean
   additionalProperties?: PoeItemProperty[]
   artFilename?: string
+  rarity?: string
   baseType?: string
   cisRaceReward?: boolean
   colour?: string

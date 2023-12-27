@@ -4,7 +4,7 @@ import objectHash from 'object-hash'
 import { compasses } from './compasses'
 import { from, map } from 'rxjs'
 
-export type SageItemGroup = { key: string; tag: string; hash: string; shard: number, unsafeHashProperties: any }
+export type SageItemGroup = { key: string; tag: string; hash: string; unsafeHashProperties: any }
 
 export class ItemGroupingService {
   private readonly pricingHandlers: ItemGroupIdentifier[] = []
@@ -14,10 +14,14 @@ export class ItemGroupingService {
       new InscribedUltimatumGroupIndentifier(),
       new RewardMapGroupIdentifier(),
       new WatchersEyeGroupIdentifier(),
+      new ScarabGroupIdentifier(),
+      new CardGroupIdentifier(),
+      new RelicGroupIdentifier(),
       new TimelessJewelGroupIdentifier(),
       new TattooGroupIdentifier(),
       new BloodFilledVesselGroupIdentifier(),
       new UnqiueGearGroupIdentifier(),
+      new CorpseGroupIdentifier(),
       new TomeGroupIdentifier(),
       new BeastGroupIdentifier(),
       new MemoryGroupIdentifier(),
@@ -42,7 +46,7 @@ export class ItemGroupingService {
     )
   }
 
-  public group(item: PoeItem): SageItemGroup | null {
+  public group(item: PoeItem): { primaryGroup: SageItemGroup } | null {
     if (item.lockedToAccount || item.lockedToCharacter) {
       return null
     }
@@ -59,8 +63,14 @@ export class ItemGroupingService {
           { unorderedArrays: true, unorderedObjects: true }
         )
 
-        const shard = parseInt(hash, 16) % 5
-        return { key: internalGroup.key, tag: internalGroup.tag, hash: hash, shard: shard, unsafeHashProperties: internalGroup.hashProperties }
+        return {
+          primaryGroup: {
+            key: internalGroup.key,
+            tag: internalGroup.tag,
+            hash: hash,
+            unsafeHashProperties: internalGroup.hashProperties
+          }
+        }
       }
     }
 
@@ -81,13 +91,14 @@ export interface ItemGroupIdentifier {
 
 export class InscribedUltimatumGroupIndentifier implements ItemGroupIdentifier {
   group(item: PoeItem): InternalGroup | null {
-    if (item.baseType === "Inscribed Ultimatum") {
+    if (item.baseType === 'Inscribed Ultimatum') {
       const challenge = item.properties?.filter((prop) => prop.name === 'Challenge')?.[0]
         ?.values?.[0]?.[0]
-      const reward = item.properties?.filter((prop) => prop.name?.startsWith("Reward"))?.[0]
+      const reward = item.properties?.filter((prop) => prop.name?.startsWith('Reward'))?.[0]
         ?.values?.[0]?.[0]
-      const sacrifice = item.properties?.filter((prop) => prop.name?.startsWith("Requires Sacrifice"))?.[0]
-        ?.values?.[0]?.[0]
+      const sacrifice = item.properties?.filter(
+        (prop) => prop.name?.startsWith('Requires Sacrifice')
+      )?.[0]?.values?.[0]?.[0]
 
       const group: InternalGroup = {
         key: `${reward}`,
@@ -97,6 +108,20 @@ export class InscribedUltimatumGroupIndentifier implements ItemGroupIdentifier {
           reward: reward,
           sacrifice: sacrifice
         }
+      }
+      return group
+    }
+    return null
+  }
+}
+
+export class RelicGroupIdentifier implements ItemGroupIdentifier {
+  group(item: PoeItem): InternalGroup | null {
+    if (item.typeLine?.endsWith(' Relic') && item.rarity === 'Unique') {
+      const group: InternalGroup = {
+        key: item.name!!.toLowerCase(),
+        tag: 'relic',
+        hashProperties: {}
       }
       return group
     }
@@ -115,6 +140,51 @@ export class TimelessJewelGroupIdentifier implements ItemGroupIdentifier {
         }
       }
       return group
+    }
+    return null
+  }
+}
+
+
+
+export class CorpseGroupIdentifier implements ItemGroupIdentifier {
+  group(item: PoeItem): InternalGroup | null {
+    const typeLine = item.typeLine?.toLowerCase() ?? ''
+    if (item.descrText === "Right click this item to create this corpse.") {
+      return {
+        key: typeLine,
+        tag: 'corpse',
+        hashProperties: {}
+      }
+    }
+    return null
+  }
+}
+
+
+export class ScarabGroupIdentifier implements ItemGroupIdentifier {
+  group(item: PoeItem): InternalGroup | null {
+    const typeLine = item.typeLine?.toLowerCase() ?? ''
+    if (item.descrText === "Can be used in a personal Map Device to add modifiers to a Map." && typeLine.endsWith(" Scarab")) {
+      return {
+        key: typeLine,
+        tag: 'scarab',
+        hashProperties: {}
+      }
+    }
+    return null
+  }
+}
+
+export class CardGroupIdentifier implements ItemGroupIdentifier {
+  group(item: PoeItem): InternalGroup | null {
+    if (item.icon?.endsWith("InventoryIcon.png")) {
+      const typeLine = item.typeLine?.toLowerCase() ?? ''
+      return {
+        key: typeLine,
+        tag: 'card',
+        hashProperties: {}
+      }
     }
     return null
   }
@@ -184,31 +254,6 @@ export class BloodFilledVesselGroupIdentifier implements ItemGroupIdentifier {
           tag: 'fragment',
           hashProperties: {
             monsterLvl: parseInt(monsterLvl)
-          }
-        }
-        return group
-      }
-    }
-    return null
-  }
-}
-
-export class HelmEnchantGroupIdentifier implements ItemGroupIdentifier {
-  group(item: PoeItem): InternalGroup | null {
-    const enchant = item.enchantMods?.join(' ')
-    if (enchant && [0, 1, 2].includes(item.frameType!!)) {
-      const itemCategory = ItemUtils.decodeIcon(item.icon!!, 0)
-
-      if (itemCategory?.includes('helmet')) {
-        const ilvl = item.ilvl ?? item.itemLevel
-        const cleanCategory = itemCategory.replaceAll('helmet', '').replaceAll(/[0-9]/g, '')
-
-        const group: InternalGroup = {
-          key: enchant,
-          tag: 'enchant',
-          hashProperties: {
-            type: cleanCategory,
-            ilvl: ilvl!! >= 84 ? '84+' : '<84'
           }
         }
         return group
@@ -316,42 +361,27 @@ export class GemGroupIdentifier implements ItemGroupIdentifier {
   ]
 
   private convertLvlToRange(typeLine: string, lvl: number): string {
-    if (
-      this.exceptionalGems.includes(typeLine) ||
-      this.exceptionalGems.includes(typeLine.replaceAll('awakened ', ''))
-    ) {
+    if (this.exceptionalGems.includes(typeLine) || lvl >= 20 || typeLine.includes('awakened')) {
       return lvl.toString()
     }
-    if (lvl >= 20) {
+    if (lvl >= 20 || typeLine.includes('awakened')) {
       return lvl.toString()
     }
     return '1-19'
   }
 
   private convertQToRange(typeLine: string, quality: number): string {
-    if (
-      this.exceptionalGems.includes(typeLine) ||
-      this.exceptionalGems.includes(typeLine.replaceAll('awakened ', ''))
-    ) {
+    if (this.exceptionalGems.includes(typeLine) || typeLine.includes('awakened')) {
       return 'any'
     }
-
-    if (quality === 0) {
-      return quality.toString()
-    }
-    if (quality >= 20) {
+    if (quality >= 20 || quality === 0) {
       return quality.toString()
     }
     return '1-19'
   }
 
   group(item: PoeItem): InternalGroup | null {
-    if (
-      item.descrText ===
-      'Place into an item socket of the right colour to gain this skill. Right click to remove from a socket.' ||
-      item.descrText ===
-      'This is a Support Gem. It does not grant a bonus to your character, but to skills in sockets connected to it. Place into an item socket connected to a socket containing the Active Skill Gem you wish to augment. Right click to remove from a socket.'
-    ) {
+    if (item.support === true || item.support === false) {
       const typeLine = item.typeLine!!.toLowerCase()
       const quality = this.convertQToRange(
         typeLine,
@@ -609,12 +639,10 @@ export class IncubatorGroupIdentifier implements ItemGroupIdentifier {
 }
 
 export class RewardMapGroupIdentifier implements ItemGroupIdentifier {
-
   group(item: PoeItem): InternalGroup | null {
     const mapTier = item.properties?.filter((prop) => prop.name === 'Map Tier')?.[0]
       ?.values?.[0]?.[0]
-    const reward = item.properties?.filter((prop) => prop.name === 'Reward')?.[0]
-      ?.values?.[0]?.[0]
+    const reward = item.properties?.filter((prop) => prop.name === 'Reward')?.[0]?.values?.[0]?.[0]
 
     if (mapTier && reward && item.name) {
       return {
@@ -727,7 +755,6 @@ export class CurrencyGroupIdentifier implements ItemGroupIdentifier {
         'ancient orb',
         'tainted chromatic orb',
         'awakened sextant',
-
         'stacked deck',
         "harbinger's orb",
         "gemcutter's prism",
@@ -856,506 +883,6 @@ export class CurrencyGroupIdentifier implements ItemGroupIdentifier {
         'amber oil',
         'sepia oil',
         'clear oil'
-      ])
-    },
-    card: {
-      items: new Set([
-        'the apothecary',
-        'the price of devotion',
-        'house of mirrors',
-        'the insane cat',
-        'unrequited love',
-        'the doctor',
-        'the demon',
-        'the fiend',
-        'love through ice',
-        'the immortal',
-        'the shieldbearer',
-        'the soul',
-        'the nurse',
-        'the cheater',
-        'choking guilt',
-        'wealth and power',
-        'the sephirot',
-        'the sustenance',
-        'seven years bad luck',
-        "the dragon's heart",
-        'divine beauty',
-        'desecrated virtue',
-        'beauty through death',
-        'succor of the sinless',
-        'the price of loyalty',
-        "doryani's epiphany",
-        "the samurai's eye",
-        "brother's stash",
-        'a fate worse than death',
-        'the enlightened',
-        'the endless darkness',
-        'eternal bonds',
-        'home',
-        "gemcutter's mercy",
-        'the garish power',
-        'broken promises',
-        'the patient',
-        'the last one standing',
-        'monochrome',
-        'imperfect memories',
-        'the artist',
-        'darker half',
-        'magnum opus',
-        'the sacrifice',
-        'the destination',
-        'luminous trove',
-        "winter's embrace",
-        "the mind's eyes",
-        'the world eater',
-        'alluring bounty',
-        'tranquillity',
-        'gift of asenath',
-        'the hook',
-        'the greatest intentions',
-        'the eldritch decay',
-        'pride of the first ones',
-        "akil's prophecy",
-        'the strategist',
-        'the gulf',
-        'the astromancer',
-        'the shortcut',
-        'deadly joy',
-        'the escape',
-        'fateful meeting',
-        'the scout',
-        'the damned',
-        'the aspirant',
-        'the long con',
-        'the polymath',
-        'remembrance',
-        "the rabbit's foot",
-        'abandoned wealth',
-        'altered perception',
-        'something dark',
-        'the eye of terror',
-        'the eternal war',
-        'justified ambition',
-        'the leviathan',
-        'the eye of the dragon',
-        'judging voices',
-        'the enforcer',
-        'a modest request',
-        'the progeny of lunaris',
-        "anarchy's price",
-        'chaotic disposition',
-        'pride before the fall',
-        'the offering',
-        'the vast',
-        "nook's crown",
-        "azyran's reward",
-        'the old man',
-        'the chosen',
-        'underground forest',
-        'council of cats',
-        'the white knight',
-        'a familiar call',
-        'the academic',
-        'the bitter blossom',
-        'draped in dreams',
-        'a stone perfected',
-        'chasing risk',
-        'duality',
-        'the one that got away',
-        'further invention',
-        'auspicious ambitions',
-        'the wedding gift',
-        'the fishmonger',
-        'the heroic shot',
-        "a mother's parting gift",
-        'mawr blaidd',
-        'the dark mage',
-        'the hunger',
-        'the jester',
-        'the professor',
-        'the primordial',
-        'dark dreams',
-        'the bargain',
-        'void of the elements',
-        'the tumbleweed',
-        'the awakened',
-        'unchained',
-        'brotherhood in exile',
-        'haunting shadows',
-        'dying light',
-        'the last supper',
-        'the price of prescience',
-        'the emptiness',
-        'the forgotten treasure',
-        'the catch',
-        'bijoux',
-        'the forward gaze',
-        'the brawny battle mage',
-        "the shepherd's sandals",
-        'a dusty memory',
-        'prejudice',
-        'the return of the rat',
-        'the thaumaturgist',
-        'call to the first ones',
-        'the golden era',
-        'terrible secret of space',
-        "sambodhi's wisdom",
-        'merciless armament',
-        'the brittle emperor',
-        'the seeker',
-        'the bones',
-        'audacity',
-        'the porcupine',
-        'the wind',
-        'rebirth',
-        'the bear woman',
-        'dementophobia',
-        'blind venture',
-        "bowyer's dream",
-        "dialla's subjugation",
-        'dying anguish',
-        "hunter's reward",
-        'last hope',
-        'lost worlds',
-        'lucky deck',
-        'the avenger',
-        'the battle born',
-        'the cartographer',
-        'the celestial justicar',
-        'the conduit',
-        'the drunken aristocrat',
-        'the ethereal',
-        'the formless sea',
-        'the fox',
-        'the gentleman',
-        "the king's heart",
-        'the mercenary',
-        'the oath',
-        'the pack leader',
-        'the pact',
-        'the poet',
-        'the rabid rhoa',
-        'the road to power',
-        'the siren',
-        'the survivalist',
-        'the tyrant',
-        'the void',
-        'the warlord',
-        "the saint's treasure",
-        'the wolverine',
-        'might is right',
-        'the obscured',
-        'the breach',
-        'the dreamer',
-        "the jeweller's boon",
-        'the hale heart',
-        'perfection',
-        'the master',
-        'the undaunted',
-        'the darkest dream',
-        'the celestial stone',
-        'the undisputed',
-        'harmony of souls',
-        'the innocent',
-        'the twilight moon',
-        'the mad king',
-        'the landing',
-        'the life thief',
-        'burning blood',
-        'the deep ones',
-        'buried treasure',
-        'the deal',
-        'the side quest',
-        'more is never enough',
-        'divine justice',
-        'deathly designs',
-        'etched in blood',
-        'the easy stroll',
-        'peaceful moments',
-        'the hive of knowledge',
-        "society's remorse",
-        'reckless ambition',
-        "keeper's corruption",
-        'brush, paint and palette',
-        'the enthusiasts',
-        'the card sharp',
-        'the offspring',
-        'lachrymal necrosis',
-        'costly curio',
-        'ambitious obsession',
-        "guardian's challenge",
-        'desperate crusade',
-        'the prince of darkness',
-        'parasitic passengers',
-        'silence and frost',
-        'from bone to ashes',
-        'the dungeon master',
-        'rebirth and renewal',
-        'azure rage',
-        'checkmate',
-        'lethean temptation',
-        'ever-changing',
-        'man with bear',
-        'gift of the gemling queen',
-        "the tinkerer's table",
-        'the whiteout',
-        'heterochromia',
-        'the gladiator',
-        'the fortunate',
-        'endless night',
-        'the traitor',
-        'the aesthete',
-        'the lord in black',
-        'the lord of celebration',
-        'the arena champion',
-        'no traces',
-        'the inoculated',
-        'the feast',
-        'death',
-        'the body',
-        'the incantation',
-        'the risk',
-        "demigod's wager",
-        'earth drinker',
-        'the hoarder',
-        'the price of protection',
-        "prometheus' armoury",
-        'the cursed king',
-        "the archmage's right hand",
-        'the cataclysm',
-        'the wolf',
-        'the fox in the brambles',
-        'the fool',
-        'the visionary',
-        'treasure hunter',
-        'the deceiver',
-        'dark temptation',
-        'the lion',
-        "the flora's gift",
-        'the forsaken',
-        'the summoner',
-        'the rite of elements',
-        'boundless realms',
-        "cartographer's delight",
-        'coveted possession',
-        'destined to crumble',
-        'emperor of purity',
-        'grave knowledge',
-        'hope',
-        'hubris',
-        'light and truth',
-        'lucky connections',
-        "lysah's respite",
-        'scholar of the seas',
-        'shard of fate',
-        'the betrayal',
-        'the dapper prodigy',
-        'the encroaching darkness',
-        'the endurance',
-        'the explorer',
-        'the fletcher',
-        'the inventor',
-        'the lich',
-        'the one with all',
-        'the penitent',
-        'the queen',
-        'the scavenger',
-        'the sigil',
-        'the spoiled prince',
-        'the surgeon',
-        'the surveyor',
-        'the throne',
-        'the twins',
-        'the union',
-        'the valkyrie',
-        'the warden',
-        'the watcher',
-        'the web',
-        'thunderous skies',
-        'time-lost relic',
-        'turn the other cheek',
-        'mitts',
-        'the wretched',
-        'the coming storm',
-        "the wolven king's bite",
-        'the spark and the flame',
-        "atziri's arsenal",
-        'struck by lightning',
-        'the realm',
-        'left to fate',
-        'the insatiable',
-        'forbidden power',
-        'three voices',
-        'the beast',
-        "the sword king's salute",
-        'the fathomless depths',
-        'the dreamland',
-        'immortal resolve',
-        'the admirer',
-        'the witch',
-        'boon of the first ones',
-        'the wilted rose',
-        'the cacophony',
-        'the master artisan',
-        'a dab of ink',
-        "sambodhi's vow",
-        'arrogance of the vaal',
-        'alone in the darkness',
-        'the journey',
-        'the messenger',
-        'thirst for knowledge',
-        'echoes of love',
-        'the mountain',
-        'the skeleton',
-        "the wolf's legacy",
-        "cameria's cut",
-        'baited expectations',
-        'a note in the wind',
-        'the unexpected prize',
-        'the cache',
-        'acclimatisation',
-        'a sea of blue',
-        'the blessing of moosh',
-        'disdain',
-        'the tireless extractor',
-        'the transformation',
-        'the magma crab',
-        'misery in darkness',
-        'astral protection',
-        "alivia's grace",
-        'the calling',
-        'the ruthless ceinture',
-        'the sun',
-        'the army of blood',
-        'the journalist',
-        'the dragon',
-        'volatile power',
-        "gemcutter's promise",
-        'the adventuring spirit',
-        "hunter's resolve",
-        'the stormcaller',
-        'loyalty',
-        "the wolf's shadow",
-        'triskaidekaphobia',
-        'the lover',
-        'the tower',
-        'the scarred meadow',
-        'jack in the box',
-        'the opulent',
-        'boon of justice',
-        'vile power',
-        'glimmer of hope',
-        'broken truce',
-        'lingering remnants',
-        'the standoff',
-        "assassin's favour",
-        "doedre's madness",
-        "emperor's luck",
-        'her mask',
-        'humility',
-        "lantador's lost love",
-        'prosperity',
-        'rain of chaos',
-        'rain tempter',
-        'rats',
-        'the carrion crow',
-        'the catalyst',
-        'the chains that bind',
-        'the demoness',
-        'the doppelganger',
-        'the gambler',
-        'the gemcutter',
-        'the harvester',
-        'the hermit',
-        "the king's blade",
-        'the lunaris priestess',
-        "the metalsmith's gift",
-        'the scholar',
-        'the trial',
-        'the wrath',
-        'three faces in the dark',
-        "vinia's token",
-        'the blazing fire',
-        'the puzzle',
-        'vanity',
-        'the craving',
-        'cursed words',
-        'the finishing touch',
-        'imperial legacy',
-        "brother's gift"
-      ])
-    },
-    scarab: {
-      items: new Set([
-        'winged ambush scarab',
-        'winged divination scarab',
-        'winged reliquary scarab',
-        'winged harbinger scarab',
-        'winged abyss scarab',
-        'winged bestiary scarab',
-        'winged legion scarab',
-        'winged breach scarab',
-        'winged blight scarab',
-        'winged expedition scarab',
-        'winged cartography scarab',
-        'winged shaper scarab',
-        'winged torment scarab',
-        'winged sulphite scarab',
-        'winged ultimatum scarab',
-        'winged metamorph scarab',
-        'winged elder scarab',
-        'gilded divination scarab',
-        'gilded ambush scarab',
-        'gilded harbinger scarab',
-        'gilded legion scarab',
-        'gilded expedition scarab',
-        'polished harbinger scarab',
-        'gilded blight scarab',
-        'gilded breach scarab',
-        'gilded cartography scarab',
-        'gilded reliquary scarab',
-        'gilded metamorph scarab',
-        'gilded abyss scarab',
-        'gilded ultimatum scarab',
-        'gilded bestiary scarab',
-        'gilded sulphite scarab',
-        'polished divination scarab',
-        'gilded torment scarab',
-        'polished ambush scarab',
-        'gilded shaper scarab',
-        'polished legion scarab',
-        'polished cartography scarab',
-        'gilded elder scarab',
-        'polished sulphite scarab',
-        'polished breach scarab',
-        'polished ultimatum scarab',
-        'polished abyss scarab',
-        'polished blight scarab',
-        'polished expedition scarab',
-        'polished metamorph scarab',
-        'rusted divination scarab',
-        'rusted harbinger scarab',
-        'rusted legion scarab',
-        'rusted cartography scarab',
-        'rusted elder scarab',
-        'rusted ambush scarab',
-        'polished shaper scarab',
-        'polished torment scarab',
-        'polished elder scarab',
-        'polished bestiary scarab',
-        'polished reliquary scarab',
-        'rusted sulphite scarab',
-        'rusted expedition scarab',
-        'rusted reliquary scarab',
-        'rusted blight scarab',
-        'rusted bestiary scarab',
-        'rusted torment scarab',
-        'rusted breach scarab',
-        'rusted ultimatum scarab',
-        'rusted shaper scarab',
-        'rusted metamorph scarab',
-        'rusted abyss scarab'
       ])
     },
     'delirium orb': {

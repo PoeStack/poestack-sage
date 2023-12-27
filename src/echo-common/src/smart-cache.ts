@@ -92,9 +92,7 @@ export class SmartCache<T> {
       }
     })
 
-    this.workQueue$.pipe(
-      mergeMap((e) => this.executeWorkload(e), concurrent ? 5 : 1)
-    ).subscribe({
+    this.workQueue$.pipe(mergeMap((e) => this.executeWorkload(e), concurrent ? 5 : 1)).subscribe({
       next: (e) => {
         this.events$.next(e)
       }
@@ -143,12 +141,15 @@ export class SmartCache<T> {
               return throwError(() => error)
             }
           }),
-          catchError((error): Observable<SmartCacheErrorEvent> => of({
-            type: "error",
-            error: error,
-            key: e.key,
-            timestampMs: Date.now()
-          }))
+          catchError(
+            (error): Observable<SmartCacheErrorEvent> =>
+              of({
+                type: 'error',
+                error: error,
+                key: e.key,
+                timestampMs: Date.now()
+              })
+          )
         )
       })
     )

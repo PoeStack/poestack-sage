@@ -3,6 +3,7 @@ import { HttpUtil, ItemGroupingService, PoeItem, SageItemGroup } from 'sage-comm
 import { EchoDirService } from './echo-dir-service'
 import { Observable, map, mergeMap, tap } from 'rxjs'
 import { validResultsWithNullish } from './smart-cache-hooks'
+import { EchoPoeItem } from './poe-stash-service'
 
 export class SageValuationService {
   private httpUtil = new HttpUtil()
@@ -10,7 +11,7 @@ export class SageValuationService {
   constructor(
     private echoDir: EchoDirService,
     private itemGroupingService: ItemGroupingService
-  ) { }
+  ) {}
 
   public cacheValuationShards = new SmartCache<SageValuationShard>(this.echoDir, 'sage-valuations')
 
@@ -20,7 +21,7 @@ export class SageValuationService {
         this.itemValuation(league, e.data).pipe(
           validResultsWithNullish(),
           tap((e) => console.log('shard', e)),
-          map((shard) => ({ ...e, valuation: shard?.valuations?.[e.group?.hash ?? ''] }))
+          map((shard) => ({ ...e, valuation: shard?.valuations?.[e.group?.primaryGroup?.hash ?? ''] }))
         )
       )
     )
@@ -32,10 +33,9 @@ export class SageValuationService {
         this.itemValuation(league, e.data).pipe(
           map((vEvent) => {
             if (vEvent.type === 'result') {
-              const itemValuation = vEvent?.result?.valuations?.[e?.group?.hash ?? '']
-              const eItem = {
+              const itemValuation = vEvent?.result?.valuations?.[e?.group?.primaryGroup?.hash ?? '']
+              const eItem: EchoPoeItem = {
                 valuation: itemValuation,
-                timestampMs: Date.now(),
                 ...e
               }
               return { ...vEvent, result: eItem }
@@ -53,13 +53,20 @@ export class SageValuationService {
   ): Observable<SmartCacheEvent<SageValuationShard>> {
     const group = this.itemGroupingService.group(item)
     if (group) {
-      return this.valuation(league, group)
+      return this.valuation(league, group?.primaryGroup)
     }
     return SmartCache.emptyResult()
   }
 
   public valuation(league: string, group: SageItemGroup) {
-    const key = `${group.tag}_${group.shard}_${league}`.replaceAll(' ', '_')
+    const key = `${league}/${group.tag}`.replaceAll(' ', '_').toLowerCase()
+    return this.cacheValuationShards.load({ key: key, maxAgeMs: 1000 * 60 * 60 }, () =>
+      this.loadInternal(key)
+    )
+  }
+
+  public valuationRaw(league: string, tag: string) {
+    const key = `${league}/${tag}`.replaceAll(' ', '_').toLowerCase()
     return this.cacheValuationShards.load({ key: key, maxAgeMs: 1000 * 60 * 60 }, () =>
       this.loadInternal(key)
     )
@@ -67,7 +74,7 @@ export class SageValuationService {
 
   private mapInternalToExternal(internal: SageValuationShardInternal): SageValuationShard {
     const out: SageValuationShard = {
-      metadata: internal.metadata,
+      meta: internal.metadata,
       valuations: {}
     }
 
@@ -81,12 +88,11 @@ export class SageValuationService {
       out.valuations[key] = {
         listings: value.l,
         primaryValue: pValues[12],
-        pValues: pValues, 
-        groupSummary: value.s ? { key: value.s.k, icon: `https://web.poecdn.com/gen/image/${value.s.i}` } : undefined,
+        pValues: pValues,
         history: {
           primaryValueDaily: value.d,
           primaryValueHourly: value.h
-        },
+        }
       }
     })
 
@@ -94,11 +100,11 @@ export class SageValuationService {
   }
 
   private loadInternal(key: string) {
-    return this.httpUtil.get<SageValuationShardInternal>(
-      `https://pub-1ac9e2cd6dca4bda9dc260cb6a6f7c90.r2.dev/v6/${key}.json`
-    ).pipe(
-      map((e) => this.mapInternalToExternal(e))
-    )
+    return this.httpUtil
+      .get<SageValuationShardInternal>(
+        `https://pub-1ac9e2cd6dca4bda9dc260cb6a6f7c90.r2.dev/v10/valuations/${key}.json`
+      )
+      .pipe(map((e) => this.mapInternalToExternal(e)))
   }
 }
 
@@ -112,7 +118,6 @@ export type SageValuationInternal = {
   c: number[]
   h: number[]
   d: number[]
-  s: SageValuationSummaryInternal | undefined
 }
 
 export type SageValuationShardInternal = {
@@ -130,20 +135,14 @@ export type SageValuationHistory = {
   primaryValueHourly: number[]
 }
 
-export type SageValuationSummary = {
-  key: string
-  icon: string
-}
-
 export type SageValuation = {
   listings: number
   pValues: { [percentile: number]: number }
   primaryValue: number
   history: SageValuationHistory
-  groupSummary?: SageValuationSummary | undefined
 }
 
 export type SageValuationShard = {
-  metadata: SageValuationMetadata
+  meta: SageValuationMetadata
   valuations: { [hash: string]: SageValuation }
 }

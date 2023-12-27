@@ -1,0 +1,19 @@
+{
+  "success": {
+    "title": {},
+    "description": {}
+  },
+  "error": {
+    "unknown_error": "Unknown error occurred",
+    "title": {},
+    "description": {}
+  },
+  "warning": {
+    "title": {},
+    "description": {}
+  },
+  "info": {
+    "title": {},
+    "description": {}
+  }
+}
