@@ -17,9 +17,6 @@ const pluginRoute = (): EchoRoute => ({
 })
 
 const start = () => {
-  // TODO: hydrate all from sqlite tables
-  // applySnapshot(rootStore, {})
-
   context().router.registerRoute(pluginRoute())
 }
 

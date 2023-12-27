@@ -37,7 +37,7 @@ export function TablePagination<TData>({ table, showSelected }: TablePaginationP
               <Select.Value placeholder={table.getState().pagination.pageSize} />
             </Select.Trigger>
             <Select.Content side="top">
-              {[25, 50, 75, 100].map((pageSize) => (
+              {[10, 25, 50, 75, 100].map((pageSize) => (
                 <Select.Item key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </Select.Item>
