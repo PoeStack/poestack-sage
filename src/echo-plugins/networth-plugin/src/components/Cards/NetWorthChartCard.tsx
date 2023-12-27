@@ -83,7 +83,9 @@ const NetWorthChartCard: React.FC<NetWorthChartCardProps> = ({ className }) => {
           <Card.Header className="flex flex-row justify-between items-center p-3">
             <div className="flex flex-row items-center">
               <LineChartIcon />
-              <Card.Title className="text-base pl-2">{t('title.netWorthHistoryCard')}</Card.Title>
+              <Card.Title className="text-base pl-2 uppercase">
+                {t('title.netWorthHistoryCard')}
+              </Card.Title>
             </div>
 
             {open ? (

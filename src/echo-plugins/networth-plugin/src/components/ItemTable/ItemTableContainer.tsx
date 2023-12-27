@@ -43,11 +43,7 @@ const ItemTableContainer: React.FC = () => {
     return filterFns.includesString(row, columnId, filterValue, addMeta)
   }
 
-  return (
-    <div className="w-full px-8 py-4 border rounded-md">
-      <ItemTable columns={columns} data={data} globalFilterFn={fuzzyFilter} />
-    </div>
-  )
+  return <ItemTable columns={columns} data={data} globalFilterFn={fuzzyFilter} />
 }
 
 export default observer(ItemTableContainer)

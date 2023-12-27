@@ -3,12 +3,12 @@ import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import ToolbarContainer from '../../components/Toolbar/ToolbarContainer'
 import NetWorthChartCard from '../../components/Cards/NetWorthChartCard'
-import ItemTableContainer from '../../components/ItemTable/ItemTableContainer'
 import NetWorthSummaryCard from '../../components/Cards/NetWorthSummaryCard'
 import IncomeSummaryCard from '../../components/Cards/IncomeSummaryCard'
 import SnapshotSummaryCard from '../../components/Cards/SnapshotSummaryCard'
 import TabBreakdownChartCard from '../../components/Cards/TabBreakdownChartCard'
 import MainContentSkeleton from '../../components/LoadingStates/MainContentSkeleton'
+import ItemTableCard from '../../components/Cards/ItemTableCard'
 
 const NetWorth = () => {
   const { accountStore, uiStateStore } = useStore()
@@ -32,9 +32,7 @@ const NetWorth = () => {
             <NetWorthChartCard className="lg:col-span-2" />
             <TabBreakdownChartCard />
           </div>
-          <div className="flex flex-row">
-            <ItemTableContainer />
-          </div>
+          <ItemTableCard />
         </main>
       )}
     </div>
