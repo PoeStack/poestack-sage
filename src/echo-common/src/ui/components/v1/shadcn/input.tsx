@@ -36,7 +36,7 @@ const InputWithIcons = React.forwardRef<HTMLInputElement, InputProps>(
 
     if (startIcon || endIcon) {
       return (
-        <div className={cn('relative flex items-center')} ref={outerRef}>
+        <div className="relative flex items-center w-full" ref={outerRef}>
           {startIcon && <div className="absolute left-0">{startIcon}</div>}
           {input}
           {endIcon && (
