@@ -36,7 +36,12 @@ const ItemTable = <TData, TValue>({
   const { t } = useTranslation()
   const { accountStore } = useStore()
   const tableState = accountStore.activeAccount.networthTableView
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [sorting, setSorting] = React.useState<SortingState>([
+    {
+      desc: true,
+      id: 'total'
+    }
+  ])
   // const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
 
