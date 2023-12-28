@@ -35,6 +35,8 @@
     "name": "Name",
     "tab": "Tabs",
     "quantity": "Quantity",
+    "priceLast7Days": "Price last 7 days",
+    "priceLast24Hours": "Price last 24 hours",
     "price": "Price",
     "total": "Total value",
     "cumulative": "Cumulative"

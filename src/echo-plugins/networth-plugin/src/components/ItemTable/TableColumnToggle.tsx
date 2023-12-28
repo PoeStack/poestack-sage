@@ -3,9 +3,9 @@ import { ChevronDown } from 'lucide-react'
 import { Table } from '@tanstack/react-table'
 
 import { DropdownMenu, Button } from 'echo-common/components-v1'
-import { observer } from 'mobx-react'
-import { useStore } from '../../hooks/useStore'
 import { useTranslation } from 'react-i18next'
+import { useStore } from '../../hooks/useStore'
+import { observer } from 'mobx-react'
 
 interface TableColumnToggleProps<TData> {
   table: Table<TData>

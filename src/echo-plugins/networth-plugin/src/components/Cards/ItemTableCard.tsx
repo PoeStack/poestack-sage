@@ -14,7 +14,13 @@ const ItemTableCard: React.FC<ItemTableCardProps> = ({ className }) => {
   const [open, setOpen] = useState(false)
 
   return (
-    <Collapsible open={open} onOpenChange={setOpen} className={className}>
+    <Collapsible
+      open={open}
+      onOpenChange={(open) => {
+        setOpen(open)
+      }}
+      className={className}
+    >
       <Card className="w-full">
         <Collapsible.Trigger className="!mt-0 cursor-pointer" asChild>
           <Card.Header className="flex flex-row justify-between items-center p-3">
@@ -30,8 +36,7 @@ const ItemTableCard: React.FC<ItemTableCardProps> = ({ className }) => {
             )}
           </Card.Header>
         </Collapsible.Trigger>
-        {/* Keep the table mounted */}
-        <Collapsible.Content forceMount={true} hidden={!open}>
+        <Collapsible.Content>
           <Card.Content className="w-full px-8 py-4">
             <ItemTableContainer />
           </Card.Content>

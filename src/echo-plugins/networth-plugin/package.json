@@ -23,7 +23,7 @@
     "@libsql/client": "^0.4.0-pre.2",
     "@react-rxjs/core": "^0.10.7",
     "@react-rxjs/utils": "^0.9.7",
-    "@tanstack/react-table": "^8.10.7",
+    "@tanstack/react-table": "^8.11.2",
     "dayjs": "1.11.10",
     "drizzle-orm": "^0.29.0",
     "echo-common": "file:../../echo-common",

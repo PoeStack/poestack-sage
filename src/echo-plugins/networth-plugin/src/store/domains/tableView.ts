@@ -12,7 +12,14 @@ import {
 } from 'mobx-keystone'
 import { ItemTableSelectionType } from '../../interfaces/item-table-selection.interface'
 import { StashTab } from './stashtab'
-import { OnChangeFn, PaginationState, Updater } from '@tanstack/react-table'
+import {
+  ColumnSizingState,
+  OnChangeFn,
+  PaginationState,
+  SortingState,
+  Updater,
+  VisibilityState
+} from '@tanstack/react-table'
 import { PersistWrapper } from '../../utils/persist.utils'
 
 export const tableStashTabRef = rootRef<StashTab>('nw/tableStashTabRef', {
@@ -26,6 +33,9 @@ export const tableStashTabRef = rootRef<StashTab>('nw/tableStashTabRef', {
 interface ITableView {
   setPagination: OnChangeFn<PaginationState>
   setGlobalFilter: OnChangeFn<string>
+  setSorting: OnChangeFn<SortingState>
+  setColumnVisibility: OnChangeFn<VisibilityState>
+  setColumnSizing: OnChangeFn<ColumnSizingState>
 }
 
 @model('nw/tableview')
@@ -35,6 +45,14 @@ export class TableView
       {
         id: idProp,
         globalFilter: tProp(types.string, ''),
+        sorting: prop<SortingState>(() => [
+          {
+            desc: true,
+            id: 'total'
+          }
+        ]),
+        columnVisibility: prop<VisibilityState>(() => ({})),
+        columnSizing: prop<ColumnSizingState>(() => ({})),
         pageSize: tProp(25).withSetter(),
         pageIndex: tProp(0).withSetter(),
         showPricedItems: tProp(true).withSetter(),
@@ -72,6 +90,39 @@ export class TableView
       globalFilter = updaterOrValue
     }
     this.globalFilter = globalFilter
+  }
+
+  @modelAction
+  setSorting(updaterOrValue: Updater<SortingState>) {
+    let sorting: SortingState
+    if (typeof updaterOrValue === 'function') {
+      sorting = updaterOrValue(this.sorting)
+    } else {
+      sorting = updaterOrValue
+    }
+    this.sorting = sorting
+  }
+
+  @modelAction
+  setColumnVisibility(updaterOrValue: Updater<VisibilityState>) {
+    let columnVisibility: VisibilityState
+    if (typeof updaterOrValue === 'function') {
+      columnVisibility = updaterOrValue(this.columnVisibility)
+    } else {
+      columnVisibility = updaterOrValue
+    }
+    this.columnVisibility = columnVisibility
+  }
+
+  @modelAction
+  setColumnSizing(updaterOrValue: Updater<ColumnSizingState>) {
+    let columnSizing: ColumnSizingState
+    if (typeof updaterOrValue === 'function') {
+      columnSizing = updaterOrValue(this.columnSizing)
+    } else {
+      columnSizing = updaterOrValue
+    }
+    this.columnSizing = columnSizing
   }
 
   @computed

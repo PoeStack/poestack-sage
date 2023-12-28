@@ -2,13 +2,18 @@ import { ColumnDef } from '@tanstack/react-table'
 import { rarityColors, currencyChangeColors } from '../../assets/theme'
 import { getRarity, parseTabNames } from '../../utils/item.utils'
 import { ActionTooltip } from 'echo-common/components-v1'
-import { cn } from 'echo-common'
+import { SageValuation, cn } from 'echo-common'
 import { CurrencySwitch } from '../../store/settingStore'
 import { IPricedItem } from '../../interfaces/priced-item.interface'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import { TableColumnHeader } from './ColumnHeader'
 import CurrencyDisplay from '../CurrencyDisplay/CurrencyDisplay'
+import { baseChartConfig } from '../Cards/baseChartConfig'
+import { useMemo, useRef } from 'react'
+import { formatValue } from '../../utils/currency.utils'
+import * as Highcharts from 'highcharts'
+import HighchartsReact from 'highcharts-react-official'
 
 type PricedItem = keyof IPricedItem | 'cumulative'
 
@@ -21,7 +26,7 @@ export function itemIcon(options: {
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
     accessorKey,
-    minSize: 100,
+    // minSize: 100,
     enableSorting: false,
     enableGlobalFilter: true,
     cell: ({ row }) => {
@@ -39,7 +44,8 @@ export function itemName(options: {
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
-    minSize: 120,
+    // minSize: 120,
+    size: 450,
     accessorKey,
     enableSorting: true,
     enableGlobalFilter: true,
@@ -101,10 +107,31 @@ export function itemQuantity(options: {
     accessorKey,
     enableSorting: true,
     enableGlobalFilter: false,
-    maxSize: 80,
+    // maxSize: 80,
     cell: ({ row }) => {
       const value = row.getValue<number>(accessorKey)
       return <ItemQuantityCell quantity={value} diff={diff} />
+    }
+  }
+}
+
+export function sparkLine(options: {
+  accessorKey: PricedItem
+  header: string
+}): ColumnDef<IPricedItem> {
+  const { accessorKey, header } = options
+
+  return {
+    header: ({ column }) => <TableColumnHeader column={column} title={header} align="right" />,
+    accessorKey,
+    enableSorting: true,
+    enableGlobalFilter: false,
+    // size: 190,
+    // minSize: 190,
+    // maxSize: 190,
+    cell: ({ row }) => {
+      const value = row.getValue<SageValuation>(accessorKey)
+      return <SparklineCell valuation={value} />
     }
   }
 }
@@ -209,9 +236,10 @@ const ItemQuantityCell = ({ quantity, diff }: ItemQuantityCellProps) => {
   return (
     <div
       className={cn(
-        'font-bold text-right',
-        diff && quantity > 0 && `text-[${currencyChangeColors.positive}]`,
-        diff && quantity < 0 && `text-[${currencyChangeColors.negative}]`
+        'text-right',
+        diff && 'font-semibold',
+        diff && quantity > 0 && `text-green-700`,
+        diff && quantity < 0 && `text-red-800`
       )}
     >
       {diff && quantity > 0 ? '+ ' : ''}
@@ -242,3 +270,123 @@ const ItemValueCellComponent = ({ value, showChange, toCurrency }: ItemValueCell
 }
 
 const ItemValueCell = observer(ItemValueCellComponent)
+
+type SparklineCellProps = {
+  valuation?: SageValuation
+}
+
+const SparklineCell = ({ valuation }: SparklineCellProps) => {
+  const data = useMemo(() => {
+    if (!valuation) return
+    return valuation.history.primaryValueHourly.map((value, i) => {
+      const format = formatValue(value, 'chaos')
+      return [i + 1, format.value]
+    })
+  }, [valuation])
+
+  const chartConfig: Highcharts.Options = useMemo(
+    () => ({
+      ...baseChartConfig,
+      series: [
+        {
+          type: 'area',
+          showInLegend: false,
+          lineColor: 'hsl(var(--muted-foreground))',
+          fillOpacity: 0.5,
+          fillColor: {
+            linearGradient: {
+              x1: 0,
+              y1: 0,
+              x2: 0,
+              y2: 1
+            },
+            stops: [
+              [0, 'hsla(var(--muted), 1)'],
+              [0.5, 'hsla(var(--muted), 0.5)'],
+              [1, 'hsla(var(--muted), 0.2)']
+            ]
+          },
+          marker: {
+            fillColor: 'hsl(var(--muted-foreground))',
+            enabled: false
+          },
+          states: {
+            hover: {
+              enabled: false
+            }
+          },
+          animation: true,
+          data: data
+        }
+      ],
+      chart: {
+        ...baseChartConfig.chart,
+        height: 25, // 25,
+        width: 90
+      },
+      boost: {
+        useGPUTranslations: true
+      },
+      title: {
+        text: undefined
+      },
+      yAxis: {
+        ...baseChartConfig.yAxis,
+        height: 25,
+        visible: false
+      },
+      xAxis: {
+        ...baseChartConfig.xAxis,
+        height: 90,
+        visible: false
+      },
+      tooltip: {
+        ...baseChartConfig.tooltip,
+        enabled: false
+      }
+    }),
+    [data]
+  )
+
+  const chartComponentRef = useRef<HighchartsReact.RefObject>(null)
+
+  const totalChange = useMemo(() => {
+    if (!valuation) return 0
+    // Remove indexes
+    const history = valuation.history.primaryValueHourly.slice()
+    if (history.length < 2) return 0
+    let i = history.length
+    let indexToUse = history.length
+    while (i--) {
+      if (history[i]) {
+        indexToUse = i
+        break
+      }
+    }
+    if (indexToUse === 0) return 0
+
+    return (history[indexToUse] / history[0] - 1) * 100
+  }, [valuation])
+
+  return (
+    <>
+      {data && (
+        <div className="flex flex-row justify-between">
+          <HighchartsReact highcharts={Highcharts} options={chartConfig} ref={chartComponentRef} />
+          <span
+            className={cn(
+              'text-right whitespace-nowrap',
+              totalChange > 0 && `font-semibold text-green-700`,
+              totalChange < 0 && `font-semibold text-red-800`
+            )}
+          >
+            {totalChange.toLocaleString(undefined, {
+              maximumFractionDigits: 2
+            })}{' '}
+            %
+          </span>
+        </div>
+      )}
+    </>
+  )
+}
