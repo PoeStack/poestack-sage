@@ -1,4 +1,4 @@
-import { Toast } from '@/components-v1/shadcn/toast'
+import { Toast } from './toast'
 import { useToast } from '../hooks/use-toast'
 
 export function Toaster() {

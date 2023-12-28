@@ -43,7 +43,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.49.2",
-    "react-i18next": "^13.5.0",
+    "react-i18next": "^13.4.1",
     "rxjs": "^7.8.1",
     "sage-common": "file:../../sage-common",
     "ts-ratchet": "file:../../ts-ratchet",

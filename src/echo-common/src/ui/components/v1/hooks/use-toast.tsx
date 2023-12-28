@@ -1,7 +1,7 @@
 // Inspired by react-hot-toast library
 import * as React from 'react'
 
-import type { ToastActionElement, ToastProps } from '@/components-v1/shadcn/toast'
+import type { ToastActionElement, ToastProps } from '../shadcn/toast'
 
 // For rxjs it makes sense to show multiple errors
 const TOAST_LIMIT = 3
