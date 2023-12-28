@@ -11,7 +11,11 @@
     "outDir": "./dist/esm",
     "declaration": true,
     "jsx": "react-jsx",
-    "sourceMap": true
+    "sourceMap": true,
+    "paths": {
+      "@/components-v1/*": ["./src/ui/components/v1/*"],
+      "@/lib/utils": ["./src/ui/lib/utils"]
+    }
   },
   "include": ["./src", "./test"]
 }

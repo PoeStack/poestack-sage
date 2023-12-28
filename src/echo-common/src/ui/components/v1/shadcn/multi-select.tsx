@@ -53,7 +53,7 @@ const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
     }, [onChange, selected])
 
     return (
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover open={open} onOpenChange={setOpen} modal>
         <Popover.Trigger asChild className={className}>
           <Button
             ref={ref}
