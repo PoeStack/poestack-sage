@@ -8,10 +8,7 @@ import {
 } from '../interfaces/stash.interface'
 import { v4 as uuidv4 } from 'uuid'
 import { IPricedItem } from '../interfaces/priced-item.interface'
-import { IItem } from '../interfaces/item.interface'
-import { IValuatedItem } from '../interfaces/snapshot.interface'
-import { StashTab } from '../store/domains/stashtab'
-import { SageValuation } from 'echo-common'
+import { EchoPoeItem } from 'echo-common'
 
 const rarities: (keyof Rarity)[] = [
   'normal', //0
@@ -202,7 +199,7 @@ export const createCompactTab = (stashTab: IStashTabNode | string): ICompactTab 
 }
 
 export function mapItemsToPricedItems(
-  valuation: IValuatedItem[],
+  valuation: EchoPoeItem[],
   stashTab: ICompactTab,
   percentile: number
 ): IPricedItem[] {
@@ -215,9 +212,9 @@ export function mapItemsToPricedItems(
 
     const mappedItem: IPricedItem = {
       uuid: uuidv4(),
-      tag: valuatedItem.group?.tag,
-      key: valuatedItem.group?.key,
-      hash: valuatedItem.group?.hash,
+      tag: valuatedItem.group?.primaryGroup.tag,
+      key: valuatedItem.group?.primaryGroup.key,
+      hash: valuatedItem.group?.primaryGroup.hash,
       itemId: item.id!,
       name:
         mapTier && item.frameType !== 3

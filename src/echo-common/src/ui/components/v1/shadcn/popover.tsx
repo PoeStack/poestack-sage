@@ -1,13 +1,13 @@
-'use client'
-
 import * as React from 'react'
 import * as PopoverPrimitive from '@radix-ui/react-popover'
 
-import { cn } from '../../../lib/utils'
+import { cn } from '@/lib/utils'
 
 const PopoverRoot = PopoverPrimitive.Root
 
 const PopoverTrigger = PopoverPrimitive.Trigger
+
+const PopoverAnchor = PopoverPrimitive.Anchor
 
 const PopoverContent = React.forwardRef<
   React.ElementRef<typeof PopoverPrimitive.Content>,
@@ -31,7 +31,9 @@ PopoverContent.displayName = PopoverPrimitive.Content.displayName
 export const Popover: typeof PopoverRoot & {
   Trigger: typeof PopoverTrigger
   Content: typeof PopoverContent
+  Anchor: typeof PopoverAnchor
 } = Object.assign(PopoverRoot, {
   Trigger: PopoverTrigger,
-  Content: PopoverContent
+  Content: PopoverContent,
+  Anchor: PopoverAnchor
 })
