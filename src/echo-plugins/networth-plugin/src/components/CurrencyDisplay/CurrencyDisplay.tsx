@@ -39,8 +39,8 @@ const CurrencyDisplay: React.FC<CurrencyDisplayProps> = ({
     <span
       className={cn(
         showChange && 'font-semibold',
-        showChange && parsedValue < 0 && `text-green-700`,
-        showChange && parsedValue > 0 && `text-red-800`
+        showChange && parsedValue > 0 && `text-green-700`,
+        showChange && parsedValue < 0 && `text-red-800`
       )}
     >
       {formattedValue}
