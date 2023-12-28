@@ -29,6 +29,9 @@ export function itemIcon(options: {
     // minSize: 100,
     enableSorting: false,
     enableGlobalFilter: true,
+    meta: {
+      headerWording: header
+    },
     cell: ({ row }) => {
       const value = row.getValue<string>(accessorKey)
       return <ItemIconCell value={value} frameType={row.original.frameType} />
@@ -49,6 +52,9 @@ export function itemName(options: {
     accessorKey,
     enableSorting: true,
     enableGlobalFilter: true,
+    meta: {
+      headerWording: header
+    },
     cell: ({ row }) => {
       const value = row.getValue<string>(accessorKey)
       return <ItemNameCell value={value} frameType={row.original.frameType} />
@@ -86,6 +92,9 @@ export function itemTabs(options: {
     accessorKey,
     enableSorting: true,
     enableGlobalFilter: true,
+    meta: {
+      headerWording: header
+    },
     accessorFn: (val) =>
       val.tab && typeof val.tab === 'object' ? parseTabNames(val.tab || []) : '',
     cell: ({ row }) => {
@@ -107,6 +116,9 @@ export function itemQuantity(options: {
     accessorKey,
     enableSorting: true,
     enableGlobalFilter: false,
+    meta: {
+      headerWording: header
+    },
     // maxSize: 80,
     cell: ({ row }) => {
       const value = row.getValue<number>(accessorKey)
@@ -126,6 +138,9 @@ export function sparkLine(options: {
     accessorKey,
     enableSorting: true,
     enableGlobalFilter: false,
+    meta: {
+      headerWording: header
+    },
     // size: 190,
     // minSize: 190,
     // maxSize: 190,
@@ -151,6 +166,9 @@ export function itemValue(options: {
     accessorKey,
     enableSorting: enableSorting ?? false,
     enableGlobalFilter: false,
+    meta: {
+      headerWording: header
+    },
     cell: ({ row, table }) => {
       let value = 0
       if (cumulative) {

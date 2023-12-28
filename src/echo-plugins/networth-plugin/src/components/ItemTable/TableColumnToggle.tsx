@@ -53,7 +53,7 @@ function TableColumnToggle<TData>({ table }: TableColumnToggleProps<TData>) {
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
-                {column.id}
+                {t(`columnTitle.${column.columnDef.meta?.headerWording}` as any)}
               </DropdownMenu.CheckboxItem>
             )
           })}
