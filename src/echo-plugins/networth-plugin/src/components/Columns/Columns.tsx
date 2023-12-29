@@ -26,7 +26,7 @@ export function itemIcon(options: {
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
     accessorKey,
-    // minSize: 100,
+    size: 60,
     enableSorting: false,
     enableGlobalFilter: true,
     meta: {
@@ -47,11 +47,10 @@ export function itemName(options: {
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
-    // minSize: 120,
-    size: 450,
     accessorKey,
     enableSorting: true,
     enableGlobalFilter: true,
+    size: 300,
     meta: {
       headerWording: header
     },
@@ -70,7 +69,6 @@ export function itemProps(options: {
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
-    // minSize: 120,
     accessorKey,
     accessorFn: (val) => {
       const hashProps = Object.entries(val.unsafeHashProperties || {})
@@ -104,7 +102,7 @@ export function itemProps(options: {
     },
     enableSorting: true,
     enableGlobalFilter: true,
-    size: 450,
+    size: 620,
     meta: {
       headerWording: header
     },
@@ -126,6 +124,7 @@ export function itemTabs(options: {
     accessorKey,
     enableSorting: true,
     enableGlobalFilter: true,
+    size: 180,
     meta: {
       headerWording: header
     },
@@ -150,6 +149,7 @@ export function itemQuantity(options: {
     accessorKey,
     enableSorting: true,
     enableGlobalFilter: false,
+    size: 110,
     meta: {
       headerWording: header
     },
@@ -193,9 +193,7 @@ export function sparkLine(options: {
     meta: {
       headerWording: header
     },
-    // size: 190,
-    // minSize: 130,
-    // maxSize: 190,
+    size: 180,
     cell: ({ row }) => {
       const value = row.original.valuation
       const totalChange = row.getValue<number>(accessorKey)
@@ -219,6 +217,7 @@ export function itemValue(options: {
     accessorKey,
     enableSorting: enableSorting ?? false,
     enableGlobalFilter: false,
+    size: 120,
     meta: {
       headerWording: header
     },
@@ -446,9 +445,9 @@ const SparklineCell = ({ valuation, totalChange }: SparklineCellProps) => {
       {data && (
         <div className="flex flex-row justify-between items-center">
           <HighchartsReact highcharts={Highcharts} options={chartConfig} ref={chartComponentRef} />
-          <span
+          <div
             className={cn(
-              'text-right whitespace-nowrap',
+              'text-right whitespace-nowrap pl-2',
               totalChange > 0 && `font-semibold text-green-700`,
               totalChange < 0 && `font-semibold text-red-800`
             )}
@@ -457,7 +456,7 @@ const SparklineCell = ({ valuation, totalChange }: SparklineCellProps) => {
               maximumFractionDigits: 2
             })}{' '}
             %
-          </span>
+          </div>
         </div>
       )}
     </>

@@ -17,7 +17,8 @@
     "saveProfile": "Save Profile",
     "createProfile": "Create Profile",
     "selectAll": "Select all",
-    "delete": "Delete"
+    "delete": "Delete",
+    "resetView": "Reset View"
   },
   "title": {
     "editProfile": "Edit Profile: {{name}}",

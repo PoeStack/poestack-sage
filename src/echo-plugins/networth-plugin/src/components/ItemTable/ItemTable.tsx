@@ -103,11 +103,11 @@ const ItemTable = <TData, TValue>({
     }
     return colSizes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [table.getState().columnSizingInfo])
+  }, [table.getState().columnSizing])
 
   return (
     <div>
-      <div className="flex items-center pb-4">
+      <div className="flex items-center pb-4 space-x-2">
         <DebouncedInput
           value={tableState.globalFilter ?? ''}
           onChange={(value) => tableState.setGlobalFilter(String(value))}
@@ -130,6 +130,18 @@ const ItemTable = <TData, TValue>({
             </Button>
           }
         />
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            table.resetSorting()
+            table.resetColumnOrder()
+            table.resetColumnSizing()
+            table.resetColumnVisibility()
+          }}
+        >
+          {t('action.resetView')}
+        </Button>
         <TableColumnToggle table={table} />
       </div>
       <div className="block max-w-full rounded-md border">
