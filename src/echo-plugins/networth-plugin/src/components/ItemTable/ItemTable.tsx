@@ -90,6 +90,14 @@ const ItemTable = <TData, TValue>({
       pagination: tableState.pagination,
       globalFilter: tableState.globalFilter,
       columnSizing: localColumnSizing
+    },
+    initialState: {
+      sorting: [
+        {
+          desc: true,
+          id: 'total'
+        }
+      ]
     }
   })
 
