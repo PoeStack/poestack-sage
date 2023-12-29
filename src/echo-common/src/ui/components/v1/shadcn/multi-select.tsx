@@ -35,7 +35,7 @@ const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
     // on delete key press, remove last selected item
     React.useEffect(() => {
       const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Backspace' && selected.length > 0) {
+        if (open && e.key === 'Backspace' && selected.length > 0) {
           onChange(selected.filter((_, index) => index !== selected.length - 1))
         }
 
@@ -50,10 +50,10 @@ const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
       return () => {
         document.removeEventListener('keydown', handleKeyDown)
       }
-    }, [onChange, selected])
+    }, [onChange, open, selected])
 
     return (
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover open={open} onOpenChange={setOpen} modal={true}>
         <Popover.Trigger asChild className={className}>
           <Button
             ref={ref}
@@ -69,31 +69,23 @@ const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                   variant="outline"
                   key={item.value}
                   className="flex items-center gap-1 group-hover:bg-background"
-                  onClick={() => handleUnselect(item)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleUnselect(item)
+                    }
+                  }}
+                  onMouseDown={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    handleUnselect(item)
+                  }}
                 >
                   {item.label}
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="icon"
-                    className="border-none"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleUnselect(item)
-                      }
-                    }}
-                    onMouseDown={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                    }}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      handleUnselect(item)
-                    }}
-                  >
-                    <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
-                  </Button>
+                  <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
                 </Badge>
               ))}
               {selected.length === 0 && <span>{props.placeholder ?? 'Select ...'}</span>}
@@ -105,31 +97,33 @@ const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
           <Command className={className}>
             <Command.Input placeholder="Search ..." />
             <Command.Empty>No item found.</Command.Empty>
-            <Command.Group className="max-h-64 overflow-auto">
-              {options.map((option) => (
-                <Command.Item
-                  key={option.value}
-                  onSelect={() => {
-                    onChange(
-                      selected.some((item) => item.value === option.value)
-                        ? selected.filter((item) => item.value !== option.value)
-                        : [...selected, option]
-                    )
-                    setOpen(true)
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      'mr-2 h-4 w-4',
-                      selected.some((item) => item.value === option.value)
-                        ? 'opacity-100'
-                        : 'opacity-0'
-                    )}
-                  />
-                  {option.label}
-                </Command.Item>
-              ))}
-            </Command.Group>
+            <Command.List>
+              <Command.Group className="max-h-64 overflow-auto">
+                {options.map((option) => (
+                  <Command.Item
+                    key={option.value}
+                    onSelect={() => {
+                      onChange(
+                        selected.some((item) => item.value === option.value)
+                          ? selected.filter((item) => item.value !== option.value)
+                          : [...selected, option]
+                      )
+                      setOpen(true)
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        'mr-2 h-4 w-4',
+                        selected.some((item) => item.value === option.value)
+                          ? 'opacity-100'
+                          : 'opacity-0'
+                      )}
+                    />
+                    {option.label}
+                  </Command.Item>
+                ))}
+              </Command.Group>
+            </Command.List>
           </Command>
         </Popover.Content>
       </Popover>

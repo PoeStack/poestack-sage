@@ -1,5 +1,3 @@
-'use client'
-
 import { Toast } from './toast'
 import { useToast } from '../hooks/use-toast'
 
