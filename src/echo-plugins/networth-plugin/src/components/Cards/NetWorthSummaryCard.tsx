@@ -54,9 +54,9 @@ const NetWorthSummaryCard: React.FC<NetWorthSummaryCardProps> = ({ className }) 
             y2: 1
           },
           stops: [
-            [0, 'hsla(var(--muted), 1)'],
-            [0.5, 'hsla(var(--muted), 0.5)'],
-            [1, 'hsla(var(--muted), 0.2)']
+            [0, 'hsl(var(--muted) / 1)'],
+            [0.5, 'hsl(var(--muted) / 0.5)'],
+            [1, 'hsl(var(--muted) / 0.2)']
           ]
         },
         marker: {
