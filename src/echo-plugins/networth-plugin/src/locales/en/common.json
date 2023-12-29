@@ -33,6 +33,7 @@
   "columnTitle": {
     "icon": "Icon",
     "name": "Name",
+    "properties": "Pricing Properties",
     "tab": "Tabs",
     "quantity": "Quantity",
     "priceLast7Days": "Price last 7 days",
@@ -48,7 +49,7 @@
     "showPriced": "Show Priced",
     "showUnpriced": "Show Unpriced",
     "toggleColumns": "Toggle columns",
-    "searchItemsPlaceholder": "Search name or tab... Regex support...",
+    "searchItemsPlaceholder": "Search name, tab or properties... Regex support...",
     "noResults": "No results.",
     "selectProfile": "Select profile",
     "addProfile": "Add Profile",

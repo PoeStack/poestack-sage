@@ -4,6 +4,7 @@ import {
   itemName,
   itemQuantity,
   itemTabs,
+  itemProps,
   itemValue,
   sparkLine
 } from '../Columns/Columns'
@@ -18,6 +19,7 @@ export const itemTableColumns = (): ColumnDef<IPricedItem>[] => [
     accessorKey: 'name',
     header: 'name'
   }),
+  itemProps({ accessorKey: 'unsafeHashProperties', header: 'properties' }),
   itemTabs({
     accessorKey: 'tab',
     header: 'tab'

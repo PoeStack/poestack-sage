@@ -1,4 +1,4 @@
-import { ColumnDef } from '@tanstack/react-table'
+import { ColumnDef, filterFns } from '@tanstack/react-table'
 import { rarityColors, currencyChangeColors } from '../../assets/theme'
 import { getRarity, parseTabNames } from '../../utils/item.utils'
 import { SageValuation, cn } from 'echo-common'
@@ -13,6 +13,7 @@ import { useMemo, useRef } from 'react'
 import { formatValue } from '../../utils/currency.utils'
 import * as Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
+import { Badge } from 'echo-common/components-v1'
 
 type PricedItem = keyof IPricedItem | 'cumulative'
 
@@ -61,24 +62,58 @@ export function itemName(options: {
   }
 }
 
-// TODO:
-// export function itemProps(options: {
-//     accessorKey: PricedItem
-//     header: string
-//   }): ColumnDef<IPricedItem> {
-//     const { header, accessorKey } = options
+export function itemProps(options: {
+  accessorKey: PricedItem
+  header: string
+}): ColumnDef<IPricedItem> {
+  const { header, accessorKey } = options
 
-//     return {
-//       header,
-//       minSize: 120,
-//       accessorKey,
-//       cell: ({ row }) => {
-//         const value = row.getValue<string>(accessorKey)
-//         const frameType = row.getValue<number>('frameType')
-//         return <ItemNameCell value={value} frameType={frameType} />
-//       }
-//     }
-//   }
+  return {
+    header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
+    // minSize: 120,
+    accessorKey,
+    accessorFn: (val) => {
+      const hashProps = Object.entries(val.unsafeHashProperties || {})
+        .filter(([name, value]) => {
+          const excludeNameByIncludes = (name: string) =>
+            !['mods', 'Mods'].some((key) => name.includes(key))
+
+          const excludeFalseValues = (value: any) => {
+            if (!value || value === '0') return false
+            return true
+          }
+          return excludeNameByIncludes(name) && excludeFalseValues(value)
+        })
+        .map(([name, value]) => {
+          let displayValue = `${name}: ${value}`
+          // Name only
+          if (value === true) {
+            displayValue = name
+          }
+          return { name, value, displayValue }
+        })
+
+      if (val.key && val.name.toLowerCase() !== val.key.toLowerCase()) {
+        // Used for contract or cluster jewels
+        hashProps.push({ name: val.name, value: val.key, displayValue: val.key })
+      }
+
+      hashProps.sort((a, b) => a.displayValue.length - b.displayValue.length)
+      // Filterfn does not work, when an object is returned
+      return hashProps.map((p) => `${p.name};;${p.displayValue}`).join(';;;')
+    },
+    enableSorting: true,
+    enableGlobalFilter: true,
+    size: 450,
+    meta: {
+      headerWording: header
+    },
+    cell: ({ row }) => {
+      const value = row.getValue<string>(accessorKey)
+      return <ItemPropsCell value={value} />
+    }
+  }
+}
 
 export function itemTabs(options: {
   accessorKey: PricedItem
@@ -136,7 +171,6 @@ export function sparkLine(options: {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="right" />,
     accessorKey,
     accessorFn: (pricedItem) => {
-      console.log('accessorFn', pricedItem)
       const valuation = pricedItem.valuation
       if (!valuation) return 0
       // Remove indexes
@@ -160,7 +194,7 @@ export function sparkLine(options: {
       headerWording: header
     },
     // size: 190,
-    // minSize: 190,
+    // minSize: 130,
     // maxSize: 190,
     cell: ({ row }) => {
       const value = row.original.valuation
@@ -246,6 +280,30 @@ const ItemNameCell = ({ value, frameType }: ItemNameCellProps) => {
       <span className={`whitespace-nowrap overflow-hidden text-ellipsis text-[${rarityColor}]`}>
         {value}
       </span>
+    </div>
+  )
+}
+
+type ItemPropsCellProps = {
+  value: string
+}
+
+const ItemPropsCell = ({ value }: ItemPropsCellProps) => {
+  const hashProps = useMemo(() => {
+    if (!value) return []
+    return value.split(';;;').map((v) => {
+      const keyVal = v.split(';;')
+      return { name: keyVal[0], value: keyVal[1] }
+    })
+  }, [value])
+
+  return (
+    <div className="space-x-1 truncate hover:overflow-x-auto hover:text-clip no-scrollbar">
+      {hashProps.map(({ name, value }) => (
+        <Badge key={name} className="capitalize">
+          {value}
+        </Badge>
+      ))}
     </div>
   )
 }
@@ -386,7 +444,7 @@ const SparklineCell = ({ valuation, totalChange }: SparklineCellProps) => {
   return (
     <>
       {data && (
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row justify-between items-center">
           <HighchartsReact highcharts={Highcharts} options={chartConfig} ref={chartComponentRef} />
           <span
             className={cn(

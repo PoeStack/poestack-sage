@@ -133,7 +133,7 @@ const ItemTable = <TData, TValue>({
         <TableColumnToggle table={table} />
       </div>
       <div className="block max-w-full rounded-md border">
-        <Table style={{ ...columnSizeVars }} className="w-full">
+        <Table style={{ ...columnSizeVars }} className="w-full table table-fixed">
           <Table.Header>
             {table.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id} className="divide-x">
@@ -146,7 +146,7 @@ const ItemTable = <TData, TValue>({
                         position: 'relative',
                         width: `calc(var(--header-${header?.id}-size) * 1px)`
                       }}
-                      className="h-10 px-[14px]"
+                      className="h-10 px-[14px] truncate"
                     >
                       {header.isPlaceholder
                         ? null
@@ -160,7 +160,7 @@ const ItemTable = <TData, TValue>({
                             headerGroup.headers.length - 1 === i && 'right-0 w-1',
                             header.column.getIsResizing() && 'bg-muted'
                           )}
-                        ></div>
+                        />
                       )}
                     </Table.Head>
                   )
@@ -181,7 +181,7 @@ const ItemTable = <TData, TValue>({
                     <Table.Cell
                       key={cell.id}
                       style={{ width: `calc(var(--col-${cell.column.id}-size) * 1px)` }}
-                      className="h-10 py-[6px] px-[14px]"
+                      className="h-10 py-[6px] px-[14px] truncate"
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </Table.Cell>

@@ -25,7 +25,6 @@ const ItemTableContainer: React.FC = () => {
       const rarity = getRarityIdentifier(filterValue?.toString()?.toLowerCase())
       return rarity >= 0 && row.original.frameType === rarity
     }
-
     if (columnId === 'name') {
       let itemNameRegex = new RegExp('', 'i')
       try {

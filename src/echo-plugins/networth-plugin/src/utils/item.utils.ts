@@ -215,6 +215,7 @@ export function mapItemsToPricedItems(
       tag: valuatedItem.group?.primaryGroup.tag,
       key: valuatedItem.group?.primaryGroup.key,
       hash: valuatedItem.group?.primaryGroup.hash,
+      unsafeHashProperties: valuatedItem.group?.primaryGroup.unsafeHashProperties,
       itemId: item.id!,
       name:
         mapTier && item.frameType !== 3

@@ -90,4 +90,8 @@
   display: none;
 }
 
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 .bg-gradient { background: var(--gradient) }
