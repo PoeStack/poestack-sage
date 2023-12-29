@@ -48,7 +48,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
           <div className="py-2 px-2 h-full flex justify-center items-center gap-2.5">
             <Button
               disabled={!readyToSnapshot}
-              className="border rounded h-8 p-1 pr-1.5 space-x-1"
+              className="border rounded h-8 p-1 pr-1.5 space-x-1 bg-gradient hover:brightness-90"
               onClick={() => handleSnapshot()}
             >
               <RefreshCcw className={cn('h-4 w-4', isSnapshotting && 'animate-spin')} />

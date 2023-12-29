@@ -23,7 +23,7 @@ const ItemTableCard: React.FC<ItemTableCardProps> = ({ className }) => {
             </Card.Header>
           </Accordion.Trigger>
           <Accordion.Content>
-            <Card.Content className="p-2 border-t">
+            <Card.Content className="p-2 pt-4 border-t">
               <ItemTableContainer />
             </Card.Content>
           </Accordion.Content>
