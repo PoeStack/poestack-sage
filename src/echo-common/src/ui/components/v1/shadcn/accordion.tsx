@@ -49,11 +49,11 @@ const AccordionContent = React.forwardRef<
 AccordionContent.displayName = AccordionPrimitive.Content.displayName
 
 export const Accordion: typeof AccordionRoot & {
-  Item555: typeof AccordionItem
+  Item: typeof AccordionItem
   Trigger: typeof AccordionTrigger
   Content: typeof AccordionContent
 } = Object.assign(AccordionRoot, {
-  Item555: AccordionItem,
+  Item: AccordionItem,
   Trigger: AccordionTrigger,
   Content: AccordionContent
 })
