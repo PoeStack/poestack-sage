@@ -12,7 +12,9 @@ include(
   "src:sage-aws-cdk",
   "src:sage-docs",
   "src:sage-common",
+  "src:tactics-image-gen",
   "src:sage-ts-tooling",
+  "src:tactics-api"
 )
 
 File("src/echo-plugin-examples").listFiles()?.forEach {

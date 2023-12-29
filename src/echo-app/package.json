@@ -94,8 +94,7 @@
     "ts-ratchet": "file:../ts-ratchet",
     "typescript": "^5.2.2",
     "uuid": "^9.0.1",
-    "zod": "^3.22.4",
-    "networth-plugin": "file:../echo-plugins/networth-plugin"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^1.0.1",
