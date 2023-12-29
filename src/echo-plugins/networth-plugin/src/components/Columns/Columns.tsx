@@ -1,7 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { rarityColors, currencyChangeColors } from '../../assets/theme'
 import { getRarity, parseTabNames } from '../../utils/item.utils'
-import { ActionTooltip } from 'echo-common/components-v1'
 import { SageValuation, cn } from 'echo-common'
 import { CurrencySwitch } from '../../store/settingStore'
 import { IPricedItem } from '../../interfaces/priced-item.interface'
@@ -244,11 +243,9 @@ const ItemNameCell = ({ value, frameType }: ItemNameCellProps) => {
 
   return (
     <div className="flex items-center justify-between">
-      <ActionTooltip label={value || ''} side="bottom">
-        <span className={`whitespace-nowrap overflow-hidden text-ellipsis text-[${rarityColor}]`}>
-          {value}
-        </span>
-      </ActionTooltip>
+      <span className={`whitespace-nowrap overflow-hidden text-ellipsis text-[${rarityColor}]`}>
+        {value}
+      </span>
     </div>
   )
 }
@@ -258,11 +255,7 @@ type ItemTabsCellProps = {
 }
 
 const ItemTabsCell = ({ value }: ItemTabsCellProps) => {
-  return (
-    <ActionTooltip label={value} side="bottom">
-      <span className="whitespace-nowrap overflow-hidden text-ellipsis">{value}</span>
-    </ActionTooltip>
-  )
+  return <span className="whitespace-nowrap overflow-hidden text-ellipsis">{value}</span>
 }
 
 type ItemQuantityCellProps = {
