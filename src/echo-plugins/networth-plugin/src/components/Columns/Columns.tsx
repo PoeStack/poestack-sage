@@ -340,7 +340,8 @@ const SparklineCell = ({ valuation }: SparklineCellProps) => {
       chart: {
         ...baseChartConfig.chart,
         height: 25, // 25,
-        width: 90
+        width: 90,
+        backgroundColor: '' // Dynamic for hover effects
       },
       boost: {
         useGPUTranslations: true
