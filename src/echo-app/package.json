@@ -54,7 +54,7 @@
     "@radix-ui/react-tooltip": "^1.0.7",
     "@react-rxjs/core": "^0.10.7",
     "@react-rxjs/utils": "^0.9.7",
-    "@tanstack/react-table": "^8.10.7",
+    "@tanstack/react-table": "^8.11.2",
     "@types/mock-fs": "^4.13.4",
     "axios": "^1.6.1",
     "body-parser": "^1.20.2",
