@@ -69,31 +69,23 @@ const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                   variant="outline"
                   key={item.value}
                   className="flex items-center gap-1 group-hover:bg-background"
-                  onClick={() => handleUnselect(item)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleUnselect(item)
+                    }
+                  }}
+                  onMouseDown={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    handleUnselect(item)
+                  }}
                 >
                   {item.label}
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="icon"
-                    className="border-none"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleUnselect(item)
-                      }
-                    }}
-                    onMouseDown={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                    }}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      handleUnselect(item)
-                    }}
-                  >
-                    <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
-                  </Button>
+                  <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
                 </Badge>
               ))}
               {selected.length === 0 && <span>{props.placeholder ?? 'Select ...'}</span>}
