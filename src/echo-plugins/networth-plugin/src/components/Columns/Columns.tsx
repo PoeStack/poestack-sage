@@ -136,6 +136,25 @@ export function sparkLine(options: {
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="right" />,
     accessorKey,
+    accessorFn: (pricedItem) => {
+      console.log('accessorFn', pricedItem)
+      const valuation = pricedItem.valuation
+      if (!valuation) return 0
+      // Remove indexes
+      const history = valuation.history.primaryValueHourly.slice()
+      if (history.length < 2) return 0
+      let i = history.length
+      let indexToUse = history.length
+      while (i--) {
+        if (history[i]) {
+          indexToUse = i
+          break
+        }
+      }
+      if (indexToUse === 0) return 0
+
+      return (history[indexToUse] / history[0] - 1) * 100
+    },
     enableSorting: true,
     enableGlobalFilter: false,
     meta: {
@@ -145,8 +164,9 @@ export function sparkLine(options: {
     // minSize: 190,
     // maxSize: 190,
     cell: ({ row }) => {
-      const value = row.getValue<SageValuation>(accessorKey)
-      return <SparklineCell valuation={value} />
+      const value = row.original.valuation
+      const totalChange = row.getValue<number>(accessorKey)
+      return <SparklineCell valuation={value} totalChange={totalChange} />
     }
   }
 }
@@ -291,9 +311,10 @@ const ItemValueCell = observer(ItemValueCellComponent)
 
 type SparklineCellProps = {
   valuation?: SageValuation
+  totalChange: number
 }
 
-const SparklineCell = ({ valuation }: SparklineCellProps) => {
+const SparklineCell = ({ valuation, totalChange }: SparklineCellProps) => {
   const data = useMemo(() => {
     if (!valuation) return
     return valuation.history.primaryValueHourly.map((value, i) => {
@@ -368,24 +389,6 @@ const SparklineCell = ({ valuation }: SparklineCellProps) => {
   )
 
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null)
-
-  const totalChange = useMemo(() => {
-    if (!valuation) return 0
-    // Remove indexes
-    const history = valuation.history.primaryValueHourly.slice()
-    if (history.length < 2) return 0
-    let i = history.length
-    let indexToUse = history.length
-    while (i--) {
-      if (history[i]) {
-        indexToUse = i
-        break
-      }
-    }
-    if (indexToUse === 0) return 0
-
-    return (history[indexToUse] / history[0] - 1) * 100
-  }, [valuation])
 
   return (
     <>
