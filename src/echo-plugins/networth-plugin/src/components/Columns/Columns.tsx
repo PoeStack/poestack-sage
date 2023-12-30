@@ -297,7 +297,10 @@ const ItemPropsCell = ({ value }: ItemPropsCellProps) => {
   }, [value])
 
   return (
-    <div className="space-x-1 truncate hover:overflow-x-auto hover:text-clip no-scrollbar">
+    <div
+      className="space-x-1 truncate hover:overflow-x-auto hover:text-clip no-scrollbar"
+      onMouseLeave={(e) => (e.currentTarget.scrollLeft = 0)}
+    >
       {hashProps.map(({ name, value }) => (
         <Badge key={name} variant="secondary" className="capitalize">
           {value}
