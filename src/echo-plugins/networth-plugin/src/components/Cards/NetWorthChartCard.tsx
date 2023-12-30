@@ -86,9 +86,9 @@ const NetWorthChartCard: React.FC<NetWorthChartCardProps> = ({ className }) => {
       text: undefined
     },
     xAxis: {
-      ...baseChartConfig.yAxis,
+      ...baseChartConfig.xAxis,
       labels: {
-        ...(baseChartConfig.yAxis as Highcharts.XAxisOptions).labels,
+        ...(baseChartConfig.xAxis as Highcharts.XAxisOptions).labels,
         formatter: function () {
           return dateFormat('%d %b %H:%M', this.value as number)
         }
