@@ -22,15 +22,15 @@ const NetWorth = () => {
       <ToolbarContainer />
       {uiStateStore.isInitiating && <MainContentSkeleton />}
       {!uiStateStore.isInitiating && (
-        <main className="flex flex-col p-2 gap-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 auto-rows-auto gap-4">
+        <main className="flex flex-col p-2 gap-2 lg:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 auto-rows-auto gap-2 lg:gap-4">
             <NetWorthSummaryCard />
             <IncomeSummaryCard />
             <SnapshotSummaryCard />
           </div>
-          <div className="grid lg:grid-cols-3 auto-rows-auto gap-4">
-            <NetWorthChartCard className="lg:col-span-2" />
-            <TabBreakdownChartCard />
+          <div className="grid lg:grid-cols-5 auto-rows-auto gap-2 lg:gap-4">
+            <NetWorthChartCard className="lg:col-span-3" />
+            <TabBreakdownChartCard className="lg:col-span-2" />
           </div>
           <ItemTableCard />
         </main>

@@ -8,6 +8,7 @@ import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import { useTranslation } from 'react-i18next'
 import { baseChartConfig } from './baseChartConfig'
+import { dateFormat } from 'highcharts'
 
 type StartDateOption = { label: 'all-time' | 'one-month' | 'one-week' | 'one-day'; value?: number }
 
@@ -47,8 +48,18 @@ const NetWorthChartCard: React.FC<NetWorthChartCardProps> = ({ className }) => {
           ]
         },
         marker: {
-          fillColor: 'hsl(var(--muted-foreground))'
+          enabled: true,
+          fillColor: 'hsl(var(--muted-foreground))',
+          radius: 1,
+          symbol: 'circle'
         },
+        lineWidth: 1,
+        states: {
+          hover: {
+            lineWidth: 1
+          }
+        },
+        threshold: null,
         tooltip: {
           pointFormat: '{point.y}',
           valueDecimals: 2,
@@ -73,6 +84,15 @@ const NetWorthChartCard: React.FC<NetWorthChartCardProps> = ({ className }) => {
     },
     title: {
       text: undefined
+    },
+    xAxis: {
+      ...baseChartConfig.yAxis,
+      labels: {
+        ...(baseChartConfig.yAxis as Highcharts.XAxisOptions).labels,
+        formatter: function () {
+          return dateFormat('%d %b %H:%M', this.value as number)
+        }
+      }
     },
     yAxis: {
       ...baseChartConfig.yAxis,

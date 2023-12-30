@@ -244,7 +244,7 @@ export class Profile extends Model(
     const { settingStore, priceStore } = getRoot<RootStore>(this)
     const currencyToUse = settingStore.currency === 'both' ? 'divine' : settingStore.currency
 
-    const breakdownData = this.snapshots.reduce(
+    const breakdownData = this.snapshots.slice(0, 50).reduce(
       (breakdownSeries, snapshot) => {
         const snapshotTabs = snapshot.stashTabs.map((tab) => {
           const format = formatValue(tab.totalValue, currencyToUse, priceStore.divinePrice)

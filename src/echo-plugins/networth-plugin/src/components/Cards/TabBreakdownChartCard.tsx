@@ -8,6 +8,7 @@ import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import { useTranslation } from 'react-i18next'
 import { baseChartConfig } from './baseChartConfig'
+import { dateFormat } from 'highcharts'
 
 interface TabBreakdownChartCardProps {
   className?: string
@@ -37,6 +38,15 @@ const TabBreakdownChartCard: React.FC<TabBreakdownChartCardProps> = ({ className
     title: {
       text: undefined
     },
+    xAxis: {
+      ...baseChartConfig.yAxis,
+      labels: {
+        ...(baseChartConfig.yAxis as Highcharts.XAxisOptions).labels,
+        formatter: function () {
+          return dateFormat('%H:%M', this.value as number)
+        }
+      }
+    },
     yAxis: {
       ...baseChartConfig.yAxis,
       title: {
@@ -49,6 +59,22 @@ const TabBreakdownChartCard: React.FC<TabBreakdownChartCardProps> = ({ className
       pointFormat: '{series.name}: {point.y}',
       valueDecimals: 2,
       valueSuffix: settingStore.activeCurrency.short
+    },
+    plotOptions: {
+      line: {
+        marker: {
+          enabled: true,
+          radius: 1,
+          symbol: 'circle'
+        },
+        lineWidth: 1,
+        states: {
+          hover: {
+            lineWidth: 1
+          }
+        },
+        threshold: null
+      }
     }
   }
 
