@@ -29,7 +29,7 @@ export const formatValue = (
     currencyShort = 'div'
     icon = divineIcon
   }
-  const prefix = value < 0 ? '- ' : showChange && value > 0 ? '+ ' : ''
+  const prefix = value < 0 ? '− ' : showChange && value > 0 ? '+ ' : ''
   if (valueShort && absValue >= 1_000_000) {
     formattedValue = `${prefix}${(absValue / 1_000_000).toLocaleString(undefined, {
       maximumFractionDigits: 0

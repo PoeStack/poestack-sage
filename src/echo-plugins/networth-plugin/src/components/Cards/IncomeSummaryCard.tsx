@@ -27,12 +27,12 @@ const IncomeSummaryCard: React.FC<IncomeSummaryCardProps> = ({ className }) => {
 
   return (
     <Card className={className}>
-      <Card.Content className="p-2 py-1">
-        <div className="flex flex-row items-center justify-between min-h-[64px]">
+      <Card.Content className="p-3 py-0">
+        <div className="flex flex-row items-center justify-between min-h-[60px]">
           <div className="flex flex-row items-center justify-center">
             <TrendingUp className="w-6 h-6" />
           </div>
-          <div className="flex flex-row items-center justify-center gap-2">
+          <div className="flex flex-row items-center justify-center gap-1">
             <span className="flex flex-row items-center justify-center gap-1">
               <CurrencyDisplay
                 value={activeProfile?.income}
@@ -49,7 +49,7 @@ const IncomeSummaryCard: React.FC<IncomeSummaryCardProps> = ({ className }) => {
           </div>
         </div>
       </Card.Content>
-      <Card.Footer className="border-t p-3">
+      <Card.Footer className="border-t p-3 py-2">
         <div className="text-sm flex flex-row grow items-center justify-between">
           <span>{t('label.income')}</span>
           <span>{`Since ${incomeTimeFrameMessage}`}</span>
