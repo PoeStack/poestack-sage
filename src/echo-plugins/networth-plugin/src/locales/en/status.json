@@ -9,6 +9,6 @@
     "pricingItems": "Pricing items",
     "savingSnapshot": "Saving snapshot",
     "rateLimitExceeded": "Waiting ...",
-    "activeRateLimiter": "Ratelimiter active - Waiting ..."
+    "activeRateLimiter": "Ratelimiter ... Waiting ..."
   }
 }

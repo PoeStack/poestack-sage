@@ -28,7 +28,7 @@ const StatusMessage: React.FC<StatusMessageProps> = ({ statusMessage, retryAfter
       )}
       {!!retryAfter && retryAfter > 0 && (
         <div className="flex flex-row items-center text-sm">
-          {statusMessage && ' - '}
+          {statusMessage && ' ... '}
           {`${statusMessage ? t('message.rateLimitExceeded') : t('message.activeRateLimiter')} `}
           <CountdownTimer comparison={retryAfter} timeOverCb={timeOverCb} />
         </div>
