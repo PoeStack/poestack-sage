@@ -355,13 +355,13 @@ export class Profile extends Model(
 
   @modelAction
   refreshStashTabs() {
-    const { uiStateStore, accountStore } = getRoot<RootStore>(this)
+    const { uiStateStore, accountStore, rateLimitStore } = getRoot<RootStore>(this)
     const league = this.activeLeague!
 
     uiStateStore.setStatusMessage('fetchingStashTabs', league.name)
 
     externalService
-      .getStashTabs(league.name)
+      .getStashTabs(league.name, rateLimitStore)
       .pipe(
         mergeMap((st) => {
           accountStore.activeAccount.updateLeagueStashTabs(st, league)
@@ -390,7 +390,7 @@ export class Profile extends Model(
 
   @modelAction
   getItems(league: League) {
-    const { uiStateStore } = getRoot<RootStore>(this)
+    const { uiStateStore, rateLimitStore } = getRoot<RootStore>(this)
 
     const selectedStashTabs = this.activeStashTabs.filter((st) => !st.deleted)
 
@@ -402,7 +402,11 @@ export class Profile extends Model(
       selectedStashTabs.length > 0
         ? from(selectedStashTabs).pipe(
             concatMap((stashTab) =>
-              externalService.getStashTabWithChildren(stashTab as IStashTab, league.name)
+              externalService.getStashTabWithChildren(
+                stashTab as IStashTab,
+                league.name,
+                rateLimitStore
+              )
             ),
             tap(() => uiStateStore.incrementStatusMessageCount()),
             toArray()
@@ -412,7 +416,9 @@ export class Profile extends Model(
     uiStateStore.setStatusMessage('fetchingStashTab', undefined, 1, selectedStashTabs.length)
     forkJoin([
       getMainTabsWithChildren,
-      this.activeCharacter ? externalService.getCharacter(this.activeCharacter.name) : of(null)
+      this.activeCharacter
+        ? externalService.getCharacter(this.activeCharacter.name, rateLimitStore)
+        : of(null)
     ])
       .pipe(
         switchMap((response) => {
@@ -428,7 +434,12 @@ export class Profile extends Model(
           uiStateStore.setStatusMessage('fetchingSubtabs', undefined, 1, subTabs.length)
           const getItemsForSubTabsSource = from(subTabs).pipe(
             concatMap((stashTab) =>
-              externalService.getStashTabWithChildren(stashTab as IStashTab, league.name, true)
+              externalService.getStashTabWithChildren(
+                stashTab as IStashTab,
+                league.name,
+                rateLimitStore,
+                true
+              )
             ),
             tap(() => uiStateStore.incrementStatusMessageCount()),
             toArray()
@@ -510,19 +521,21 @@ export class Profile extends Model(
 
   @modelAction
   priceItemsForStashTabs(stashTabsWithItems: IStashTabItems[], league: League) {
-    const { uiStateStore, settingStore } = getRoot<RootStore>(this)
+    const { uiStateStore, settingStore, rateLimitStore } = getRoot<RootStore>(this)
     uiStateStore.setStatusMessage('pricingItems')
     const getValuation = from(stashTabsWithItems).pipe(
       mergeMap((stashTabWithItems) => {
-        return externalService.valuateItems(league.name, stashTabWithItems.items).pipe(
-          toArray(),
-          map((valuation) => {
-            return {
-              valuation,
-              stashTab: stashTabWithItems.stashTab
-            }
-          })
-        )
+        return externalService
+          .valuateItems(league.name, stashTabWithItems.items, rateLimitStore)
+          .pipe(
+            toArray(),
+            map((valuation) => {
+              return {
+                valuation,
+                stashTab: stashTabWithItems.stashTab
+              }
+            })
+          )
       }),
       toArray()
     )
