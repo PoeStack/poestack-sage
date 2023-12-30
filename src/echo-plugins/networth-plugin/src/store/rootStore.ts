@@ -6,6 +6,7 @@ import { NotificationStore } from './notificationStore'
 import { SettingStore } from './settingStore'
 import { UiStateStore } from './uiStateStore'
 import { PriceStore } from './priceStore'
+import { RateLimitStore } from './rateLimitStore'
 
 @model('nw/rootStore')
 export class RootStore extends Model({
@@ -14,5 +15,6 @@ export class RootStore extends Model({
   notificationStore: tProp(types.model(NotificationStore), new NotificationStore({})),
   settingStore: tProp(types.model(SettingStore), new SettingStore({})),
   uiStateStore: tProp(types.model(UiStateStore), new UiStateStore({})),
-  priceStore: tProp(types.model(PriceStore), new PriceStore({}))
+  priceStore: tProp(types.model(PriceStore), new PriceStore({})),
+  rateLimitStore: tProp(types.model(RateLimitStore), new RateLimitStore({}))
 }) {}

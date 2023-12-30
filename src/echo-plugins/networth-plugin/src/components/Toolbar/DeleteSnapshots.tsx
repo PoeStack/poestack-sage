@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useStore } from '../../hooks/useStore'
-import { Button, Checkbox, Label, Sheet } from 'echo-common/components-v1'
+import { Button, Checkbox, Label, Dialog } from 'echo-common/components-v1'
 import { observer } from 'mobx-react'
 import { useTranslation } from 'react-i18next'
 import { Trash2 } from 'lucide-react'
@@ -21,22 +21,22 @@ const DeleteSnapshots = () => {
   }
 
   return (
-    <Sheet
+    <Dialog
       open={deleteSnapshotsSheetOpen}
       onOpenChange={(open) => {
         setSelectedSnapshotIds([])
         setDeleteSnapshotsSheetOpen(open)
       }}
     >
-      <Sheet.Trigger asChild>
+      <Dialog.Trigger asChild>
         <Button variant="ghost" size="icon" className="h-8 w-8">
           <Trash2 className="h-4 w-4" />
         </Button>
-      </Sheet.Trigger>
-      <Sheet.Content className="mt-7 overflow-y-scroll w-3/5 sm:max-w-full">
-        <Sheet.Header className="pb-4">
-          <Sheet.Title>{t('title.deleteSnapshots')}</Sheet.Title>
-        </Sheet.Header>
+      </Dialog.Trigger>
+      <Dialog.Content>
+        <Dialog.Header className="pb-4">
+          <Dialog.Title>{t('title.deleteSnapshots')}</Dialog.Title>
+        </Dialog.Header>
         <div className="flex flex-col gap-3">
           {snapshots.map((snapshot) => (
             <div key={snapshot.uuid} className="flex flex-row items-center justify-start gap-3">
@@ -60,13 +60,14 @@ const DeleteSnapshots = () => {
             </div>
           ))}
         </div>
-        <Sheet.Footer className="pt-6">
+        <Dialog.Footer className="pt-6">
           <Button
             onClick={() => {
               setSelectedSnapshotIds([])
               setDeleteSnapshotsSheetOpen(false)
             }}
             variant="outline"
+            type="button"
           >
             {t('action.cancel')}
           </Button>
@@ -76,6 +77,7 @@ const DeleteSnapshots = () => {
               setSelectedSnapshotIds(snapshots.map((snapshot) => snapshot.uuid))
             }}
             variant="outline"
+            type="button"
           >
             {t('action.selectAll')}
           </Button>
@@ -90,9 +92,9 @@ const DeleteSnapshots = () => {
           >
             {t('action.delete')}
           </Button>
-        </Sheet.Footer>
-      </Sheet.Content>
-    </Sheet>
+        </Dialog.Footer>
+      </Dialog.Content>
+    </Dialog>
   )
 }
 

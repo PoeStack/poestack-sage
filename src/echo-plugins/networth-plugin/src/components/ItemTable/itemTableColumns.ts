@@ -1,5 +1,13 @@
 import { ColumnDef } from '@tanstack/react-table'
-import { itemIcon, itemName, itemQuantity, itemTabs, itemValue } from '../Columns/Columns'
+import {
+  itemIcon,
+  itemName,
+  itemQuantity,
+  itemTabs,
+  itemProps,
+  itemValue,
+  sparkLine
+} from '../Columns/Columns'
 import { IPricedItem } from '../../interfaces/priced-item.interface'
 
 export const itemTableColumns = (): ColumnDef<IPricedItem>[] => [
@@ -11,6 +19,7 @@ export const itemTableColumns = (): ColumnDef<IPricedItem>[] => [
     accessorKey: 'name',
     header: 'name'
   }),
+  itemProps({ accessorKey: 'unsafeHashProperties', header: 'properties' }),
   itemTabs({
     accessorKey: 'tab',
     header: 'tab'
@@ -19,10 +28,12 @@ export const itemTableColumns = (): ColumnDef<IPricedItem>[] => [
     accessorKey: 'stackSize',
     header: 'quantity'
   }),
+  sparkLine({ accessorKey: 'valuation', header: 'priceLast24Hours' }),
   itemValue({
     accessorKey: 'calculated',
     header: 'price',
-    enableSorting: true
+    enableSorting: true,
+    toCurrency: 'chaos'
   }),
   itemValue({
     accessorKey: 'total',

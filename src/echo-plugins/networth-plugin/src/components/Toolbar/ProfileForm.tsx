@@ -7,7 +7,7 @@ import {
   profileStashTabRef
 } from '../../store/domains/profile'
 import { Profile } from '../../store/domains/profile'
-import { Button, Checkbox, Form, Input, Select, Sheet } from 'echo-common/components-v1'
+import { Button, Checkbox, Form, Input, Select, Dialog } from 'echo-common/components-v1'
 import { observer } from 'mobx-react'
 import { StashTab } from '../../store/domains/stashtab'
 import { useForm } from 'react-hook-form'
@@ -18,6 +18,8 @@ import { Character } from '../../store/domains/character'
 import { useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StashTabMultiSelect } from './StashTabMultiSelect'
+import { generateProfileName } from '../../utils/profile.utils'
+import { DicesIcon } from 'lucide-react'
 
 type ProfilePayload = {
   name: string
@@ -53,7 +55,7 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
 
   const defaultFormValues = useMemo(
     () => ({
-      name: profile?.name ?? '',
+      name: profile?.name ?? generateProfileName(),
       stashTabs: profile?.activeStashTabs ?? [],
       league: profile?.activeLeague ?? leagueStore.leagues[0],
       pricingLeague: profile?.activePriceLeague ?? leagueStore.leagues[0],
@@ -76,6 +78,8 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
   const form = useForm<ProfilePayload>({
     defaultValues: defaultFormValues,
     reValidateMode: 'onChange',
+    mode: 'all',
+    delayError: 500, // Do not show error when canceled
     resolver: zodResolver(schema)
   })
 
@@ -104,22 +108,23 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
     onClose?.()
   }
 
+  const selectedLeague = form.getValues().league
   const stashTabOptions = useMemo(
     () =>
       (activeAccount.stashTabs ?? [])
-        .filter((stash) => !stash.deleted && stash.league === form.getValues().league)
+        .filter((stash) => !stash.deleted && stash.league === selectedLeague)
         .slice()
         .sort((a, b) => a.index - b.index),
-    [form, activeAccount.stashTabs]
+    [activeAccount.stashTabs, selectedLeague]
   )
 
   return (
-    <Sheet.Content className="mt-7 overflow-y-scroll w-3/5 sm:max-w-full">
-      <Sheet.Header>
-        <Sheet.Title>
+    <Dialog.Content>
+      <Dialog.Header>
+        <Dialog.Title>
           {profile ? t('title.editProfile', { name: profile.name }) : t('title.addProfile')}
-        </Sheet.Title>
-      </Sheet.Header>
+        </Dialog.Title>
+      </Dialog.Header>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           <Form.Field
@@ -129,9 +134,22 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
               <Form.Item>
                 <Form.Label aria-required>{t('label.profileName')}</Form.Label>
                 <Form.Control>
-                  <Input {...field} placeholder={t('label.selectProfilePlaceholder')} />
+                  <Input
+                    {...field}
+                    placeholder={t('label.selectProfilePlaceholder')}
+                    endIcon={
+                      <Button
+                        onClick={() => form.setValue('name', generateProfileName())}
+                        variant="ghost"
+                        size="icon"
+                        type="button"
+                      >
+                        <DicesIcon className="h-4 w-4" />
+                      </Button>
+                    }
+                  />
                 </Form.Control>
-                <Form.Message className="text-destructive" />
+                <Form.Message />
               </Form.Item>
             )}
           />
@@ -320,13 +338,23 @@ const ProfileForm = ({ profile, onClose, profileDialogOpen }: ProfileFormProps) 
               />
             </div>
           )}
-
-          <Button disabled={!form.formState.isValid} type="submit">
-            {profile ? t('action.saveProfile') : t('action.createProfile')}
-          </Button>
+          <Dialog.Footer>
+            <Button
+              onClick={() => {
+                onClose?.()
+              }}
+              variant="outline"
+              type="button"
+            >
+              {t('action.cancel')}
+            </Button>
+            <Button disabled={!form.formState.isValid} type="submit">
+              {profile ? t('action.saveProfile') : t('action.createProfile')}
+            </Button>
+          </Dialog.Footer>
         </form>
       </Form>
-    </Sheet.Content>
+    </Dialog.Content>
   )
 }
 

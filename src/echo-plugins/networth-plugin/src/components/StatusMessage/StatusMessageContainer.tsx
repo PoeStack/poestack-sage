@@ -5,9 +5,15 @@ import { useStore } from '../../hooks/useStore'
 import StatusMessage from './StatusMessage'
 
 const StatusMessageContainer = () => {
-  const { uiStateStore } = useStore()
+  const { uiStateStore, rateLimitStore } = useStore()
 
-  return <StatusMessage statusMessage={uiStateStore.statusMessage} />
+  return (
+    <StatusMessage
+      statusMessage={uiStateStore.statusMessage}
+      retryAfter={rateLimitStore.retryAfter}
+      timeOverCb={() => rateLimitStore.setRetryAfter(0)}
+    />
+  )
 }
 
 export default observer(StatusMessageContainer)

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useStore } from '../../hooks/useStore'
-import { AlertDialog, Button, Command, Popover, Sheet } from 'echo-common/components-v1'
+import { AlertDialog, Button, Command, Popover, Dialog } from 'echo-common/components-v1'
 import {
   Check,
   ChevronDownIcon,
@@ -27,7 +27,7 @@ const ProfileMenu = () => {
   const hasProfiles = activeAccount.profiles && activeAccount.profiles?.length > 0
 
   return (
-    <Sheet
+    <Dialog
       open={profileDialogOpen}
       onOpenChange={(open) => {
         setProfileDialogOpen(open)
@@ -66,18 +66,18 @@ const ProfileMenu = () => {
               </Button>
             </Popover.Trigger>
           ) : (
-            <Sheet.Trigger asChild>
+            <Dialog.Trigger asChild>
               <Button
                 variant="ghost"
-                className="flex flex-row border rounded h-8 pl-2 pr-1 w-[250px] justify-between"
+                className="border rounded h-8 p-1 pr-1.5 space-x-1"
                 role="combobox"
                 aria-expanded={menuOpen}
                 aria-label={t('label.selectProfile')}
               >
-                <PlusCircleIcon className="flex-shrink-0 ml-auto mr-2 h-4 w-4" />
+                <PlusCircleIcon className="h-4 w-4" />
                 <span className="truncate">{t('label.addProfile')}</span>
               </Button>
-            </Sheet.Trigger>
+            </Dialog.Trigger>
           )}
           <Popover.Content className="w-[250px] p-0">
             <Command>
@@ -101,28 +101,32 @@ const ProfileMenu = () => {
                                 : 'opacity-0'
                             )}
                           />
-                          {profile.name}
-                          <Sheet.Trigger asChild>
+                          <span className="truncate">{profile.name}</span>
+                          <Dialog.Trigger asChild>
                             <Button
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
                                 setSelectedProfile(profile)
                                 setMenuOpen(false)
                                 setProfileDialogOpen(true)
                               }}
-                              className="ml-auto hover:border-accent-foreground rounded border border-transparent h-8 w-8"
+                              className="ml-auto hover:border-accent-foreground rounded border border-transparent h-8 w-8 shrink-0"
                               size="icon"
                               variant="ghost"
                             >
                               <PencilIcon className="h-4 w-4" />
                             </Button>
-                          </Sheet.Trigger>
+                          </Dialog.Trigger>
                           <AlertDialog.Trigger asChild>
                             <Button
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
                                 setSelectedProfile(profile)
                                 setDeleteProfileDialogOpen(true)
                               }}
-                              className="ml-2 hover:border-accent-foreground rounded border border-transparent h-8 w-8"
+                              className="ml-2 hover:border-accent-foreground rounded border border-transparent h-8 w-8 shrink-0"
                               size="icon"
                               variant="ghost"
                             >
@@ -138,7 +142,7 @@ const ProfileMenu = () => {
               )}
               <Command.List>
                 <Command.Group>
-                  <Sheet.Trigger asChild>
+                  <Dialog.Trigger asChild>
                     <Command.Item
                       onSelect={() => {
                         setMenuOpen(false)
@@ -148,7 +152,7 @@ const ProfileMenu = () => {
                       <PlusCircleIcon className="mr-2 h-5 w-5" />
                       {t('label.addProfile')}
                     </Command.Item>
-                  </Sheet.Trigger>
+                  </Dialog.Trigger>
                 </Command.Group>
               </Command.List>
             </Command>
@@ -188,7 +192,7 @@ const ProfileMenu = () => {
           </AlertDialog.Footer>
         </AlertDialog.Content>
       </AlertDialog>
-    </Sheet>
+    </Dialog>
   )
 }
 

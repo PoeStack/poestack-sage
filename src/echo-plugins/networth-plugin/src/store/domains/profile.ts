@@ -28,6 +28,7 @@ import {
   of,
   switchMap,
   takeUntil,
+  tap,
   toArray
 } from 'rxjs'
 import { IStashTabItems } from '../../interfaces/snapshot.interface'
@@ -43,6 +44,9 @@ import { StashTabSnapshot } from './stashtab-snapshot'
 import { diffSnapshots, filterItems, filterSnapshotItems } from '../../utils/snapshot.utils'
 import { IPricedItem } from '../../interfaces/priced-item.interface'
 import { PersistWrapper } from '../../utils/persist.utils'
+import dayjs from 'dayjs'
+
+import { formatValue } from '../../utils/currency.utils'
 
 export const profileLeagueRef = rootRef<League>('nw/profileLeagueRef')
 export const profilePriceLeagueRef = rootRef<League>('nw/profilePriceLeagueRef')
@@ -137,30 +141,116 @@ export class Profile extends Model(
     )
   }
 
-  netWorthOverTime(sinceUtc?: number) {
-    let snapshots = this.snapshots.slice()
-    if (sinceUtc) {
-      snapshots = snapshots.filter((snapshot) => snapshot.created >= sinceUtc)
+  @computed
+  get netWorthValue() {
+    if (this.snapshots.length === 0) {
+      return 0
     }
-    return snapshots.reduce(
-      (netWorthSeries, snapshot) => {
-        return [
-          ...netWorthSeries,
-          { time: snapshot.created, value: parseFloat(snapshot.totalValue.toFixed(2)) }
-        ]
-      },
-      [] as { time: number; value: number }[]
-    )
+    return this.snapshots[0].totalValue
   }
 
   @computed
-  get tabBreakdownOverTime() {
-    return this.snapshots.reduce(
+  get lastSnapshotChange() {
+    if (this.snapshots.length < 2) {
+      return 0
+    }
+    const lastSnapshotNetWorth = this.snapshots[0].totalValue
+    const previousSnapshotNetWorth = this.snapshots[1].totalValue
+
+    return lastSnapshotNetWorth - previousSnapshotNetWorth
+  }
+
+  @computed
+  get income() {
+    let incomePerHour = 0
+
+    const oneHourAgo = dayjs.utc().subtract(1, 'hours')
+    const incomeResetAt = dayjs.utc(this.incomeResetAt)
+    const timestampToUse = incomeResetAt.isAfter(oneHourAgo) ? incomeResetAt : oneHourAgo
+    const snapshots = this.snapshots.filter((s) => dayjs.utc(s.created).isAfter(timestampToUse))
+    const hoursToCalcOver = 1
+
+    if (snapshots.length > 1) {
+      const lastSnapshot = snapshots[0]
+      const firstSnapshot = snapshots[snapshots.length - 1]
+      incomePerHour = (lastSnapshot.totalValue - firstSnapshot.totalValue) / hoursToCalcOver
+    }
+    return incomePerHour
+  }
+
+  @computed
+  get chartData() {
+    const { uiStateStore, priceStore, settingStore } = getRoot<RootStore>(this)
+    const currencyToUse = settingStore.currency === 'both' ? 'divine' : settingStore.currency
+    let snapshots = [...this.snapshots]
+
+    if (this.snapshots.length === 0) {
+      return undefined
+    }
+
+    switch (uiStateStore.chartTimeSpan) {
+      case 'one-day': {
+        snapshots = this.snapshots.filter((s) => {
+          return dayjs.utc().subtract(24, 'h').isBefore(dayjs.utc(s.created))
+        })
+        break
+      }
+      case 'one-week': {
+        snapshots = this.snapshots.filter((s) =>
+          dayjs.utc().subtract(7, 'd').isBefore(dayjs.utc(s.created))
+        )
+        break
+      }
+      case 'one-month': {
+        snapshots = this.snapshots.filter((s) =>
+          dayjs.utc().subtract(30, 'd').isBefore(dayjs.utc(s.created))
+        )
+        break
+      }
+      case 'all-time':
+      default: {
+        // all time
+        break
+      }
+    }
+
+    return snapshots
+      .map((s) => {
+        const format = formatValue(s.totalValue, currencyToUse, priceStore.divinePrice)
+        return [s.created, format.value]
+      })
+      .sort((n1, n2) => n1[0] - n2[0])
+  }
+
+  @computed
+  get sparklineChartData() {
+    const { priceStore } = getRoot<RootStore>(this)
+
+    const sortedSnapshots = this.snapshots.slice(0, 10)
+    const snapshots = [...sortedSnapshots]
+    if (snapshots.length === 0) {
+      return
+    }
+    return snapshots
+      .map((s) => {
+        const format = formatValue(s.totalValue, 'chaos', priceStore.divinePrice)
+        return [s.created, format.value]
+      })
+      .sort((n1, n2) => n1[0] - n2[0])
+  }
+
+  @computed
+  get tabChartData() {
+    const { settingStore, priceStore } = getRoot<RootStore>(this)
+    const currencyToUse = settingStore.currency === 'both' ? 'divine' : settingStore.currency
+
+    const breakdownData = this.snapshots.slice(0, 50).reduce(
       (breakdownSeries, snapshot) => {
         const snapshotTabs = snapshot.stashTabs.map((tab) => {
+          const format = formatValue(tab.totalValue, currencyToUse, priceStore.divinePrice)
           return {
             time: snapshot.created,
-            value: parseFloat(tab.totalValue.toFixed(2)),
+            value: format.value,
             stashTabId: tab.stashTabId
           }
         })
@@ -168,26 +258,31 @@ export class Profile extends Model(
       },
       [] as { time: number; value: number; stashTabId: string }[]
     )
-  }
 
-  netWorthChange(sinceUtc?: number) {
-    let snapshots = this.snapshots
-    if (sinceUtc) {
-      snapshots = this.snapshots.filter((snapshot) => snapshot.created >= sinceUtc)
-    }
-    if (snapshots.length === 0) {
-      return 0
-    }
+    const series =
+      this.activeStashTabs.reduce(
+        (seriesMap, tab) => {
+          seriesMap[tab.id] = {
+            type: 'line',
+            data: [],
+            name: tab.name
+          }
+          return seriesMap
+        },
+        {} as Record<string, { type: 'line'; data: any[]; name: string }>
+      ) ?? {}
 
-    const latestValue = snapshots[0].totalValue
-
-    if (snapshots.length === 1) {
-      return parseFloat(latestValue.toFixed(2))
-    }
-
-    const initialSnapshot = sinceUtc ? snapshots[0] : snapshots[snapshots.length - 2]
-    const initialValue = initialSnapshot.totalValue
-    return parseFloat(latestValue.toFixed(2)) - parseFloat(initialValue.toFixed(2))
+    breakdownData?.forEach((item) => {
+      const tabSeries = series[item.stashTabId]
+      if (tabSeries) {
+        tabSeries.data.push([item.time, item.value])
+      }
+    })
+    const chartData = Object.values(series)
+    chartData.forEach((line) => {
+      line.data.sort((n1, n2) => n1[0] - n2[0])
+    })
+    return chartData
   }
 
   @modelAction
@@ -263,13 +358,13 @@ export class Profile extends Model(
 
   @modelAction
   refreshStashTabs() {
-    const { uiStateStore, accountStore } = getRoot<RootStore>(this)
+    const { uiStateStore, accountStore, rateLimitStore } = getRoot<RootStore>(this)
     const league = this.activeLeague!
 
     uiStateStore.setStatusMessage('fetchingStashTabs', league.name)
 
     externalService
-      .getStashTabs(league.name)
+      .getStashTabs(league.name, rateLimitStore)
       .pipe(
         mergeMap((st) => {
           accountStore.activeAccount.updateLeagueStashTabs(st, league)
@@ -298,7 +393,7 @@ export class Profile extends Model(
 
   @modelAction
   getItems(league: League) {
-    const { uiStateStore } = getRoot<RootStore>(this)
+    const { uiStateStore, rateLimitStore } = getRoot<RootStore>(this)
 
     const selectedStashTabs = this.activeStashTabs.filter((st) => !st.deleted)
 
@@ -310,8 +405,13 @@ export class Profile extends Model(
       selectedStashTabs.length > 0
         ? from(selectedStashTabs).pipe(
             concatMap((stashTab) =>
-              externalService.getStashTabWithChildren(stashTab as IStashTab, league.name)
+              externalService.getStashTabWithChildren(
+                stashTab as IStashTab,
+                league.name,
+                rateLimitStore
+              )
             ),
+            tap(() => uiStateStore.incrementStatusMessageCount()),
             toArray()
           )
         : of([])
@@ -319,7 +419,9 @@ export class Profile extends Model(
     uiStateStore.setStatusMessage('fetchingStashTab', undefined, 1, selectedStashTabs.length)
     forkJoin([
       getMainTabsWithChildren,
-      this.activeCharacter ? externalService.getCharacter(this.activeCharacter.name) : of(null)
+      this.activeCharacter
+        ? externalService.getCharacter(this.activeCharacter.name, rateLimitStore)
+        : of(null)
     ])
       .pipe(
         switchMap((response) => {
@@ -335,8 +437,14 @@ export class Profile extends Model(
           uiStateStore.setStatusMessage('fetchingSubtabs', undefined, 1, subTabs.length)
           const getItemsForSubTabsSource = from(subTabs).pipe(
             concatMap((stashTab) =>
-              externalService.getStashTabWithChildren(stashTab as IStashTab, league.name, true)
+              externalService.getStashTabWithChildren(
+                stashTab as IStashTab,
+                league.name,
+                rateLimitStore,
+                true
+              )
             ),
+            tap(() => uiStateStore.incrementStatusMessageCount()),
             toArray()
           )
           return getItemsForSubTabsSource.pipe(
@@ -416,19 +524,21 @@ export class Profile extends Model(
 
   @modelAction
   priceItemsForStashTabs(stashTabsWithItems: IStashTabItems[], league: League) {
-    const { uiStateStore, settingStore } = getRoot<RootStore>(this)
+    const { uiStateStore, settingStore, rateLimitStore } = getRoot<RootStore>(this)
     uiStateStore.setStatusMessage('pricingItems')
     const getValuation = from(stashTabsWithItems).pipe(
       mergeMap((stashTabWithItems) => {
-        return externalService.valuateItems(league.name, stashTabWithItems.items).pipe(
-          toArray(),
-          map((valuation) => {
-            return {
-              valuation,
-              stashTab: stashTabWithItems.stashTab
-            }
-          })
-        )
+        return externalService
+          .valuateItems(league.name, stashTabWithItems.items, rateLimitStore)
+          .pipe(
+            toArray(),
+            map((valuation) => {
+              return {
+                valuation,
+                stashTab: stashTabWithItems.stashTab
+              }
+            })
+          )
       }),
       toArray()
     )

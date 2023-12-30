@@ -84,20 +84,23 @@ export class AccountStore extends Model(
   }
 
   initSession() {
-    const { uiStateStore, leagueStore } = getRoot<RootStore>(this)
+    const { uiStateStore, leagueStore, rateLimitStore } = getRoot<RootStore>(this)
     if (uiStateStore.isInitiating || uiStateStore.initiated) return
 
     uiStateStore.setIsInitiating(true)
     uiStateStore.setStatusMessage('initializingSession')
 
     externalService
-      .getProfile()
+      .getProfile(rateLimitStore)
       .pipe(
         concatMap((poeProfile) => {
           const account = this.addOrUpdateAccount(poeProfile.name!)
           this.setActiveAccountRef(accountStoreAccountRef(account))
 
-          return forkJoin([externalService.getLeagues(), externalService.getCharacters()]).pipe(
+          return forkJoin([
+            externalService.getLeagues(rateLimitStore),
+            externalService.getCharacters(rateLimitStore)
+          ]).pipe(
             concatMap(([leagues, characters]) => {
               if (leagues.length === 0) {
                 throw new Error('noLeaguesFound')
@@ -123,7 +126,7 @@ export class AccountStore extends Model(
               return forkJoin([
                 from(availableLeagues).pipe(
                   concatMap((league) => {
-                    return externalService.getStashTabs(league.name).pipe(
+                    return externalService.getStashTabs(league.name, rateLimitStore).pipe(
                       map((stashTabs) => {
                         return of(account.updateLeagueStashTabs(stashTabs, league))
                       })

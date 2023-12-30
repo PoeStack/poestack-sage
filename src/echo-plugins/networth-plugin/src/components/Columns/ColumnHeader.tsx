@@ -39,9 +39,8 @@ export function TableColumnHeader<TData, TValue>({
         <DropdownMenu.Trigger asChild>
           <Button
             variant="ghost"
-            size="sm"
             className={cn(
-              'h-8 data-[state=open]:bg-accent px-2',
+              'h-8 data-[state=open]:bg-accent px-2 py-2',
               align === 'left' ? '-mx-2' : '-mx-3'
             )}
           >

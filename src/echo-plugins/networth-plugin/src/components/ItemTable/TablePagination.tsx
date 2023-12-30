@@ -3,6 +3,7 @@ import { Table } from '@tanstack/react-table'
 
 import { Select, Button } from 'echo-common/components-v1'
 import { useTranslation } from 'react-i18next'
+import React from 'react'
 
 interface TablePaginationProps<TData> {
   table: Table<TData>
@@ -11,6 +12,22 @@ interface TablePaginationProps<TData> {
 
 export function TablePagination<TData>({ table, showSelected }: TablePaginationProps<TData>) {
   const { t } = useTranslation()
+
+  // on delete key press, remove last selected item
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (document.activeElement && document.activeElement.nodeName !== 'BODY') return
+      if (e.key === 'ArrowLeft' && table.getCanPreviousPage()) {
+        table.previousPage()
+      } else if (e.key === 'ArrowRight' && table.getCanNextPage()) {
+        table.nextPage()
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [table])
 
   return (
     <div className="flex items-center justify-between px-2 py-4">
@@ -37,7 +54,7 @@ export function TablePagination<TData>({ table, showSelected }: TablePaginationP
               <Select.Value placeholder={table.getState().pagination.pageSize} />
             </Select.Trigger>
             <Select.Content side="top">
-              {[25, 50, 75, 100].map((pageSize) => (
+              {[10, 25, 50, 75, 100].map((pageSize) => (
                 <Select.Item key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </Select.Item>

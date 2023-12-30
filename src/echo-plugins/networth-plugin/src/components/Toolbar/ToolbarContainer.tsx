@@ -6,7 +6,7 @@ import Toolbar from './Toolbar'
 type ToolbarContainerProps = {}
 
 const ToolbarContainer: React.FC<ToolbarContainerProps> = () => {
-  const { uiStateStore, accountStore } = useStore()
+  const { uiStateStore, accountStore, rateLimitStore } = useStore()
 
   const activeProfile = accountStore.activeAccount.activeProfile
 
@@ -17,6 +17,7 @@ const ToolbarContainer: React.FC<ToolbarContainerProps> = () => {
       isSnapshotting={uiStateStore.isSnapshotting}
       isProfileValid={activeProfile?.isProfileValid || false}
       readyToSnapshot={activeProfile?.readyToSnapshot || false}
+      rateLimiterActive={!!rateLimitStore.retryAfter && rateLimitStore.retryAfter > 0}
       statusMessage={uiStateStore.statusMessage}
       handleSnapshot={() => activeProfile?.snapshot()}
       handleCancelSnapshot={() => uiStateStore.setCancelSnapshot(true)}
