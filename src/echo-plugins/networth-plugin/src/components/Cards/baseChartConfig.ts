@@ -65,5 +65,8 @@ export const baseChartConfig: Options = {
       fontFamily: 'Times New Roman',
       color: 'hsl(var(--muted-foreground))'
     }
+  },
+  time: {
+    useUTC: false
   }
 }
