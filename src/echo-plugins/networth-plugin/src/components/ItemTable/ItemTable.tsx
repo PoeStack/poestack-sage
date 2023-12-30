@@ -146,6 +146,8 @@ const ItemTable = <TData, TValue>({
             table.resetColumnOrder()
             table.resetColumnSizing()
             table.resetColumnVisibility()
+            tableState.setShowPricedItems(true)
+            tableState.setShowUnpricedItems(false)
           }}
         >
           {t('action.resetView')}

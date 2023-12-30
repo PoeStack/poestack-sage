@@ -55,8 +55,8 @@ export class TableView
         columnSizing: prop<ColumnSizingState>(() => ({})),
         pageSize: tProp(25).withSetter(),
         pageIndex: tProp(0).withSetter(),
-        showPricedItems: tProp(true).withSetter(),
-        showUnpricedItems: tProp(false).withSetter(),
+        showPricedItems: tProp(true),
+        showUnpricedItems: tProp(false),
         itemTableSelection: prop<ItemTableSelectionType>('latest').withSetter(),
         filteredStashTabsRef: tProp(
           // TODO: implement
@@ -65,7 +65,7 @@ export class TableView
         version: prop(1)
       },
       {
-        whitelist: ['id', 'showPricedItems', 'showUnpricedItems']
+        blacklist: ['globalFilter', 'pageIndex', 'itemTableSelection']
       }
     )
   )
@@ -130,6 +130,7 @@ export class TableView
     } else {
       columnVisibility = updaterOrValue
     }
+    console.log(columnVisibility)
     this.columnVisibility = columnVisibility
   }
 
