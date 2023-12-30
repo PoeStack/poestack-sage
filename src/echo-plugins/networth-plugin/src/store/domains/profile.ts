@@ -28,6 +28,7 @@ import {
   of,
   switchMap,
   takeUntil,
+  tap,
   toArray
 } from 'rxjs'
 import { IStashTabItems } from '../../interfaces/snapshot.interface'
@@ -403,6 +404,7 @@ export class Profile extends Model(
             concatMap((stashTab) =>
               externalService.getStashTabWithChildren(stashTab as IStashTab, league.name)
             ),
+            tap(() => uiStateStore.incrementStatusMessageCount()),
             toArray()
           )
         : of([])
@@ -428,6 +430,7 @@ export class Profile extends Model(
             concatMap((stashTab) =>
               externalService.getStashTabWithChildren(stashTab as IStashTab, league.name, true)
             ),
+            tap(() => uiStateStore.incrementStatusMessageCount()),
             toArray()
           )
           return getItemsForSubTabsSource.pipe(

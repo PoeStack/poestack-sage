@@ -17,6 +17,7 @@ type ToolbarProps = {
   isSnapshotting: boolean
   isProfileValid: boolean
   readyToSnapshot: boolean
+  rateLimiterActive: boolean
   statusMessage?: IStatusMessage
   handleSnapshot: () => void
   handleCancelSnapshot: () => void
@@ -28,6 +29,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   isSnapshotting,
   isProfileValid,
   readyToSnapshot,
+  rateLimiterActive,
   statusMessage,
   handleSnapshot,
   handleCancelSnapshot
@@ -37,7 +39,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
     <header className="z-50 flex border-b">
       <div className="flex flex-none flex-row items-center pl-2 space-x-2">
         {(isInitiating || isSnapshotting) && <Loader2 className="animate-spin" />}
-        {statusMessage && <StatusMessageContainer />}
+        {(statusMessage || rateLimiterActive) && <StatusMessageContainer />}
       </div>
       {isInitiating && <ToolbarContentSkeleton />}
       {!isInitiating && (

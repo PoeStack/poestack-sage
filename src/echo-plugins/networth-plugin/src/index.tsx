@@ -37,9 +37,6 @@ export function createRootStore() {
 
 export const store = createRootStore()
 
-// @ts-ignore
-window.rootStore = store
-
 const App = () => {
   return (
     <Suspense>

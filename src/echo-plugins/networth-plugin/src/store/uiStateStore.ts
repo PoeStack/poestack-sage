@@ -27,7 +27,7 @@ export class StatusMessage extends Model({
   uuid: idProp,
   message: tProp(types.string),
   translateParam: tProp(types.maybe(types.or(types.number, types.string))),
-  currentCount: tProp(types.maybe(types.number)),
+  currentCount: tProp(types.maybe(types.number)).withSetter(),
   totalCount: tProp(types.maybe(types.number))
 }) {}
 
@@ -88,7 +88,7 @@ export class UiStateStore extends Model(
       this.statusMessage?.totalCount &&
       this.statusMessage?.totalCount > this.statusMessage?.currentCount
     ) {
-      this.statusMessage.currentCount++
+      this.statusMessage.setCurrentCount(++this.statusMessage.currentCount)
     }
   }
 
