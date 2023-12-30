@@ -145,12 +145,10 @@ export class TimelessJewelGroupIdentifier implements ItemGroupIdentifier {
   }
 }
 
-
-
 export class CorpseGroupIdentifier implements ItemGroupIdentifier {
   group(item: PoeItem): InternalGroup | null {
     const typeLine = item.typeLine?.toLowerCase() ?? ''
-    if (item.descrText === "Right click this item to create this corpse.") {
+    if (item.descrText === 'Right click this item to create this corpse.') {
       return {
         key: typeLine,
         tag: 'corpse',
@@ -161,11 +159,13 @@ export class CorpseGroupIdentifier implements ItemGroupIdentifier {
   }
 }
 
-
 export class ScarabGroupIdentifier implements ItemGroupIdentifier {
   group(item: PoeItem): InternalGroup | null {
     const typeLine = item.typeLine?.toLowerCase() ?? ''
-    if (item.descrText === "Can be used in a personal Map Device to add modifiers to a Map." && typeLine.endsWith(" Scarab")) {
+    if (
+      item.descrText === 'Can be used in a personal Map Device to add modifiers to a Map.' &&
+      typeLine.endsWith(' Scarab')
+    ) {
       return {
         key: typeLine,
         tag: 'scarab',
@@ -178,7 +178,7 @@ export class ScarabGroupIdentifier implements ItemGroupIdentifier {
 
 export class CardGroupIdentifier implements ItemGroupIdentifier {
   group(item: PoeItem): InternalGroup | null {
-    if (item.icon?.endsWith("InventoryIcon.png")) {
+    if (item.icon?.endsWith('InventoryIcon.png')) {
       const typeLine = item.typeLine?.toLowerCase() ?? ''
       return {
         key: typeLine,
@@ -337,7 +337,7 @@ export class MemoryGroupIdentifier implements ItemGroupIdentifier {
     if (
       typeLine &&
       item.descrText ===
-      'Right-click on this, then left click on a completed Map on your Atlas to apply this Memory.'
+        'Right-click on this, then left click on a completed Map on your Atlas to apply this Memory.'
     ) {
       return {
         key: typeLine,
@@ -689,7 +689,7 @@ export class MapGroupIdentifier implements ItemGroupIdentifier {
         .join(',')
 
       return {
-        key: (specialMapType ?? baseType)!!,
+        key: (specialMapType || baseType)!!,
         tag: 'map',
         hashProperties: {
           tier: mapTier
