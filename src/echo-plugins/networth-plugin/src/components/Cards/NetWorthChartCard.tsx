@@ -59,7 +59,17 @@ const NetWorthChartCard: React.FC<NetWorthChartCardProps> = ({ className }) => {
     ],
     chart: {
       ...baseChartConfig.chart,
-      height: 200
+      height: 200,
+      zooming: {
+        resetButton: {
+          position: {
+            align: 'left',
+            verticalAlign: 'top',
+            x: 15
+          }
+        },
+        type: 'x'
+      }
     },
     title: {
       text: undefined

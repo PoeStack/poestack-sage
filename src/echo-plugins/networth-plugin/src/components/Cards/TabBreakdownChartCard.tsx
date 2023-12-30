@@ -22,7 +22,17 @@ const TabBreakdownChartCard: React.FC<TabBreakdownChartCardProps> = ({ className
     series: accountStore.activeAccount.activeProfile?.tabChartData,
     chart: {
       ...baseChartConfig.chart,
-      height: 234
+      height: 234,
+      zooming: {
+        resetButton: {
+          position: {
+            align: 'left',
+            verticalAlign: 'top',
+            x: 15
+          }
+        },
+        type: 'x'
+      }
     },
     title: {
       text: undefined
