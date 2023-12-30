@@ -82,6 +82,25 @@ export class TableView
   }
 
   @modelAction
+  setShowPricedItems(show: boolean) {
+    this.showPricedItems = show
+    if (!this.showPricedItems && this.showUnpricedItems && this.columnVisibility) {
+      this.columnVisibility.unsafeHashProperties = false
+    } else {
+      this.columnVisibility.unsafeHashProperties = true
+    }
+  }
+  @modelAction
+  setShowUnpricedItems(show: boolean) {
+    this.showUnpricedItems = show
+    if (!this.showPricedItems && this.showUnpricedItems && this.columnVisibility) {
+      this.columnVisibility.unsafeHashProperties = false
+    } else {
+      this.columnVisibility.unsafeHashProperties = true
+    }
+  }
+
+  @modelAction
   setGlobalFilter(updaterOrValue: Updater<string>) {
     let globalFilter: string
     if (typeof updaterOrValue === 'function') {
