@@ -11,7 +11,7 @@ export class SageItemGroupService {
     'sage-item-group-summaries'
   )
 
-  constructor(private echoDir: EchoDirService) {}
+  constructor(private echoDir: EchoDirService) { }
 
   public summary(tag: string) {
     return this.cacheValuationShards.load({ key: tag, maxAgeMs: 1000 * 60 * 60 * 4 }, () =>
@@ -37,10 +37,11 @@ export class SageItemGroupService {
     }
 
     Object.entries(internal.summaries).forEach(([k, v]) => {
+      const icons = v.i
       out.summaries[k] = {
         hash: k,
         key: v.k,
-        icon: `https://web.poecdn.com/gen/image/${v.i}`,
+        icon: `https://web.poecdn.com/gen/image/${icons?.[0]}`,
         sortProperty: v.v,
         unsafeHashProperties: v.p
       }
