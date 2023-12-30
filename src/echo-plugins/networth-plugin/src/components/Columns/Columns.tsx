@@ -299,7 +299,7 @@ const ItemPropsCell = ({ value }: ItemPropsCellProps) => {
   return (
     <div className="space-x-1 truncate hover:overflow-x-auto hover:text-clip no-scrollbar">
       {hashProps.map(({ name, value }) => (
-        <Badge key={name} className="capitalize">
+        <Badge key={name} variant="secondary" className="capitalize">
           {value}
         </Badge>
       ))}
