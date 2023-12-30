@@ -104,7 +104,9 @@ const ProfileMenu = () => {
                           <span className="truncate">{profile.name}</span>
                           <Dialog.Trigger asChild>
                             <Button
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
                                 setSelectedProfile(profile)
                                 setMenuOpen(false)
                                 setProfileDialogOpen(true)
@@ -118,7 +120,9 @@ const ProfileMenu = () => {
                           </Dialog.Trigger>
                           <AlertDialog.Trigger asChild>
                             <Button
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
                                 setSelectedProfile(profile)
                                 setDeleteProfileDialogOpen(true)
                               }}
