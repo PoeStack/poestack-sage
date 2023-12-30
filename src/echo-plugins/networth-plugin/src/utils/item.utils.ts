@@ -157,8 +157,16 @@ export function mapMapStashItemToPoeItem(tab: IStashTab, league: string): PoeIte
       league: league,
       id: uuidv4(),
       name: st.metadata.map.name,
-      typeLine: normalMap ? st.metadata.map.name : '',
-      baseType: normalMap ? st.metadata.map.name : '',
+      typeLine: normalMap
+        ? st.metadata.map.name
+        : specialMap
+          ? `${st.metadata.map.name} Map`
+          : st.metadata.map.name,
+      baseType: normalMap
+        ? st.metadata.map.name
+        : specialMap
+          ? `${st.metadata.map.name} Map`
+          : st.metadata.map.name,
       identified: true,
       ilvl: ilvl,
       properties: [
