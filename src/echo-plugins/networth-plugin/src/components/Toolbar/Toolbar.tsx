@@ -17,6 +17,7 @@ type ToolbarProps = {
   isSnapshotting: boolean
   isProfileValid: boolean
   readyToSnapshot: boolean
+  rateLimiterActive: boolean
   statusMessage?: IStatusMessage
   handleSnapshot: () => void
   handleCancelSnapshot: () => void
@@ -28,6 +29,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   isSnapshotting,
   isProfileValid,
   readyToSnapshot,
+  rateLimiterActive,
   statusMessage,
   handleSnapshot,
   handleCancelSnapshot
@@ -37,7 +39,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
     <header className="z-50 flex border-b">
       <div className="flex flex-none flex-row items-center pl-2 space-x-2">
         {(isInitiating || isSnapshotting) && <Loader2 className="animate-spin" />}
-        {statusMessage && <StatusMessageContainer />}
+        {(statusMessage || rateLimiterActive) && <StatusMessageContainer />}
       </div>
       {isInitiating && <ToolbarContentSkeleton />}
       {!isInitiating && (
@@ -47,15 +49,12 @@ const Toolbar: React.FC<ToolbarProps> = ({
           </div>
           <div className="py-2 px-2 h-full flex justify-center items-center gap-2.5">
             <Button
-              variant="ghost"
               disabled={!readyToSnapshot}
-              className="border p-1 pr-1.5 rounded h-8"
+              className="border rounded h-8 p-1 px-2 space-x-2 bg-gradient hover:brightness-90"
               onClick={() => handleSnapshot()}
             >
-              <div className="flex flex-row justify-center text-xs items-center gap-1">
-                <RefreshCcw className={cn('h-4 w-4', isSnapshotting && 'animate-spin')} />
-                {t('action.takeSnapshot')}
-              </div>
+              <RefreshCcw className={cn('h-4 w-4', isSnapshotting && 'animate-spin')} />
+              <span>{t('action.takeSnapshot')}</span>
             </Button>
             <Button
               variant="ghost"

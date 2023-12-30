@@ -33,7 +33,7 @@ export const baseChartConfig: Options = {
         color: 'hsl(var(--muted-foreground))'
       },
       formatter: function () {
-        return dateFormat('%a %d %b %H:%M:%S', this.value as number)
+        return dateFormat('%d %b %H:%M:%S', this.value as number)
       }
     },
     title: {
@@ -49,7 +49,7 @@ export const baseChartConfig: Options = {
   },
   legend: {
     itemStyle: {
-      font: '14px Times New Roman',
+      font: '12px Times New Roman',
       color: 'hsl(var(--muted-foreground))'
     },
     itemHoverStyle: {
@@ -65,5 +65,8 @@ export const baseChartConfig: Options = {
       fontFamily: 'Times New Roman',
       color: 'hsl(var(--muted-foreground))'
     }
+  },
+  time: {
+    useUTC: false
   }
 }

@@ -25,7 +25,6 @@ const ItemTableContainer: React.FC = () => {
       const rarity = getRarityIdentifier(filterValue?.toString()?.toLowerCase())
       return rarity >= 0 && row.original.frameType === rarity
     }
-
     if (columnId === 'name') {
       let itemNameRegex = new RegExp('', 'i')
       try {
@@ -43,11 +42,7 @@ const ItemTableContainer: React.FC = () => {
     return filterFns.includesString(row, columnId, filterValue, addMeta)
   }
 
-  return (
-    <div className="w-full px-8 py-4 border rounded-md">
-      <ItemTable columns={columns} data={data} globalFilterFn={fuzzyFilter} />
-    </div>
-  )
+  return <ItemTable columns={columns} data={data} globalFilterFn={fuzzyFilter} />
 }
 
 export default observer(ItemTableContainer)

@@ -4,6 +4,7 @@ import { Check, ChevronsUpDown, X } from 'lucide-react'
 import { cn } from 'echo-common'
 import { Badge, Button, Command, Form, Popover } from 'echo-common/components-v1'
 import { StashTab } from '../../store/domains/stashtab'
+import { useTranslation } from 'react-i18next'
 
 export type OptionType = StashTab
 
@@ -17,6 +18,7 @@ interface MultiSelectProps {
 
 const StashTabMultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
   ({ options, selected, onChange, className, ...props }, ref) => {
+    const { t } = useTranslation()
     const [open, setOpen] = React.useState(false)
 
     const handleUnselect = (item: StashTab) => {
@@ -26,7 +28,7 @@ const StashTabMultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps
     // on delete key press, remove last selected item
     React.useEffect(() => {
       const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Backspace' && selected.length > 0) {
+        if (open && e.key === 'Backspace' && selected.length > 0) {
           onChange(selected.filter((_, index) => index !== selected.length - 1))
         }
 
@@ -41,7 +43,7 @@ const StashTabMultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps
       return () => {
         document.removeEventListener('keydown', handleKeyDown)
       }
-    }, [onChange, selected])
+    }, [onChange, open, selected])
 
     return (
       <Popover open={open} onOpenChange={setOpen} modal={true}>
@@ -60,42 +62,36 @@ const StashTabMultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps
                     variant="outline"
                     key={item.hash}
                     className="flex items-center gap-1 group-hover:bg-background"
-                    onClick={() => handleUnselect(item)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleUnselect(item)
+                      }
+                    }}
+                    onMouseDown={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                    }}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      handleUnselect(item)
+                    }}
                   >
                     {item.name}
-                    <Button
-                      asChild
-                      variant="outline"
-                      size="icon"
-                      className="border-none"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleUnselect(item)
-                        }
-                      }}
-                      onMouseDown={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                      }}
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        handleUnselect(item)
-                      }}
-                    >
-                      <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
-                    </Button>
+                    <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
                   </Badge>
                 ))}
-                {selected.length === 0 && <span>{props.placeholder ?? 'Select ...'}</span>}
+                {selected.length === 0 && (
+                  <span>{props.placeholder ?? t('label.selectPlaceholder')}</span>
+                )}
               </div>
               <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </Popover.Trigger>
         </Form.Control>
-        <Popover.Content className="w-full p-0">
+        <Popover.Content className="p-0 w-[var(--radix-popover-trigger-width)]">
           <Command className={className}>
-            <Command.Input placeholder="Search ..." />
+            <Command.Input placeholder={t('label.searchPlaceholder')} />
             <Command.Empty>No item found.</Command.Empty>
             <Command.List>
               <Command.Group>

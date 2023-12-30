@@ -1,56 +1,51 @@
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import * as Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
-import { ChevronDownIcon, ChevronRightIcon } from 'lucide-react'
+import { LineChartIcon } from 'lucide-react'
 
-import { Collapsible, Card } from 'echo-common/components-v1'
+import { Card, Accordion } from 'echo-common/components-v1'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
-import { convertToCurrency } from '../../utils/currency.utils'
 import { useTranslation } from 'react-i18next'
 import { baseChartConfig } from './baseChartConfig'
+import { dateFormat } from 'highcharts'
 
-function TabBreakdownChartCard() {
+interface TabBreakdownChartCardProps {
+  className?: string
+}
+
+const TabBreakdownChartCard: React.FC<TabBreakdownChartCardProps> = ({ className }) => {
   const { t } = useTranslation()
-  const [open, setOpen] = useState(false)
-  const { accountStore, priceStore, settingStore } = useStore()
-  const breakdownData = accountStore.activeAccount.activeProfile?.tabBreakdownOverTime
-  const series =
-    accountStore.activeAccount.activeProfile?.activeStashTabs.reduce(
-      (seriesMap, tab) => {
-        seriesMap[tab.id] = {
-          type: 'line',
-          data: [],
-          name: tab.name
-        }
-        return seriesMap
-      },
-      {} as Record<string, { type: 'line'; data: any[]; name: string }>
-    ) ?? {}
-
-  breakdownData?.forEach((item) => {
-    const tabSeries = series[item.stashTabId]
-    if (tabSeries) {
-      tabSeries.data.push([
-        item.time,
-        convertToCurrency({
-          value: item.value,
-          toCurrency: settingStore.currency,
-          divinePrice: priceStore.divinePrice
-        })
-      ])
-    }
-  })
+  const { accountStore, settingStore } = useStore()
 
   const chartConfig: Highcharts.Options = {
     ...baseChartConfig,
-    series: Object.values(series),
+    series: accountStore.activeAccount.activeProfile?.tabChartData,
     chart: {
       ...baseChartConfig.chart,
-      height: 200
+      height: 234,
+      zooming: {
+        resetButton: {
+          position: {
+            align: 'left',
+            verticalAlign: 'top',
+            x: 15
+          }
+        },
+        type: 'x'
+      }
     },
     title: {
       text: undefined
+    },
+    xAxis: {
+      ...baseChartConfig.yAxis,
+      labels: {
+        ...(baseChartConfig.yAxis as Highcharts.XAxisOptions).labels,
+        formatter: function () {
+          return dateFormat('%H:%M', this.value as number)
+        }
+      }
     },
     yAxis: {
       ...baseChartConfig.yAxis,
@@ -64,37 +59,51 @@ function TabBreakdownChartCard() {
       pointFormat: '{series.name}: {point.y}',
       valueDecimals: 2,
       valueSuffix: settingStore.activeCurrency.short
+    },
+    plotOptions: {
+      line: {
+        marker: {
+          enabled: true,
+          radius: 1,
+          symbol: 'circle'
+        },
+        lineWidth: 1,
+        states: {
+          hover: {
+            lineWidth: 1
+          }
+        },
+        threshold: null
+      }
     }
   }
 
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null)
 
   return (
-    <Collapsible open={open} onOpenChange={setOpen}>
-      <Card>
-        <Collapsible.Trigger className="!mt-0 cursor-pointer" asChild>
-          <Card.Header className="flex flex-row justify-between items-center p-3">
-            <Card.Title className="text-base">{t('title.tabBreakdownHistoryCard')}</Card.Title>
-            {open ? (
-              <ChevronDownIcon className="h-4 w-4" />
-            ) : (
-              <ChevronRightIcon className="h-4 w-4" />
-            )}
-          </Card.Header>
-        </Collapsible.Trigger>
-        <Collapsible.Content>
-          <Card.Content className="p-2">
-            <div className="px-2">
-              <HighchartsReact
-                highcharts={Highcharts}
-                options={chartConfig}
-                ref={chartComponentRef}
-              />
-            </div>
-          </Card.Content>
-        </Collapsible.Content>
+    <Accordion type="single" collapsible className={className}>
+      <Card className="w-full">
+        <Accordion.Item value="item-1" className="border-b-0">
+          <Accordion.Trigger className="pr-2 py-0">
+            <Card.Header className="flex flex-row justify-between items-center p-3 space-y-0">
+              <LineChartIcon className="h-5 w-5" />
+              <div className="pl-2 uppercase">{t('title.tabBreakdownHistoryCard')}</div>
+            </Card.Header>
+          </Accordion.Trigger>
+          <Accordion.Content>
+            <Card.Content className="p-2 border-t">
+              <div className="px-2">
+                <HighchartsReact
+                  highcharts={Highcharts}
+                  options={chartConfig}
+                  ref={chartComponentRef}
+                />
+              </div>
+            </Card.Content>
+          </Accordion.Content>
+        </Accordion.Item>
       </Card>
-    </Collapsible>
+    </Accordion>
   )
 }
 

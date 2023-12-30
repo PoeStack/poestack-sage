@@ -12,7 +12,14 @@ import {
 } from 'mobx-keystone'
 import { ItemTableSelectionType } from '../../interfaces/item-table-selection.interface'
 import { StashTab } from './stashtab'
-import { OnChangeFn, PaginationState, Updater } from '@tanstack/react-table'
+import {
+  ColumnSizingState,
+  OnChangeFn,
+  PaginationState,
+  SortingState,
+  Updater,
+  VisibilityState
+} from '@tanstack/react-table'
 import { PersistWrapper } from '../../utils/persist.utils'
 
 export const tableStashTabRef = rootRef<StashTab>('nw/tableStashTabRef', {
@@ -26,6 +33,9 @@ export const tableStashTabRef = rootRef<StashTab>('nw/tableStashTabRef', {
 interface ITableView {
   setPagination: OnChangeFn<PaginationState>
   setGlobalFilter: OnChangeFn<string>
+  setSorting: OnChangeFn<SortingState>
+  setColumnVisibility: OnChangeFn<VisibilityState>
+  setColumnSizing: OnChangeFn<ColumnSizingState>
 }
 
 @model('nw/tableview')
@@ -35,10 +45,18 @@ export class TableView
       {
         id: idProp,
         globalFilter: tProp(types.string, ''),
+        sorting: prop<SortingState>(() => [
+          {
+            desc: true,
+            id: 'total'
+          }
+        ]),
+        columnVisibility: prop<VisibilityState>(() => ({})),
+        columnSizing: prop<ColumnSizingState>(() => ({})),
         pageSize: tProp(25).withSetter(),
         pageIndex: tProp(0).withSetter(),
-        showPricedItems: tProp(true).withSetter(),
-        showUnpricedItems: tProp(false).withSetter(),
+        showPricedItems: tProp(true),
+        showUnpricedItems: tProp(false),
         itemTableSelection: prop<ItemTableSelectionType>('latest').withSetter(),
         filteredStashTabsRef: tProp(
           // TODO: implement
@@ -47,7 +65,7 @@ export class TableView
         version: prop(1)
       },
       {
-        whitelist: ['id', 'showPricedItems', 'showUnpricedItems']
+        blacklist: ['globalFilter', 'pageIndex', 'itemTableSelection']
       }
     )
   )
@@ -64,6 +82,25 @@ export class TableView
   }
 
   @modelAction
+  setShowPricedItems(show: boolean) {
+    this.showPricedItems = show
+    if (!this.showPricedItems && this.showUnpricedItems && this.columnVisibility) {
+      this.columnVisibility.unsafeHashProperties = false
+    } else {
+      this.columnVisibility.unsafeHashProperties = true
+    }
+  }
+  @modelAction
+  setShowUnpricedItems(show: boolean) {
+    this.showUnpricedItems = show
+    if (!this.showPricedItems && this.showUnpricedItems && this.columnVisibility) {
+      this.columnVisibility.unsafeHashProperties = false
+    } else {
+      this.columnVisibility.unsafeHashProperties = true
+    }
+  }
+
+  @modelAction
   setGlobalFilter(updaterOrValue: Updater<string>) {
     let globalFilter: string
     if (typeof updaterOrValue === 'function') {
@@ -72,6 +109,40 @@ export class TableView
       globalFilter = updaterOrValue
     }
     this.globalFilter = globalFilter
+  }
+
+  @modelAction
+  setSorting(updaterOrValue: Updater<SortingState>) {
+    let sorting: SortingState
+    if (typeof updaterOrValue === 'function') {
+      sorting = updaterOrValue(this.sorting)
+    } else {
+      sorting = updaterOrValue
+    }
+    this.sorting = sorting
+  }
+
+  @modelAction
+  setColumnVisibility(updaterOrValue: Updater<VisibilityState>) {
+    let columnVisibility: VisibilityState
+    if (typeof updaterOrValue === 'function') {
+      columnVisibility = updaterOrValue(this.columnVisibility)
+    } else {
+      columnVisibility = updaterOrValue
+    }
+    console.log(columnVisibility)
+    this.columnVisibility = columnVisibility
+  }
+
+  @modelAction
+  setColumnSizing(updaterOrValue: Updater<ColumnSizingState>) {
+    let columnSizing: ColumnSizingState
+    if (typeof updaterOrValue === 'function') {
+      columnSizing = updaterOrValue(this.columnSizing)
+    } else {
+      columnSizing = updaterOrValue
+    }
+    this.columnSizing = columnSizing
   }
 
   @computed

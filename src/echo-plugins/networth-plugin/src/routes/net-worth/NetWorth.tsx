@@ -3,12 +3,12 @@ import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import ToolbarContainer from '../../components/Toolbar/ToolbarContainer'
 import NetWorthChartCard from '../../components/Cards/NetWorthChartCard'
-import ItemTableContainer from '../../components/ItemTable/ItemTableContainer'
 import NetWorthSummaryCard from '../../components/Cards/NetWorthSummaryCard'
 import IncomeSummaryCard from '../../components/Cards/IncomeSummaryCard'
 import SnapshotSummaryCard from '../../components/Cards/SnapshotSummaryCard'
 import TabBreakdownChartCard from '../../components/Cards/TabBreakdownChartCard'
 import MainContentSkeleton from '../../components/LoadingStates/MainContentSkeleton'
+import ItemTableCard from '../../components/Cards/ItemTableCard'
 
 const NetWorth = () => {
   const { accountStore, uiStateStore } = useStore()
@@ -22,82 +22,21 @@ const NetWorth = () => {
       <ToolbarContainer />
       {uiStateStore.isInitiating && <MainContentSkeleton />}
       {!uiStateStore.isInitiating && (
-        <main className="flex flex-col p-2 gap-4">
-          <div className="flex flex-row gap-4 flex-wrap">
+        <main className="flex flex-col p-2 gap-2 lg:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 auto-rows-auto gap-2 lg:gap-4">
             <NetWorthSummaryCard />
             <IncomeSummaryCard />
             <SnapshotSummaryCard />
           </div>
-          <NetWorthChartCard />
-          <TabBreakdownChartCard />
-          <div className="flex flex-row">
-            <ItemTableContainer />
+          <div className="grid lg:grid-cols-5 auto-rows-auto gap-2 lg:gap-4">
+            <NetWorthChartCard className="lg:col-span-3" />
+            <TabBreakdownChartCard className="lg:col-span-2" />
           </div>
-          {/* <Test /> */}
+          <ItemTableCard />
         </main>
       )}
     </div>
   )
 }
-
-const Test = observer(() => {
-  const { accountStore, uiStateStore } = useStore()
-  return (
-    <>
-      <button
-        className="h-10 px-6 font-semibold rounded-full bg-violet-600 text-white mb-1"
-        onClick={() => {
-          uiStateStore.fillTree()
-        }}
-      >
-        fillTree
-      </button>
-      <br />
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-1"
-        onClick={() => {
-          uiStateStore.testReferences()
-        }}
-      >
-        testReferences
-      </button>
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-1"
-        onClick={() => {
-          accountStore.initSession()
-        }}
-      >
-        InitSession
-      </button>
-      <br />
-      Accounts:
-      <ul>
-        {accountStore.accounts.map((acccount) => {
-          return <li key={acccount.name}>{acccount!.name}</li>
-        })}
-      </ul>
-      <br />
-      Active account: {accountStore.activeAccount.name}
-      <br />
-      Profiles in account: {accountStore.activeAccount.name}
-      <ul>
-        {accountStore.activeAccount.profiles.map((profile) => {
-          return <li key={profile.name}>{profile.name}</li>
-        })}
-      </ul>
-      <br />
-      Active Profile: {accountStore.activeAccount.activeProfile?.name}
-      <br />
-      Active League: {accountStore.activeAccount.activeProfile?.activeLeague?.name}
-      <br />
-      Active Price-League: {accountStore.activeAccount.activeProfile?.activePriceLeague?.name}
-      <br />
-      Active Character: {accountStore.activeAccount.activeProfile?.activeCharacter?.name}
-      <br />
-      Active Stash-Tabs:{' '}
-      {accountStore.activeAccount.activeProfile?.activeStashTabs?.map((st) => st.name).join(', ')}
-    </>
-  )
-})
 
 export default observer(NetWorth)

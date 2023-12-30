@@ -14,8 +14,13 @@ export class PriceStore extends Model(
   })
 ) {
   onAttachedToRootStore() {
+    const { rateLimitStore } = getRoot<RootStore>(this)
     const getItemObserable = (league: string) =>
-      valuateItems(league, [{ typeLine: 'Divine Orb' }, { typeLine: 'Exalted Orb' }]).pipe(
+      valuateItems(
+        league,
+        [{ typeLine: 'Divine Orb' }, { typeLine: 'Exalted Orb' }],
+        rateLimitStore
+      ).pipe(
         mergeMap((valuation) => {
           // For currencies we use the most stable divine price
           const { settingStore } = getRoot<RootStore>(this)

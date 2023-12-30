@@ -17,7 +17,8 @@
     "saveProfile": "Save Profile",
     "createProfile": "Create Profile",
     "selectAll": "Select all",
-    "delete": "Delete"
+    "delete": "Delete",
+    "resetView": "Reset View"
   },
   "title": {
     "editProfile": "Edit Profile: {{name}}",
@@ -27,16 +28,20 @@
     "priceSettings": "Pricing settings",
     "tabBreakdownHistoryCard": "Tab breakdown history",
     "netWorthHistoryCard": "Net worth history",
+    "itemsCard": "Items",
     "deleteSnapshots": "Delete snapshots"
   },
   "columnTitle": {
     "icon": "Icon",
     "name": "Name",
+    "properties": "Pricing Properties",
     "tab": "Tabs",
     "quantity": "Quantity",
+    "priceLast7Days": "Price last 7 days",
+    "priceLast24Hours": "Price last 24 hours",
     "price": "Price",
-    "total": "Total value ({{currency}})",
-    "cumulative": "Cumulative ({{currency}})"
+    "total": "Total value",
+    "cumulative": "Cumulative"
   },
   "label": {
     "pageRows": "Rows per page",
@@ -45,7 +50,7 @@
     "showPriced": "Show Priced",
     "showUnpriced": "Show Unpriced",
     "toggleColumns": "Toggle columns",
-    "searchItemsPlaceholder": "Search name or tab... Regex support...",
+    "searchItemsPlaceholder": "Search name, tab or properties... Regex support...",
     "noResults": "No results.",
     "selectProfile": "Select profile",
     "addProfile": "Add Profile",
@@ -65,7 +70,9 @@
     "totalPriceThreshold": "Total price threshold (Chaos)",
     "income": "Income",
     "netWorth": "Net worth",
-    "snapshotCount": "Snapshot count"
+    "snapshotCount": "Snapshot count",
+    "selectPlaceholder": "Select ...",
+    "searchPlaceholder": "Search ..."
   },
   "body": {
     "pageOf": "Page {{current}} of {{of}}",

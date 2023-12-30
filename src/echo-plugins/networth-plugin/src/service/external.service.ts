@@ -1,13 +1,19 @@
-import { map } from 'rxjs'
+import { map, tap } from 'rxjs'
 import { filterNullish } from 'ts-ratchet'
-import { IStashTab, IStashTabNode } from '../interfaces/stash.interface'
+import { IStashTab } from '../interfaces/stash.interface'
 import { PoeItem } from 'sage-common'
-import { StashTab } from '../store/domains/stashtab'
 import { context } from '../context'
+import { RateLimitStore } from '../store/rateLimitStore'
 
-export const valuateItems = (league: string, items: PoeItem[]) => {
+export const valuateItems = (league: string, items: PoeItem[], rateLimitStore: RateLimitStore) => {
   const { poeValuations } = context()
   return poeValuations.withValuations(league, items).pipe(
+    tap((e) => {
+      if (e.type === 'rate-limit') {
+        console.warn('Set ratelimiting', 'valuateItems', e.limitExpiresMs)
+        rateLimitStore.setRetryAfter(e.limitExpiresMs)
+      }
+    }),
     map((e) => {
       if (e.type === 'error') {
         console.log(e.error.stack)
@@ -22,9 +28,15 @@ export const valuateItems = (league: string, items: PoeItem[]) => {
   )
 }
 
-export const getProfile = () => {
+export const getProfile = (rateLimitStore: RateLimitStore) => {
   const { poeAccounts } = context()
   return poeAccounts.profile().pipe(
+    tap((e) => {
+      if (e.type === 'rate-limit') {
+        console.warn('Set ratelimiting', 'getProfile', e.limitExpiresMs)
+        rateLimitStore.setRetryAfter(e.limitExpiresMs)
+      }
+    }),
     map((e) => {
       if (e.type === 'error') {
         console.log(e.error.stack)
@@ -39,9 +51,15 @@ export const getProfile = () => {
   )
 }
 
-export const getLeagues = () => {
+export const getLeagues = (rateLimitStore: RateLimitStore) => {
   const { poeAccounts } = context()
   return poeAccounts.leagues().pipe(
+    tap((e) => {
+      if (e.type === 'rate-limit') {
+        console.warn('Set ratelimiting', 'getLeagues', e.limitExpiresMs)
+        rateLimitStore.setRetryAfter(e.limitExpiresMs)
+      }
+    }),
     map((e) => {
       if (e.type === 'error') {
         console.log(e.error.stack)
@@ -56,9 +74,15 @@ export const getLeagues = () => {
   )
 }
 
-export const getCharacters = () => {
+export const getCharacters = (rateLimitStore: RateLimitStore) => {
   const { poeCharacters } = context()
   return poeCharacters.characterList().pipe(
+    tap((e) => {
+      if (e.type === 'rate-limit') {
+        console.warn('Set ratelimiting', 'getCharacters', e.limitExpiresMs)
+        rateLimitStore.setRetryAfter(e.limitExpiresMs)
+      }
+    }),
     map((e) => {
       if (e.type === 'error') {
         console.log(e.error.stack)
@@ -73,9 +97,15 @@ export const getCharacters = () => {
   )
 }
 
-export const getCharacter = (character: string) => {
+export const getCharacter = (character: string, rateLimitStore: RateLimitStore) => {
   const { poeCharacters } = context()
   return poeCharacters.character(character).pipe(
+    tap((e) => {
+      if (e.type === 'rate-limit') {
+        console.warn('Set ratelimiting', 'getCharacter', e.limitExpiresMs)
+        rateLimitStore.setRetryAfter(e.limitExpiresMs)
+      }
+    }),
     map((e) => {
       if (e.type === 'error') {
         console.log(e.error.stack)
@@ -90,9 +120,15 @@ export const getCharacter = (character: string) => {
   )
 }
 
-export const getStashTabs = (league: string) => {
+export const getStashTabs = (league: string, rateLimitStore: RateLimitStore) => {
   const { poeStash } = context()
   return poeStash.stashes(league).pipe(
+    tap((e) => {
+      if (e.type === 'rate-limit') {
+        console.warn('Set ratelimiting', 'getStashTabs', e.limitExpiresMs)
+        rateLimitStore.setRetryAfter(e.limitExpiresMs)
+      }
+    }),
     map((e) => {
       if (e.type === 'error') {
         console.log(e.error.stack)
@@ -106,12 +142,23 @@ export const getStashTabs = (league: string) => {
     filterNullish()
   )
 }
-export const getStashTabWithChildren = (stash: IStashTab, league: string, children?: boolean) => {
+export const getStashTabWithChildren = (
+  stash: IStashTab,
+  league: string,
+  rateLimitStore: RateLimitStore,
+  children?: boolean
+) => {
   const { poeStash } = context()
   const prefix = stash.parent && children ? `${stash.parent}/` : ''
   const stashId = `${prefix}${stash.id}`
 
   return poeStash.stashTab(league, stashId).pipe(
+    tap((e) => {
+      if (e.type === 'rate-limit') {
+        console.warn('Set ratelimiting', 'getStashTabWithChildren', e.limitExpiresMs)
+        rateLimitStore.setRetryAfter(e.limitExpiresMs)
+      }
+    }),
     map((e) => {
       if (e.type === 'error') {
         console.log(e.error.stack)

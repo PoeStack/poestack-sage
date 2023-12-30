@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { IApiSnapshot } from '../interfaces/api/api-snapshot.interface'
 import { IApiStashTabSnapshot } from '../interfaces/api/api-stash-tab-snapshot.interface'
 import { IPricedItem } from '../interfaces/priced-item.interface'
@@ -5,6 +6,7 @@ import { IStashTab } from '../interfaces/stash.interface'
 import { Snapshot } from '../store/domains/snapshot'
 import { StashTab } from '../store/domains/stashtab'
 import { findItem, getRarityIdentifier, mergeItemStacks } from './item.utils'
+import { IChartStashTabSnapshot } from '../interfaces/hc-chart-series.interface'
 
 export const diffSnapshots = (
   snapshot1: Snapshot,

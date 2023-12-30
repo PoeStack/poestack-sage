@@ -6,6 +6,7 @@ export interface IPricedItem {
   tag: string | undefined
   key: string | undefined
   hash: string | undefined
+  unsafeHashProperties: any
   itemId: string
   name: string
   typeLine: string
