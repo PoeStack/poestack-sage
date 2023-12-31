@@ -79,16 +79,22 @@ const client = new Redis(process.env['REDIS_URL'])
 
 const groupsWritten = new Set<string>()
 function writeGroup(group: SageItemGroup, item: PoeItem) {
-  if (!groupsWritten.has(group.hash)) {
-    const summary = {
-      k: group.key,
-      i: item.icon?.replaceAll('https://web.poecdn.com/gen/image/', ''),
-      p: group.unsafeHashProperties
-    }
+  const icon = item.icon?.replaceAll('https://web.poecdn.com/gen/image/', '')
+  const key = `${group.hash}:${icon}`
 
-    from(client.hset(`igs:${group.tag}`, `${group.hash}`, JSON.stringify(summary))).subscribe()
+  if (!groupsWritten.has(key)) {
+    from(client.hget(key, group.hash)).subscribe((orgGroupString) => {
+      const out= JSON.parse(orgGroupString) ?? {
+        k: group.key,
+        i: [icon],
+        p: group.unsafeHashProperties
+      }
+      out.i = [...out.i, icon]
+      out.i = [...new Set(out.i)]
+      from(client.hset( `igs:${group.tag}`, `${group.hash}`, JSON.stringify(out))).subscribe()
+    })
 
-    groupsWritten.add(group.hash)
+    groupsWritten.add(key)
   }
 }
 
