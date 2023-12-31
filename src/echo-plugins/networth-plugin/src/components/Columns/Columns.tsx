@@ -26,7 +26,8 @@ export function itemIcon(options: {
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
     accessorKey,
-    size: 60,
+    size: 65,
+    minSize: 52,
     enableSorting: false,
     enableGlobalFilter: true,
     meta: {
@@ -51,6 +52,7 @@ export function itemName(options: {
     enableSorting: true,
     enableGlobalFilter: true,
     size: 300,
+    minSize: 100,
     meta: {
       headerWording: header
     },
@@ -103,6 +105,7 @@ export function itemProps(options: {
     enableSorting: true,
     enableGlobalFilter: true,
     size: 620,
+    minSize: 150,
     meta: {
       headerWording: header
     },
@@ -125,6 +128,7 @@ export function itemTabs(options: {
     enableSorting: true,
     enableGlobalFilter: true,
     size: 180,
+    minSize: 75,
     meta: {
       headerWording: header
     },
@@ -150,6 +154,7 @@ export function itemQuantity(options: {
     enableSorting: true,
     enableGlobalFilter: false,
     size: 110,
+    minSize: 90,
     meta: {
       headerWording: header
     },
@@ -190,10 +195,11 @@ export function sparkLine(options: {
     },
     enableSorting: true,
     enableGlobalFilter: false,
+    size: 180,
+    minSize: 170,
     meta: {
       headerWording: header
     },
-    size: 180,
     cell: ({ row }) => {
       const value = row.original.valuation
       const totalChange = row.getValue<number>(accessorKey)
@@ -218,6 +224,7 @@ export function itemValue(options: {
     enableSorting: enableSorting ?? false,
     enableGlobalFilter: false,
     size: 120,
+    minSize: 100,
     meta: {
       headerWording: header
     },

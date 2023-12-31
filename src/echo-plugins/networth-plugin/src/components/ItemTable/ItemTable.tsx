@@ -155,7 +155,7 @@ const ItemTable = <TData, TValue>({
         <TableColumnToggle table={table} />
       </div>
       <div className="block max-w-full rounded-md border">
-        <Table style={{ ...columnSizeVars }} className="w-full table table-fixed">
+        <Table style={{ ...columnSizeVars }} className="w-full table-fixed">
           <Table.Header>
             {table.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id} className="divide-x">
