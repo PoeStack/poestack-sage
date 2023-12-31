@@ -63,6 +63,29 @@ export function itemName(options: {
   }
 }
 
+export function itemTag(options: {
+  accessorKey: PricedItem
+  header: string
+}): ColumnDef<IPricedItem> {
+  const { header, accessorKey } = options
+
+  return {
+    header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
+    accessorKey,
+    enableSorting: true,
+    enableGlobalFilter: true,
+    size: 65,
+    minSize: 65,
+    meta: {
+      headerWording: header
+    },
+    cell: ({ row }) => {
+      const value = row.getValue<string>(accessorKey)
+      return <ItemTagCell value={value} />
+    }
+  }
+}
+
 export function itemProps(options: {
   accessorKey: PricedItem
   header: string
@@ -104,7 +127,7 @@ export function itemProps(options: {
     },
     enableSorting: true,
     enableGlobalFilter: true,
-    size: 620,
+    size: 400,
     minSize: 150,
     meta: {
       headerWording: header
@@ -281,13 +304,15 @@ type ItemNameCellProps = {
 const ItemNameCell = ({ value, frameType }: ItemNameCellProps) => {
   const rarityColor = rarityColors[getRarity(frameType)]
 
-  return (
-    <div className="flex items-center justify-between">
-      <span className={`whitespace-nowrap overflow-hidden text-ellipsis text-[${rarityColor}]`}>
-        {value}
-      </span>
-    </div>
-  )
+  return <span className={`truncate text-[${rarityColor}]`}>{value}</span>
+}
+
+type ItemTagCellProps = {
+  value: string
+}
+
+const ItemTagCell = ({ value }: ItemTagCellProps) => {
+  return <span className="truncate capitalize">{value}</span>
 }
 
 type ItemPropsCellProps = {
@@ -322,7 +347,7 @@ type ItemTabsCellProps = {
 }
 
 const ItemTabsCell = ({ value }: ItemTabsCellProps) => {
-  return <span className="whitespace-nowrap overflow-hidden text-ellipsis">{value}</span>
+  return <span className="truncate">{value}</span>
 }
 
 type ItemQuantityCellProps = {

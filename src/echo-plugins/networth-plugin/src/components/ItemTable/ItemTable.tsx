@@ -97,7 +97,10 @@ const ItemTable = <TData, TValue>({
           desc: true,
           id: 'total'
         }
-      ]
+      ],
+      columnVisibility: {
+        tag: false
+      }
     }
   })
 

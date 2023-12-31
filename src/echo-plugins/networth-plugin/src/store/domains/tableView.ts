@@ -51,7 +51,9 @@ export class TableView
             id: 'total'
           }
         ]),
-        columnVisibility: prop<VisibilityState>(() => ({})),
+        columnVisibility: prop<VisibilityState>(() => ({
+          tag: false
+        })),
         columnSizing: prop<ColumnSizingState>(() => ({})),
         pageSize: tProp(25).withSetter(),
         pageIndex: tProp(0).withSetter(),
