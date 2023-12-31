@@ -152,7 +152,11 @@ const ItemTable = <TData, TValue>({
         >
           {t('action.resetView')}
         </Button>
-        <TableColumnToggle table={table} />
+        <TableColumnToggle
+          columns={table
+            .getAllColumns()
+            .filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide())}
+        />
       </div>
       <div className="block max-w-full rounded-md border">
         <Table style={{ ...columnSizeVars }} className="w-full table-fixed">
