@@ -200,6 +200,11 @@ function createLogger() {
           options: {
             destination: logPath
           }
+        },
+        formatters: {
+          level: (label: string) => {
+            return { level: label.toUpperCase() }
+          }
         }
       })
     )

@@ -74,4 +74,11 @@ export interface LoggingService extends LoggingTarget {
    * @param name The name of the child logger.
    */
   createChildLogger(name: string): LoggingService;
+
+  /**
+   * Assigns a scope to the logger.
+   * 
+   * @param prefix The prefix to use for the scope.
+   */
+  assignScope(prefix: string): LoggingService;
 };
