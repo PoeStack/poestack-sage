@@ -26,7 +26,8 @@ export function itemIcon(options: {
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
     accessorKey,
-    size: 60,
+    size: 65,
+    minSize: 52,
     enableSorting: false,
     enableGlobalFilter: true,
     meta: {
@@ -51,12 +52,36 @@ export function itemName(options: {
     enableSorting: true,
     enableGlobalFilter: true,
     size: 300,
+    minSize: 100,
     meta: {
       headerWording: header
     },
     cell: ({ row }) => {
       const value = row.getValue<string>(accessorKey)
       return <ItemNameCell value={value} frameType={row.original.frameType} />
+    }
+  }
+}
+
+export function itemTag(options: {
+  accessorKey: PricedItem
+  header: string
+}): ColumnDef<IPricedItem> {
+  const { header, accessorKey } = options
+
+  return {
+    header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
+    accessorKey,
+    enableSorting: true,
+    enableGlobalFilter: true,
+    size: 65,
+    minSize: 65,
+    meta: {
+      headerWording: header
+    },
+    cell: ({ row }) => {
+      const value = row.getValue<string>(accessorKey)
+      return <ItemTagCell value={value} />
     }
   }
 }
@@ -102,7 +127,8 @@ export function itemProps(options: {
     },
     enableSorting: true,
     enableGlobalFilter: true,
-    size: 620,
+    size: 400,
+    minSize: 150,
     meta: {
       headerWording: header
     },
@@ -125,6 +151,7 @@ export function itemTabs(options: {
     enableSorting: true,
     enableGlobalFilter: true,
     size: 180,
+    minSize: 75,
     meta: {
       headerWording: header
     },
@@ -150,6 +177,7 @@ export function itemQuantity(options: {
     enableSorting: true,
     enableGlobalFilter: false,
     size: 110,
+    minSize: 90,
     meta: {
       headerWording: header
     },
@@ -190,10 +218,11 @@ export function sparkLine(options: {
     },
     enableSorting: true,
     enableGlobalFilter: false,
+    size: 180,
+    minSize: 170,
     meta: {
       headerWording: header
     },
-    size: 180,
     cell: ({ row }) => {
       const value = row.original.valuation
       const totalChange = row.getValue<number>(accessorKey)
@@ -218,6 +247,7 @@ export function itemValue(options: {
     enableSorting: enableSorting ?? false,
     enableGlobalFilter: false,
     size: 120,
+    minSize: 100,
     meta: {
       headerWording: header
     },
@@ -274,13 +304,15 @@ type ItemNameCellProps = {
 const ItemNameCell = ({ value, frameType }: ItemNameCellProps) => {
   const rarityColor = rarityColors[getRarity(frameType)]
 
-  return (
-    <div className="flex items-center justify-between">
-      <span className={`whitespace-nowrap overflow-hidden text-ellipsis text-[${rarityColor}]`}>
-        {value}
-      </span>
-    </div>
-  )
+  return <span className={`truncate text-[${rarityColor}]`}>{value}</span>
+}
+
+type ItemTagCellProps = {
+  value: string
+}
+
+const ItemTagCell = ({ value }: ItemTagCellProps) => {
+  return <span className="truncate capitalize">{value}</span>
 }
 
 type ItemPropsCellProps = {
@@ -315,7 +347,7 @@ type ItemTabsCellProps = {
 }
 
 const ItemTabsCell = ({ value }: ItemTabsCellProps) => {
-  return <span className="whitespace-nowrap overflow-hidden text-ellipsis">{value}</span>
+  return <span className="truncate">{value}</span>
 }
 
 type ItemQuantityCellProps = {

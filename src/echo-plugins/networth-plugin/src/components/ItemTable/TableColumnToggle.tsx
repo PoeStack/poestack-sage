@@ -1,6 +1,6 @@
 // import { MixerHorizontalIcon } from '@radix-ui/react-icons'
 import { ChevronDown } from 'lucide-react'
-import { Table } from '@tanstack/react-table'
+import { Column, Table } from '@tanstack/react-table'
 
 import { DropdownMenu, Button } from 'echo-common/components-v1'
 import { useTranslation } from 'react-i18next'
@@ -8,10 +8,10 @@ import { useStore } from '../../hooks/useStore'
 import { observer } from 'mobx-react'
 
 interface TableColumnToggleProps<TData> {
-  table: Table<TData>
+  columns: Column<TData, unknown>[]
 }
 
-function TableColumnToggle<TData>({ table }: TableColumnToggleProps<TData>) {
+function TableColumnToggle<TData>({ columns }: TableColumnToggleProps<TData>) {
   const { t } = useTranslation()
   const { accountStore } = useStore()
   const tableState = accountStore.activeAccount.networthTableView
@@ -42,21 +42,18 @@ function TableColumnToggle<TData>({ table }: TableColumnToggleProps<TData>) {
         <DropdownMenu.Separator />
         <DropdownMenu.Label>{t('label.toggleColumns')}</DropdownMenu.Label>
         <DropdownMenu.Separator />
-        {table
-          .getAllColumns()
-          .filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide())
-          .map((column) => {
-            return (
-              <DropdownMenu.CheckboxItem
-                key={column.id}
-                className="capitalize"
-                checked={column.getIsVisible()}
-                onCheckedChange={(value) => column.toggleVisibility(!!value)}
-              >
-                {t(`columnTitle.${column.columnDef.meta?.headerWording}` as any)}
-              </DropdownMenu.CheckboxItem>
-            )
-          })}
+        {columns.map((column) => {
+          return (
+            <DropdownMenu.CheckboxItem
+              key={column.id}
+              className="capitalize"
+              checked={column.getIsVisible()}
+              onCheckedChange={(value) => column.toggleVisibility(!!value)}
+            >
+              {t(`columnTitle.${column.columnDef.meta?.headerWording}` as any)}
+            </DropdownMenu.CheckboxItem>
+          )
+        })}
       </DropdownMenu.Content>
     </DropdownMenu>
   )

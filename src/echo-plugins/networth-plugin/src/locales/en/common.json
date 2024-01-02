@@ -36,6 +36,7 @@
     "name": "Name",
     "properties": "Pricing Properties",
     "tab": "Tabs",
+    "tag": "Tag",
     "quantity": "Quantity",
     "priceLast7Days": "Price last 7 days",
     "priceLast24Hours": "Price last 24 hours",

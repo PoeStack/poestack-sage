@@ -39,9 +39,9 @@ const TabBreakdownChartCard: React.FC<TabBreakdownChartCardProps> = ({ className
       text: undefined
     },
     xAxis: {
-      ...baseChartConfig.yAxis,
+      ...baseChartConfig.xAxis,
       labels: {
-        ...(baseChartConfig.yAxis as Highcharts.XAxisOptions).labels,
+        ...(baseChartConfig.xAxis as Highcharts.XAxisOptions).labels,
         formatter: function () {
           return dateFormat('%H:%M', this.value as number)
         }
