@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, shell, Tray } from 'electron'
+import { app, BrowserWindow, Menu, shell, Tray, ipcMain } from 'electron'
 import path from 'path'
 import * as os from 'os'
 import * as fs from 'fs'
@@ -6,6 +6,10 @@ import { Server } from 'http'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { initialize, enable } from '@electron/remote/main'
 import { createLocalServer } from '../local-server/server'
+import { EchoLoggingService, LogLevel, PinoLoggingTarget, EchoDirService } from 'echo-common'
+import { ACTIVATED_LOG_LEVELS } from '../constants'
+
+const logger = createLogger()
 
 let mainWindow: BrowserWindow | null
 let tray: Tray | null
@@ -140,3 +144,65 @@ app.on('window-all-closed', () => {
     }
   }
 })
+
+ipcMain.handle(
+  'IPC_LOG',
+  (
+    _,
+    data: {
+      logLevel: LogLevel
+      message: string
+      payload?: unknown
+    }
+  ) => {
+    switch (data.logLevel) {
+      case LogLevel.Error:
+        logger.error(data.message, data.payload)
+        break
+
+      case LogLevel.Warn:
+        logger.warn(data.message, data.payload)
+        break
+
+      case LogLevel.Info:
+        logger.info(data.message, data.payload)
+        break
+
+      case LogLevel.Debug:
+        logger.debug(data.message, data.payload)
+        break
+
+      case LogLevel.Trace:
+        logger.trace(data.message, data.payload)
+        break
+
+      case LogLevel.Fatal:
+        logger.fatal(data.message, data.payload)
+        break
+    }
+  }
+)
+
+function createLogger() {
+  const echoDirService = new EchoDirService()
+
+  echoDirService.ensureDirExists('logs')
+
+  const now = new Date().toISOString().split('T')[0]
+  const logPath = path.resolve(echoDirService.homeDirPath, 'logs', `${now}.log`)
+
+  const logger = new EchoLoggingService()
+    .activateLogLevel(ACTIVATED_LOG_LEVELS)
+    .activateLoggingTarget(
+      PinoLoggingTarget.create({
+        transport: {
+          target: 'pino/file',
+          options: {
+            destination: logPath
+          }
+        }
+      })
+    )
+
+  return logger
+}

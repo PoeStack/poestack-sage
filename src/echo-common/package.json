@@ -113,5 +113,8 @@
     "tailwindcss-animate": "^1.0.7",
     "ts-ratchet": "file:../ts-ratchet",
     "zod": "^3.22.4"
+  },
+  "dependencies": {
+    "pino": "^8.17.2"
   }
 }

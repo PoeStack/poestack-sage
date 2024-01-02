@@ -1,4 +1,6 @@
+import { PluginContext } from "./plugin-context"
+
 export type EchoPluginHook = {
-  start: () => void
+  start: (pluginContext: PluginContext) => void
   destroy: () => void
 }

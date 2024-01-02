@@ -36,15 +36,17 @@ Module['_resolveLookupPaths'] = function (request, parent) {
   return results
 }
 
-import { contextBridge } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import * as libsqlClient from '@libsql/client'
 import * as drizzleMigrator from 'drizzle-orm/libsql/migrator'
+import { LogLevel } from 'echo-common'
 
 // Custom APIs for renderer
 const api = {
   '@libsql/client': libsqlClient,
-  'drizzle-orm/libsql/migrator': drizzleMigrator
+  'drizzle-orm/libsql/migrator': drizzleMigrator,
+  'IPC_LOG': <TPayload>(logLevel: LogLevel, message: string, payload?: TPayload) => ipcRenderer.invoke('IPC_LOG', logLevel, message, payload), 
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
