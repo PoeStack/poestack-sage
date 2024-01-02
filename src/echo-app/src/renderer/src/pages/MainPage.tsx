@@ -93,11 +93,11 @@ export const MainPage: React.FC = () => {
             const plugin: EchoPluginHook = entry.default()
 
             plugin.start({
-              registration: {
+              meta: {
                 name
               },
               services: {
-                loggingService: APP_CONTEXT.loggingService // TODO: after implemented use APP_CONTEXT.loggingService.createChildLogger('pluginName')
+                loggingService: APP_CONTEXT.loggingService.createChildLogger(name),
               }
             })
           })
