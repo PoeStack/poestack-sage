@@ -97,7 +97,10 @@ const ItemTable = <TData, TValue>({
           desc: true,
           id: 'total'
         }
-      ]
+      ],
+      columnVisibility: {
+        tag: false
+      }
     }
   })
 
@@ -152,10 +155,14 @@ const ItemTable = <TData, TValue>({
         >
           {t('action.resetView')}
         </Button>
-        <TableColumnToggle table={table} />
+        <TableColumnToggle
+          columns={table
+            .getAllColumns()
+            .filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide())}
+        />
       </div>
       <div className="block max-w-full rounded-md border">
-        <Table style={{ ...columnSizeVars }} className="w-full table table-fixed">
+        <Table style={{ ...columnSizeVars }} className="w-full table-fixed">
           <Table.Header>
             {table.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id} className="divide-x">

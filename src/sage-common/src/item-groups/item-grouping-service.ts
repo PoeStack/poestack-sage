@@ -164,7 +164,7 @@ export class ScarabGroupIdentifier implements ItemGroupIdentifier {
     const typeLine = item.typeLine?.toLowerCase() ?? ''
     if (
       item.descrText === 'Can be used in a personal Map Device to add modifiers to a Map.' &&
-      typeLine.endsWith(' Scarab')
+      typeLine.endsWith(' scarab')
     ) {
       return {
         key: typeLine,

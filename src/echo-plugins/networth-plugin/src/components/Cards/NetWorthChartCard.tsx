@@ -48,18 +48,18 @@ const NetWorthChartCard: React.FC<NetWorthChartCardProps> = ({ className }) => {
           ]
         },
         marker: {
-          enabled: true,
+          // enabled: true,
           fillColor: 'hsl(var(--muted-foreground))',
-          radius: 1,
+          // radius: 1,
           symbol: 'circle'
         },
-        lineWidth: 1,
-        states: {
-          hover: {
-            lineWidth: 1
-          }
-        },
-        threshold: null,
+        // lineWidth: 1,
+        // states: {
+        //   hover: {
+        //     lineWidth: 1
+        //   }
+        // },
+        // threshold: null,
         tooltip: {
           pointFormat: '{point.y}',
           valueDecimals: 2,
@@ -86,9 +86,9 @@ const NetWorthChartCard: React.FC<NetWorthChartCardProps> = ({ className }) => {
       text: undefined
     },
     xAxis: {
-      ...baseChartConfig.yAxis,
+      ...baseChartConfig.xAxis,
       labels: {
-        ...(baseChartConfig.yAxis as Highcharts.XAxisOptions).labels,
+        ...(baseChartConfig.xAxis as Highcharts.XAxisOptions).labels,
         formatter: function () {
           return dateFormat('%d %b %H:%M', this.value as number)
         }
