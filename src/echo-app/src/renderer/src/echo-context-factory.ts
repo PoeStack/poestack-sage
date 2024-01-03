@@ -27,7 +27,7 @@ const LOGGING_SERVICE = new EchoLoggingService(new Set(ACTIVATED_LOG_LEVELS))
   .activateLoggingTarget(new BrowserIpcLoggingTarget(IPC_LOGGING_DELEGATE))
 
 const ECHO_DIR = new EchoDirService()
-const ECHO_PLUGIN_SERVICE = new EchoPluginService(ECHO_DIR, LOGGING_SERVICE, buildContext)
+const ECHO_PLUGIN_SERVICE = new EchoPluginService(ECHO_DIR, buildContext)
 const ECHO_ROUTER = new EchoRouter()
 
 export const GGG_HTTP_UTIL = new GggHttpUtil()

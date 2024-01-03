@@ -31,7 +31,6 @@ export class EchoPluginService {
 
   constructor(
     private readonly echoDir: EchoDirService,
-    private readonly loggingService: LoggingService,
     private readonly buildContext: (source: string) => EchoContext
   ) {
     this.plugins$
@@ -44,11 +43,11 @@ export class EchoPluginService {
       .subscribe(this.currentPlugins$)
 
     this.currentPlugins$.subscribe((plugins) => {
-      Object.values(plugins).forEach((plugin) => {
+      Object.entries(plugins).forEach(([key, plugin]) => {
         if (plugin.enabled && plugin.path && !plugin.hook) {
           this.persistEnabledPlugins()
-          const context = buildContext('plugin')
-          ECHO_CONTEXT_SERVICE.contexts['plugin'] = context
+          const context = buildContext(key)
+          ECHO_CONTEXT_SERVICE.contexts[key] = context
 
           const pluginEntry = module.require(path.resolve(plugin.path, 'entry.js'))
           const hook: EchoPluginHook = pluginEntry()
