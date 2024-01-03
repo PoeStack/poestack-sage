@@ -84,15 +84,19 @@ export const MainPage: React.FC = () => {
 
   useEffect(() => {
     if (import.meta.env.MODE === 'development') {
-      DEV_PLUGINS.forEach((e: Promise<{ default: () => EchoPluginHook }>) => {
-        const context = buildContext('plugin')
-        ECHO_CONTEXT_SERVICE.contexts['plugin'] = context
+      for (const [name, devPlugin] of Object.entries(DEV_PLUGINS)) {
+        const context = buildContext(name)
+        ECHO_CONTEXT_SERVICE.contexts[name] = context
 
-        e.then((entry: { default: () => EchoPluginHook }) => {
-          const plugin: EchoPluginHook = entry.default()
-          plugin.start()
-        })
-      })
+        devPlugin()
+          .then((entry: { default: () => EchoPluginHook }) => {
+            const plugin: EchoPluginHook = entry.default()
+            plugin.start()
+          })
+          .catch((error) => {
+            APP_CONTEXT.loggingService.error(`Failed to load plugin ${name}`, error)
+          })
+      }
     } else {
       plugins.loadPlugins()
     }

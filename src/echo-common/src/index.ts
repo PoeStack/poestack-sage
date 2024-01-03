@@ -14,6 +14,11 @@ import { ECHO_CONTEXT_SERVICE, EchoContextService } from './echo-context-service
 import { SageValuationService, SageValuation, SageValuationShard } from './sage-valuation-service'
 import { validResults } from './smart-cache-hooks'
 import { SageItemGroupService } from './sage-item-group-service'
+import { EchoLoggingService } from './echo-logging-service'
+import { LoggingService, LoggingTarget } from './logging-service'
+import { LogLevel } from './log-level'
+import { PinoLoggingTarget } from './pino-logging-target'
+import { BrowserIpcLoggingTarget, IpcLoggingDelegate } from './browser-ipc-logging-target'
 
 export { cn } from './ui/lib/utils'
 
@@ -32,7 +37,11 @@ export {
   EchoDirService,
   validResults,
   EchoContextService,
-  ECHO_CONTEXT_SERVICE
+  ECHO_CONTEXT_SERVICE,
+  EchoLoggingService,
+  LogLevel,
+  PinoLoggingTarget,
+  BrowserIpcLoggingTarget
 }
 
 export type {
@@ -44,5 +53,8 @@ export type {
   EchoRoute,
   EchoContext,
   SageValuation,
-  SageValuationShard
+  SageValuationShard,
+  LoggingService,
+  LoggingTarget,
+  IpcLoggingDelegate,
 }

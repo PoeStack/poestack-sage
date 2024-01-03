@@ -7,6 +7,7 @@ import { EchoDirService } from './echo-dir-service'
 import { EchoContext } from './echo-context'
 import { ECHO_CONTEXT_SERVICE } from './echo-context-service'
 import StreamZip from 'node-stream-zip'
+import { LoggingService } from './logging-service'
 
 export type EchoPluginManifest = { name: string; version: string; echoCommonVersion: string }
 
@@ -19,6 +20,9 @@ export type EchoPlugin = {
 }
 
 export class EchoPluginService {
+  private readonly PUBLISHED_PLUGINS_LIST_URL = 'https://raw.githubusercontent.com/PoeStack/poestack-sage/published-plugins/public/plugins.json';
+  private readonly DIST_PLUGINS_URL = 'https://raw.githubusercontent.com/PoeStack/poestack-sage/published-plugins/dist_plugins';
+
   private installedPluginsPath = path.resolve(this.echoDir.homeDirPath, 'plugins')
   private httpUtil = new HttpUtil()
 
@@ -26,8 +30,8 @@ export class EchoPluginService {
   public currentPlugins$ = new BehaviorSubject<{ [key: string]: EchoPlugin }>({})
 
   constructor(
-    private echoDir: EchoDirService,
-    private buildContext: (source: string) => EchoContext
+    private readonly echoDir: EchoDirService,
+    private readonly buildContext: (source: string) => EchoContext
   ) {
     this.plugins$
       .pipe(
@@ -38,23 +42,25 @@ export class EchoPluginService {
       )
       .subscribe(this.currentPlugins$)
 
-    this.currentPlugins$.subscribe((e) => {
-      Object.values(e).forEach((p) => {
-        if (p.enabled && p.path && !p.hook) {
+    this.currentPlugins$.subscribe((plugins) => {
+      Object.entries(plugins).forEach(([key, plugin]) => {
+        if (plugin.enabled && plugin.path && !plugin.hook) {
           this.persistEnabledPlugins()
-          const context = buildContext('plugin')
-          ECHO_CONTEXT_SERVICE.contexts['plugin'] = context
+          const context = buildContext(key)
+          ECHO_CONTEXT_SERVICE.contexts[key] = context
 
-          const pluginEntry = module.require(path.resolve(p.path, 'entry.js'))
+          const pluginEntry = module.require(path.resolve(plugin.path, 'entry.js'))
           const hook: EchoPluginHook = pluginEntry()
+
           hook.start()
-          this.plugins$.next({ key: p.key, hook: hook })
+
+          this.plugins$.next({ key: plugin.key, hook: hook })
         }
 
-        if (!p.enabled && p.hook) {
+        if (!plugin.enabled && plugin.hook) {
           this.persistEnabledPlugins()
-          p.hook.destroy()
-          this.plugins$.next({ key: p.key, hook: undefined })
+          plugin.hook.destroy()
+          this.plugins$.next({ key: plugin.key, hook: undefined })
         }
       })
     })
@@ -97,9 +103,7 @@ export class EchoPluginService {
   public async installPlugin(plugin: EchoPlugin) {
     return this.httpUtil
       .get<string>(
-        `https://raw.githubusercontent.com/PoeStack/poestack-sage/published-plugins/dist_plugins/${
-          plugin.manifest!!.name
-        }.zip`,
+        `${this.DIST_PLUGINS_URL}/${plugin.manifest!!.name}.zip`,
         // @ts-ignore
         { responseType: 'arraybuffer' }
       )
@@ -128,14 +132,11 @@ export class EchoPluginService {
 
   public loadPlugins() {
     this.loadEnabledPlugins()
+  
     this.httpUtil
-      .get<{ [key: string]: EchoPluginManifest }>(
-        'https://raw.githubusercontent.com/PoeStack/poestack-sage/published-plugins/public/plugins.json'
-      )
+      .get<{ [key: string]: EchoPluginManifest }>(this.PUBLISHED_PLUGINS_LIST_URL)
       .subscribe((resp) => {
-        Object.values(resp).forEach((e) => {
-          this.plugins$.next({ key: e.name, manifest: e })
-        })
+        Object.values(resp).forEach((e) => this.plugins$.next({ key: e.name, manifest: e }))
         this.loadInstalledPlugins()
       })
   }

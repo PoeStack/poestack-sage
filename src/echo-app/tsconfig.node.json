@@ -5,7 +5,8 @@
     "src/main/*",
     "src/preload/*",
     "plugins/*",
-    "src/local-server/*"
+    "src/local-server/*",
+    "src/constants.ts"
   ],
   "compilerOptions": {
     "composite": true,
