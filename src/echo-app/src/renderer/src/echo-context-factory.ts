@@ -13,21 +13,21 @@ import {
   SageItemGroupService,
   EchoLoggingService,
   PinoLoggingTarget,
-  BrowserIpcLoggingTarget
+  BrowserIpcLoggingTarget,
+  IpcLoggingDelegate
 } from 'echo-common'
 import { GggApi, GggHttpUtil } from 'ggg-api'
 import { ItemGroupingService } from 'sage-common'
 import { ACTIVATED_LOG_LEVELS } from '../../constants'
 
-const loggingService = new EchoLoggingService(new Set(ACTIVATED_LOG_LEVELS))
+const IPC_LOGGING_DELEGATE: IpcLoggingDelegate = (logLevel, message, payload) => window.api.IPC_LOG({ logLevel, message, payload })
+
+const LOGGING_SERVICE = new EchoLoggingService(new Set(ACTIVATED_LOG_LEVELS))
   .activateLoggingTarget(PinoLoggingTarget.create())
-  .activateLoggingTarget(
-    new BrowserIpcLoggingTarget((logLevel, message, payload) =>
-      window.api.IPC_LOG({ logLevel, message, payload })
-    )
-  )
+  .activateLoggingTarget(new BrowserIpcLoggingTarget(IPC_LOGGING_DELEGATE))
+
 const ECHO_DIR = new EchoDirService()
-const ECHO_PLUGIN_SERVICE = new EchoPluginService(ECHO_DIR, buildContext)
+const ECHO_PLUGIN_SERVICE = new EchoPluginService(ECHO_DIR, LOGGING_SERVICE, buildContext)
 const ECHO_ROUTER = new EchoRouter()
 
 export const GGG_HTTP_UTIL = new GggHttpUtil()
@@ -42,8 +42,6 @@ const SAGE_ITEM_GROUP_SERVICE = new SageItemGroupService(ECHO_DIR)
 const POE_STASH_SERVICE = new PoeStashService(ECHO_DIR, GGG_API)
 const POE_CHARCTERS_SERVICE = new PoeCharacterService(ECHO_DIR, GGG_API)
 const POE_ZONE_TRACKER_SERVICE = new PoeZoneTrackerService(POE_CLIENT_LOG_SERVICE)
-
-
 
 export function buildContext(contextSource: string): EchoContext {
   return {
@@ -60,7 +58,7 @@ export function buildContext(contextSource: string): EchoContext {
     poeCharacters: POE_CHARCTERS_SERVICE,
     itemGroups: SAGE_ITEM_GROUP_SERVICE,
     subscriptions: [],
-    loggingService: loggingService
+    loggingService: LOGGING_SERVICE
   }
 }
 
