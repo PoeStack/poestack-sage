@@ -53,14 +53,7 @@ export class EchoPluginService {
           const pluginEntry = module.require(path.resolve(plugin.path, 'entry.js'))
           const hook: EchoPluginHook = pluginEntry()
 
-          hook.start({
-            meta: {
-              name: plugin.key,
-            },
-            services: {
-              loggingService: this.loggingService.createChildLogger(plugin.key)
-            }
-          })
+          hook.start()
 
           this.plugins$.next({ key: plugin.key, hook: hook })
         }

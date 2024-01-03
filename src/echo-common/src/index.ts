@@ -16,7 +16,6 @@ import { validResults } from './smart-cache-hooks'
 import { SageItemGroupService } from './sage-item-group-service'
 import { EchoLoggingService } from './echo-logging-service'
 import { LoggingService, LoggingTarget } from './logging-service'
-import { PluginMetadata, PluginContext } from './plugin-context'
 import { LogLevel } from './log-level'
 import { PinoLoggingTarget } from './pino-logging-target'
 import { BrowserIpcLoggingTarget, IpcLoggingDelegate } from './browser-ipc-logging-target'
@@ -56,8 +55,6 @@ export type {
   SageValuation,
   SageValuationShard,
   LoggingService,
-  PluginMetadata as PluginRegistration,
-  PluginContext,
   LoggingTarget,
   IpcLoggingDelegate,
 }
