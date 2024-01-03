@@ -202,6 +202,8 @@ function createLogger() {
           }
         },
         formatters: {
+          // can be used to display meta data like hostname, pid and so on
+          bindings: () => ({}),
           level: (label: string) => {
             return { level: label.toUpperCase() }
           }
