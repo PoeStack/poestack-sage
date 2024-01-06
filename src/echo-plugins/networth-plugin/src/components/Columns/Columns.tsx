@@ -1,9 +1,9 @@
 import { ColumnDef, filterFns } from '@tanstack/react-table'
 import { rarityColors, currencyChangeColors } from '../../assets/theme'
-import { getRarity, parseTabNames } from '../../utils/item.utils'
+import { getRarity, parseTabNames, parseUnsafeHashProps } from '../../utils/item.utils'
 import { SageValuation, cn } from 'echo-common'
 import { CurrencySwitch } from '../../store/settingStore'
-import { IPricedItem } from '../../interfaces/priced-item.interface'
+import { IDisplayedItem } from '../../interfaces/priced-item.interface'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import { TableColumnHeader } from './ColumnHeader'
@@ -14,18 +14,18 @@ import { formatValue } from '../../utils/currency.utils'
 import * as Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import { Badge } from 'echo-common/components-v1'
+import { SageItemGroup } from 'sage-common'
 
-type PricedItem = keyof IPricedItem | 'cumulative'
+type DisplayedItem = keyof IDisplayedItem | keyof SageItemGroup | 'cumulative'
 
-export function itemIcon(options: {
-  accessorKey: PricedItem
-  header: string
-}): ColumnDef<IPricedItem> {
-  const { header, accessorKey } = options
+export function itemIcon(): ColumnDef<IDisplayedItem> {
+  const key: DisplayedItem = 'icon'
+  const header = 'icon'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
-    accessorKey,
+    accessorKey: key,
+    accessorFn: (val) => val.icon,
     size: 65,
     minSize: 52,
     enableSorting: false,
@@ -34,21 +34,19 @@ export function itemIcon(options: {
       headerWording: header
     },
     cell: ({ row }) => {
-      const value = row.getValue<string>(accessorKey)
+      const value = row.getValue<string>(key)
       return <ItemIconCell value={value} frameType={row.original.frameType} />
     }
   }
 }
 
-export function itemName(options: {
-  accessorKey: PricedItem
-  header: string
-}): ColumnDef<IPricedItem> {
-  const { header, accessorKey } = options
+export function itemName(): ColumnDef<IDisplayedItem> {
+  const key: DisplayedItem = 'displayName'
+  const header = 'name'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
-    accessorKey,
+    accessorKey: key,
     enableSorting: true,
     enableGlobalFilter: true,
     size: 300,
@@ -57,21 +55,20 @@ export function itemName(options: {
       headerWording: header
     },
     cell: ({ row }) => {
-      const value = row.getValue<string>(accessorKey)
+      const value = row.getValue<string>(key)
       return <ItemNameCell value={value} frameType={row.original.frameType} />
     }
   }
 }
 
-export function itemTag(options: {
-  accessorKey: PricedItem
-  header: string
-}): ColumnDef<IPricedItem> {
-  const { header, accessorKey } = options
+export function itemTag(): ColumnDef<IDisplayedItem> {
+  const key: DisplayedItem = 'tag'
+  const header = 'tag'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
-    accessorKey,
+    accessorKey: key,
+    accessorFn: (val) => val.group?.tag,
     enableSorting: true,
     enableGlobalFilter: true,
     size: 65,
@@ -80,51 +77,20 @@ export function itemTag(options: {
       headerWording: header
     },
     cell: ({ row }) => {
-      const value = row.getValue<string>(accessorKey)
+      const value = row.getValue<string>(key)
       return <ItemTagCell value={value} />
     }
   }
 }
 
-export function itemProps(options: {
-  accessorKey: PricedItem
-  header: string
-}): ColumnDef<IPricedItem> {
-  const { header, accessorKey } = options
+export function itemProps(): ColumnDef<IDisplayedItem> {
+  const key: DisplayedItem = 'unsafeHashProperties'
+  const header = 'properties'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
-    accessorKey,
-    accessorFn: (val) => {
-      const hashProps = Object.entries(val.unsafeHashProperties || {})
-        .filter(([name, value]) => {
-          const excludeNameByIncludes = (name: string) =>
-            !['mods', 'Mods'].some((key) => name.includes(key))
-
-          const excludeFalseValues = (value: any) => {
-            if (!value || value === '0') return false
-            return true
-          }
-          return excludeNameByIncludes(name) && excludeFalseValues(value)
-        })
-        .map(([name, value]) => {
-          let displayValue = `${name}: ${value}`
-          // Name only
-          if (value === true) {
-            displayValue = name
-          }
-          return { name, value, displayValue }
-        })
-
-      if (val.key && val.name.toLowerCase() !== val.key.toLowerCase()) {
-        // Used for contract or cluster jewels
-        hashProps.push({ name: val.name, value: val.key, displayValue: val.key })
-      }
-
-      hashProps.sort((a, b) => a.displayValue.length - b.displayValue.length)
-      // Filterfn does not work, when an object is returned
-      return hashProps.map((p) => `${p.name};;${p.displayValue}`).join(';;;')
-    },
+    accessorKey: key,
+    accessorFn: (val) => parseUnsafeHashProps(val),
     enableSorting: true,
     enableGlobalFilter: true,
     size: 400,
@@ -133,21 +99,20 @@ export function itemProps(options: {
       headerWording: header
     },
     cell: ({ row }) => {
-      const value = row.getValue<string>(accessorKey)
+      const value = row.getValue<string>(key)
       return <ItemPropsCell value={value} />
     }
   }
 }
 
-export function itemTabs(options: {
-  accessorKey: PricedItem
-  header: string
-}): ColumnDef<IPricedItem> {
-  const { header, accessorKey } = options
+export function itemTabs(): ColumnDef<IDisplayedItem> {
+  const key: DisplayedItem = 'tab'
+  const header = 'tab'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
-    accessorKey,
+    accessorKey: key,
+    accessorFn: (val) => parseTabNames(val.tab),
     enableSorting: true,
     enableGlobalFilter: true,
     size: 180,
@@ -155,25 +120,22 @@ export function itemTabs(options: {
     meta: {
       headerWording: header
     },
-    accessorFn: (val) =>
-      val.tab && typeof val.tab === 'object' ? parseTabNames(val.tab || []) : '',
     cell: ({ row }) => {
-      const value = row.getValue<string>(accessorKey)
+      const value = row.getValue<string>(key)
       return <ItemTabsCell value={value} />
     }
   }
 }
 
-export function itemQuantity(options: {
-  accessorKey: PricedItem
-  header: string
-  diff?: boolean
-}): ColumnDef<IPricedItem> {
-  const { header, accessorKey, diff } = options
+export function itemQuantity(options: { diff?: boolean }): ColumnDef<IDisplayedItem> {
+  const { diff } = options
+
+  const key: DisplayedItem = 'stackSize'
+  const header = 'quantity'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="right" />,
-    accessorKey,
+    accessorKey: key,
     enableSorting: true,
     enableGlobalFilter: false,
     size: 110,
@@ -183,21 +145,19 @@ export function itemQuantity(options: {
     },
     // maxSize: 80,
     cell: ({ row }) => {
-      const value = row.getValue<number>(accessorKey)
+      const value = row.getValue<number>(key)
       return <ItemQuantityCell quantity={value} diff={diff} />
     }
   }
 }
 
-export function sparkLine(options: {
-  accessorKey: PricedItem
-  header: string
-}): ColumnDef<IPricedItem> {
-  const { accessorKey, header } = options
+export function sparkLine(): ColumnDef<IDisplayedItem> {
+  const key: DisplayedItem = 'valuation'
+  const header = 'priceLast24Hours'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="right" />,
-    accessorKey,
+    accessorKey: key,
     accessorFn: (pricedItem) => {
       const valuation = pricedItem.valuation
       if (!valuation) return 0
@@ -225,20 +185,20 @@ export function sparkLine(options: {
     },
     cell: ({ row }) => {
       const value = row.original.valuation
-      const totalChange = row.getValue<number>(accessorKey)
+      const totalChange = row.getValue<number>(key)
       return <SparklineCell valuation={value} totalChange={totalChange} />
     }
   }
 }
 
 export function itemValue(options: {
-  accessorKey: PricedItem
+  accessorKey: DisplayedItem
   header: string
   cumulative?: boolean
   showChange?: boolean
   toCurrency?: 'chaos' | 'divine' | 'both'
   enableSorting?: boolean
-}): ColumnDef<IPricedItem> {
+}): ColumnDef<IDisplayedItem> {
   const { header, accessorKey, cumulative, showChange, toCurrency, enableSorting } = options
 
   return {

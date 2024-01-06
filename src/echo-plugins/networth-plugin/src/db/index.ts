@@ -52,3 +52,7 @@ export const getRootSnapshot = async () => {
 export const saveRootSnapshot = (data: SnapshotOutOfModel<RootStore>) => {
   return db.update(schema.rootStore).set({ root: data }).where(eq(schema.rootStore.id, 1)).execute()
 }
+
+export const resetAll = () => {
+  return db.delete(schema.rootStore).where(eq(schema.rootStore.id, 1)).execute()
+}

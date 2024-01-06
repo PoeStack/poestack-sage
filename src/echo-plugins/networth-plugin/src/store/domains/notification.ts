@@ -1,5 +1,4 @@
-import { computed } from 'mobx'
-import { detach, idProp, model, Model, prop, rootRef, tProp, types } from 'mobx-keystone'
+import { idProp, model, Model, prop, tProp, types } from 'mobx-keystone'
 import { NotificationType } from '../../interfaces/notification.interface'
 import dayjs from 'dayjs'
 

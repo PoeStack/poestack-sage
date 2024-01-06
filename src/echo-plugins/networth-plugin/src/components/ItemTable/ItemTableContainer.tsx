@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { itemTableColumns } from './itemTableColumns'
 import ItemTable from './ItemTable'
-import { IPricedItem } from '../../interfaces/priced-item.interface'
+import { IDisplayedItem, IPricedItem } from '../../interfaces/priced-item.interface'
 import { observer } from 'mobx-react'
 import { useStore } from '../../hooks/useStore'
 import { FilterFn, filterFns } from '@tanstack/react-table'
@@ -20,7 +20,7 @@ const ItemTableContainer: React.FC = () => {
     return itemTableColumns()
   }, [])
 
-  const fuzzyFilter: FilterFn<IPricedItem> = (row, columnId, filterValue, addMeta) => {
+  const fuzzyFilter: FilterFn<IDisplayedItem> = (row, columnId, filterValue, addMeta) => {
     if (columnId === 'icon') {
       const rarity = getRarityIdentifier(filterValue?.toString()?.toLowerCase())
       return rarity >= 0 && row.original.frameType === rarity

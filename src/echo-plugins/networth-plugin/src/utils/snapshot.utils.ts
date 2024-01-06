@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import { IApiSnapshot } from '../interfaces/api/api-snapshot.interface'
 import { IApiStashTabSnapshot } from '../interfaces/api/api-stash-tab-snapshot.interface'
-import { IPricedItem } from '../interfaces/priced-item.interface'
+import { IDisplayedItem } from '../interfaces/priced-item.interface'
 import { IStashTab } from '../interfaces/stash.interface'
 import { Snapshot } from '../store/domains/snapshot'
 import { StashTab } from '../store/domains/stashtab'
@@ -11,16 +11,12 @@ import { IChartStashTabSnapshot } from '../interfaces/hc-chart-series.interface'
 export const diffSnapshots = (
   snapshot1: Snapshot,
   snapshot2: Snapshot,
-  removedItemsPriceResolver?: (items: IPricedItem[]) => void
+  removedItemsPriceResolver?: (items: IDisplayedItem[]) => void
 ) => {
-  const difference: IPricedItem[] = []
-  const removedItems: IPricedItem[] = []
-  const itemsInSnapshot1 = mergeItemStacks(
-    snapshot1.stashTabs.flatMap((sts) => sts.pricedItems.data)
-  )
-  const itemsInSnapshot2 = mergeItemStacks(
-    snapshot2.stashTabs.flatMap((sts) => sts.pricedItems.data)
-  )
+  const difference: IDisplayedItem[] = []
+  const removedItems: IDisplayedItem[] = []
+  const itemsInSnapshot1 = mergeItemStacks(snapshot1.stashTabs.flatMap((sts) => sts.displayedItems))
+  const itemsInSnapshot2 = mergeItemStacks(snapshot2.stashTabs.flatMap((sts) => sts.displayedItems))
 
   // items that exist in snapshot 2 but not in snapshot 1 & items that exist in both snapshots but should be updated
   const itemsToAddOrUpdate = itemsInSnapshot2.filter((x) => {
@@ -63,7 +59,7 @@ export const diffSnapshots = (
 }
 
 export const filterItems = (
-  items: IPricedItem[],
+  items: IDisplayedItem[],
   showPricedItems: boolean,
   showUnpricedItems: boolean
 ) => {
@@ -93,7 +89,7 @@ export const filterSnapshotItems = (
         )
       )
       .flatMap((sts) =>
-        sts.pricedItems.data.filter((i) => {
+        sts.displayedItems.filter((i) => {
           return (showPricedItems && i.calculated > 0) || (showUnpricedItems && !i.calculated)
         })
       )

@@ -37,12 +37,12 @@ import {
   createCompactTab,
   mapItemsToPricedItems,
   mapMapStashItemToPoeItem as mapMapStashItemsToPoeItems,
-  mergeItemStacks
+  mergeItems
 } from '../../utils/item.utils'
 import { PoeItem } from 'sage-common'
 import { StashTabSnapshot } from './stashtab-snapshot'
 import { diffSnapshots, filterItems, filterSnapshotItems } from '../../utils/snapshot.utils'
-import { IPricedItem } from '../../interfaces/priced-item.interface'
+import { IDisplayedItem } from '../../interfaces/priced-item.interface'
 import { PersistWrapper } from '../../utils/persist.utils'
 import dayjs from 'dayjs'
 
@@ -553,14 +553,14 @@ export class Profile extends Model(
                 compactStash,
                 settingStore.primaryPercentile
               )
-              const pricedStackedItems = mergeItemStacks(pricedItems)
+              const pricedStackedItems = mergeItems(pricedItems)
               const stashTabId =
                 valuatedStash.stashTab instanceof StashTab
                   ? valuatedStash.stashTab.id
                   : compactStash.id
               const stashTabSnapshots = new StashTabSnapshot({
                 stashTabId: stashTabId,
-                pricedItems: frozen(pricedStackedItems)
+                pricedItems: pricedStackedItems
               })
               return of(stashTabSnapshots)
             })
@@ -618,7 +618,7 @@ export class Profile extends Model(
     // }
 
     // const pricedStashTabs = stashTabsWithItems.map((stashTabWithItems: IStashTabSnapshot) => {
-    //   stashTabWithItems.pricedItems = stashTabWithItems.pricedItems.map((item: IPricedItem) => {
+    //   stashTabWithItems.pricedItems = stashTabWithItems.pricedItems.map((item: IDisplayedItem) => {
     //     return pricingService.priceItem(item, prices)
     //   })
     //   return stashTabWithItems
@@ -673,7 +673,7 @@ export class Profile extends Model(
     this.snapshots = nextSnapshots
   }
 
-  diffSnapshotPriceResolver(removedItems: IPricedItem[]) {
+  diffSnapshotPriceResolver(removedItems: IDisplayedItem[]) {
     // TODO: use some flow generator function & convert PricedItem to PoeItem, that it can priced again or save the PoeItem in the PricedItem
     return 0
 

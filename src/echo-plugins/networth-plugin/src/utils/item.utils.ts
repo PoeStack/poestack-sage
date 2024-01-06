@@ -1,4 +1,4 @@
-import { PoeItem, PoeItemProperty } from 'sage-common'
+import { PoeItem, PoeItemProperty, PoeItemSocket } from 'sage-common'
 import { Rarity } from '../assets/theme'
 import {
   IChildStashTab,
@@ -7,7 +7,7 @@ import {
   IStashTabNode
 } from '../interfaces/stash.interface'
 import { v4 as uuidv4 } from 'uuid'
-import { IPricedItem } from '../interfaces/priced-item.interface'
+import { IDisplayedItem, IPricedItem } from '../interfaces/priced-item.interface'
 import { EchoPoeItem } from 'echo-common'
 
 const rarities: (keyof Rarity)[] = [
@@ -39,12 +39,49 @@ export const parseTabNames = (tabs: ICompactTab[]) => {
   return tabs.map((t) => t.name).join(', ')
 }
 
+export const parseUnsafeHashProps = (item: IDisplayedItem) => {
+  const hashProps = Object.entries(item.group?.unsafeHashProperties || {})
+    .filter(([name, value]) => {
+      const excludeNameByIncludes = (name: string) =>
+        !['mods', 'Mods'].some((key) => name.includes(key))
+
+      const excludeFalseValues = (value: any) => {
+        if (!value || value === '0') return false
+        return true
+      }
+      return excludeNameByIncludes(name) && excludeFalseValues(value)
+    })
+    .map(([name, value]) => {
+      let displayValue = `${name}: ${value}`
+      // Name only
+      if (value === true) {
+        displayValue = name
+      }
+      return { name, value, displayValue }
+    })
+
+  if (item.group?.key && item.displayName.toLowerCase() !== item.group.key?.toLowerCase()) {
+    // Used for contract or cluster jewels
+    hashProps.push({ name: item.displayName, value: item.group.key, displayValue: item.group.key })
+  }
+
+  hashProps.sort((a, b) => a.displayValue.length - b.displayValue.length)
+  // Filterfn does not work, when an object is returned
+  return hashProps.map((p) => `${p.name};;${p.displayValue}`).join(';;;')
+}
+
 export const getItemName = (name?: string, typeline?: string) => {
   let itemName = name || ''
   if (typeline) {
     itemName += ' ' + typeline
   }
   return itemName.replace('<<set:MS>><<set:M>><<set:S>>', '').trim()
+}
+
+export const getItemDisplayName = (item: PoeItem) => {
+  return getMapTier(item.properties) && item.frameType !== 3
+    ? getSpecialMapFromImplicits(item.implicitMods) || item.baseType!
+    : getItemName(item.name, item.frameType !== 3 ? item.typeLine : undefined)
 }
 
 export const getPropertyValue = (props: PoeItemProperty[], key: string) => {
@@ -68,26 +105,54 @@ export const getMapTier = (props?: PoeItemProperty[]) => {
   return getPropertyValue(props, 'Map Tier')
 }
 
-export function getLinks(array: any[]) {
+export const getStackSize = (item: PoeItem) => {
+  return item.stackSize || 1
+}
+
+export const getTotalStackSize = (item: PoeItem) => {
+  return item.maxStackSize || 1
+}
+
+export const getSockets = (item: PoeItem) => {
+  return item.sockets !== undefined && item.sockets !== null ? item.sockets.length : 0
+}
+
+export function getLinks(sockets?: PoeItemSocket[]) {
+  if (sockets === undefined || sockets === null) return 0
+
   const numMapping: any = {}
   let greatestFreq = 0
-  array.forEach((number) => {
-    numMapping[number] = (numMapping[number] || 0) + 1
+  sockets
+    .map((t) => t.group!)
+    .forEach((number) => {
+      numMapping[number] = (numMapping[number] || 0) + 1
 
-    if (greatestFreq < numMapping[number]) {
-      greatestFreq = numMapping[number]
-    }
-  })
+      if (greatestFreq < numMapping[number]) {
+        greatestFreq = numMapping[number]
+      }
+    })
   return greatestFreq
 }
 
-export function findItem<T extends IPricedItem>(array: T[], toFind: T) {
+export function findItem<T extends IDisplayedItem>(array: T[], toFind: T) {
   return array.find((x) => {
-    if (toFind.hash) {
-      return x.hash === toFind.hash
+    if (toFind.group?.hash) {
+      return x.group?.hash === toFind.group?.hash
     }
-    if (toFind.totalStacksize > 1) {
-      return x.name === toFind.name
+    if (!x.group && toFind.totalStacksize > 1) {
+      return x.displayName === toFind.displayName
+    }
+    return false
+  })
+}
+
+export function findPricedItem<T extends IPricedItem>(array: T[], toFind: T) {
+  return array.find((x) => {
+    if (toFind.group?.hash) {
+      return x.group?.hash === toFind.group?.hash
+    }
+    if (!x.group && getTotalStackSize(toFind.items[0]) > 1) {
+      return getItemDisplayName(x.items[0]) === getItemDisplayName(toFind.items[0])
     }
     return false
   })
@@ -206,76 +271,90 @@ export const createCompactTab = (stashTab: IStashTabNode | string): ICompactTab 
   }
 }
 
-export function mapItemsToPricedItems(
+export const mapItemsToPricedItems = (
   valuation: EchoPoeItem[],
   stashTab: ICompactTab,
   percentile: number
-): IPricedItem[] {
+): IPricedItem[] => {
   return valuation.map((valuatedItem) => {
-    const item = valuatedItem.data
-    const valuation = valuatedItem.valuation
-
-    const mapTier = getMapTier(item.properties)
-    const stackSize = item.stackSize || 1
-
-    const mappedItem: IPricedItem = {
+    const pricedItem: IPricedItem = {
       uuid: uuidv4(),
-      tag: valuatedItem.group?.primaryGroup.tag,
-      key: valuatedItem.group?.primaryGroup.key,
-      hash: valuatedItem.group?.primaryGroup.hash,
-      unsafeHashProperties: valuatedItem.group?.primaryGroup.unsafeHashProperties,
-      itemId: item.id!,
-      name:
-        mapTier && item.frameType !== 3
-          ? getSpecialMapFromImplicits(item.implicitMods) || item.baseType!
-          : getItemName(item.name, item.frameType !== 3 ? item.typeLine : undefined),
-      typeLine: item.typeLine!,
-      frameType: item.frameType!,
-      identified: item.identified!,
-      total: valuation ? valuation.pValues[percentile] * stackSize : 0,
-      calculated: valuation ? valuation.pValues[percentile] : 0,
-      valuation: valuation === null ? undefined : valuation,
-      icon: item.icon!,
-      ilvl: item.ilvl!,
-      tier: mapTier,
-      corrupted: item.corrupted || false,
-      links:
-        item.sockets !== undefined && item.sockets !== null
-          ? getLinks(item.sockets.map((t) => t.group))
-          : 0,
-      sockets: item.sockets !== undefined && item.sockets !== null ? item.sockets.length : 0,
-      quality: getQuality(item.properties),
-      level: getLevel(item.properties),
-      stackSize: stackSize,
-      totalStacksize: item.maxStackSize || 1,
+      percentile: percentile,
+      group: valuatedItem.group?.primaryGroup,
+      valuation: valuatedItem.valuation || undefined,
+      items: [valuatedItem.data],
       tab: [stashTab]
     }
+    return pricedItem
+  })
+}
 
-    if (mappedItem.name === 'Chaos Orb') {
+export const mapItemsToDisplayedItems = (pricedItems: IPricedItem[]): IDisplayedItem[] => {
+  return pricedItems.map((pItem) => {
+    const item = pItem.items[0]
+    const valuation = pItem.valuation
+
+    const stackSize = getStackSize(item)
+
+    const mappedItem: IDisplayedItem = {
+      displayName: getItemDisplayName(item),
+      total: valuation ? valuation.pValues[pItem.percentile] * stackSize : 0,
+      calculated: valuation ? valuation.pValues[pItem.percentile] : 0,
+      stackSize: stackSize,
+      totalStacksize: getTotalStackSize(item),
+      icon: item.icon!,
+      frameType: item.frameType!,
+      ...pItem
+    }
+
+    if (mappedItem.displayName === 'Chaos Orb') {
       mappedItem.calculated = 1
-      mappedItem.total = mappedItem.stackSize
+      mappedItem.total = stackSize
     }
     return mappedItem
   })
 }
 
-export function mergeItemStacks(items: IPricedItem[]) {
-  const mergedItems: IPricedItem[] = []
+export function mergeItemStacks(items: IDisplayedItem[]) {
+  const mergedItems: IDisplayedItem[] = []
 
-  items.forEach((item) => {
-    const foundItem = findItem(mergedItems, item)
+  items.forEach((dItem) => {
+    const foundItem = findItem(mergedItems, dItem)
     if (!foundItem) {
       mergedItems.push({
-        ...item
+        ...dItem
       })
     } else {
-      const foundIdx = mergedItems.indexOf(foundItem)
-      mergedItems[foundIdx].stackSize += item.stackSize
-      mergedItems[foundIdx].total =
-        mergedItems[foundIdx].stackSize * mergedItems[foundIdx].calculated
-      if (mergedItems[foundIdx].tab !== undefined && item.tab !== undefined) {
-        mergedItems[foundIdx].tab = [...mergedItems[foundIdx].tab, ...item.tab]
-        mergedItems[foundIdx].tab = mergedItems[foundIdx].tab.filter(
+      const idx = mergedItems.indexOf(foundItem)
+      mergedItems[idx].stackSize += dItem.stackSize
+      mergedItems[idx].total = mergedItems[idx].stackSize * mergedItems[idx].calculated
+      if (dItem.tab !== undefined) {
+        mergedItems[idx].tab = [...(mergedItems[idx].tab || []), ...dItem.tab]
+        mergedItems[idx].tab = mergedItems[idx].tab.filter(
+          (v, i, a) => a.findIndex((t) => t.id === v.id) === i
+        )
+      }
+    }
+  })
+
+  return mergedItems
+}
+
+export function mergeItems(items: IPricedItem[]) {
+  const mergedItems: IPricedItem[] = []
+
+  items.forEach((pItem) => {
+    const foundItem = findPricedItem(mergedItems, pItem)
+    if (!foundItem) {
+      mergedItems.push({
+        ...pItem
+      })
+    } else {
+      const idx = mergedItems.indexOf(foundItem)
+      mergedItems[idx].items = [...(mergedItems[idx].items || []), ...(pItem.items || [])]
+      if (pItem.tab !== undefined) {
+        mergedItems[idx].tab = [...(mergedItems[idx].tab || []), ...pItem.tab]
+        mergedItems[idx].tab = mergedItems[idx].tab.filter(
           (v, i, a) => a.findIndex((t) => t.id === v.id) === i
         )
       }

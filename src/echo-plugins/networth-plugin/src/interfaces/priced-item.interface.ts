@@ -1,29 +1,24 @@
 import { SageValuation } from 'echo-common'
 import { ICompactTab } from './stash.interface'
+import { PoeItem, SageItemGroup } from 'sage-common'
 
+// The persisted priced item
 export interface IPricedItem {
   uuid: string
-  tag: string | undefined
-  key: string | undefined
-  hash: string | undefined
-  unsafeHashProperties: any
-  itemId: string
-  name: string
-  typeLine: string
-  frameType: number
-  identified: boolean
-  total: number
-  calculated: number
+  percentile: number
+  group?: SageItemGroup
   valuation: SageValuation | undefined
-  icon: string
-  ilvl: number
-  tier: number
-  corrupted: boolean
-  links: number
-  sockets: number
-  quality: number
-  level: number
+  items: PoeItem[]
+  tab: ICompactTab[]
+}
+
+// The hydrated displayed item
+export interface IDisplayedItem extends IPricedItem {
+  displayName: string
+  calculated: number
+  total: number
   stackSize: number
   totalStacksize: number
-  tab: ICompactTab[]
+  icon: string
+  frameType: number
 }

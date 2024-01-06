@@ -9,31 +9,16 @@ import {
   itemValue,
   sparkLine
 } from '../Columns/Columns'
-import { IPricedItem } from '../../interfaces/priced-item.interface'
+import { IDisplayedItem } from '../../interfaces/priced-item.interface'
 
-export const itemTableColumns = (): ColumnDef<IPricedItem>[] => [
-  itemIcon({
-    accessorKey: 'icon',
-    header: 'icon'
-  }),
-  itemName({
-    accessorKey: 'name',
-    header: 'name'
-  }),
-  itemProps({ accessorKey: 'unsafeHashProperties', header: 'properties' }),
-  itemTag({
-    accessorKey: 'tag',
-    header: 'tag'
-  }),
-  itemTabs({
-    accessorKey: 'tab',
-    header: 'tab'
-  }),
-  itemQuantity({
-    accessorKey: 'stackSize',
-    header: 'quantity'
-  }),
-  sparkLine({ accessorKey: 'valuation', header: 'priceLast24Hours' }),
+export const itemTableColumns = (): ColumnDef<IDisplayedItem>[] => [
+  itemIcon(),
+  itemName(),
+  itemProps(),
+  itemTag(),
+  itemTabs(),
+  itemQuantity({}),
+  sparkLine(),
   itemValue({
     accessorKey: 'calculated',
     header: 'price',
