@@ -17,7 +17,7 @@ import { cn } from 'echo-common'
 
 const ProfileMenu = () => {
   const { t } = useTranslation()
-  const { accountStore } = useStore()
+  const { accountStore, uiStateStore } = useStore()
   const activeAccount = accountStore.activeAccount
   const [menuOpen, setMenuOpen] = useState(false)
   const [selectedProfile, setSelectedProfile] = useState<Profile | undefined>()
@@ -54,6 +54,7 @@ const ProfileMenu = () => {
                 role="combobox"
                 aria-expanded={menuOpen}
                 aria-label={t('label.selectProfile')}
+                disabled={!uiStateStore.initiated}
               >
                 <span className="truncate">
                   {activeAccount.activeProfile?.name ?? t('label.addProfile')}
@@ -73,6 +74,7 @@ const ProfileMenu = () => {
                 role="combobox"
                 aria-expanded={menuOpen}
                 aria-label={t('label.selectProfile')}
+                disabled={!uiStateStore.initiated}
               >
                 <PlusCircleIcon className="h-4 w-4" />
                 <span className="truncate">{t('label.addProfile')}</span>

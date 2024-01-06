@@ -14,6 +14,7 @@ const ToolbarContainer: React.FC<ToolbarContainerProps> = () => {
     <Toolbar
       isSubmitting={uiStateStore.isSubmitting}
       isInitiating={uiStateStore.isInitiating}
+      isInitiated={uiStateStore.initiated}
       isSnapshotting={uiStateStore.isSnapshotting}
       isProfileValid={activeProfile?.isProfileValid || false}
       readyToSnapshot={activeProfile?.readyToSnapshot || false}
