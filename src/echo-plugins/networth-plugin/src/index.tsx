@@ -10,6 +10,8 @@ import Notifier from './components/Notifier/Notifier'
 import { Toaster } from 'echo-common/components-v1'
 import { initDrizzle, getRootSnapshot, saveRootSnapshot } from './db'
 import _ from 'lodash'
+import { ErrorBoundary } from 'react-error-boundary'
+import ErrorBoundaryFallback from './components/ErrorBroundary/ErrorBoundaryFallback'
 
 export function createRootStore() {
   const rootStore = new RootStore({})
@@ -41,11 +43,13 @@ const App = () => {
   return (
     <Suspense>
       <I18nextProvider i18n={i18nInstance as i18n}>
-        <StoreContext.Provider value={store}>
-          <NetWorth />
-          <Notifier />
-          <Toaster />
-        </StoreContext.Provider>
+        <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
+          <StoreContext.Provider value={store}>
+            <NetWorth />
+            <Notifier />
+            <Toaster />
+          </StoreContext.Provider>
+        </ErrorBoundary>
       </I18nextProvider>
     </Suspense>
   )
