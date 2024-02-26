@@ -16,6 +16,8 @@ spec:
             env:
               - name: UPDATE_HISTORY_HOURLY
                 value: "true"
+              - name: UPDATE_HISTORY_DAILY
+                value: "true"
             envFrom:
               - secretRef:
                   name: sage-secrets

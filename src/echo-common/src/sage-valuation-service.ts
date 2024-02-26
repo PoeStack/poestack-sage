@@ -11,12 +11,12 @@ export class SageValuationService {
   constructor(
     private echoDir: EchoDirService,
     private itemGroupingService: ItemGroupingService
-  ) {}
+  ) { }
 
   public cacheValuationShards = new SmartCache<SageValuationShard>(this.echoDir, 'sage-valuations')
 
   public withValuationsResultOnly(league: string, items: PoeItem[]) {
-    return this.itemGroupingService.withGroup(items).pipe(
+    return this.itemGroupingService.withGroupObserable(items).pipe(
       mergeMap((e) =>
         this.itemValuation(league, e.data).pipe(
           validResultsWithNullish(),
@@ -28,7 +28,7 @@ export class SageValuationService {
   }
 
   public withValuations(league: string, items: PoeItem[]) {
-    return this.itemGroupingService.withGroup(items).pipe(
+    return this.itemGroupingService.withGroupObserable(items).pipe(
       mergeMap((e) =>
         this.itemValuation(league, e.data).pipe(
           map((vEvent) => {
@@ -87,6 +87,7 @@ export class SageValuationService {
 
       out.valuations[key] = {
         listings: value.l,
+        lowConfidence: value.lc === true,
         primaryValue: pValues[12],
         pValues: pValues,
         history: {
@@ -115,6 +116,7 @@ export type SageValuationSummaryInternal = {
 
 export type SageValuationInternal = {
   l: number
+  lc?: boolean | null | undefined
   c: number[]
   h: number[]
   d: number[]
@@ -137,6 +139,7 @@ export type SageValuationHistory = {
 
 export type SageValuation = {
   listings: number
+  lowConfidence: boolean
   pValues: { [percentile: number]: number }
   primaryValue: number
   history: SageValuationHistory
