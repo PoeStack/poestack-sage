@@ -1,0 +1,27 @@
+{
+  "example-character-plugin": {
+    "name": "example-character-plugin",
+    "version": "0.0.0",
+    "echoCommonVersion": "1.0.3"
+  },
+  "example-log-plugin": {
+    "name": "example-log-plugin",
+    "version": "0.0.0",
+    "echoCommonVersion": "1.0.3"
+  },
+  "example-stash-plugin": {
+    "name": "example-stash-plugin",
+    "version": "0.0.0",
+    "echoCommonVersion": "1.0.3"
+  },
+  "economy-plugin": {
+    "name": "economy-plugin",
+    "version": "0.0.0",
+    "echoCommonVersion": "1.0.3"
+  },
+  "networth-plugin": {
+    "name": "networth-plugin",
+    "version": "0.0.0",
+    "echoCommonVersion": "1.0.3"
+  }
+}
