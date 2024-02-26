@@ -1,0 +1,1 @@
+ALTER TABLE "listings" ALTER COLUMN "timestamp" SET DATA TYPE timestamp;

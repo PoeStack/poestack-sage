@@ -1,0 +1,38 @@
+{
+  "name": "sage-pg-db",
+  "version": "1.0.0",
+  "description": "",
+  "type": "commonjs",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "files": [
+    "dist/"
+  ],
+  "exports": {
+    "development": {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts"
+    },
+    "default": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig-esm.json && tsc -p tsconfig.json",
+    "generate": "drizzle-kit generate:pg"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "drizzle-orm": "^0.29.3",
+    "postgres": "^3.4.3",
+    "uuidv4": "^6.2.13"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.20.13",
+    "typescript": "^5.2.2",
+    "@types/node": "^20.9.0"
+  }
+}

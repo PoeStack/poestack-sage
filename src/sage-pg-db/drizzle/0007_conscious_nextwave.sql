@@ -1,0 +1,1 @@
+ALTER TABLE "discord_accounts" ADD COLUMN "tft_vouch_bonus" integer;

@@ -1,0 +1,1 @@
+ALTER TABLE "poe_profiles" ADD COLUMN "token" varchar(256);
