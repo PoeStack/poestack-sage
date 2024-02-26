@@ -5,7 +5,7 @@ import process from 'process'
 
 const client = new Redis(process.env['REDIS_URL'])
 
-const cacheLimit = 5000
+const cacheLimit = 100000000
 const ageLimit = 1000 * 60 * 60 * 48
 
 function cleanShard(shard: string) {

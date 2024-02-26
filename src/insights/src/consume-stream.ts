@@ -35,7 +35,7 @@ const extractCurrencyValue = (currencyValueRaw: string): string | null => {
     }
 
     if (numericValue) {
-      return twoDecimals(numericValue).toString()
+      return numericValue.toString()
     }
   } catch (e) {
     // @ts-ignore

@@ -1,8 +1,7 @@
-import { PoeItem } from '../ggg/poe-api-models'
-import { ItemUtils } from './item-utils'
 import objectHash from 'object-hash'
-import { compasses } from './compasses'
 import { from, map } from 'rxjs'
+import { PoeItem } from '../ggg/poe-api-models';
+import { ItemUtils } from './item-utils';
 
 export type SageItemGroup = { key: string; tag: string; hash: string; unsafeHashProperties: any }
 
@@ -37,13 +36,20 @@ export class ItemGroupingService {
     )
   }
 
-  public withGroup(items: PoeItem[]) {
+  public withGroupObserable(items: PoeItem[]) {
     return from(items).pipe(
       map((item) => ({
         data: item,
         group: this.group(item)
       }))
     )
+  }
+
+  public withGroup(items: PoeItem[]) {
+    return items.map((item) => ({
+      data: item,
+      group: this.group(item)
+    }))
   }
 
   public group(item: PoeItem): { primaryGroup: SageItemGroup } | null {
@@ -96,8 +102,8 @@ export class InscribedUltimatumGroupIndentifier implements ItemGroupIdentifier {
         ?.values?.[0]?.[0]
       const reward = item.properties?.filter((prop) => prop.name?.startsWith('Reward'))?.[0]
         ?.values?.[0]?.[0]
-      const sacrifice = item.properties?.filter(
-        (prop) => prop.name?.startsWith('Requires Sacrifice')
+      const sacrifice = item.properties?.filter((prop) =>
+        prop.name?.startsWith('Requires Sacrifice')
       )?.[0]?.values?.[0]?.[0]
 
       const group: InternalGroup = {
@@ -317,13 +323,70 @@ export class UnqiueGearGroupIdentifier implements ItemGroupIdentifier {
 }
 
 export class BeastGroupIdentifier implements ItemGroupIdentifier {
+
+  private sellableRedBeasts = [
+    "craicic chimeral",
+    "vivid vulture",
+    "wild hellion alpha",
+    "vivid abberarach",
+    "farric lynx alpha",
+    "farric wolf alpha",
+    "craicic savage crab",
+    "saqawine cobra",
+    "primal rhex matriarch",
+    "vivid watcher",
+    "wild bristle matron",
+    "fenumal plagued arachnid",
+    "wild brambleback",
+    "craicic maw ",
+    "farric frost hellion alpha",
+    "farric tiger alpha",
+  ]
+
+  private beastMods = [
+    "fertile presence",
+    "aspect of the hellion",
+    "farric presence",
+    "satyr storm",
+    "tiger prey",
+    "spectral swipe",
+    "deep one's presence",
+    "churning claws",
+    "winter bloom",
+    "craicic presence",
+    "crushing claws",
+    "hadal dive",
+    "raven caller",
+    "putrid flight",
+    "saqawine presence",
+    "vile hatchery",
+    "spectral stampede",
+    "fenumal presence",
+    "unstable swarm",
+    "blood geyser",
+    "crimson flock",
+    "incendiary mite",
+    "infested earth",
+  ]
+
   group(item: PoeItem): InternalGroup | null {
     if (item?.descrText === 'Right-click to add this to your bestiary.') {
-      const baseType = item.baseType?.toLocaleLowerCase()
-      return {
-        key: baseType!!,
-        tag: 'beast',
-        hashProperties: {}
+      const beastModCount = (item.explicitMods ?? []).filter((e) => this.beastMods.includes(e.toLowerCase())).length
+
+      const baseType = item.baseType?.toLocaleLowerCase() ?? ""
+      if (this.sellableRedBeasts.includes(baseType) || item?.rarity === "Unique") {
+        return {
+          key: baseType!!,
+          tag: 'beast',
+          hashProperties: {}
+        }
+      }
+      else {
+        return {
+          key: beastModCount === 1 ? "yellow beast" : "red beast",
+          tag: 'beast',
+          hashProperties: {}
+        }
       }
     }
 
@@ -509,15 +572,6 @@ export class LogbookGroupIdentifier implements ItemGroupIdentifier {
 }
 
 export class CompassGroupIdentifier implements ItemGroupIdentifier {
-  public static DISPLAY_OVERRIDES: Record<string, string> = {}
-
-  constructor() {
-    Object.entries(compasses).forEach((e) => {
-      CompassGroupIdentifier.DISPLAY_OVERRIDES[e[0]?.toLowerCase().replace('sextant ', '')] =
-        e[1] as string
-    })
-  }
-
   private usesToString(uses: number): string {
     if (uses === 4 || uses === 16) {
       return `${uses}`
@@ -553,7 +607,6 @@ export class CompassGroupIdentifier implements ItemGroupIdentifier {
       return {
         key: otherMods + ' compass',
         tag: 'compass',
-        displayOverride: CompassGroupIdentifier.DISPLAY_OVERRIDES[otherMods],
         hashProperties: {
           uses: this.usesToString(parseInt(usesMod))
         }
@@ -580,16 +633,16 @@ export class ClusterGroupIdentifier implements ItemGroupIdentifier {
       const ilvl = item['ilvl'] ?? item.itemLevel
       if (clusterType && numberPassiveSkills && ilvl) {
         return {
-          key: `${clusterType} ${baseType}`,
+          key: baseType,
           tag: 'cluster',
           hashProperties: {
-            ilvl,
+            ilvl: ilvl,
+            clusterType: clusterType,
             passives: parseInt(numberPassiveSkills)
           }
         }
       }
     }
-
     return null
   }
 }
@@ -644,7 +697,7 @@ export class RewardMapGroupIdentifier implements ItemGroupIdentifier {
       ?.values?.[0]?.[0]
     const reward = item.properties?.filter((prop) => prop.name === 'Reward')?.[0]?.values?.[0]?.[0]
 
-    if (mapTier && reward && item.name) {
+    if (mapTier?.length && reward?.length && item?.name?.length) {
       return {
         key: `${item.name} ${item.typeLine}`,
         tag: 'reward map',
