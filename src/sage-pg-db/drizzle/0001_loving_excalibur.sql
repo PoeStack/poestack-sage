@@ -1,0 +1,1 @@
+ALTER TABLE "vouches" ADD COLUMN "target_type" "vouch_type";

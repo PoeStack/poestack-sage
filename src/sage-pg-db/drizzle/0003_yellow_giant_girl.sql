@@ -1,0 +1,1 @@
+ALTER TABLE "vouches" RENAME COLUMN "id" TO "vouch_id";
