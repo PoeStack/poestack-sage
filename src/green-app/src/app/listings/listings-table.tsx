@@ -36,7 +36,7 @@ import { useShallow } from 'zustand/react/shallow'
 import ListingDialogContent from './listing-dialog-content'
 import { useListingsStore } from './listingsStore'
 import { atom, useAtom } from 'jotai'
-import { BasicSelect } from '@/components/poe/BasicSelect'
+import { BasicSelect } from '@/components/basic-select'
 dayjs.extend(utc)
 
 type SellModeOptions = 'Show all modes' | 'Show whole listings' | 'Show individual listings'

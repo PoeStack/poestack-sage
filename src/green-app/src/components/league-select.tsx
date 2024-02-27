@@ -8,7 +8,7 @@ import {
 import { listLeagues } from '@/lib/http-util'
 import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
-import { currentUserAtom } from '../providers'
+import { currentUserAtom } from './providers'
 import { useMemo } from 'react'
 
 type OnSelectProps = {

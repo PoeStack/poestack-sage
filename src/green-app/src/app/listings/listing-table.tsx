@@ -28,7 +28,7 @@ import {
 import React, { memo, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { useListingsStore } from './listingsStore'
-import { BasicSelect } from '@/components/poe/BasicSelect'
+import { BasicSelect } from '@/components/basic-select'
 import { atom, useAtom } from 'jotai'
 
 interface DataTableProps {

@@ -13,7 +13,7 @@ import {
   useState
 } from 'react'
 
-import { BasicSelect } from '@/components/poe/BasicSelect'
+import { BasicSelect } from '@/components/basic-select'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {

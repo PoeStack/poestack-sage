@@ -1,6 +1,6 @@
 'use client'
 
-import { ListingCategorySelect } from '@/components/poe/ListingCategorySelect'
+import { ListingCategorySelect } from '@/components/listing-category-select'
 import ListingFilterCard from '@/components/trade-filter-card'
 import {
   Accordion,

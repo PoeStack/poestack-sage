@@ -111,8 +111,8 @@ export const useListingToolStore = create<State & Actions>()(
         5
       ),
       setLocalMultiplier: (localMultiplier, category) => {
-        set(() => {
-          get().debouncedMultiplier(localMultiplier, category)
+        set((state) => {
+          state.debouncedMultiplier(localMultiplier, category)
           return { localMultiplier }
         })
       },

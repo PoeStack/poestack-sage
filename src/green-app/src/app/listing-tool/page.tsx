@@ -2,7 +2,7 @@
 
 import CharacterSelect from '@/components/character-select'
 import DebouncedInput from '@/components/debounced-input'
-import { ListingCategorySelect } from '@/components/poe/ListingCategorySelect'
+import { ListingCategorySelect } from '@/components/listing-category-select'
 import { currentUserAtom } from '@/components/providers'
 import StashSelect from '@/components/stash-select'
 import ListingFilterCard, { ListingFilterGroup } from '@/components/trade-filter-card'
@@ -54,6 +54,7 @@ dayjs.extend(utc)
 // Add character combobox loading indicator
 // Hide "Connect discord" when discord is connected? - Get the current connected discord
 // Add "Pin all selected items" switch
+// Clear cache on logout
 
 export default function PageHydration() {
   return (
@@ -101,7 +102,7 @@ function Page() {
             ...offering,
             meta: {
               ...offering.meta,
-              subCategory: "test",
+              subCategory: 'test',
               totalPrice: offering.items.reduce((sum, item) => item.price * item.quantity + sum, 0)
             }
           }
@@ -157,7 +158,7 @@ function Page() {
       meta: {
         league: selectedLeague,
         category: selectedCategory,
-        subCategory: "test",
+        subCategory: 'test',
         ign: selectedIgn,
         listingMode: selectedListingMode,
         timestampMs: dayjs.utc().valueOf(),

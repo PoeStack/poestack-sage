@@ -4,11 +4,11 @@ import { useDivinePrice } from '@/hooks/useDivinePrice'
 import { UserInfo } from '@/types/userInfo'
 import { QueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { Provider, atom, createStore } from 'jotai'
+import { Provider, atom, createStore, useAtomValue } from 'jotai'
 import { ReactNode, useState } from 'react'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
-import { ToastContainer, toast } from 'react-toastify'
+import { ToastContainer, ToastPosition, toast } from 'react-toastify'
 import Notifier from './notifier'
 
 // type DivineLeagues = {
@@ -54,7 +54,7 @@ export function Providers({ children }: ProvidersProps) {
     <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
       <Provider store={atomStore}>
         {children}
-        <ToastContainer theme="dark" />
+        <ToastProvider />
         <Notifier />
       </Provider>
       <ReactQueryDevtools />
@@ -62,19 +62,22 @@ export function Providers({ children }: ProvidersProps) {
   )
 }
 
-// export const DivineProvider = ({
-//   children,
-//   league
-// }: ProvidersProps & { league?: string | null }) => {
-//   return (
-//     <Provider store={leagueDivineStore}>
-//       {league ? <DivineSetter league={league}>{children}</DivineSetter> : children}
-//     </Provider>
-//   )
-// }
+export const toastPositionAtom = atom<ToastPosition>('top-right')
 
-// export const DivineSetter = ({ children, league }: ProvidersProps & { league: string | null }) => {
-//   useDivinePrice(league)
+const ToastProvider = () => {
+  const position = useAtomValue(toastPositionAtom)
 
-//   return children
-// }
+  console.log('Position: ', position)
+
+  return (
+    <ToastContainer
+      style={{ top: 'max(4rem,(var(--toastify-toast-top))' }}
+      toastClassName="border"
+      // stacked
+      theme="dark"
+      className="top-20"
+      limit={4}
+      position={position}
+    />
+  )
+}
