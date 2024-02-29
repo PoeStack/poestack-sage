@@ -18,7 +18,7 @@
     --toastify-toast-min-height: 64px;
     --toastify-toast-max-height: 800px;
     --toastify-font-family: sans-serif;
-    --toastify-z-index: 9999;
+    --toastify-z-index: 60;
   
     --toastify-text-color-light: #757575;
     --toastify-text-color-dark: hsl(var(--foreground));
@@ -52,4 +52,10 @@
   
     /* // used to control the opacity of the progress trail */
     --toastify-color-progress-bgo: .2;
+  }
+
+  @keyframes pulsatingDot {
+    0% {transform: scale(0.1, 0.1); opacity: 0.0;}
+    50% {opacity: 1.0;}
+    100% {transform: scale(1.2, 1.2); opacity: 0.0;}
   }

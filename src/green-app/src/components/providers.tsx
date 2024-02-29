@@ -62,22 +62,14 @@ export function Providers({ children }: ProvidersProps) {
   )
 }
 
-export const toastPositionAtom = atom<ToastPosition>('top-right')
-
 const ToastProvider = () => {
-  const position = useAtomValue(toastPositionAtom)
-
-  console.log('Position: ', position)
-
   return (
     <ToastContainer
       style={{ top: 'max(4rem,(var(--toastify-toast-top))' }}
       toastClassName="border"
-      // stacked
       theme="dark"
-      className="top-20"
       limit={4}
-      position={position}
+      draggable
     />
   )
 }

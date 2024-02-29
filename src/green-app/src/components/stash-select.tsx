@@ -25,6 +25,8 @@ import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 import { Separator } from './ui/separator'
 import { Skeleton } from './ui/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip'
+import { TimeTracker } from './time-tracker'
+import { UserInfo } from '@/types/userInfo'
 dayjs.extend(relativeTime)
 
 // Inspiration:
@@ -125,6 +127,7 @@ const StashSelect = ({
                         return (
                           <StashItem
                             key={subStash.id}
+                            currentUser={currentUser}
                             league={league}
                             stash={subStash}
                             selected={selected}
@@ -138,6 +141,7 @@ const StashSelect = ({
                 return (
                   <StashItem
                     key={stash.id}
+                    currentUser={currentUser}
                     league={league}
                     stash={stash}
                     selected={selected}
@@ -181,19 +185,19 @@ const StashSelect = ({
 }
 
 type StashItemProps = {
+  currentUser: UserInfo | null
   league: string | null
   stash: IStashTab
   selected: IStashTab[]
   onSelect: (stashes: IStashTab[]) => void
 }
 
-const StashItem = ({ league, stash, selected, onSelect }: StashItemProps) => {
+const StashItem = ({ currentUser, league, stash, selected, onSelect }: StashItemProps) => {
   const isSelected = useMemo(() => selected.some((x) => x.id === stash.id), [selected, stash.id])
   const [open, setOpen] = useState(false)
-  const [relativeTime, setRelativeTime] = useState('')
 
   const { isSuccess, isError, isFetching, dataUpdatedAt } = useQuery({
-    queryKey: ['stash', league, stash.id],
+    queryKey: [currentUser?.profile?.uuid, 'stash', league, stash.id],
     enabled: false
   })
 
@@ -205,9 +209,6 @@ const StashItem = ({ league, stash, selected, onSelect }: StashItemProps) => {
         delayDuration={500}
         open={open}
         onOpenChange={(open) => {
-          if (dataUpdatedAt !== 0) {
-            setRelativeTime(dayjs(dataUpdatedAt).fromNow())
-          }
           setOpen(open)
         }}
       >
@@ -258,7 +259,16 @@ const StashItem = ({ league, stash, selected, onSelect }: StashItemProps) => {
           </TooltipTrigger>
           {!isUnsupported && (
             <TooltipContent side="top">
-              <Label>{dataUpdatedAt === 0 ? `Not loaded` : `Updated ${relativeTime}`}</Label>
+              <Label>
+                {dataUpdatedAt === 0 ? (
+                  `Not loaded`
+                ) : (
+                  <span className="flex flex-row gap-1">
+                    {'Updated'}
+                    <TimeTracker createdAt={dataUpdatedAt} />
+                  </span>
+                )}
+              </Label>
             </TooltipContent>
           )}
           {isFetching && (

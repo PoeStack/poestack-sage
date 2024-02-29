@@ -131,10 +131,12 @@ const CurrencyDisplay: React.FC<CurrencyDisplayProps> = ({
 
 interface CurrencyDisplayWithTooltipProps extends Omit<CurrencyDisplayProps, 'divinePrice'> {
   className?: string
+  ttContentClassName?: string
 }
 
 const CurrencyDisplayWithTooltip: React.FC<CurrencyDisplayWithTooltipProps> = ({
   className,
+  ttContentClassName,
   value,
   valueShort = true,
   toCurrency = 'both',
@@ -178,7 +180,7 @@ const CurrencyDisplayWithTooltip: React.FC<CurrencyDisplayWithTooltipProps> = ({
             }
           </div>
         </TooltipTrigger>
-        <TooltipContent className="space-y-1">
+        <TooltipContent className={cn('space-y-1', ttContentClassName)}>
           <Label>OTHER CALCULATIONS</Label>
           <Separator orientation="horizontal" />
           <div className="flex flex-row flex-grow-0 gap-1 justify-end">

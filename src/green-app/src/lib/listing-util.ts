@@ -27,7 +27,7 @@ export const calculateListingFromOfferingListing = (
       price: e.price,
       quantity: e.quantity,
       displayName: summaries[e.hash]?.displayName,
-      calculatedTotalPrice: e.quantity * e.price,
+      calculatedTotalPrice: (e.selectedQuantity ?? e.quantity) * e.price,
       primaryValuation: valuation?.pValues?.[DEFAULT_VALUATION_INDEX] ?? 0,
       valuation: valuation,
       summary: summaries[e.hash],
@@ -49,7 +49,7 @@ export const calculateListingFromOfferingListing = (
   }
 
   return {
-    userId: offering.uuid,
+    userId: offering.userId,
     uuid: offering.uuid,
     deleted: offering.deleted,
     meta: {

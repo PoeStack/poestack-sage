@@ -57,18 +57,9 @@ dayjs.extend(utc)
 // Clear cache on logout
 // Add Errorboundary
 
-export default function PageHydration() {
-  return (
-    // TODO: Add loading indicator
-    // <HydrationZustand>
-    <Page />
-    // </HydrationZustand>
-  )
-}
-
 type PageProps = {}
 
-function Page() {
+export default function Page() {
   const queryClient = useQueryClient()
   const selectedLeague = useListingToolStore((state) => state.league)
   const [stashes, setStashes] = useListingToolStore(

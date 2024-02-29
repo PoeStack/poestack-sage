@@ -131,7 +131,7 @@ export async function postNotifications(notification: NotificationCreate) {
 
 export type Notification = {
   id: string
-  timestamp: string
+  timestamp: number
   type: string
   targetId: string
   senderId: string

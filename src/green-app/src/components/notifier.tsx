@@ -15,20 +15,31 @@ import { SageItemGroupSummaryShard } from '@/types/echo-api/item-group'
 import { SageValuationShard } from '@/types/echo-api/valuation'
 import {
   SageListingType,
-  SageNotificationListingType,
   SageOfferingType,
   SageSelectedDatabaseOfferingItemType
 } from '@/types/sage-listing-type'
 import { useQueries, useQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { useAtomValue } from 'jotai'
-import { memo, useEffect, useMemo, useRef, useState } from 'react'
+import React, { ReactNode, memo, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
-import { Alert, AlertDescription, AlertTitle } from './ui/alert'
 import CurrencyDisplay from './currency-display'
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from './ui/tooltip'
+import Image from 'next/image'
+import { Button } from './ui/button'
+import { PackageSearchIcon } from 'lucide-react'
 
 type ParsedNotification = Omit<Notification, 'body'> & {
   body: string | { listing: SageOfferingType; requestedItems?: NotificationItem[]; ign: string }
+}
+
+export type ToastData = {
+  listing: SageListingType
+  created: number
+  type: string
+  buyer: string
+  ign: string
+  toastBody: React.JSX.Element
 }
 
 interface NotificationHandlerProps {}
@@ -76,7 +87,6 @@ const Notifier = () => {
 
   const parsedNotifications = useMemo(() => {
     return notifications?.notifications.map((n): ParsedNotification => {
-      console.log('Notification received: ', n)
       if (n.type === 'offering-buy') {
         try {
           const body: NotificationBody = JSON.parse(n.body)
@@ -204,7 +214,7 @@ const Notifier = () => {
       // TODO: Rebuild the listing
       let listing: SageListingType | undefined
       const categoryTagItem = LISTING_CATEGORIES.find((ca) => ca.name === offering.meta.category)
-      if (offering.items.length > 0) {
+      if (requestedItems.length > 0) {
         // Single items
         const reqItems = requestedItems
           .map(([hash, selectedQuantity]): SageSelectedDatabaseOfferingItemType | undefined => {
@@ -237,31 +247,72 @@ const Notifier = () => {
         )
       }
 
-      // TODO: Generate a short whisper message. Username - Category - Total Value -> Button to show the details
       if (validNotification && listing) {
-        let description: string
-        if (offering.items.length === 0) {
-          description = `${ign} wants to buy all ${listing.meta.category}. Total: `
+        let description: ReactNode
+        if (requestedItems.length === 0) {
+          description = ` wtb all ${listing.meta.category}.`
         } else {
           const totalItems = listing.items.reduce((sum, item) => item.selectedQuantity + sum, 0)
-          description = `${ign} wants to buy ${totalItems} ${listing.meta.category}. Total: `
+          description = ` wtb ${totalItems} ${listing.meta.category}.`
         }
 
-        toast.info(
-          <Alert>
-            <AlertTitle>{`@${ign} WTB ${listing.meta.category}`}</AlertTitle>
-            <AlertDescription>
-              <div>{description}</div>
+        const toastBody = (
+          <div className="flex flex-col gap-2 text-sm">
+            <div className="font-medium">
+              <TooltipProvider>
+                <Tooltip>
+                  @
+                  <span className="space-x-1">
+                    <TooltipTrigger asChild>
+                      <span className="underline underline-offset-2 cursor-help">{ign}</span>
+                    </TooltipTrigger>
+                    {description}
+                  </span>
+                  {/* TODO: Show user stats */}
+                  {/* <TooltipContent>{`User: ${ign}`}</TooltipContent> */}
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <div className="flex flex-row items-center justify-start gap-2">
+              <Image
+                className="block h-5 min-h-fit min-w-fit"
+                src={listing.meta.icon}
+                alt={listing.meta.altIcon}
+                height={20}
+                width={20}
+                sizes="33vw"
+                style={{ width: 'auto', height: '20px' }}
+              />
+              <div className="text-nowrap">Total:</div>
               <CurrencyDisplay
+                ttContentClassName="z-[100]"
                 iconRect={{ width: 20, height: 20 }}
                 value={listing.meta.calculatedTotalPrice}
                 splitIcons
               />
-            </AlertDescription>
-          </Alert>,
+            </div>
+          </div>
+        )
+
+        const toastData: ToastData = {
+          listing,
+          created: n.timestamp,
+          type: n.type,
+          buyer: n.senderId,
+          ign,
+          toastBody
+        }
+
+        toast.info(
+          <div className="flex flex-row items-center justify-between w-full gap-2">
+            {toastBody}
+            <Button variant="outline" size="icon">
+              <PackageSearchIcon className="h-4 w-4 shrink-0" />
+            </Button>
+          </div>,
           {
             toastId: n.id,
-            data: listing,
+            data: toastData,
             autoClose: 10000
           }
         )

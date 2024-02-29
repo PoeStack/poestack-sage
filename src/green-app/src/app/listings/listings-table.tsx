@@ -130,7 +130,7 @@ const ListingsTable = ({ columns, globalFilterFn, className }: DataTableProps) =
 
   return (
     <div className={className}>
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen} modal={false}>
         <div className="flex items-center pb-4 gap-4">
           <DebouncedInput
             value={globalFilter ?? ''}

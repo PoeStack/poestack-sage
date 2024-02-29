@@ -19,6 +19,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { TableColumnHeader } from '../../components/column-header'
 import { useListingsStore } from './listingsStore'
+import { TimeTracker } from '@/components/time-tracker'
 dayjs.extend(relativeTime)
 dayjs.extend(utc)
 
@@ -197,7 +198,7 @@ export function createdColumn(): ColumnDef<SageListingType> {
     },
     cell: ({ row }) => {
       const value = row.getValue<number>(key)
-      return <div>{dayjs.utc(value).fromNow()}</div>
+      return <TimeTracker createdAt={dayjs.utc(value)} />
     }
   }
 }

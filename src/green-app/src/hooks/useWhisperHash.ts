@@ -91,11 +91,6 @@ export const useWhisperHashCopied = (
           !state.whisperedListings[listing.uuid]?.sentHashes.includes(generatedHash) &&
           currentIgn
         ) {
-          console.log('Send notification')
-          const body: any = {}
-          body.uuid = listing.uuid
-          body.items = listing.items
-
           mutation.mutate({
             targetId: listing.userId,
             type: 'offering-buy', // Maybe offering-buy-update later to update the promise

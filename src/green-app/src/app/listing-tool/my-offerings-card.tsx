@@ -1,5 +1,6 @@
 import CurrencyDisplay from '@/components/currency-display'
 import { currentUserAtom } from '@/components/providers'
+import { TimeTracker } from '@/components/time-tracker'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
@@ -132,6 +133,7 @@ export function MyOfferingsCard({ league, setCategory, setStashes }: MyOfferings
                     <div className="flex flex-row items-center ">
                       <CurrencyDisplay
                         className="text-sm"
+                        ttContentClassName="z-[60]"
                         iconRect={{ width: 20, height: 20 }}
                         value={meta.totalPrice}
                         splitIcons
@@ -155,7 +157,7 @@ export function MyOfferingsCard({ league, setCategory, setStashes }: MyOfferings
                       <span key={`${i}_${tab}`}>{tab}</span>
                     ))} */}
                     </div>
-                    <div>{dayjs.utc(meta.timestampMs).fromNow()}</div>
+                    <TimeTracker createdAt={dayjs.utc(meta.timestampMs)} />
                   </div>
                   <div className="flex flex-row justify-between items-center gap-2">
                     {/* <div className="flex flow-row items-center gap-2 "> */}
