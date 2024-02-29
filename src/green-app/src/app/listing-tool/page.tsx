@@ -87,36 +87,46 @@ function Page() {
   const mutation = useMutation({
     mutationFn: (listing: SageDatabaseOfferingType) => postListing(listing),
     onMutate: async (offering) => {
-      await queryClient.cancelQueries({ queryKey: ['my-listings'] })
+      await queryClient.cancelQueries({ queryKey: [currentUser?.profile?.uuid, 'my-listings'] })
 
-      const previousListings = queryClient.getQueryData(['my-listings'])
+      const previousListings = queryClient.getQueryData([currentUser?.profile?.uuid, 'my-listings'])
 
-      queryClient.setQueryData(['my-listings'], (old?: SageDatabaseOfferingType[]) => {
-        return [
-          ...(old || []).filter(
-            (x) =>
-              !(
-                x.meta.league === offering.meta.league && x.meta.category === offering.meta.category
-              )
-          ),
-          {
-            ...offering,
-            meta: {
-              ...offering.meta,
-              subCategory: 'test',
-              totalPrice: offering.items.reduce((sum, item) => item.price * item.quantity + sum, 0)
+      queryClient.setQueryData(
+        [currentUser?.profile?.uuid, 'my-listings'],
+        (old?: SageDatabaseOfferingType[]) => {
+          return [
+            ...(old || []).filter(
+              (x) =>
+                !(
+                  x.meta.league === offering.meta.league &&
+                  x.meta.category === offering.meta.category
+                )
+            ),
+            {
+              ...offering,
+              meta: {
+                ...offering.meta,
+                subCategory: 'test',
+                totalPrice: offering.items.reduce(
+                  (sum, item) => item.price * item.quantity + sum,
+                  0
+                )
+              }
             }
-          }
-        ].sort((a, b) => b.meta.timestampMs - a.meta.timestampMs)
-      })
+          ].sort((a, b) => b.meta.timestampMs - a.meta.timestampMs)
+        }
+      )
 
       return { previousListings }
     },
     onError: (err, offering, context) => {
-      queryClient.setQueryData(['my-listings'], context?.previousListings)
+      queryClient.setQueryData(
+        [currentUser?.profile?.uuid, 'my-listings'],
+        context?.previousListings
+      )
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['my-listings'] })
+      queryClient.invalidateQueries({ queryKey: [currentUser?.profile?.uuid, 'my-listings'] })
     }
   })
 

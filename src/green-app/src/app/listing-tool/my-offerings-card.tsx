@@ -52,8 +52,9 @@ export function MyOfferingsCard({ league, setCategory, setStashes }: MyOfferings
   })
 
   const { data: allListings, isLoading } = useQuery({
-    queryKey: ['my-listings'],
-    queryFn: () => listMyListings().then((res) => res.filter((l) => !l.deleted))
+    queryKey: [currentUser?.profile?.uuid, 'my-listings'],
+    queryFn: () => listMyListings().then((res) => res.filter((l) => !l.deleted)),
+    enabled: !!currentUser?.profile?.uuid
   })
 
   useEffect(() => {
@@ -77,20 +78,25 @@ export function MyOfferingsCard({ league, setCategory, setStashes }: MyOfferings
     mutationFn: ({ league, category, uuid }: { league: string; category: string; uuid: string }) =>
       deleteListing(league, category, 'test', uuid),
     onMutate: async (deleted) => {
-      await queryClient.cancelQueries({ queryKey: ['my-listings'] })
-      const previousListings = queryClient.getQueryData(['my-listings'])
-      queryClient.setQueryData(['my-listings'], (old: SageDatabaseOfferingTypeExt[]) =>
-        old.filter(
-          (x) => !(x.meta.league === deleted.league && x.meta.category === deleted.category)
-        )
+      await queryClient.cancelQueries({ queryKey: [currentUser?.profile?.uuid, 'my-listings'] })
+      const previousListings = queryClient.getQueryData([currentUser?.profile?.uuid, 'my-listings'])
+      queryClient.setQueryData(
+        [currentUser?.profile?.uuid, 'my-listings'],
+        (old: SageDatabaseOfferingTypeExt[]) =>
+          old.filter(
+            (x) => !(x.meta.league === deleted.league && x.meta.category === deleted.category)
+          )
       )
       return { previousListings }
     },
     onError: (err, deletedListing, context) => {
-      queryClient.setQueryData(['my-listings'], context?.previousListings)
+      queryClient.setQueryData(
+        [currentUser?.profile?.uuid, 'my-listings'],
+        context?.previousListings
+      )
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['my-listings'] })
+      queryClient.invalidateQueries({ queryKey: [currentUser?.profile?.uuid, 'my-listings'] })
     }
   })
 
@@ -195,14 +201,14 @@ export function MyOfferingsCard({ league, setCategory, setStashes }: MyOfferings
                         <Button
                           size="icon"
                           variant="ghost"
-                          disabled={isLoading}
-                          onClick={() =>
+                          disabled={isLoading || !currentUser?.profile?.uuid}
+                          onClick={() => {
                             deleteMutation.mutate({
                               league: meta.league,
                               category: meta.category,
                               uuid: listing.uuid
                             })
-                          }
+                          }}
                         >
                           <Trash2Icon className="w-4 h-4" />
                         </Button>

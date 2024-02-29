@@ -51,8 +51,9 @@ const Notifier = () => {
   })
 
   const { data: allListings, isLoading } = useQuery({
-    queryKey: ['my-listings'],
-    queryFn: () => listMyListings().then((res) => res.filter((l) => !l.deleted))
+    queryKey: [currentUser?.profile?.uuid, 'my-listings'],
+    queryFn: () => listMyListings().then((res) => res.filter((l) => !l.deleted)),
+    enabled: !!currentUser?.profile?.uuid
   })
 
   const enabled = useRef(isError)

@@ -245,10 +245,13 @@ function itemGroupMapInternalToExternal(
 
     const tag = out.meta.tag
     if (tag) {
-      out.summaries[k]['displayName'] =
-        LISTING_CATEGORIES.find((cat) => cat.tags.includes(tag))?.parseName?.({
-          group: out.summaries[k]
-        }) || ''
+      const parseFn = LISTING_CATEGORIES.find((cat) => cat.tags.includes(tag))?.parseName
+      if (parseFn) {
+        out.summaries[k]['displayName'] =
+          parseFn({
+            group: out.summaries[k]
+          }) || ''
+      }
     }
   })
 
