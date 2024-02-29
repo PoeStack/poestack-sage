@@ -2,7 +2,7 @@ import { listCharacters } from '@/lib/http-util'
 import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
 import { currentUserAtom } from './providers'
-import { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 import { Button } from './ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from './ui/command'
@@ -21,35 +21,31 @@ const CharacterSelect = ({ selectedLeague, onIgnSelect }: CharacterSelectProps) 
   const [popoverOpen, setPopoverOpen] = useState(false)
   const [selectedCharacter, setSelectedCharacter] = useState<PoeCharacter>()
 
-  const [dataCounter, setDataCounter] = useState(0)
+  const selectCharacters = useCallback(
+    (characters: PoeCharacter[] | undefined) => {
+      return characters?.filter((char) => selectedLeague === char.league.toLowerCase())
+    },
+    [selectedLeague]
+  )
+
   const {
-    data: characters,
+    data: selectableCharacters,
     isFetching: isCharactersFetching,
     refetch: refetchCharacters
   } = useQuery({
-    queryKey: ['characters'],
-    queryFn: async () => {
-      const data = await listCharacters()
-      // We want to reset the character but the query data is stable if the http request data is the same
-      setDataCounter((prev) => prev + 1)
-      // data.forEach((x) => (x.current = false))
-      // data[Math.trunc(Math.random() * data.length)].current = true
-      return data
-    },
+    queryKey: [currentUser?.profile?.uuid, 'characters'],
+    queryFn: () => listCharacters(),
+    select: selectCharacters,
     staleTime: 5 * 60 * 1000,
     enabled: !!currentUser?.profile?.uuid && !!selectedLeague
   })
-
-  const selectableCharacters = useMemo(() => {
-    return characters?.filter((char) => selectedLeague === char.league.toLowerCase())
-  }, [selectedLeague, characters])
 
   useEffect(() => {
     const defaultCharacter =
       selectableCharacters?.find((x) => x.current) || selectableCharacters?.[0]
     setSelectedCharacter(defaultCharacter)
     onIgnSelect(defaultCharacter?.name || null)
-  }, [selectableCharacters, dataCounter, onIgnSelect])
+  }, [selectableCharacters, onIgnSelect])
 
   return (
     <Popover open={popoverOpen} onOpenChange={setPopoverOpen} modal={true}>

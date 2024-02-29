@@ -57,7 +57,7 @@ const StashSelect = ({
     isLoading: isStashListLoading,
     refetch
   } = useQuery({
-    queryKey: ['stashes', league],
+    queryKey: [currentUser?.profile?.uuid, 'stashes', league],
     queryFn: () => {
       if (!league) return [] as IStashTab[]
       return listStashes(league)

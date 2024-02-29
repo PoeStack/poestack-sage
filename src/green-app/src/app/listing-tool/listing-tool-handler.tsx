@@ -1,4 +1,5 @@
 import { useListingToolStore } from '@/app/listing-tool/listingToolStore'
+import { currentUserAtom } from '@/components/providers'
 import { DEFAULT_VALUATION_INDEX } from '@/lib/constants'
 import { listStash, listValuations } from '@/lib/http-util'
 import { ItemGroupingService } from '@/lib/item-grouping-service'
@@ -16,6 +17,7 @@ import { IStashTab } from '@/types/echo-api/stash'
 import { GroupedItem, StashItem, ValuatedItem } from '@/types/item'
 import { PoeItem } from '@/types/poe-api-models'
 import { useQueries } from '@tanstack/react-query'
+import { useAtomValue } from 'jotai'
 import { memo, useEffect, useMemo } from 'react'
 
 type ListingToolHandlerProps = {
@@ -24,6 +26,7 @@ type ListingToolHandlerProps = {
 }
 
 const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingToolHandlerProps) => {
+  const currentUser = useAtomValue(currentUserAtom)
   const stashes = useListingToolStore((state) => state.stashes[state.league])
   const league = useListingToolStore((state) => state.league)
   const selectedCategory = useListingToolStore((state) => state.category)
@@ -39,9 +42,9 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
     queries: stashes
       ? stashes.map((stash) => {
           return {
-            queryKey: ['stash', league, stash.id],
+            queryKey: [currentUser?.profile?.uuid, 'stash', league, stash.id],
             queryFn: async () => {
-              if (!league) return []
+              if (!currentUser?.profile?.uuid || !league) return []
               const stashItems = await listStash(league, stash.id)
 
               let items: PoeItem[] = []

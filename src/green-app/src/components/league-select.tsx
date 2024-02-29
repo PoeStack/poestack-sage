@@ -19,9 +19,9 @@ export function LeagueSelect({ onSelect }: OnSelectProps) {
   const currentUser = useAtomValue(currentUserAtom)
 
   const { data, isFetching } = useQuery({
-    queryKey: ['leagues'],
-    queryFn: async () => {
-      const leagues = await listLeagues()
+    queryKey: [currentUser?.profile?.uuid, 'leagues'],
+    queryFn: async () => listLeagues(),
+    select: (leagues) => {
       const unsupportedLeagues = ['Path of Exile: Royale']
       const filteredPriceLeagues = leagues.filter(
         (league) =>

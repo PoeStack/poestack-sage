@@ -42,7 +42,7 @@ export function MyOfferingsCard({ league, setCategory, setStashes }: MyOfferings
   const [listings, setListings] = useState<SageOfferingType[]>()
 
   const { data: stashes } = useQuery({
-    queryKey: ['stashes', league],
+    queryKey: [currentUser?.profile?.uuid, 'stashes', league],
     queryFn: () => {
       if (!league) return [] as IStashTab[]
       return listStashes(league)
@@ -75,7 +75,7 @@ export function MyOfferingsCard({ league, setCategory, setStashes }: MyOfferings
   // Optimistic delete; See: https://tanstack.com/query/v4/docs/framework/react/guides/optimistic-updates
   const deleteMutation = useMutation({
     mutationFn: ({ league, category, uuid }: { league: string; category: string; uuid: string }) =>
-      deleteListing(league, category, "test", uuid),
+      deleteListing(league, category, 'test', uuid),
     onMutate: async (deleted) => {
       await queryClient.cancelQueries({ queryKey: ['my-listings'] })
       const previousListings = queryClient.getQueryData(['my-listings'])
