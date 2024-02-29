@@ -1,7 +1,7 @@
 'use client'
 
 import { currentUserAtom } from '@/components/providers'
-import { NotificationBody, NotificationItem } from '@/hooks/useWhisperHashCopied'
+import { NotificationBody, NotificationItem } from '@/hooks/useWhisperHash'
 import {
   listMyListings,
   listNotifications,
@@ -10,18 +10,25 @@ import {
   Notification
 } from '@/lib/http-util'
 import { LISTING_CATEGORIES } from '@/lib/listing-categories'
+import { calculateListingFromOfferingListing } from '@/lib/listing-util'
 import { SageItemGroupSummaryShard } from '@/types/echo-api/item-group'
 import { SageValuationShard } from '@/types/echo-api/valuation'
-import { SageNotificationListingType, SageOfferingType } from '@/types/sage-listing-type'
+import {
+  SageListingType,
+  SageNotificationListingType,
+  SageOfferingType,
+  SageSelectedDatabaseOfferingItemType
+} from '@/types/sage-listing-type'
 import { useQueries, useQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { useAtomValue } from 'jotai'
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
+import { Alert, AlertDescription, AlertTitle } from './ui/alert'
+import CurrencyDisplay from './currency-display'
 
 type ParsedNotification = Omit<Notification, 'body'> & {
-  body: string | SageOfferingType
-  requestedItems?: NotificationItem[]
+  body: string | { listing: SageOfferingType; requestedItems?: NotificationItem[]; ign: string }
 }
 
 interface NotificationHandlerProps {}
@@ -38,7 +45,7 @@ const Notifier = () => {
     queryFn: () => listNotifications(fetchTimeStamp),
     // We do not save any cache - this has the effect, that the query starts directly after changing the category
     gcTime: 0,
-    enabled: !!currentUser,
+    enabled: !!currentUser && !!fetchTimeStamp,
     refetchOnWindowFocus: false,
     retry: true
   })
@@ -74,7 +81,7 @@ const Notifier = () => {
           const body: NotificationBody = JSON.parse(n.body)
           const listing = allListings?.find((l) => l.uuid === body.uuid)
           if (listing) {
-            return { ...n, body: listing, requestedItems: body.items }
+            return { ...n, body: { listing, requestedItems: body.items, ign: body.ign } }
           }
         } catch (error) {
           console.error('Notification body could not be parsed', error)
@@ -89,11 +96,11 @@ const Notifier = () => {
     const leagues: Record<string, boolean> = {}
     parsedNotifications?.forEach((n) => {
       if (typeof n.body === 'object') {
-        const category = n.body.meta.category
+        const category = n.body.listing.meta.category
         const categoryTagItem = LISTING_CATEGORIES.find((ca) => ca.name === category)
         categoryTagItem?.tags.forEach((t) => (tags[t] = true))
 
-        leagues[n.body.meta.league] = true
+        leagues[n.body.listing.meta.league] = true
       }
     })
     return [Object.keys(tags), Object.keys(leagues)]
@@ -171,9 +178,12 @@ const Notifier = () => {
     }
   })
 
+  const startCalculation = valuations !== undefined && summaries !== undefined
+
   useEffect(() => {
     // TODO:
     parsedNotifications?.forEach((n) => {
+      if (!summaries || !valuations) return
       if (listedNotifications.current[n.id]) return
       listedNotifications.current[n.id] = true
 
@@ -181,48 +191,95 @@ const Notifier = () => {
         console.warn('Notification type not supported', n)
         return
       }
-      if (typeof n.body !== 'object' || !n.requestedItems) {
+      if (typeof n.body !== 'object' || !n.body.requestedItems) {
         console.warn('Notification listing not found', n)
         return
       }
       console.log('Notification received: ', n)
 
       let validNotification = true
-      const offering = n.body
-      const requestedItems = n.requestedItems
+      const { listing: offering, requestedItems, ign } = n.body
 
       // TODO: Rebuild the listing
-      let listing: SageNotificationListingType
-
-      if (n.body.items.length > 0) {
+      let listing: SageListingType | undefined
+      const categoryTagItem = LISTING_CATEGORIES.find((ca) => ca.name === offering.meta.category)
+      if (offering.items.length > 0) {
         // Single items
-        const reqItems = requestedItems.map(([hash, selectedQuantity]) => {
-          const item = offering?.items.find((item) => item.hash === hash)
-          if (!item) {
-            validNotification = false
-          }
-          return {
-            ...item,
-            selectedQuantity: selectedQuantity
-          }
-        })
+        const reqItems = requestedItems
+          .map(([hash, selectedQuantity]): SageSelectedDatabaseOfferingItemType | undefined => {
+            const item = offering?.items.find((item) => item.hash === hash)
+            if (!item) {
+              validNotification = false
+              return undefined
+            }
+            return {
+              ...item,
+              selectedQuantity: selectedQuantity
+            }
+          })
+          .filter((item) => !!item) as SageSelectedDatabaseOfferingItemType[]
+
+        if (validNotification) {
+          listing = calculateListingFromOfferingListing(
+            { ...offering, items: reqItems },
+            summaries,
+            valuations,
+            categoryTagItem
+          )
+        }
       } else {
-        // All items
+        listing = calculateListingFromOfferingListing(
+          offering,
+          summaries,
+          valuations,
+          categoryTagItem
+        )
       }
 
       // TODO: Generate a short whisper message. Username - Category - Total Value -> Button to show the details
-      if (validNotification) {
-        toast.info('', {
-          toastId: n.id,
-          autoClose: 10000
-        })
+      if (validNotification && listing) {
+        let description: string
+        if (offering.items.length === 0) {
+          description = `${ign} wants to buy all ${listing.meta.category}. Total: `
+        } else {
+          const totalItems = listing.items.reduce((sum, item) => item.selectedQuantity + sum, 0)
+          description = `${ign} wants to buy ${totalItems} ${listing.meta.category}. Total: `
+        }
+
+        toast.info(
+          <Alert>
+            <AlertTitle>{`@${ign} WTB ${listing.meta.category}`}</AlertTitle>
+            <AlertDescription>
+              <div>{description}</div>
+              <CurrencyDisplay
+                iconRect={{ width: 20, height: 20 }}
+                value={listing.meta.calculatedTotalPrice}
+                splitIcons
+              />
+            </AlertDescription>
+          </Alert>,
+          {
+            toastId: n.id,
+            data: listing,
+            autoClose: 10000
+          }
+        )
       } else {
+        toast.warning(
+          'You received an invalid notification because a buyer want to buy items which are not offered',
+          {
+            toastId: n.id,
+            data: listing,
+            autoClose: 10000
+          }
+        )
         console.warn('The received notification body is invalid. Not all items found')
       }
 
       // TODO: List username + vouchrank + short message what he wants to buy
     })
-  }, [parsedNotifications])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startCalculation, parsedNotifications])
 
   return null
 }

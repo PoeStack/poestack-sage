@@ -55,6 +55,7 @@ dayjs.extend(utc)
 // Hide "Connect discord" when discord is connected? - Get the current connected discord
 // Add "Pin all selected items" switch
 // Clear cache on logout
+// Add Errorboundary
 
 export default function PageHydration() {
   return (
@@ -225,7 +226,6 @@ function Page() {
                   refetchAll?.()
                 }}
               />
-              {/* <HydrationZustand> */}
               <ListingCard
                 selectedCategory={selectedCategory}
                 postListingButtonDisabled={postListingButtonDisabled}
@@ -234,7 +234,6 @@ function Page() {
                 onListingModeChange={setSelectedListingMode}
                 onPostItemsClicked={postItems}
               />
-              {/* </HydrationZustand> */}
             </div>
           </div>
           <div className="flex flex-col w-[1024px]">

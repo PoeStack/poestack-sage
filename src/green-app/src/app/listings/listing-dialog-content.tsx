@@ -4,7 +4,7 @@ import { currentDivinePriceAtom } from '@/components/providers'
 import { Button } from '@/components/ui/button'
 import { DialogClose, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useWhisperHashCopied } from '@/hooks/useWhisperHashCopied'
+import { useWhisperHashCopied } from '@/hooks/useWhisperHash'
 import { createWishperAndCopyToClipboard } from '@/lib/whsiper-util'
 import { SageListingItemType } from '@/types/sage-listing-type'
 import { FilterFn, filterFns } from '@tanstack/react-table'
@@ -27,7 +27,7 @@ export default function ListingDialogContent() {
         state.listingsMap[state.category || ''].find((l) => l.uuid === state.selectedListingId)!
     )
   )
-  const [copyBtnDisabled, messageCopied, messageSent, setMessageCopied] =
+  const [copyBtnDisabled, isLoading, messageCopied, messageSent, setMessageCopied] =
     useWhisperHashCopied(selectedListing)
 
   const divinePrice = useAtomValue(currentDivinePriceAtom)
@@ -87,7 +87,8 @@ export default function ListingDialogContent() {
       <DialogFooter className="fley flex-row justify-end gap-1">
         <Button
           variant={messageCopied ? 'secondary' : 'default'}
-          disabled={copyBtnDisabled}
+          // TODO: Add spinner
+          disabled={copyBtnDisabled || isLoading}
           onClick={() => {
             const state = useListingsStore.getState()
             if (!divinePrice || !state.selectedListingId || !selectedListing) return

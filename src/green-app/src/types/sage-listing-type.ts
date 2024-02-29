@@ -9,6 +9,13 @@ export type SageDatabaseOfferingItemType = {
   price: number
 }
 
+export type SageSelectedDatabaseOfferingItemType = {
+  hash: string
+  quantity: number
+  price: number
+  selectedQuantity?: number
+}
+
 export type SageDatabaseOfferingType = {
   uuid: string // Unique identifier across relistings
   userId: string
@@ -25,14 +32,8 @@ export type SageDatabaseOfferingType = {
   items: SageDatabaseOfferingItemType[]
 }
 
-export type SageOfferingType = Omit<SageDatabaseOfferingType, 'meta'> & {
+export type SageOfferingType = SageDatabaseOfferingType & {
   meta: {
-    league: string
-    category: string
-    ign: string
-    timestampMs: number
-    listingMode: ListingMode
-    tabs: string[]
     totalPrice: number
   }
 }

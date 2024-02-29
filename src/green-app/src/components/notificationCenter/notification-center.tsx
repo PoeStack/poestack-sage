@@ -5,7 +5,7 @@ import { Button } from '../ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { useNotificationCenter } from 'react-toastify/addons/use-notification-center'
 import { Badge } from '../ui/badge'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { TypeOptions, toast, collapseToast } from 'react-toastify'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Switch } from '../ui/switch'
@@ -78,32 +78,37 @@ const NotificationCenter = () => {
             )}
             {(showUnreadOnly ? notifications.filter((v) => !v.read) : notifications).map(
               (notification) => {
-                return (
-                  <Alert key={notification.id}>
-                    <AlertTitle>Heads up!</AlertTitle>
-                    <AlertDescription>{notification.content}</AlertDescription>
-                  </Alert>
-                  // <Alert
-                  //   key={notification.id}
-                  //   severity={(notification.type as AlertColor) || 'info'}
-                  //   action={
-                  //     notification.read ? (
-                  //       <CheckIcon />
-                  //     ) : (
-                  //       <IconButton
-                  //         color="primary"
-                  //         aria-label="upload picture"
-                  //         component="span"
-                  //         onClick={() => markAsRead(notification.id)}
-                  //       >
-                  //         <MarkChatReadIcon />
-                  //       </IconButton>
-                  //     )
-                  //   }
-                  // >
-                  //   {notification.content}
-                  // </Alert>
-                )
+                if (typeof notification.content === 'string') {
+                  return (
+                    <Alert key={notification.id}>
+                      <AlertTitle>Heads up!</AlertTitle>
+                      <AlertDescription>{notification.content || ''}</AlertDescription>
+                    </Alert>
+                  )
+                } else {
+                  return <div key={notification.id}>{notification.content as ReactNode}</div>
+                }
+
+                // <Alert
+                //   key={notification.id}
+                //   severity={(notification.type as AlertColor) || 'info'}
+                //   action={
+                //     notification.read ? (
+                //       <CheckIcon />
+                //     ) : (
+                //       <IconButton
+                //         color="primary"
+                //         aria-label="upload picture"
+                //         component="span"
+                //         onClick={() => markAsRead(notification.id)}
+                //       >
+                //         <MarkChatReadIcon />
+                //       </IconButton>
+                //     )
+                //   }
+                // >
+                //   {notification.content}
+                // </Alert>
               }
             )}
           </div>

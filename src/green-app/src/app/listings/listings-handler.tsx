@@ -11,6 +11,7 @@ import dayjs from 'dayjs'
 import { memo, useEffect, useMemo, useRef } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { useListingsStore } from './listingsStore'
+import { calculateListingFromOfferingListing } from '@/lib/listing-util'
 
 interface ListingsHandlerProps {}
 
@@ -31,16 +32,7 @@ const ListingsHandler = () => {
   const { data: listings, isError } = useQuery({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey: ['listings', league, categoryTagItem?.name || '', fetchTimeStamp],
-    queryFn: async () => {
-      const listingsRes = await listListings(league, categoryTagItem!.name, fetchTimeStamp)
-      const listings = Object.entries(listingsRes).map(
-        (e): SageListingType => ({
-          userId: e[0],
-          ...(e[1] as any)
-        })
-      )
-      return listings
-    },
+    queryFn: () => listListings(league, categoryTagItem!.name, fetchTimeStamp),
     // We do not save any cache - this has the effect, that the query starts directly after changing the category
     gcTime: 0,
     enabled: !!categoryTagItem,
@@ -152,33 +144,9 @@ const ListingsHandler = () => {
 
   useEffect(() => {
     if (listings && listings.length > 0 && startCalculation) {
-      const nextListings = listings.map((listing: SageListingType) => {
-        listing.items.forEach((e) => {
-          e.valuation = valuations[e.hash]
-          e.primaryValuation = e.valuation?.pValues?.[DEFAULT_VALUATION_INDEX] ?? 0
-          e.calculatedTotalPrice = e.quantity * e.price
-          e.summary = summaries[e.hash]
-          e.selectedQuantity = e.quantity
-          e.displayName = summaries[e.hash]?.displayName
-          if (e.primaryValuation <= 0) {
-            console.log('NOT FOUND', e)
-          }
-          e.icon = summaries[e.hash]?.icon
-        })
-        listing.meta.calculatedTotalPrice = listing.items.reduce(
-          (a, b) => a + b.calculatedTotalPrice,
-          0
-        )
-        listing.meta.calculatedTotalValuation = listing.items.reduce(
-          (a, b) => a + b.primaryValuation * b.quantity,
-          0
-        )
-        listing.meta.multiplier =
-          (listing.meta.calculatedTotalPrice / listing.meta.calculatedTotalValuation) * 100
-        listing.meta.icon = categoryTagItem!.icon
-        listing.meta.altIcon = ''
-        return listing
-      })
+      const nextListings = listings.map((listing) =>
+        calculateListingFromOfferingListing(listing, summaries, valuations, categoryTagItem)
+      )
 
       // One user can have one category per league active. We delete or replace this
       const categories: Record<string, SageListingType[]> = {}
@@ -192,10 +160,14 @@ const ListingsHandler = () => {
       Object.entries(categories).forEach(([category, listings]) => {
         addListings(listings, category)
       })
-      cleanupListings()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startCalculation, listings])
+
+  useEffect(() => {
+    const interval = setInterval(cleanupListings, 2000)
+    return () => clearInterval(interval)
+  }, [cleanupListings])
 
   return null
 }

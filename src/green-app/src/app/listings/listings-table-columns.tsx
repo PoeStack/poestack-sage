@@ -5,7 +5,7 @@ import CurrencyDisplay from '@/components/currency-display'
 import { currentDivinePriceAtom } from '@/components/providers'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { useWhisperHashCopied } from '@/hooks/useWhisperHashCopied'
+import { useWhisperHashCopied } from '@/hooks/useWhisperHash'
 import { CurrencySwitch } from '@/lib/currency'
 import { createWishperAndCopyToClipboard } from '@/lib/whsiper-util'
 import { ListingMode, SageListingType } from '@/types/sage-listing-type'
@@ -218,9 +218,8 @@ export function actionsColumn(): ColumnDef<SageListingType> {
       const divinePrice = useAtomValue(currentDivinePriceAtom)
       const [detailsTooltipOpen, setDetailsTooltipOpen] = useState(false)
       const setSelectedListingId = useListingsStore((state) => state.setSelectedListingId)
-      const [copyBtnDisabled, messageCopied, messageSent, setMessageCopied] = useWhisperHashCopied(
-        row.original
-      )
+      const [copyBtnDisabled, isLoading, messageCopied, messageSent, setMessageCopied] =
+        useWhisperHashCopied(row.original)
 
       return (
         <TooltipProvider disableHoverableContent>
@@ -246,7 +245,8 @@ export function actionsColumn(): ColumnDef<SageListingType> {
               <TooltipTrigger asChild> */}
             <Button
               size="default"
-              disabled={copyBtnDisabled}
+              // TODO: Add spinner
+              disabled={copyBtnDisabled || isLoading}
               variant={messageCopied ? 'outline' : 'secondary'}
               onClick={() => {
                 if (!divinePrice || !setMessageCopied) return

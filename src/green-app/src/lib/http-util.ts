@@ -9,6 +9,7 @@ import {
   SageItemGroupSummaryShardInternal
 } from '@/types/echo-api/item-group'
 import { PoeCharacter, PoeLeague } from '@/types/poe-api-models'
+import { LISTING_CATEGORIES } from './listing-categories'
 
 const dev = false
 const baseUrl = dev ? 'http://localhost:3001' : 'https://green-api.poestack.com'
@@ -59,18 +60,16 @@ export async function listMyListings() {
       Authorization: `Bearer ${localStorage.getItem('doNotShareJwt')}`
     }
   })
-  const listings = resp.data as string[]
+  const listings = resp.data as SageDatabaseOfferingType[]
 
   return listings
     .map((listing): SageOfferingType => {
-      const parsed: SageDatabaseOfferingType = JSON.parse(listing)
-
       return {
-        ...parsed,
+        ...listing,
         meta: {
-          ...parsed.meta,
-          timestampMs: parsed.meta.timestampMs - 2000, // ??? Somehow there is a difference between client & server of approx. 1-3 second
-          totalPrice: parsed.items.reduce((sum, item) => item.price * item.quantity + sum, 0)
+          ...listing.meta,
+          timestampMs: listing.meta.timestampMs - 2000, // ??? Somehow there is a difference between client & server of approx. 1-3 second
+          totalPrice: listing.items.reduce((sum, item) => item.price * item.quantity + sum, 0)
         }
       }
     })
@@ -101,7 +100,7 @@ export async function listListings(league: string, category: string, startTimeMs
       }
     }
   )
-  return resp.data
+  return resp.data as SageDatabaseOfferingType[]
 }
 
 export async function listValuations(league: string, tag: string): Promise<SageValuationShard> {
@@ -138,15 +137,13 @@ export type Notification = {
   senderId: string
   body: string
 }
-export async function listNotifications(
-  startTimeMs: number
-): Promise<{ notifications: Notification[] }> {
+export async function listNotifications(startTimeMs: number) {
   const resp = await Axios.get(`${baseUrl}/notifications/${includeTimeOffset(startTimeMs)}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('doNotShareJwt')}`
     }
   })
-  return resp.data
+  return resp.data as { notifications: Notification[] }
 }
 
 //#region GGG-API
@@ -246,8 +243,12 @@ function itemGroupMapInternalToExternal(
       tag: out.meta.tag
     }
 
-    if (out.meta?.tag === 'compass' || out.meta?.tag === 'compasses') {
-      out.summaries[k]['displayName'] = lowerCaseCompasses[v?.k]
+    const tag = out.meta.tag
+    if (tag) {
+      out.summaries[k]['displayName'] =
+        LISTING_CATEGORIES.find((cat) => cat.tags.includes(tag))?.parseName?.({
+          group: out.summaries[k]
+        }) || ''
     }
   })
 
