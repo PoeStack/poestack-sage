@@ -8,6 +8,11 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { ProfileMenu } from '@/components/profile-menu'
 import { Providers } from '@/components/providers'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import utc from 'dayjs/plugin/utc'
+dayjs.extend(relativeTime)
+dayjs.extend(utc)
 
 const inter = Inter({ subsets: ['latin'] })
 

@@ -10,7 +10,7 @@ import utc from 'dayjs/plugin/utc'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
-import { toast } from 'react-toastify'
+import { useNotificationStore } from '@/store/notificationStore'
 dayjs.extend(utc)
 
 const calculateMetaPrices = (
@@ -243,7 +243,9 @@ export const useListingsStore = create<State & Actions>()(
                 if (state.dialogOpen && state.selectedListingId === l.uuid) {
                   state.dialogOpen = false
                   console.warn('The dialog was closed because the opened listing was deleted')
-                  toast.warning('Sorry! The listing has been deleted!')
+                  useNotificationStore
+                    .getState()
+                    .addNotification('Sorry! The listing has been deleted!', 'warning')
                 }
                 if (state.selectedItemsMap[l.uuid]) {
                   delete state.selectedItemsMap[l.uuid]
@@ -258,7 +260,9 @@ export const useListingsStore = create<State & Actions>()(
                   if (state.dialogOpen && state.selectedListingId === prev.uuid) {
                     state.selectedListingId = l.uuid
                     console.warn('The dialog was updated because the opened listing was replaced')
-                    toast.warning('The listing has been updated!')
+                    useNotificationStore
+                      .getState()
+                      .addNotification('The listing has been updated!', 'warning')
 
                     // Move the selection over
                     if (state.selectedItemsMap[prev.uuid]) {
@@ -340,16 +344,20 @@ export const useListingsStore = create<State & Actions>()(
           while (idx--) {
             const l = state.listingsMap[state.category][idx]
             if (now - l.meta.timestampMs > 30 * 60 * 1000) {
-              if (!(state.dialogOpen && state.selectedListingId === l.uuid)) {
-                // Delete only if the listing is not opened. The listing will be deleted in the next request
-                if (state.selectedItemsMap[l.uuid]) {
-                  delete state.selectedItemsMap[l.uuid]
-                }
-                if (state.filteredByGroupListings[l.uuid]) {
-                  delete state.filteredByGroupListings[l.uuid]
-                }
-                state.listingsMap[state.category].splice(idx, 1)
+              if (state.dialogOpen && state.selectedListingId === l.uuid) {
+                state.dialogOpen = false
+                console.warn('The dialog was closed because the opened listing got stale')
+                useNotificationStore
+                  .getState()
+                  .addNotification('Sorry! The listing is stale and got deleted!', 'warning')
               }
+              if (state.selectedItemsMap[l.uuid]) {
+                delete state.selectedItemsMap[l.uuid]
+              }
+              if (state.filteredByGroupListings[l.uuid]) {
+                delete state.filteredByGroupListings[l.uuid]
+              }
+              state.listingsMap[state.category].splice(idx, 1)
             }
           }
         }),

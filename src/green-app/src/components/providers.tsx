@@ -68,7 +68,6 @@ const ToastProvider = () => {
       style={{ top: 'max(4rem,(var(--toastify-toast-top))' }}
       toastClassName="border"
       theme="dark"
-      limit={4}
       draggable
     />
   )

@@ -1,16 +1,16 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { Notification, useNotificationStore } from '@/store/notificationStore'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArchiveIcon, BellIcon, CheckIcon, PackageSearchIcon } from 'lucide-react'
-import { ReactNode, useState } from 'react'
-import { Icons, TypeOptions, toast } from 'react-toastify'
-import { useNotificationCenter } from 'react-toastify/addons/use-notification-center'
+import { ReactNode, useRef, useState } from 'react'
+import { Icons, Id, TypeOptions } from 'react-toastify'
+import { useShallow } from 'zustand/react/shallow'
 import { ToastData } from '../notifier'
 import { TimeTracker } from '../time-tracker'
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { Label } from '../ui/label'
@@ -52,42 +52,81 @@ const variants = {
 type NotificationCenterProps = {}
 
 const NotificationCenter = () => {
-  const { notifications, clear, markAllAsRead, markAsRead, unreadCount, remove } =
-    useNotificationCenter()
-  const [showUnreadOnly, setShowUnreadOnly] = useState(false)
+  const {
+    notifications,
+    // addNotification: addToast,
+    clear,
+    markAllAsRead,
+    markAsRead,
+    remove,
+    dismissAll,
+    blockDisplay
+  } = useNotificationStore(
+    useShallow((state) => ({
+      notifications: state.notifications,
+      // addNotification: state.addNotification,
+      clear: state.clear,
+      markAllAsRead: state.markAllAsRead,
+      markAsRead: state.markAsRead,
+      remove: state.remove,
+      dismissAll: state.dismissAll,
+      blockDisplay: state.blockDisplay
+    }))
+  )
+
+  const unreadCount = useNotificationStore((state) => {
+    return state.notifications.filter((n) => {
+      if (state.toastsToDisplay.some((ttd) => ttd === n.id)) return false
+      return !n.read
+    }).length
+  })
+
+  const [showUnreadOnly, setShowUnreadOnly] = useState(true)
   const [open, setOpen] = useState(false)
 
-  const addNotification = () => {
-    // use a random type of notification
-    toast('Lorem ipsum dolor sit amet, consectetur adipiscing elit', {
-      type: types[Math.floor(Math.random() * types.length)] as TypeOptions
-    })
-  }
+  // const addNotificationToStore = useNotificationStore((state) => state.addNotification)
+
+  // const counterRef = useRef(0)
+
+  // const addNotification = () => {
+  //   // use a random type of notification
+  //   // const toastId = uuidv4()
+  //   const toastId = counterRef.current
+  //   addToast(`Toast: ${toastId}`, types[Math.floor(Math.random() * types.length)] as TypeOptions, {
+  //     toastId: toastId
+  //   })
+  //   counterRef.current++
+  // }
+
+  // useEffect(() => {
+  //   setInterval(addNotification, 2000)
+  // }, [])
 
   return (
     <Popover
       open={open}
       onOpenChange={(open) => {
+        if (open) {
+          // Race conditions - dismiss has priority!
+          setTimeout(() => dismissAll(true), 0)
+        } else {
+          blockDisplay(false)
+        }
         setOpen(open)
       }}
     >
-      {/* <Button onClick={(e) => addNotification()}>Add notification</Button> */}
+      {/* <Button onClick={() => addNotification()}>Add notification</Button> */}
       <PopoverTrigger asChild>
-        <Button
-          className={cn('relative select-none')}
-          variant="ghost"
-          size="icon"
-          onClick={() => {
-            notifications.forEach((n) => toast.dismiss(n.id))
-          }}
-        >
-          <Badge
-            className={cn(
-              'rounded-full absolute -right-1 -top-1 h-4 w-4 px-0 items-center justify-center select-none cursor-pointer'
-            )}
-          >
-            {unreadCount}
-          </Badge>
+        <Button className={cn('relative select-none')} variant="ghost" size="icon">
+          {unreadCount > 0 && (
+            <Badge
+              className={cn(
+                'rounded-full absolute -right-1 -top-1 h-4 w-4 px-0 items-center justify-center select-none cursor-pointer'
+              )}
+            >
+              {unreadCount > 99 ? 99 : unreadCount}
+            </Badge>
+          )}
           <BellIcon className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
@@ -107,7 +146,7 @@ const NotificationCenter = () => {
             <motion.section
               variants={variants.content}
               animate={open ? 'open' : 'closed'}
-              className="flex flex-col gap-2 h-[400px] w-[300px] lg:w-[400px] overflow-y-auto"
+              className="flex flex-col gap-2 h-[400px] w-[300px] lg:w-[400px] overflow-y-auto overflow-x-hidden"
             >
               {(!notifications.length || (unreadCount === 0 && showUnreadOnly)) && (
                 <h4>
@@ -120,80 +159,30 @@ const NotificationCenter = () => {
               <AnimatePresence>
                 {(showUnreadOnly ? notifications.filter((v) => !v.read) : notifications).map(
                   (notification) => {
-                    if (typeof notification.content === 'string') {
-                      return (
-                        <Alert key={notification.id}>
-                          <AlertTitle>Heads up!</AlertTitle>
-                          <AlertDescription>{notification.content || ''}</AlertDescription>
-                        </Alert>
-                      )
-                    } else if (
-                      notification.data &&
-                      'type' in notification.data &&
-                      notification.data.type === 'offering-buy'
+                    if (
+                      notification.options?.data &&
+                      'type' in notification.options.data &&
+                      notification.options.data.type === 'offering-buy'
                     ) {
-                      const toastData = notification.data as ToastData
                       return (
-                        <motion.div
-                          className="flew flex-col space-y-1 border rounded-md px-4 py-3"
+                        <ListingNotificationItem
                           key={notification.id}
-                          layout
-                          initial={{ scale: 0.4, opacity: 0, y: 50 }}
-                          exit={{
-                            scale: 0,
-                            opacity: 0,
-                            transition: { duration: 0.2 }
-                          }}
-                          animate={{ scale: 1, opacity: 1, y: 0 }}
-                        >
-                          <motion.article variants={variants.item}>
-                            <div className="flex flex-row items-center justify-between gap-2">
-                              <div className="flex flex-row items-center justify-start gap-3">
-                                <div className="w-8">
-                                  {(notification.icon as ReactNode) ||
-                                    Icons.info({
-                                      theme: notification.theme || 'dark',
-                                      type: 'info'
-                                    })}
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                  {toastData.toastBody}
-                                  <TimeTracker
-                                    className="text-sm text-muted-foreground"
-                                    createdAt={dayjs.utc(toastData.created)}
-                                  />
-                                </div>
-                              </div>
-                              <div className="flex flex-row items-center">
-                                <Button variant="ghost" size="icon">
-                                  <PackageSearchIcon className="h-4 w-4 shrink-0" />
-                                </Button>
-                                <div className="flex flex-col gap-2">
-                                  {notification.read ? (
-                                    <div className="flex items-center justify-center w-9 h-9">
-                                      <CheckIcon className=" w-4 h-4" />
-                                    </div>
-                                  ) : (
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      onClick={() => markAsRead(notification.id)}
-                                    >
-                                      <PulsatingDot />
-                                    </Button>
-                                  )}
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => remove(notification.id)}
-                                  >
-                                    <ArchiveIcon className="w-4 h-4" />
-                                  </Button>
-                                </div>
-                              </div>
-                            </div>
-                          </motion.article>
-                        </motion.div>
+                          notification={notification}
+                          showUnreadOnly={showUnreadOnly}
+                          toastData={notification.options.data}
+                          markAsRead={markAsRead}
+                          remove={remove}
+                        />
+                      )
+                    } else {
+                      return (
+                        <BasicNotificationItem
+                          key={notification.id}
+                          notification={notification}
+                          showUnreadOnly={showUnreadOnly}
+                          markAsRead={markAsRead}
+                          remove={remove}
+                        />
                       )
                     }
                   }
@@ -208,6 +197,170 @@ const NotificationCenter = () => {
         </div>
       </PopoverContent>
     </Popover>
+  )
+}
+
+type ListingNotificationItemProps = {
+  notification: Notification
+  toastData: ToastData
+  showUnreadOnly: boolean
+  markAsRead: (id: Id | Id[]) => void
+  remove: (id: Id | Id[]) => void
+}
+
+const ListingNotificationItem = ({
+  notification,
+  toastData,
+  showUnreadOnly,
+  markAsRead,
+  remove
+}: ListingNotificationItemProps) => {
+  const actionReadButton = notification.read ? (
+    <div className="flex items-center justify-center w-9 h-9">
+      <CheckIcon className=" w-4 h-4" />
+    </div>
+  ) : (
+    <Button variant="ghost" size="icon" onClick={() => markAsRead(notification.id)}>
+      <PulsatingDot />
+    </Button>
+  )
+
+  return (
+    <motion.div
+      className="flew flex-col space-y-1 border rounded-md p-[0.625rem]"
+      layout
+      initial={{ scale: 0.4, opacity: 0, y: 50 }}
+      exit={{
+        scale: 0,
+        opacity: 0,
+        transition: { duration: 0.2 }
+      }}
+      animate={{ scale: 1, opacity: 1, y: 0 }}
+    >
+      <motion.article variants={variants.item}>
+        <div className="flex flex-row items-center justify-between gap-2">
+          <div className="flex flex-row items-center justify-start gap-3">
+            <div className="w-5 shrink-0 mr-[0.625rem">
+              {Icons.info({
+                theme: 'dark',
+                type: 'info'
+              })}
+            </div>
+            <div className="flex flex-col gap-1">
+              {toastData.toastBody}
+              <TimeTracker
+                className="text-sm text-muted-foreground"
+                createdAt={dayjs.utc(toastData.created)}
+              />
+            </div>
+          </div>
+          {showUnreadOnly ? (
+            <div className="flex flex-col gap-2">
+              {actionReadButton}
+              <Button variant="ghost" size="icon">
+                <PackageSearchIcon className="h-4 w-4 shrink-0" />
+              </Button>
+            </div>
+          ) : (
+            <div className="flex flex-row items-center">
+              <Button variant="ghost" size="icon">
+                <PackageSearchIcon className="h-4 w-4 shrink-0" />
+              </Button>
+              <div className="flex flex-col gap-2">
+                {actionReadButton}
+                <Button variant="ghost" size="icon" onClick={() => remove(notification.id)}>
+                  <ArchiveIcon className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      </motion.article>
+    </motion.div>
+  )
+}
+
+type BasicNotificationItemProps = {
+  notification: Notification
+  showUnreadOnly: boolean
+  markAsRead: (id: Id | Id[]) => void
+  remove: (id: Id | Id[]) => void
+}
+
+const BasicNotificationItem = ({
+  notification,
+  showUnreadOnly,
+  markAsRead,
+  remove
+}: BasicNotificationItemProps) => {
+  return (
+    <motion.div
+      className="flew flex-col space-y-1 border rounded-md p-[0.625rem]"
+      layout
+      initial={{ scale: 0.4, opacity: 0, y: 50 }}
+      exit={{
+        scale: 0,
+        opacity: 0,
+        transition: { duration: 0.2 }
+      }}
+      animate={{ scale: 1, opacity: 1, y: 0 }}
+    >
+      <motion.article variants={variants.item}>
+        <div className="flex flex-row items-center justify-between gap-2">
+          <div className="flex flex-row items-center justify-start">
+            <div className="w-5 shrink-0 mr-[0.625rem]">
+              {notification.type === 'info'
+                ? Icons.info({
+                    theme: 'dark',
+                    type: 'info'
+                  })
+                : notification.type === 'success'
+                  ? Icons.success({
+                      theme: 'dark',
+                      type: 'success'
+                    })
+                  : notification.type === 'warning'
+                    ? Icons.warning({
+                        theme: 'dark',
+                        type: 'warning'
+                      })
+                    : notification.type === 'error'
+                      ? Icons.error({
+                          theme: 'dark',
+                          type: 'error'
+                        })
+                      : Icons.info({
+                          theme: 'dark',
+                          type: 'default'
+                        })}
+            </div>
+            <div className="flex flex-col gap-1">
+              {notification.content as ReactNode}
+              <TimeTracker
+                className="text-sm text-muted-foreground"
+                createdAt={notification.createdAt}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            {notification.read ? (
+              <div className="flex items-center justify-center w-9 h-9">
+                <CheckIcon className=" w-4 h-4" />
+              </div>
+            ) : (
+              <Button variant="ghost" size="icon" onClick={() => markAsRead(notification.id)}>
+                <PulsatingDot />
+              </Button>
+            )}
+            {!showUnreadOnly && (
+              <Button variant="ghost" size="icon" onClick={() => remove(notification.id)}>
+                <ArchiveIcon className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
+        </div>
+      </motion.article>
+    </motion.div>
   )
 }
 

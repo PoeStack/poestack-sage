@@ -32,9 +32,12 @@ import {
   AlertDialogTrigger
 } from './ui/alert-dialog'
 import NotificationCenter from './notificationCenter/notification-center'
+import { useNotificationStore } from '@/store/notificationStore'
 
 export function ProfileMenu() {
   const router = useRouter()
+
+  const [open, setOpen] = useState(false)
 
   const [selectedLeague, setListingsLeague] = useListingsStore(
     useShallow((state) => [state.league, state.setLeague])
@@ -43,6 +46,10 @@ export function ProfileMenu() {
 
   const resetListinsStore = useListingsStore((state) => state.reset)
   const resetListingToolStore = useListingToolStore((state) => state.reset)
+
+  const [dismissAll, blockDisplay] = useNotificationStore(
+    useShallow((state) => [state.dismissAll, state.blockDisplay])
+  )
 
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom)
 
@@ -88,7 +95,18 @@ export function ProfileMenu() {
         </Button>
         <NotificationCenter />
         <AlertDialog>
-          <DropdownMenu>
+          <DropdownMenu
+            open={open}
+            onOpenChange={(open) => {
+              if (open) {
+                // Race conditions - dismiss has priority!
+                setTimeout(() => dismissAll(true), 0)
+              } else {
+                blockDisplay(false)
+              }
+              setOpen(open)
+            }}
+          >
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="flex flex-row gap-2 truncate">
                 <UserRoundIcon className="w-4 h-4" />

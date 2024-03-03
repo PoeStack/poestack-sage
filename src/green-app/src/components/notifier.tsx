@@ -22,12 +22,12 @@ import { useQueries, useQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { useAtomValue } from 'jotai'
 import React, { ReactNode, memo, useEffect, useMemo, useRef, useState } from 'react'
-import { toast } from 'react-toastify'
 import CurrencyDisplay from './currency-display'
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from './ui/tooltip'
 import Image from 'next/image'
 import { Button } from './ui/button'
 import { PackageSearchIcon } from 'lucide-react'
+import { useToast } from '@/hooks/useToast'
 
 type ParsedNotification = Omit<Notification, 'body'> & {
   body: string | { listing: SageOfferingType; requestedItems?: NotificationItem[]; ign: string }
@@ -39,7 +39,7 @@ export type ToastData = {
   type: string
   buyer: string
   ign: string
-  toastBody: React.JSX.Element
+  toastBody: ReactNode
 }
 
 interface NotificationHandlerProps {}
@@ -49,6 +49,7 @@ const Notifier = () => {
   const [fetchTimeStamp, setFetchTimestamp] = useState(0)
   const currentUser = useAtomValue(currentUserAtom)
   const listedNotifications = useRef<Record<string, boolean>>({})
+  const toast = useToast()
 
   const { data: notifications, isError } = useQuery({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps
@@ -250,10 +251,10 @@ const Notifier = () => {
       if (validNotification && listing) {
         let description: ReactNode
         if (requestedItems.length === 0) {
-          description = ` wtb all ${listing.meta.category}.`
+          description = ` wtb all ${listing.meta.category}`
         } else {
           const totalItems = listing.items.reduce((sum, item) => item.selectedQuantity + sum, 0)
-          description = ` wtb ${totalItems} ${listing.meta.category}.`
+          description = ` wtb ${totalItems} ${listing.meta.category}`
         }
 
         const toastBody = (
@@ -303,26 +304,26 @@ const Notifier = () => {
           toastBody
         }
 
-        toast.info(
+        toast(
           <div className="flex flex-row items-center justify-between w-full gap-2">
             {toastBody}
             <Button variant="outline" size="icon">
               <PackageSearchIcon className="h-4 w-4 shrink-0" />
             </Button>
           </div>,
+          'info',
           {
             toastId: n.id,
-            data: toastData,
-            autoClose: 10000
+            data: toastData
           }
         )
       } else {
-        toast.warning(
+        toast(
           'You received an invalid notification because a buyer want to buy items which are not offered',
+          'warning',
           {
             toastId: n.id,
-            data: listing,
-            autoClose: 10000
+            data: listing
           }
         )
         console.warn('The received notification body is invalid. Not all items found')
