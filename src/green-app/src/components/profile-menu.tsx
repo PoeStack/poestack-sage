@@ -181,7 +181,7 @@ export function ProfileMenu() {
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                If you confirm, all dates will be reset. This can help with bugs. To fix the bug, it
+                If you confirm, all data will be reset. This can help with bugs. To fix the bug, it
                 would help to report it. Thanks!
               </AlertDialogDescription>
             </AlertDialogHeader>

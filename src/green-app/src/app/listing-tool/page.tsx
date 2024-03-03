@@ -51,11 +51,9 @@ dayjs.extend(utc)
 // Errorhandling & notification system
 // Go through all categories
 // Add offerings loading indicator
-// Add character combobox loading indicator
 // Hide "Connect discord" when discord is connected? - Get the current connected discord
 // Add "Pin all selected items" switch
 // Clear cache on logout
-// Add Errorboundary
 
 type PageProps = {}
 

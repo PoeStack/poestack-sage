@@ -90,7 +90,6 @@ export default function ListingDialogContent() {
         <Button
           className="flex flex-row gap-2"
           variant={messageCopied ? 'secondary' : 'default'}
-          // TODO: Add spinner
           disabled={copyBtnDisabled || isLoading}
           onClick={() => {
             const state = useListingsStore.getState()

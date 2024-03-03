@@ -24,7 +24,7 @@ function fallbackRender({ error, resetErrorBoundary }: FallbackProps) {
           <AlertDialogTitle>Oops ... Something went wrong</AlertDialogTitle>
           <AlertDialogDescription className="flex flex-col gap-2">
             <div>
-              If you confirm, all dates will be reset. To fix the bug, it would help to report it.
+              If you confirm, all data will be reset. To fix the bug, it would help to report it.
               Thanks!
             </div>
             <div className="text-red-400">{error.message}</div>

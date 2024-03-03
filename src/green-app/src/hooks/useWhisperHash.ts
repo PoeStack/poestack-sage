@@ -91,13 +91,21 @@ export const useWhisperHashCopied = (
           !state.whisperedListings[listing.uuid]?.sentHashes.includes(generatedHash) &&
           currentIgn
         ) {
-          mutation.mutate({
-            targetId: listing.userId,
-            type: 'offering-buy', // Maybe offering-buy-update later to update the promise
-            body: createNotificationBody(listing, selectedItemsMap, currentIgn)
-          })
+          mutation.mutate(
+            {
+              targetId: listing.userId,
+              type: 'offering-buy', // Maybe offering-buy-update later to update the promise
+              body: createNotificationBody(listing, selectedItemsMap, currentIgn)
+            },
+            {
+              onSuccess: () => {
+                state.addWhisperedListing(listing.uuid, generatedHash)
+              }
+            }
+          )
+        } else {
+          state.addWhisperedListing(listing.uuid, generatedHash)
         }
-        state.addWhisperedListing(listing.uuid, generatedHash)
       }
       if (!state.whisperedListings[listing.uuid]) {
         return [false, false, setMessageCopiedFn]
