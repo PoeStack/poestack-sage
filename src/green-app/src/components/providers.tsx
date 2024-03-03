@@ -10,6 +10,7 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import { ToastContainer, ToastPosition, toast } from 'react-toastify'
 import Notifier from './notifier'
+import ErrorBoundaryContainer from './error-boundary-fallback'
 
 // type DivineLeagues = {
 //   divinePrice: Record<string, number>
@@ -53,7 +54,11 @@ export function Providers({ children }: ProvidersProps) {
   return (
     <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
       <Provider store={atomStore}>
-        {children}
+        {process.env.NODE_ENV !== 'production' ? (
+          children
+        ) : (
+          <ErrorBoundaryContainer>{children}</ErrorBoundaryContainer>
+        )}
         <ToastProvider />
         <Notifier />
       </Provider>
