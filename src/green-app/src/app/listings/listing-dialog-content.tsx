@@ -105,7 +105,9 @@ export default function ListingDialogContent() {
           }}
         >
           {messageCopied ? `Whisper copied!` : messageSent ? `Copy again?` : 'Copy whisper'}
-          {<RefreshCwIcon className={cn(isLoading && 'animate-spin', 'w-4 h-w shrink-0')} />}
+          {((!messageCopied && !messageSent) || isLoading) && (
+            <RefreshCwIcon className={cn(isLoading && 'animate-spin', 'w-4 h-w shrink-0')} />
+          )}
         </Button>
         <DialogClose asChild>
           <Button type="button" variant="secondary">

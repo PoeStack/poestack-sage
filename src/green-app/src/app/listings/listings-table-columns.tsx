@@ -269,7 +269,9 @@ export function actionsColumn(): ColumnDef<SageListingType> {
               }}
             >
               {messageCopied ? `Whisper copied!` : messageSent ? `Copy again?` : 'Copy whisper'}
-              {<RefreshCwIcon className={cn(isLoading && 'animate-spin', 'w-4 h-w shrink-0')} />}
+              {((!messageCopied && !messageSent) || isLoading) && (
+                <RefreshCwIcon className={cn(isLoading && 'animate-spin', 'w-4 h-w shrink-0')} />
+              )}
             </Button>
             {/* </TooltipTrigger>
               <TooltipContent>{messageCopied ? 'Whisper copied' : 'Copy whisper'}</TooltipContent>
