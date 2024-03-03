@@ -14,12 +14,18 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import utc from 'dayjs/plugin/utc'
 import { useAtomValue } from 'jotai'
-import { ArrowUpRightFromSquareIcon, LayoutListIcon, PackageIcon } from 'lucide-react'
+import {
+  ArrowUpRightFromSquareIcon,
+  LayoutListIcon,
+  PackageIcon,
+  RefreshCwIcon
+} from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
 import { TableColumnHeader } from '../../components/column-header'
 import { useListingsStore } from './listingsStore'
 import { TimeTracker } from '@/components/time-tracker'
+import { cn } from '@/lib/utils'
 dayjs.extend(relativeTime)
 dayjs.extend(utc)
 
@@ -245,6 +251,7 @@ export function actionsColumn(): ColumnDef<SageListingType> {
             {/* <Tooltip>
               <TooltipTrigger asChild> */}
             <Button
+              className="flex flex-row gap-2"
               size="default"
               // TODO: Add spinner
               disabled={copyBtnDisabled || isLoading}
@@ -262,6 +269,7 @@ export function actionsColumn(): ColumnDef<SageListingType> {
               }}
             >
               {messageCopied ? `Whisper copied!` : messageSent ? `Copy again?` : 'Copy whisper'}
+              {<RefreshCwIcon className={cn(isLoading && 'animate-spin', 'w-4 h-w shrink-0')} />}
             </Button>
             {/* </TooltipTrigger>
               <TooltipContent>{messageCopied ? 'Whisper copied' : 'Copy whisper'}</TooltipContent>

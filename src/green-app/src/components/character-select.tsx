@@ -31,6 +31,7 @@ const CharacterSelect = ({ selectedLeague, onIgnSelect }: CharacterSelectProps) 
   const {
     data: selectableCharacters,
     isFetching: isCharactersFetching,
+    isLoading: isLoading,
     refetch: refetchCharacters
   } = useQuery({
     queryKey: [currentUser?.profile?.uuid, 'characters'],
@@ -54,7 +55,7 @@ const CharacterSelect = ({ selectedLeague, onIgnSelect }: CharacterSelectProps) 
           variant="outline"
           role="combobox"
           className="flex justify-between w-full"
-          disabled={!currentUser?.profile?.uuid}
+          disabled={!currentUser?.profile?.uuid || isLoading}
         >
           {selectedCharacter ? (
             <>
@@ -64,7 +65,16 @@ const CharacterSelect = ({ selectedLeague, onIgnSelect }: CharacterSelectProps) 
           ) : (
             <>
               <div>Select ...</div>
-              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              {isLoading ? (
+                <div className="flex flex-row items-center gap-2">
+                  <RefreshCwIcon
+                    className={cn('justify-self-end', isLoading && 'animate-spin', 'w-4 h-w')}
+                  />
+                  <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </div>
+              ) : (
+                <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              )}
             </>
           )}
         </Button>

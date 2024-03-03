@@ -326,7 +326,10 @@ function SubCommand({
                   onRefreshStashtabsClicked()
                   setOpen(false)
                 }}
-                className="hover:!bg-accent hover:!text-accent-foreground aria-selected:bg-inherit aria-selected:text-inherit cursor-pointer"
+                className={cn(
+                  'hover:!bg-accent hover:!text-accent-foreground aria-selected:bg-inherit aria-selected:text-inherit cursor-pointer',
+                  isStashListFetching && 'cursor-not-allowed'
+                )}
                 disabled={isStashListFetching}
               >
                 <div className="flex flex-row gap-2 items-center w-full">

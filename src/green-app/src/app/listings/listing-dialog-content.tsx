@@ -16,6 +16,8 @@ import ListingMetaOverview from './listing-meta-overview'
 import ListingTable from './listing-table'
 import { listingTableBulkModeColumns, listingTradeSingleModeColumns } from './listing-table-columns'
 import { useListingsStore } from './listingsStore'
+import { RefreshCwIcon } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 type ListingDialogContentProps = {}
 
@@ -86,6 +88,7 @@ export default function ListingDialogContent() {
       </ScrollArea>
       <DialogFooter className="fley flex-row justify-end gap-1">
         <Button
+          className="flex flex-row gap-2"
           variant={messageCopied ? 'secondary' : 'default'}
           // TODO: Add spinner
           disabled={copyBtnDisabled || isLoading}
@@ -102,6 +105,7 @@ export default function ListingDialogContent() {
           }}
         >
           {messageCopied ? `Whisper copied!` : messageSent ? `Copy again?` : 'Copy whisper'}
+          {<RefreshCwIcon className={cn(isLoading && 'animate-spin', 'w-4 h-w shrink-0')} />}
         </Button>
         <DialogClose asChild>
           <Button type="button" variant="secondary">
