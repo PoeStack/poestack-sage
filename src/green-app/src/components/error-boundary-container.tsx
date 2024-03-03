@@ -1,7 +1,7 @@
 'use client'
 
 import { PropsWithChildren } from 'react'
-import { ErrorBoundary, ErrorBoundaryContextType, FallbackProps } from 'react-error-boundary'
+import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
 import { useListingsStore } from '@/app/listings/listingsStore'
 import { useListingToolStore } from '@/app/listing-tool/listingToolStore'
 import {

@@ -424,6 +424,15 @@ export const useListingsStore = create<State & Actions>()(
     {
       name: 'listings-items-storage',
       storage: createJSONStorage(() => localStorage),
+      // TODO: On league change => increase version!
+      version: 1,
+      migrate: (persistedState: unknown, version: number) => {
+        const nextState = persistedState as State & Actions
+        if (nextState && typeof nextState === 'object' && 'league' in nextState) {
+          nextState.league = SUPPORTED_LEAGUES[0]
+        }
+        return nextState
+      },
       partialize: (state) => ({
         league: state.league
       }),

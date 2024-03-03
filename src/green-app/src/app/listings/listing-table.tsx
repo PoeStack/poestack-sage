@@ -53,8 +53,10 @@ const ListingTable = ({ columns, className, globalFilterFn }: DataTableProps) =>
     })
   )
 
-  const selectedItems = useListingsStore((state) =>
-    state.selectedListingId ? state.selectedItemsMap[state.selectedListingId] : {}
+  const selectedItems = useListingsStore(
+    useShallow((state) =>
+      state.selectedListingId ? state.selectedItemsMap[state.selectedListingId] : {}
+    )
   )
 
   const filteredItems = useMemo((): SageListingItemType[] => {

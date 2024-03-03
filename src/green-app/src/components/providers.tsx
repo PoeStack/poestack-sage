@@ -10,7 +10,7 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import { ToastContainer, ToastPosition, toast } from 'react-toastify'
 import Notifier from './notifier'
-import ErrorBoundaryContainer from './error-boundary-fallback'
+import ErrorBoundaryContainer from './error-boundary-container'
 
 // type DivineLeagues = {
 //   divinePrice: Record<string, number>

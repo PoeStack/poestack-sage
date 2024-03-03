@@ -63,7 +63,7 @@ export default function Page() {
   const queryClient = useQueryClient()
   const selectedLeague = useListingToolStore((state) => state.league)
   const [stashes, setStashes] = useListingToolStore(
-    useShallow((state) => [state.stashes[state.league], state.setStashes])
+    useShallow((state) => [state.stashes[state.league] || [], state.setStashes])
   )
   const [selectedCategory, setSelectedCategory] = useListingToolStore(
     useShallow((state) => [state.category, state.setCategory])

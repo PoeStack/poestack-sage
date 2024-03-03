@@ -19,6 +19,7 @@ import { PoeItem } from '@/types/poe-api-models'
 import { useQueries } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
 import { memo, useEffect, useMemo } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 
 type ListingToolHandlerProps = {
   setRefetchAll: (refetchAll: () => void) => void
@@ -27,7 +28,7 @@ type ListingToolHandlerProps = {
 
 const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingToolHandlerProps) => {
   const currentUser = useAtomValue(currentUserAtom)
-  const stashes = useListingToolStore((state) => state.stashes[state.league])
+  const stashes = useListingToolStore(useShallow((state) => state.stashes[state.league] || []))
   const league = useListingToolStore((state) => state.league)
   const selectedCategory = useListingToolStore((state) => state.category)
   const setSelectedCategory = useListingToolStore((state) => state.setCategory)
@@ -231,18 +232,22 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
   })
 
   useEffect(() => {
+    console.log('Set setInitialItems')
     setInitialItems(displayedItems, selectedCategory)
   }, [displayedItems, selectedCategory, setInitialItems])
 
   useEffect(() => {
+    console.log('Set refetchAll')
     setRefetchAll(refetchAll)
   }, [refetchAll, setRefetchAll])
 
   useEffect(() => {
+    console.log('Set setStashListFetching')
     setStashListFetching(isGroupedItemsFetching || isValuationPending)
   }, [isGroupedItemsFetching, isValuationPending, setStashListFetching])
 
   useEffect(() => {
+    console.log('Set setSelectableCategories')
     const selectableCategories = LISTING_CATEGORIES.filter((category) =>
       Object.keys(selectableTagsCount)?.some((tag) => category.tags.includes(tag))
     )

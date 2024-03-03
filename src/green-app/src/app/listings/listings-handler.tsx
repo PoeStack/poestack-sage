@@ -23,7 +23,7 @@ const ListingsHandler = () => {
   )
   // Starts with 0
   const fetchTimeStamp = useListingsStore(
-    (state) => state.fetchTimeStamps[state.league][state.category || '']
+    (state) => state.fetchTimeStamps[state.league]?.[state.category || '']
   )
   const setFetchTimestamp = useListingsStore((state) => state.setFetchTimestamps)
   const addListings = useListingsStore((state) => state.addListings)

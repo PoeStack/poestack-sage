@@ -39,10 +39,12 @@ export function ProfileMenu() {
 
   const [open, setOpen] = useState(false)
 
-  const [selectedLeague, setListingsLeague] = useListingsStore(
+  const [listingsLeague, setListingsLeague] = useListingsStore(
     useShallow((state) => [state.league, state.setLeague])
   )
-  const setListingToolLeague = useListingToolStore((state) => state.setLeague)
+  const [listingToolLeague, setListingToolLeague] = useListingToolStore(
+    useShallow((state) => [state.league, state.setLeague])
+  )
 
   const resetListinsStore = useListingsStore((state) => state.reset)
   const resetListingToolStore = useListingToolStore((state) => state.reset)
@@ -54,14 +56,16 @@ export function ProfileMenu() {
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom)
 
   useEffect(() => {
-    // TODO: Test this
-    if (!SUPPORTED_LEAGUES.includes(selectedLeague)) {
-      // New league - reset all
+    // New league - reset all
+    if (!SUPPORTED_LEAGUES.includes(listingsLeague)) {
       console.warn('Attention! Stores going to be resetted!')
       resetListinsStore()
+    }
+    if (!SUPPORTED_LEAGUES.includes(listingToolLeague)) {
+      console.warn('Attention! Stores going to be resetted!')
       resetListingToolStore()
     }
-  }, [resetListingToolStore, resetListinsStore, selectedLeague])
+  }, [resetListingToolStore, resetListinsStore, listingsLeague, listingToolLeague])
 
   useEffect(() => {
     const jwt = localStorage.getItem('doNotShareJwt')
@@ -143,7 +147,7 @@ export function ProfileMenu() {
                 <DropdownMenuCheckboxItem
                   key={league}
                   className="capitalize"
-                  checked={selectedLeague === league}
+                  checked={listingsLeague === league}
                   onCheckedChange={() => {
                     setListingsLeague(league)
                     setListingToolLeague(league)
