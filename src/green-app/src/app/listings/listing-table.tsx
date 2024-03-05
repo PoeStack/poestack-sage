@@ -183,9 +183,10 @@ const ListingTable = ({ columns, className, globalFilterFn }: DataTableProps) =>
                             : undefined
                       }}
                       className={cn(
-                        meta?.className,
+                        'group',
+                        'truncate',
                         !Boolean(meta?.removePadding) && 'px-[14px]',
-                        'truncate'
+                        meta?.className
                       )}
                     >
                       {header.isPlaceholder
@@ -193,11 +194,11 @@ const ListingTable = ({ columns, className, globalFilterFn }: DataTableProps) =>
                         : flexRender(header.column.columnDef.header, header.getContext())}
                       {header.column.getCanResize() && (
                         <div
+                          onDoubleClick={() => header.column.resetSize()}
                           onMouseDown={header.getResizeHandler()}
                           onTouchStart={header.getResizeHandler()}
                           className={cn(
-                            `absolute z-10 -right-1 top-0 h-full w-2 cursor-col-resize select-none touch-none`,
-                            headerGroup.headers.length - 1 === i && 'right-0 w-1',
+                            `absolute right-0 top-0 h-full w-1 cursor-col-resize select-none touch-none group-hover:bg-muted`,
                             header.column.getIsResizing() && 'bg-muted'
                           )}
                         />

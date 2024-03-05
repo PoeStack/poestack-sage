@@ -32,10 +32,7 @@ export function TableColumnHeader<TData, TValue>({
     <div className={cn('flex items-center space-x-2', alignDir, className)}>
       <Button
         variant="ghost"
-        className={cn(
-          'h-8 data-[state=open]:bg-accent px-2 py-2',
-          align === 'left' ? '-mx-2' : '-mx-3'
-        )}
+        className={cn('h-8 data-[state=open]:bg-accent px-2 py-2 -mx-2')}
         onClick={() => column.toggleSorting(undefined, true)}
       >
         <span>{title}</span>
