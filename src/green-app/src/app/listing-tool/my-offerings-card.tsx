@@ -2,7 +2,6 @@ import CurrencyDisplay from '@/components/currency-display'
 import { currentUserAtom } from '@/components/providers'
 import { TimeTracker } from '@/components/time-tracker'
 import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import {
   SageDatabaseOfferingTypeExt,
@@ -17,12 +16,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import utc from 'dayjs/plugin/utc'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useAtomValue } from 'jotai'
 import {
   ArrowLeftToLineIcon,
   CircleUserIcon,
   LayoutListIcon,
-  MoreHorizontalIcon,
   PackageIcon,
   Trash2Icon
 } from 'lucide-react'
@@ -30,6 +29,25 @@ import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
 dayjs.extend(relativeTime)
 dayjs.extend(utc)
+
+const variants = {
+  item: {
+    open: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        y: { stiffness: 1000, velocity: -100 }
+      }
+    },
+    closed: {
+      y: 50,
+      opacity: 0,
+      transition: {
+        y: { stiffness: 1000 }
+      }
+    }
+  }
+}
 
 type MyOfferingsCardProps = {
   league: string | null
@@ -106,127 +124,139 @@ export function MyOfferingsCard({ league, setCategory, setStashes }: MyOfferings
       <h3 className="p-2">My Offerings</h3>
       <div className="overflow-y-auto overflow-x-hidden max-h-[630px] h-[630px]">
         <div className="p-1">
-          {(shownListings?.length || 0) > 0 ? (
-            shownListings?.map((listing) => {
-              const meta = listing.meta
+          <AnimatePresence>
+            {(shownListings?.length || 0) > 0 ? (
+              shownListings?.map((listing) => {
+                const meta = listing.meta
 
-              const category = LISTING_CATEGORIES.find((cat) => cat.name === meta.category)
+                const category = LISTING_CATEGORIES.find((cat) => cat.name === meta.category)
 
-              return (
-                <div
-                  key={`${meta.league}:${meta.category}`}
-                  className="flex flex-col p-1 gap-2 text-sm cursor-default rounded-sm select-none outline-none hover:bg-accent/50 hover:text-accent-foreground "
-                >
-                  <div className="flex flex-row justify-between items-center gap-2 h-9">
-                    <div className="flex flex-row gap-1 items-center text-sm">
-                      {category && (
-                        <Image
-                          className="w-6 h-6"
-                          width={24}
-                          height={24}
-                          src={category.icon}
-                          alt={category.name}
-                        />
-                      )}
-                      <div className="capitalize">{meta.category}</div>
-                    </div>
-                    <div className="flex flex-row items-center ">
-                      <CurrencyDisplay
-                        className="text-sm"
-                        ttContentClassName="z-[60]"
-                        iconRect={{ width: 20, height: 20 }}
-                        value={meta.totalPrice}
-                        splitIcons
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-row justify-between items-center gap-2">
-                    <div className="flex flex-row items-center gap-1">
-                      {meta.listingMode === 'bulk' ? (
-                        <>
-                          <PackageIcon className="w-4 h-4" />
-                          Whole Offering
-                        </>
-                      ) : (
-                        <>
-                          <LayoutListIcon className="w-4 h-4" />
-                          Individual
-                        </>
-                      )}
-                      {/* {meta.tabs.map((tab, i) => (
+                return (
+                  <motion.div
+                    key={`${meta.league}:${meta.category}`}
+                    className="flex flex-col p-1 gap-2 text-sm cursor-default rounded-sm select-none outline-none hover:bg-accent/50 hover:text-accent-foreground "
+                    layout
+                    initial={{ scale: 0.4, opacity: 0, y: 50 }}
+                    exit={{
+                      scale: 0,
+                      opacity: 0,
+                      transition: { duration: 0.2 }
+                    }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                  >
+                    <motion.article variants={variants.item}>
+                      <div className="flex flex-row justify-between items-center gap-2 h-9">
+                        <div className="flex flex-row gap-1 items-center text-sm">
+                          {category && (
+                            <Image
+                              className="w-6 h-6"
+                              width={24}
+                              height={24}
+                              src={category.icon}
+                              alt={category.name}
+                            />
+                          )}
+                          <div className="capitalize">{meta.category}</div>
+                        </div>
+                        <div className="flex flex-row items-center ">
+                          <CurrencyDisplay
+                            className="text-sm"
+                            ttContentClassName="z-[60]"
+                            iconRect={{ width: 20, height: 20 }}
+                            value={meta.totalPrice}
+                            splitIcons
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-row justify-between items-center gap-2">
+                        <div className="flex flex-row items-center gap-1">
+                          {meta.listingMode === 'bulk' ? (
+                            <>
+                              <PackageIcon className="w-4 h-4" />
+                              Whole Offering
+                            </>
+                          ) : (
+                            <>
+                              <LayoutListIcon className="w-4 h-4" />
+                              Individual
+                            </>
+                          )}
+                          {/* {meta.tabs.map((tab, i) => (
                       <span key={`${i}_${tab}`}>{tab}</span>
                     ))} */}
-                    </div>
-                    <TimeTracker createdAt={dayjs.utc(meta.timestampMs)} />
-                  </div>
-                  <div className="flex flex-row justify-between items-center gap-2">
-                    {/* <div className="flex flow-row items-center gap-2 "> */}
-                    <div className="flex flex-row items-center gap-1">
-                      <CircleUserIcon className="w-4 h-4 shrink-0" />
-                      {meta.ign}
-                      {/* {' - '} */}
-                      {/* <span className="capitalize">{meta.league}</span> */}
-                    </div>
-                    <div className="flex flew-row items-center">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
+                        </div>
+                        <TimeTracker createdAt={dayjs.utc(meta.timestampMs)} />
+                      </div>
+                      <div className="flex flex-row justify-between items-center gap-2">
+                        {/* <div className="flex flow-row items-center gap-2 "> */}
+                        <div className="flex flex-row items-center gap-1">
+                          <CircleUserIcon className="w-4 h-4 shrink-0" />
+                          {meta.ign}
+                          {/* {' - '} */}
+                          {/* <span className="capitalize">{meta.league}</span> */}
+                        </div>
+                        <div className="flex flew-row items-center">
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  disabled={!stashes}
+                                  onClick={() => {
+                                    const stashesToSelect = stashes
+                                      ?.map((x) => x.children || x)
+                                      .flatMap((x) => x)
+                                      ?.filter((x) => meta.tabs.some((y) => x.id === y))
+                                    if (stashesToSelect) {
+                                      setCategory(meta.category)
+                                      setStashes(stashesToSelect)
+                                    }
+                                  }}
+                                >
+                                  <ArrowLeftToLineIcon className="w-4 h-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                This selects <b>only</b> the stashtabs and category.
+                                <br />
+                                All other settings are still applied:
+                                <ul className="list-disc pl-4">
+                                  <li>Multiplier per category</li>
+                                  <li>Overrides/Overprices</li>
+                                  <li>Unselected items</li>
+                                </ul>
+                              </TooltipContent>
+                            </Tooltip>
                             <Button
                               size="icon"
                               variant="ghost"
-                              disabled={!stashes}
+                              disabled={isLoading || !currentUser?.profile?.uuid}
                               onClick={() => {
-                                const stashesToSelect = stashes
-                                  ?.map((x) => x.children || x)
-                                  .flatMap((x) => x)
-                                  ?.filter((x) => meta.tabs.some((y) => x.id === y))
-                                if (stashesToSelect) {
-                                  setCategory(meta.category)
-                                  setStashes(stashesToSelect)
-                                }
+                                deleteMutation.mutate({
+                                  league: meta.league,
+                                  category: meta.category,
+                                  uuid: listing.uuid
+                                })
                               }}
                             >
-                              <ArrowLeftToLineIcon className="w-4 h-4" />
+                              <Trash2Icon className="w-4 h-4" />
                             </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            This selects <b>only</b> the stashtabs and category.
-                            <br />
-                            All other settings are still applied:
-                            <ul className="list-disc pl-4">
-                              <li>Multiplier per category</li>
-                              <li>Overrides/Overprices</li>
-                              <li>Unselected items</li>
-                            </ul>
-                          </TooltipContent>
-                        </Tooltip>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          disabled={isLoading || !currentUser?.profile?.uuid}
-                          onClick={() => {
-                            deleteMutation.mutate({
-                              league: meta.league,
-                              category: meta.category,
-                              uuid: listing.uuid
-                            })
-                          }}
-                        >
-                          <Trash2Icon className="w-4 h-4" />
-                        </Button>
-                        {/* <Separator orientation="vertical" className="h-6" />
+                            {/* <Separator orientation="vertical" className="h-6" />
                         <Button size="icon" variant="ghost">
                           <MoreHorizontalIcon className="w-4 h-4" />
                         </Button> */}
-                      </TooltipProvider>
-                    </div>
-                  </div>
-                </div>
-              )
-            })
-          ) : (
-            <div className="flex justify-center items-center h-20 text-sm">No offerings.</div>
-          )}
+                          </TooltipProvider>
+                        </div>
+                      </div>
+                    </motion.article>
+                  </motion.div>
+                )
+              })
+            ) : (
+              <div className="flex justify-center items-center h-20 text-sm">No offerings.</div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
