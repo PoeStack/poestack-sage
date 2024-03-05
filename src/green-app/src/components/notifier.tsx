@@ -28,6 +28,8 @@ import Image from 'next/image'
 import { Button } from './ui/button'
 import { PackageSearchIcon } from 'lucide-react'
 import { useToast } from '@/hooks/useToast'
+import Link from 'next/link'
+import { useNotificationStore } from '@/store/notificationStore'
 
 type ParsedNotification = Omit<Notification, 'body'> & {
   body: string | { listing: SageOfferingType; requestedItems?: NotificationItem[]; ign: string }
@@ -46,6 +48,10 @@ interface NotificationHandlerProps {}
 
 // Tutorial: https://ui.shadcn.com/docs/components/data-table
 const Notifier = () => {
+  const openTradeOverviewInNewWindow = useNotificationStore(
+    (state) => state.openTradeOverviewInNewWindow
+  )
+
   const [fetchTimeStamp, setFetchTimestamp] = useState(0)
   const currentUser = useAtomValue(currentUserAtom)
   const listedNotifications = useRef<Record<string, boolean>>({})
@@ -193,7 +199,6 @@ const Notifier = () => {
   const startCalculation = valuations !== undefined && summaries !== undefined
 
   useEffect(() => {
-    // TODO:
     parsedNotifications?.forEach((n) => {
       if (!summaries || !valuations) return
       if (listedNotifications.current[n.id]) return
@@ -212,7 +217,6 @@ const Notifier = () => {
       let validNotification = true
       const { listing: offering, requestedItems, ign } = n.body
 
-      // TODO: Rebuild the listing
       let listing: SageListingType | undefined
       const categoryTagItem = LISTING_CATEGORIES.find((ca) => ca.name === offering.meta.category)
       if (requestedItems.length > 0) {
@@ -308,7 +312,13 @@ const Notifier = () => {
           <div className="flex flex-row items-center justify-between w-full gap-2">
             {toastBody}
             <Button variant="outline" size="icon">
-              <PackageSearchIcon className="h-4 w-4 shrink-0" />
+              <Link
+                href={`/trade/${n.id}`}
+                target={openTradeOverviewInNewWindow ? '_blank' : undefined}
+                rel="noreferrer noopener"
+              >
+                <PackageSearchIcon className="h-4 w-4 shrink-0" />
+              </Link>
             </Button>
           </div>,
           'info',

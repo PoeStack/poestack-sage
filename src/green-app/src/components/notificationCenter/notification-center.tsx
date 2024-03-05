@@ -5,18 +5,21 @@ import { Notification, useNotificationStore } from '@/store/notificationStore'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArchiveIcon, BellIcon, CheckIcon, PackageSearchIcon } from 'lucide-react'
-import { ReactNode, useRef, useState } from 'react'
-import { Icons, Id, TypeOptions } from 'react-toastify'
+import { ArchiveIcon, BellIcon, CheckIcon, PackageSearchIcon, SettingsIcon } from 'lucide-react'
+import Link from 'next/link'
+import { ReactNode, useState } from 'react'
+import { Icons, Id } from 'react-toastify'
 import { useShallow } from 'zustand/react/shallow'
 import { ToastData } from '../notifier'
 import { TimeTracker } from '../time-tracker'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
+import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import { Label } from '../ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Switch } from '../ui/switch'
 import PulsatingDot from './pulsating-dot'
+import SettingsDialogContent from './settings-dialog-content'
 dayjs.extend(relativeTime)
 
 const types = ['success', 'info', 'warning', 'error']
@@ -82,7 +85,8 @@ const NotificationCenter = () => {
   })
 
   const [showUnreadOnly, setShowUnreadOnly] = useState(true)
-  const [open, setOpen] = useState(false)
+  const [settingsDialogOpen, setSettingsDialogOpen] = useState(false)
+  const [popoverOpen, setPopoverOpen] = useState(false)
 
   // const addNotificationToStore = useNotificationStore((state) => state.addNotification)
 
@@ -102,101 +106,112 @@ const NotificationCenter = () => {
   //   setInterval(addNotification, 2000)
   // }, [])
 
+  const handlePopoverOpenChange = (open: boolean) => {
+    if (open) {
+      // Race conditions - dismiss has priority!
+      setTimeout(() => dismissAll(true), 0)
+    } else {
+      blockDisplay(false)
+    }
+    setPopoverOpen(open)
+  }
+
   return (
-    <Popover
-      open={open}
-      onOpenChange={(open) => {
-        if (open) {
-          // Race conditions - dismiss has priority!
-          setTimeout(() => dismissAll(true), 0)
-        } else {
-          blockDisplay(false)
-        }
-        setOpen(open)
-      }}
-    >
-      {/* <Button onClick={() => addNotification()}>Add notification</Button> */}
-      <PopoverTrigger asChild>
-        <Button className={cn('relative select-none')} variant="ghost" size="icon">
-          {unreadCount > 0 && (
-            <Badge
-              className={cn(
-                'rounded-full absolute -right-1 -top-1 h-4 w-4 px-0 items-center justify-center select-none cursor-pointer'
-              )}
-            >
-              {unreadCount > 99 ? 99 : unreadCount}
-            </Badge>
-          )}
-          <BellIcon className="h-4 w-4" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-fit">
-        <div className="flex flex-col gap-y-1.5 text-center sm:text-left">
-          <div className="flex flex-row p-2 justify-between items-center">
-            <h2 className="text-lg font-semibold leading-none tracking-tight">Notifications</h2>
-            <div
-              className="flex flex-row gap-2 items-center cursor-pointer"
-              onClick={() => setShowUnreadOnly((prev) => !prev)}
-            >
-              <Switch checked={showUnreadOnly} />
-              <Label className="cursor-pointer">Show unread only</Label>
+    <Dialog open={settingsDialogOpen} onOpenChange={setSettingsDialogOpen}>
+      <Popover open={popoverOpen} onOpenChange={handlePopoverOpenChange}>
+        {/* <Button onClick={() => addNotification()}>Add notification</Button> */}
+        <PopoverTrigger asChild>
+          <Button className={cn('relative select-none')} variant="ghost" size="icon">
+            {unreadCount > 0 && (
+              <Badge
+                className={cn(
+                  'rounded-full absolute -right-1 -top-1 h-4 w-4 px-0 items-center justify-center select-none cursor-pointer'
+                )}
+              >
+                {unreadCount > 99 ? 99 : unreadCount}
+              </Badge>
+            )}
+            <BellIcon className="h-4 w-4" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-fit">
+          <div className="flex flex-col gap-y-1.5 text-center sm:text-left">
+            <div className="flex flex-row p-2 justify-between items-center">
+              <h2 className="text-lg font-semibold leading-none tracking-tight">Notifications</h2>
+              <div className="flex flex-row gap-2">
+                <div
+                  className="flex flex-row gap-2 items-center cursor-pointer"
+                  onClick={() => setShowUnreadOnly((prev) => !prev)}
+                >
+                  <Switch checked={showUnreadOnly} />
+                  <Label className="cursor-pointer">Show unread only</Label>
+                </div>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <SettingsIcon className="h-4 w-4" />
+                  </Button>
+                </DialogTrigger>
+              </div>
+            </div>
+            <AnimatePresence>
+              <motion.section
+                variants={variants.content}
+                animate={popoverOpen ? 'open' : 'closed'}
+                className="flex flex-col gap-2 h-[400px] w-[300px] lg:w-[400px] overflow-y-auto overflow-x-hidden"
+              >
+                {(!notifications.length || (unreadCount === 0 && showUnreadOnly)) && (
+                  <h4>
+                    Your queue is empty! you are all set{' '}
+                    <span role="img" aria-label="dunno what to put">
+                      🎉
+                    </span>
+                  </h4>
+                )}
+                <AnimatePresence>
+                  {(showUnreadOnly ? notifications.filter((v) => !v.read) : notifications).map(
+                    (notification) => {
+                      if (
+                        notification.options?.data &&
+                        'type' in notification.options.data &&
+                        notification.options.data.type === 'offering-buy'
+                      ) {
+                        return (
+                          <ListingNotificationItem
+                            key={notification.id}
+                            notification={notification}
+                            showUnreadOnly={showUnreadOnly}
+                            toastData={notification.options.data}
+                            markAsRead={markAsRead}
+                            remove={remove}
+                          />
+                        )
+                      } else {
+                        return (
+                          <BasicNotificationItem
+                            key={notification.id}
+                            notification={notification}
+                            showUnreadOnly={showUnreadOnly}
+                            markAsRead={markAsRead}
+                            remove={remove}
+                          />
+                        )
+                      }
+                    }
+                  )}
+                </AnimatePresence>
+              </motion.section>
+            </AnimatePresence>
+            <div className="flex flex-row p-2 justify-between items-center">
+              <Button onClick={clear}>Clear All</Button>
+              <Button onClick={markAllAsRead}>Mark all as read</Button>
             </div>
           </div>
-          <AnimatePresence>
-            <motion.section
-              variants={variants.content}
-              animate={open ? 'open' : 'closed'}
-              className="flex flex-col gap-2 h-[400px] w-[300px] lg:w-[400px] overflow-y-auto overflow-x-hidden"
-            >
-              {(!notifications.length || (unreadCount === 0 && showUnreadOnly)) && (
-                <h4>
-                  Your queue is empty! you are all set{' '}
-                  <span role="img" aria-label="dunno what to put">
-                    🎉
-                  </span>
-                </h4>
-              )}
-              <AnimatePresence>
-                {(showUnreadOnly ? notifications.filter((v) => !v.read) : notifications).map(
-                  (notification) => {
-                    if (
-                      notification.options?.data &&
-                      'type' in notification.options.data &&
-                      notification.options.data.type === 'offering-buy'
-                    ) {
-                      return (
-                        <ListingNotificationItem
-                          key={notification.id}
-                          notification={notification}
-                          showUnreadOnly={showUnreadOnly}
-                          toastData={notification.options.data}
-                          markAsRead={markAsRead}
-                          remove={remove}
-                        />
-                      )
-                    } else {
-                      return (
-                        <BasicNotificationItem
-                          key={notification.id}
-                          notification={notification}
-                          showUnreadOnly={showUnreadOnly}
-                          markAsRead={markAsRead}
-                          remove={remove}
-                        />
-                      )
-                    }
-                  }
-                )}
-              </AnimatePresence>
-            </motion.section>
-          </AnimatePresence>
-          <div className="flex flex-row p-2 justify-between items-center">
-            <Button onClick={clear}>Clear All</Button>
-            <Button onClick={markAllAsRead}>Mark all as read</Button>
-          </div>
-        </div>
-      </PopoverContent>
-    </Popover>
+        </PopoverContent>
+      </Popover>
+      <DialogContent>
+        <SettingsDialogContent onClose={() => setSettingsDialogOpen(false)} />
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -215,6 +230,10 @@ const ListingNotificationItem = ({
   markAsRead,
   remove
 }: ListingNotificationItemProps) => {
+  const openTradeOverviewInNewWindow = useNotificationStore(
+    (state) => state.openTradeOverviewInNewWindow
+  )
+
   const actionReadButton = notification.read ? (
     <div className="flex items-center justify-center w-9 h-9">
       <CheckIcon className=" w-4 h-4" />
@@ -240,7 +259,7 @@ const ListingNotificationItem = ({
       <motion.article variants={variants.item}>
         <div className="flex flex-row items-center justify-between gap-2">
           <div className="flex flex-row items-center justify-start gap-3">
-            <div className="w-5 shrink-0 mr-[0.625rem">
+            <div className="w-5 shrink-0">
               {Icons.info({
                 theme: 'dark',
                 type: 'info'
@@ -255,18 +274,30 @@ const ListingNotificationItem = ({
             </div>
           </div>
           {showUnreadOnly ? (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1">
               {actionReadButton}
               <Button variant="ghost" size="icon">
-                <PackageSearchIcon className="h-4 w-4 shrink-0" />
+                <Link
+                  href={`/trade/${notification.id}`}
+                  target={openTradeOverviewInNewWindow ? '_blank' : undefined}
+                  rel="noreferrer noopener"
+                >
+                  <PackageSearchIcon className="h-4 w-4 shrink-0" />
+                </Link>
               </Button>
             </div>
           ) : (
             <div className="flex flex-row items-center">
               <Button variant="ghost" size="icon">
-                <PackageSearchIcon className="h-4 w-4 shrink-0" />
+                <Link
+                  href={`/trade/${notification.id}`}
+                  target={openTradeOverviewInNewWindow ? '_blank' : undefined}
+                  rel="noreferrer noopener"
+                >
+                  <PackageSearchIcon className="h-4 w-4 shrink-0" />
+                </Link>
               </Button>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1">
                 {actionReadButton}
                 <Button variant="ghost" size="icon" onClick={() => remove(notification.id)}>
                   <ArchiveIcon className="w-4 h-4" />
@@ -342,7 +373,7 @@ const BasicNotificationItem = ({
               />
             </div>
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1">
             {notification.read ? (
               <div className="flex items-center justify-center w-9 h-9">
                 <CheckIcon className=" w-4 h-4" />
