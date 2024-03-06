@@ -136,7 +136,7 @@ const NotificationCenter = () => {
         </PopoverTrigger>
         <PopoverContent className="w-fit">
           <div className="flex flex-col gap-y-1.5 text-center sm:text-left">
-            <div className="flex flex-row p-2 justify-between items-center">
+            <div className="flex flex-row p-2 justify-between items-center gap-4">
               <h2 className="text-lg font-semibold leading-none tracking-tight">Notifications</h2>
               <div className="flex flex-row gap-2">
                 <div
