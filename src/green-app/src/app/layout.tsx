@@ -34,18 +34,17 @@ export default function RootLayout({
         <Providers>
           <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-14 max-w-screen-2xl items-center justify-between">
-              <div className="flex justify-center gap-6">
+              <div className="flex justify-center gap-12">
                 <div className="flex items-center gap-2">
                   <Image
                     src={poestackPic}
                     alt="poestack"
-                    width={24}
-                    height={24}
-                    className="block h-6 min-h-fit min-w-fit shrink-0"
+                    width={28}
+                    height={28}
+                    className="block h-7 min-h-fit min-w-fit shrink-0"
                     sizes="33vw"
-                    style={{ width: 'auto', height: '24px' }}
                   />
-                  <span>PoeStack</span>
+                  <div>PoeStack</div>
                 </div>
                 <Navbar />
               </div>
