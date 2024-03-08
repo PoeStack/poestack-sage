@@ -10,7 +10,7 @@ const linkVariants = cva('', {
   variants: {
     variant: {
       default: 'text-foreground',
-      navbar: 'transition-colors hover:text-foreground text-muted-foreground text-sm'
+      navbar: 'font-semibold transition-colors hover:text-foreground text-muted-foreground text-sm'
     }
   },
   defaultVariants: {
@@ -28,7 +28,7 @@ export interface LinkProps
 
 const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
   ({ className, selected, children, external, href, variant, ...props }, ref) => {
-    const comp = (
+    return (
       <NextLink
         href={href}
         className={cn(
@@ -50,8 +50,6 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
         )}
       </NextLink>
     )
-
-    return comp
   }
 )
 Link.displayName = 'Link'
