@@ -1,16 +1,18 @@
 'use client'
 
 import { currentUserAtom } from '@/components/providers'
+import { useToast } from '@/hooks/useToast'
 import { NotificationBody, NotificationItem } from '@/hooks/useWhisperHash'
 import {
+  Notification,
   listMyListings,
   listNotifications,
   listSummaries,
-  listValuations,
-  Notification
+  listValuations
 } from '@/lib/http-util'
 import { LISTING_CATEGORIES } from '@/lib/listing-categories'
 import { calculateListingFromOfferingListing } from '@/lib/listing-util'
+import { useNotificationStore } from '@/store/notificationStore'
 import { SageItemGroupSummaryShard } from '@/types/echo-api/item-group'
 import { SageValuationShard } from '@/types/echo-api/valuation'
 import {
@@ -21,15 +23,13 @@ import {
 import { useQueries, useQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { useAtomValue } from 'jotai'
-import React, { ReactNode, memo, useEffect, useMemo, useRef, useState } from 'react'
-import CurrencyDisplay from './currency-display'
-import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from './ui/tooltip'
-import Image from 'next/image'
-import { Button } from './ui/button'
 import { PackageSearchIcon } from 'lucide-react'
-import { useToast } from '@/hooks/useToast'
+import Image from 'next/image'
 import Link from 'next/link'
-import { useNotificationStore } from '@/store/notificationStore'
+import { ReactNode, memo, useEffect, useMemo, useRef, useState } from 'react'
+import CurrencyDisplay from './currency-display'
+import { Button } from './ui/button'
+import { Tooltip, TooltipProvider, TooltipTrigger } from './ui/tooltip'
 
 type ParsedNotification = Omit<Notification, 'body'> & {
   body: string | { listing: SageOfferingType; requestedItems?: NotificationItem[]; ign: string }
@@ -57,7 +57,11 @@ const Notifier = () => {
   const listedNotifications = useRef<Record<string, boolean>>({})
   const toast = useToast()
 
-  const { data: notifications, isError } = useQuery({
+  const {
+    data: notifications,
+    isError,
+    isRefetching
+  } = useQuery({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey: ['notifications', fetchTimeStamp],
     queryFn: () => listNotifications(fetchTimeStamp),
@@ -75,7 +79,7 @@ const Notifier = () => {
   })
 
   const enabled = useRef(isError)
-  enabled.current = isError || !currentUser
+  enabled.current = isError || isRefetching || !currentUser
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -218,7 +222,6 @@ const Notifier = () => {
       const { listing: offering, requestedItems, ign } = n.body
 
       let listing: SageListingType | undefined
-      const categoryTagItem = LISTING_CATEGORIES.find((ca) => ca.name === offering.meta.category)
       if (requestedItems.length > 0) {
         // Single items
         const reqItems = requestedItems
@@ -239,26 +242,20 @@ const Notifier = () => {
           listing = calculateListingFromOfferingListing(
             { ...offering, items: reqItems },
             summaries,
-            valuations,
-            categoryTagItem
+            valuations
           )
         }
       } else {
-        listing = calculateListingFromOfferingListing(
-          offering,
-          summaries,
-          valuations,
-          categoryTagItem
-        )
+        listing = calculateListingFromOfferingListing(offering, summaries, valuations)
       }
 
       if (validNotification && listing) {
         let description: ReactNode
         if (requestedItems.length === 0) {
-          description = ` wtb all ${listing.meta.category}`
+          description = ` wtb all ${listing.meta.subCategory || listing.meta.category}`
         } else {
           const totalItems = listing.items.reduce((sum, item) => item.selectedQuantity + sum, 0)
-          description = ` wtb ${totalItems} ${listing.meta.category}`
+          description = ` wtb ${totalItems} ${listing.meta.subCategory || listing.meta.category}`
         }
 
         const toastBody = (

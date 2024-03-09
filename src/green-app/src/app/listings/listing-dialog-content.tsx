@@ -15,7 +15,7 @@ import { ListingFilterGroup } from '../../components/trade-filter-card'
 import ListingMetaOverview from './listing-meta-overview'
 import ListingTable from './listing-table'
 import { listingTableBulkModeColumns, listingTradeSingleModeColumns } from './listing-table-columns'
-import { useListingsStore } from './listingsStore'
+import { getCategory, useListingsStore } from './listingsStore'
 import { RefreshCwIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -26,7 +26,7 @@ export default function ListingDialogContent() {
   const selectedListing = useListingsStore(
     useShallow(
       (state) =>
-        state.listingsMap[state.category || ''].find((l) => l.uuid === state.selectedListingId)!
+        state.listingsMap[getCategory(state)].find((l) => l.uuid === state.selectedListingId)!
     )
   )
   const [copyBtnDisabled, isLoading, messageCopied, messageSent, setMessageCopied] =

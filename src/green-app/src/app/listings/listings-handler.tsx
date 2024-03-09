@@ -10,7 +10,7 @@ import { useQueries, useQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { memo, useEffect, useMemo, useRef } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { useListingsStore } from './listingsStore'
+import { getCategory, useListingsStore } from './listingsStore'
 import { calculateListingFromOfferingListing } from '@/lib/listing-util'
 
 interface ListingsHandlerProps {}
@@ -18,30 +18,47 @@ interface ListingsHandlerProps {}
 // Tutorial: https://ui.shadcn.com/docs/components/data-table
 const ListingsHandler = () => {
   const league = useListingsStore((state) => state.league)
-  const categoryTagItem = useListingsStore(
+  const categoryItem = useListingsStore(
     useShallow((state) => LISTING_CATEGORIES.find((ca) => ca.name === state.category))
+  )
+  const subCategoryItem = useListingsStore(
+    useShallow((state) =>
+      state.subCategory
+        ? categoryItem?.subCategories.find((c) => c.name === state.subCategory)
+        : undefined
+    )
   )
   // Starts with 0
   const fetchTimeStamp = useListingsStore(
-    (state) => state.fetchTimeStamps[state.league]?.[state.category || '']
+    (state) => state.fetchTimeStamps[state.league]?.[getCategory(state)]
   )
   const setFetchTimestamp = useListingsStore((state) => state.setFetchTimestamps)
   const addListings = useListingsStore((state) => state.addListings)
   const cleanupListings = useListingsStore((state) => state.cleanupListings)
 
-  const { data: listings, isError } = useQuery({
+  const {
+    data: listings,
+    isError,
+    isRefetching
+  } = useQuery({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps
-    queryKey: ['listings', league, categoryTagItem?.name || '', fetchTimeStamp],
-    queryFn: () => listListings(league, categoryTagItem!.name, fetchTimeStamp),
+    queryKey: [
+      'listings',
+      league,
+      categoryItem?.name || '',
+      subCategoryItem?.name || '',
+      fetchTimeStamp
+    ],
+    queryFn: () => listListings(league, categoryItem!.name, fetchTimeStamp, subCategoryItem?.name),
     // We do not save any cache - this has the effect, that the query starts directly after changing the category
     gcTime: 0,
-    enabled: !!categoryTagItem,
+    enabled: !!categoryItem,
     refetchOnWindowFocus: false,
     retry: true
   })
 
   const errorRef = useRef(isError)
-  errorRef.current = isError
+  errorRef.current = isError || isRefetching
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -56,11 +73,11 @@ const ListingsHandler = () => {
 
     return () => clearInterval(interval)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoryTagItem?.name])
+  }, [categoryItem?.name])
 
   const { summaries, isSummaryPending, isSummaryFetching, isSummaryError } = useQueries({
-    queries: categoryTagItem
-      ? categoryTagItem.tags.map((tag) => {
+    queries: categoryItem
+      ? categoryItem.tags.map((tag) => {
           return {
             queryKey: ['summaries', tag],
             queryFn: () => listSummaries(tag),
@@ -100,10 +117,10 @@ const ListingsHandler = () => {
 
   const { valuations, isValuationPending, isValuationFetching, isValuationError } = useQueries({
     queries:
-      leagues.length > 0 && categoryTagItem
+      leagues.length > 0 && categoryItem
         ? leagues
             .map((league) =>
-              categoryTagItem.tags.map((tag) => {
+              categoryItem.tags.map((tag) => {
                 return {
                   queryKey: ['valuations', league, tag],
                   queryFn: () => listValuations(league, tag),
@@ -140,25 +157,27 @@ const ListingsHandler = () => {
     }
   })
 
-  const startCalculation = !!categoryTagItem && valuations !== undefined && summaries !== undefined
+  const startCalculation = !!categoryItem && valuations !== undefined && summaries !== undefined
 
   useEffect(() => {
     if (listings && listings.length > 0 && startCalculation) {
       const nextListings = listings.map((listing) =>
-        calculateListingFromOfferingListing(listing, summaries, valuations, categoryTagItem)
+        calculateListingFromOfferingListing(listing, summaries, valuations)
       )
 
       // One user can have one category per league active. We delete or replace this
       const categories: Record<string, SageListingType[]> = {}
       nextListings.forEach((l) => {
-        if (categories[l.meta.category]) {
-          categories[l.meta.category].push(l)
+        const categoryKey = l.meta.category + (!l.meta.subCategory ? '' : `_${l.meta.subCategory}`)
+        if (categories[categoryKey]) {
+          categories[categoryKey].push(l)
         } else {
-          categories[l.meta.category] = [l]
+          categories[categoryKey] = [l]
         }
       })
-      Object.entries(categories).forEach(([category, listings]) => {
-        addListings(listings, category)
+      Object.entries(categories).forEach(([categoryKey, listings]) => {
+        const [category, subCategory] = categoryKey.split('_')
+        addListings(listings, category, subCategory)
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

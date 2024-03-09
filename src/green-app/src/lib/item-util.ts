@@ -1,8 +1,8 @@
-import { v4 as uuidv4 } from 'uuid'
 import { IDisplayedItem, IPricedItem } from '@/types/echo-api/priced-item'
 import { IChildStashTab, ICompactTab, IStashTab } from '@/types/echo-api/stash'
-import { PoeItem, PoeItemProperty, PoeItemSocket } from '@/types/poe-api-models'
 import { ValuatedItem } from '@/types/item'
+import { PoeItem, PoeItemProperty, PoeItemSocket } from '@/types/poe-api-models'
+import { v4 as uuidv4 } from 'uuid'
 import { round } from './currency'
 import { LISTING_CATEGORIES } from './listing-categories'
 
@@ -313,10 +313,17 @@ export const calculateItemPrices = (item: IDisplayedItem, multiplier: number) =>
   }
 }
 
-export const filterPricedItems = (pricedItems: IPricedItem[], category: string | null) => {
+export const filterPricedItems = (
+  pricedItems: IPricedItem[],
+  category: string | null,
+  subCategory: string | null
+) => {
   return pricedItems.filter((pItem) => {
     if (!pItem.group || !category) return true
-    const result = LISTING_CATEGORIES.find((x) => x.name === category)?.filter?.(pItem)
+    const categoryItem = LISTING_CATEGORIES.find((x) => x.name === category)
+    const result = subCategory
+      ? categoryItem?.subCategories.find((c) => c.name === subCategory)?.filter?.(pItem)
+      : categoryItem?.filter?.(pItem)
     if (result === undefined) return true
     return result
   })

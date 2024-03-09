@@ -3,6 +3,7 @@
 import { ListingFilterGroup } from '@/components/trade-filter-card'
 import { SUPPORTED_LEAGUES } from '@/lib/constants'
 import { ListingFilterUtil } from '@/lib/listing-filter-util'
+import { useNotificationStore } from '@/store/notificationStore'
 import { SageListingType } from '@/types/sage-listing-type'
 import { RowSelectionState } from '@tanstack/react-table'
 import dayjs from 'dayjs'
@@ -10,7 +11,6 @@ import utc from 'dayjs/plugin/utc'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
-import { useNotificationStore } from '@/store/notificationStore'
 dayjs.extend(utc)
 
 const calculateMetaPrices = (
@@ -44,6 +44,14 @@ const calculateMetaPrices = (
   listing.meta.calculatedTotalPrice = calculatedTotalPrice
   listing.meta.calculatedTotalValuation = calculatedTotalValuation
   listing.meta.multiplier = multiplier
+}
+
+export const getCategory = (
+  state: State,
+  category?: string | null,
+  subCategory?: string | null
+) => {
+  return (category || state.category || '') + (subCategory || state.subCategory || '')
 }
 
 const calculateListings = (
@@ -92,7 +100,8 @@ const calculateListings = (
 type State = {
   dialogOpen: boolean
   league: string // Persist
-  category: string | null // Persist
+  category: string | null
+  subCategory: string | null
   multiplierRange: number[] // Persist
   /**
    * The timestamps to start from for the indivitual categories
@@ -115,6 +124,7 @@ type Actions = {
   setDialogOpen: (open: boolean) => void
   setLeague: (league: string) => void
   setCategory: (category: string | null) => void
+  setSubCategory: (subCategory: string | null) => void
   setMultiplierRange: (range: number[]) => void
   setFetchTimestamps: (timestamp: number) => void
   /**
@@ -124,7 +134,7 @@ type Actions = {
   /**
    * Calculates the listings totalValue, selected items, selected total and adds this to the pool of listings & then filters them
    */
-  addListings: (listings: SageListingType[], category: string) => void
+  addListings: (listings: SageListingType[], category: string, subCategory?: string) => void
   cleanupListings: () => void
   addWhisperedListing: (id: string, hash: string) => void
   setSelectedListingId: (id: string) => void
@@ -138,6 +148,7 @@ const initialState: State = {
   dialogOpen: false as boolean,
   league: SUPPORTED_LEAGUES[0],
   category: null as string | null,
+  subCategory: null as string | null,
   multiplierRange: [0, 200],
   fetchTimeStamps: Object.fromEntries(SUPPORTED_LEAGUES.map((league) => [league, {}])),
   filterGroups: [{ selected: true, mode: 'AND', filters: [] }],
@@ -156,7 +167,7 @@ export const useListingsStore = create<State & Actions>()(
       setDialogOpen: (open) =>
         set((state) => {
           if (!open) {
-            const listing = state.listingsMap[state.category || ''].find(
+            const listing = state.listingsMap[getCategory(state)].find(
               (l) => l.uuid === state.selectedListingId
             )
             if (listing) {
@@ -176,29 +187,37 @@ export const useListingsStore = create<State & Actions>()(
 
       setCategory: (category) =>
         set((state) => {
+          if (state.category !== category) {
+            state.subCategory = null
+          }
           state.category = category
 
           // Set initial key to listingsmap
-          if (!state.listingsMap[category || '']) {
-            state.listingsMap[category || ''] = []
+          const categoryKey = getCategory(state)
+          if (!state.listingsMap[categoryKey]) {
+            state.listingsMap[categoryKey] = []
           }
 
           // Set initial timestamp
-          if (category && state.fetchTimeStamps[state.league][category] === undefined) {
-            state.fetchTimeStamps[state.league][category] = 0
+          if (categoryKey && state.fetchTimeStamps[state.league][categoryKey] === undefined) {
+            state.fetchTimeStamps[state.league][categoryKey] = 0
           }
 
           // Reset filterGroups
           state.filterGroups = [{ selected: true, mode: 'AND', filters: [] }]
           state.filteredByGroupListings = {}
           calculateListings(
-            state.listingsMap[state.category || ''],
+            state.listingsMap[categoryKey],
             state.selectedItemsMap,
             state.filterGroups,
             state.filteredByGroupListings
           )
         }),
-
+      setSubCategory: (subCategory) =>
+        set((state) => {
+          state.subCategory = subCategory
+          state.setCategory(state.category)
+        }),
       setMultiplierRange: (range) =>
         set((state) => {
           state.multiplierRange = range
@@ -206,37 +225,35 @@ export const useListingsStore = create<State & Actions>()(
 
       setFetchTimestamps: (timestamp) =>
         set((state) => {
-          state.fetchTimeStamps[state.league][state.category || ''] = timestamp
+          state.fetchTimeStamps[state.league][getCategory(state)] = timestamp
         }),
 
       setFilterGroups: (filterGroups) =>
         set((state) => {
-          if (!state.category) return
+          if (!getCategory(state)) return
 
           state.filterGroups = filterGroups
           state.filteredByGroupListings = {}
           calculateListings(
-            state.listingsMap[state.category || ''],
+            state.listingsMap[getCategory(state)],
             state.selectedItemsMap,
             state.filterGroups,
             state.filteredByGroupListings
           )
         }),
 
-      addListings: (listings, category) =>
+      addListings: (listings, category, subCategory) =>
         set((state) => {
-          if (!state.listingsMap[category]) {
-            state.listingsMap[category] = []
+          const categoryKey = getCategory(state, category, subCategory)
+          if (!state.listingsMap[categoryKey]) {
+            state.listingsMap[categoryKey] = []
           }
 
           // Add the new listings to the listingsMap
           const newListings = listings.filter((l) => {
-            // Unique key: userId:league:category
-            const idx = state.listingsMap[category || ''].findIndex(
-              (cl) =>
-                cl.userId === l.userId &&
-                cl.meta.league === l.meta.league &&
-                cl.meta.category === l.meta.category
+            // Unique key: userId:league:category:subcategory
+            const idx = state.listingsMap[categoryKey].findIndex(
+              (cl) => cl.userId === l.userId && cl.meta.league === l.meta.league
             )
             if (idx !== -1) {
               if (l.deleted) {
@@ -253,9 +270,9 @@ export const useListingsStore = create<State & Actions>()(
                 if (state.filteredByGroupListings[l.uuid]) {
                   delete state.filteredByGroupListings[l.uuid]
                 }
-                state.listingsMap[category || ''].splice(idx, 1)
+                state.listingsMap[categoryKey].splice(idx, 1)
               } else {
-                const prev = state.listingsMap[category || ''][idx]
+                const prev = state.listingsMap[categoryKey][idx]
                 if (prev.uuid !== l.uuid) {
                   if (state.dialogOpen && state.selectedListingId === prev.uuid) {
                     state.selectedListingId = l.uuid
@@ -303,7 +320,7 @@ export const useListingsStore = create<State & Actions>()(
                     delete state.filteredByGroupListings[prev.uuid]
                   }
 
-                  state.listingsMap[category || ''].splice(idx, 1, l)
+                  state.listingsMap[categoryKey].splice(idx, 1, l)
                 }
               }
               return false
@@ -321,10 +338,10 @@ export const useListingsStore = create<State & Actions>()(
             state.filteredByGroupListings
           )
 
-          if (state.listingsMap[category]) {
-            state.listingsMap[category].push(...newListings)
+          if (state.listingsMap[categoryKey]) {
+            state.listingsMap[categoryKey].push(...newListings)
           } else {
-            state.listingsMap[category] = newListings
+            state.listingsMap[categoryKey] = newListings
           }
 
           // Add default rowselection
@@ -337,19 +354,22 @@ export const useListingsStore = create<State & Actions>()(
 
       cleanupListings: () =>
         set((state) => {
-          if (!state.category) return
+          if (!getCategory(state)) return
           // Delete all listings timestampMs > 30min
           const now = dayjs.utc().valueOf()
-          let idx = state.listingsMap[state.category].length
+          let idx = state.listingsMap[getCategory(state)].length
           while (idx--) {
-            const l = state.listingsMap[state.category][idx]
+            const l = state.listingsMap[getCategory(state)][idx]
             if (now - l.meta.timestampMs > 30 * 60 * 1000) {
               if (state.dialogOpen && state.selectedListingId === l.uuid) {
                 state.dialogOpen = false
                 console.warn('The dialog was closed because the opened listing got stale')
                 useNotificationStore
                   .getState()
-                  .addNotification('Sorry! The listing is stale and got deleted!', 'warning')
+                  .addNotification(
+                    'Sorry! The selected listing is stale and got deleted!',
+                    'warning'
+                  )
               }
               if (state.selectedItemsMap[l.uuid]) {
                 delete state.selectedItemsMap[l.uuid]
@@ -357,7 +377,7 @@ export const useListingsStore = create<State & Actions>()(
               if (state.filteredByGroupListings[l.uuid]) {
                 delete state.filteredByGroupListings[l.uuid]
               }
-              state.listingsMap[state.category].splice(idx, 1)
+              state.listingsMap[getCategory(state)].splice(idx, 1)
             }
           }
         }),
@@ -390,7 +410,7 @@ export const useListingsStore = create<State & Actions>()(
             state.selectedItemsMap[state.selectedListingId || ''] = nextState
           }
 
-          const listing = state.listingsMap[state.category || ''].find(
+          const listing = state.listingsMap[getCategory(state)].find(
             (l) => l.uuid === state.selectedListingId
           )
 
@@ -402,7 +422,7 @@ export const useListingsStore = create<State & Actions>()(
 
       updateData: (rowIndex, columnId, value) =>
         set((state) => {
-          const listing = state.listingsMap[state.category || ''].find(
+          const listing = state.listingsMap[getCategory(state)].find(
             (l) => l.uuid === state.selectedListingId
           )
           if (!listing) return {}

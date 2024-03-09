@@ -1,38 +1,20 @@
 'use client'
 
-import { useDivinePrice } from '@/hooks/useDivinePrice'
+import { useToast } from '@/hooks/useToast'
 import { UserInfo } from '@/types/userInfo'
-import { QueryClient } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { Provider, atom, createStore, useAtomValue } from 'jotai'
-import { ReactNode, useState } from 'react'
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
-import { ToastContainer, ToastPosition, toast } from 'react-toastify'
-import Notifier from './notifier'
+import { QueryCache, QueryClient } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
+import { Provider, atom, createStore } from 'jotai'
+import { ReactNode, useState } from 'react'
+import { ToastContainer } from 'react-toastify'
 import ErrorBoundaryContainer from './error-boundary-container'
-
-// type DivineLeagues = {
-//   divinePrice: Record<string, number>
-//   league: string | null
-//   setDivinePrice: (divinePrice: number, league: string) => void
-// }
-
-// export const useDivineStore = create<DivineLeagues>((set) => ({
-//   divinePrice: {},
-//   league: null,
-//   setDivinePrice: (divinePrice, league) =>
-//     set((state) => ({ divinePrice: { ...state.divinePrice, [league]: divinePrice } }))
-// }))
+import Notifier from './notifier'
 
 const leagueDivineStore = createStore()
 export const currentDivinePriceAtom = atom<number>(0)
 leagueDivineStore.set(currentDivinePriceAtom, 0)
-
-// TODO: Remove later
-const unsub = leagueDivineStore.sub(currentDivinePriceAtom, () => {
-  console.log('divinePrice value is changed to', leagueDivineStore.get(currentDivinePriceAtom))
-})
 
 export const currentUserAtom = atom<UserInfo | null>(null)
 
@@ -43,7 +25,22 @@ type ProvidersProps = {
 }
 
 export function Providers({ children }: ProvidersProps) {
-  const [queryClient] = useState(() => new QueryClient())
+  const toast = useToast()
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        queryCache: new QueryCache({
+          onError: (error, query) => {
+            // 🎉 only show error toasts if we already have data in the cache
+            // which indicates a failed background update
+            console.error(error)
+            if (query.state.data !== undefined) {
+              toast(`Something went wrong: ${error.message}`, 'error')
+            }
+          }
+        })
+      })
+  )
 
   const [persister] = useState(() =>
     createSyncStoragePersister({

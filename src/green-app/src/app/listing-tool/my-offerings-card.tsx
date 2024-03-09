@@ -9,9 +9,9 @@ import {
   listMyListings,
   listStashes
 } from '@/lib/http-util'
-import { LISTING_CATEGORIES } from '@/lib/listing-categories'
+import { LISTING_CATEGORIES, ListingSubCategory } from '@/lib/listing-categories'
 import { IStashTab } from '@/types/echo-api/stash'
-import { SageOfferingType } from '@/types/sage-listing-type'
+import { ListingMode, SageOfferingType } from '@/types/sage-listing-type'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -52,10 +52,18 @@ const variants = {
 type MyOfferingsCardProps = {
   league: string | null
   setCategory: (category: string | null) => void
+  setSubCategory: (subCategory: string | null) => void
   setStashes: (stashes: IStashTab[]) => void
+  setListingMode: (listingMode: ListingMode, category?: string | null) => void
 }
 
-export function MyOfferingsCard({ league, setCategory, setStashes }: MyOfferingsCardProps) {
+export function MyOfferingsCard({
+  league,
+  setCategory,
+  setSubCategory,
+  setStashes,
+  setListingMode
+}: MyOfferingsCardProps) {
   const queryClient = useQueryClient()
   const currentUser = useAtomValue(currentUserAtom)
   const [listings, setListings] = useState<SageOfferingType[]>()
@@ -94,8 +102,17 @@ export function MyOfferingsCard({ league, setCategory, setStashes }: MyOfferings
 
   // Optimistic delete; See: https://tanstack.com/query/v4/docs/framework/react/guides/optimistic-updates
   const deleteMutation = useMutation({
-    mutationFn: ({ league, category, uuid }: { league: string; category: string; uuid: string }) =>
-      deleteListing(league, category, 'test', uuid),
+    mutationFn: ({
+      league,
+      category,
+      subCategory,
+      uuid
+    }: {
+      league: string
+      category: string
+      subCategory: string
+      uuid: string
+    }) => deleteListing(league, category, subCategory, uuid),
     onMutate: async (deleted) => {
       await queryClient.cancelQueries({ queryKey: [currentUser?.profile?.uuid, 'my-listings'] })
       const previousListings = queryClient.getQueryData([currentUser?.profile?.uuid, 'my-listings'])
@@ -128,12 +145,14 @@ export function MyOfferingsCard({ league, setCategory, setStashes }: MyOfferings
             {(shownListings?.length || 0) > 0 ? (
               shownListings?.map((listing) => {
                 const meta = listing.meta
-
-                const category = LISTING_CATEGORIES.find((cat) => cat.name === meta.category)
+                const categoryItem = LISTING_CATEGORIES.find((cat) => cat.name === meta.category)
+                const selectedCategory = meta.subCategory
+                  ? categoryItem?.subCategories.find((cat) => cat.name === meta.subCategory)
+                  : categoryItem
 
                 return (
                   <motion.div
-                    key={`${meta.league}:${meta.category}`}
+                    key={`${meta.league}:${meta.category}:${meta.subCategory}`}
                     className="flex flex-col p-1 gap-2 text-sm cursor-default rounded-sm select-none outline-none hover:bg-accent/50 hover:text-accent-foreground "
                     layout
                     initial={{ scale: 0.4, opacity: 0, y: 50 }}
@@ -147,16 +166,16 @@ export function MyOfferingsCard({ league, setCategory, setStashes }: MyOfferings
                     <motion.article variants={variants.item}>
                       <div className="flex flex-row justify-between items-center gap-2 h-9">
                         <div className="flex flex-row gap-1 items-center text-sm">
-                          {category && (
+                          {selectedCategory && (
                             <Image
                               className="w-6 h-6"
                               width={24}
                               height={24}
-                              src={category.icon}
-                              alt={category.name}
+                              src={selectedCategory.icon}
+                              alt={selectedCategory.name}
                             />
                           )}
-                          <div className="capitalize">{meta.category}</div>
+                          <div className="capitalize">{selectedCategory?.name || ''}</div>
                         </div>
                         <div className="flex flex-row items-center ">
                           <CurrencyDisplay
@@ -210,7 +229,12 @@ export function MyOfferingsCard({ league, setCategory, setStashes }: MyOfferings
                                       ?.filter((x) => meta.tabs.some((y) => x.id === y))
                                     if (stashesToSelect) {
                                       setCategory(meta.category)
+                                      setSubCategory(!meta.subCategory ? null : meta.subCategory)
                                       setStashes(stashesToSelect)
+                                      setListingMode(
+                                        meta.listingMode,
+                                        meta.category + (!meta.subCategory ? '' : meta.subCategory)
+                                      )
                                     }
                                   }}
                                 >
@@ -218,11 +242,12 @@ export function MyOfferingsCard({ league, setCategory, setStashes }: MyOfferings
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
-                                This selects <b>only</b> the stashtabs and category.
+                                This selects <b>only</b> the stashtabs, category, subcategory and
+                                sellmode.
                                 <br />
                                 All other settings are still applied:
                                 <ul className="list-disc pl-4">
-                                  <li>Multiplier per category</li>
+                                  <li>Multiplier per (sub-)category</li>
                                   <li>Overrides/Overprices</li>
                                   <li>Unselected items</li>
                                 </ul>
@@ -236,6 +261,7 @@ export function MyOfferingsCard({ league, setCategory, setStashes }: MyOfferings
                                 deleteMutation.mutate({
                                   league: meta.league,
                                   category: meta.category,
+                                  subCategory: meta.subCategory,
                                   uuid: listing.uuid
                                 })
                               }}

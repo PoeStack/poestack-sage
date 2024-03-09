@@ -5,18 +5,22 @@ import DebouncedInput from '@/components/debounced-input'
 import { ListingCategorySelect } from '@/components/listing-category-select'
 import { currentUserAtom } from '@/components/providers'
 import StashSelect from '@/components/stash-select'
-import ListingFilterCard, { ListingFilterGroup } from '@/components/trade-filter-card'
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger
-} from '@/components/ui/accordion'
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { useDivinePrice } from '@/hooks/useDivinePrice'
 import { postListing } from '@/lib/http-util'
 import { PoeItem } from '@/types/poe-api-models'
-import { ListingMode, SageDatabaseOfferingType } from '@/types/sage-listing-type'
+import { SageDatabaseOfferingType } from '@/types/sage-listing-type'
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { FilterFn, filterFns } from '@tanstack/react-table'
@@ -33,22 +37,11 @@ import ListingToolTable from './listing-tool-table'
 import { listingToolTableEditModeColumns } from './listing-tool-table-columns'
 import { useListingToolStore } from './listingToolStore'
 import { MyOfferingsCard } from './my-offerings-card'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
-} from '@/components/ui/alert-dialog'
 dayjs.extend(utc)
 
 // TODO:
 // Save listings to the localstore without items => When they got inactive(> 30min) then they will move over to another subsection in my-offerings-view
-// Errorhandling & notification system
+// Errorhandling
 // Go through all categories
 // Add offerings loading indicator
 // Hide "Connect discord" when discord is connected? - Get the current connected discord
@@ -59,14 +52,33 @@ type PageProps = {}
 
 export default function Page() {
   const queryClient = useQueryClient()
-  const selectedLeague = useListingToolStore((state) => state.league)
-  const [stashes, setStashes] = useListingToolStore(
-    useShallow((state) => [state.stashes[state.league] || [], state.setStashes])
+
+  const {
+    selectedLeague,
+    selectableCategories,
+    selectedCategory,
+    setSelectedCategory,
+    selectedSubCategory,
+    setSelectedSubCategory,
+    stashes,
+    setStashes,
+    selectedListingMode,
+    setSelectedListingMode
+  } = useListingToolStore(
+    useShallow((state) => ({
+      selectedLeague: state.league,
+      selectableCategories: state.selectableCategories,
+      selectedCategory: state.category,
+      setSelectedCategory: state.setCategory,
+      selectedSubCategory: state.subCategory,
+      setSelectedSubCategory: state.setSubCategory,
+      stashes: state.stashes[state.league] || [],
+      setStashes: state.setStashes,
+      selectedListingMode:
+        state.categoryListingMode[state.category + (state.subCategory || '')] || 'bulk',
+      setSelectedListingMode: state.setCategoryListingMode
+    }))
   )
-  const [selectedCategory, setSelectedCategory] = useListingToolStore(
-    useShallow((state) => [state.category, state.setCategory])
-  )
-  const selectableCategories = useListingToolStore((state) => state.selectableCategories)
 
   const [[refetchAll], setRefetchAll] = useState<(() => void)[]>([])
   const [isStashListItemsFetching, setStashListFetching] = useState<boolean>(false)
@@ -95,7 +107,6 @@ export default function Page() {
               ...offering,
               meta: {
                 ...offering.meta,
-                subCategory: 'test',
                 totalPrice: offering.items.reduce(
                   (sum, item) => item.price * item.quantity + sum,
                   0
@@ -121,11 +132,7 @@ export default function Page() {
 
   const currentUser = useAtomValue(currentUserAtom)
   const [selectedIgn, setSelectedIgn] = useState<string | null>(null)
-  const [selectedListingMode, setSelectedListingMode] = useState<ListingMode>('bulk')
-  const [filterGroups, setFilterGroups] = useState<ListingFilterGroup[]>([
-    { mode: 'AND', filters: [], selected: true }
-  ])
-  const [showFilter, setShowFilter] = useState(false)
+
   const [showRightSidePanel, setShowRightSidePanel] = useState(false)
   const [globalFilter, setGlobalFilter] = useState('')
   const resetData = useListingToolStore((state) => state.resetData)
@@ -158,7 +165,7 @@ export default function Page() {
       meta: {
         league: selectedLeague,
         category: selectedCategory,
-        subCategory: 'test',
+        subCategory: selectedSubCategory || '',
         ign: selectedIgn,
         listingMode: selectedListingMode,
         timestampMs: dayjs.utc().valueOf(),
@@ -179,6 +186,7 @@ export default function Page() {
     currentUser?.profile?.uuid,
     mutation,
     selectedCategory,
+    selectedSubCategory,
     selectedIgn,
     selectedLeague,
     selectedListingMode,
@@ -227,6 +235,7 @@ export default function Page() {
               />
               <ListingCard
                 selectedCategory={selectedCategory}
+                selectedSubCategory={selectedSubCategory}
                 postListingButtonDisabled={postListingButtonDisabled}
                 isPostListingLoading={mutation.isPending}
                 listingMode={selectedListingMode}
@@ -252,9 +261,23 @@ export default function Page() {
               <div className="w-40">
                 <ListingCategorySelect
                   control="select"
-                  category={selectedCategory}
+                  isSubCategory={false}
                   selectableCategories={selectableCategories}
+                  category={selectedCategory}
+                  subCategory={selectedSubCategory}
                   onCategorySelect={setSelectedCategory}
+                  onSubCategorySelect={setSelectedSubCategory}
+                />
+              </div>
+              <div className="w-40">
+                <ListingCategorySelect
+                  control="select"
+                  isSubCategory
+                  selectableCategories={selectableCategories}
+                  category={selectedCategory}
+                  subCategory={selectedSubCategory}
+                  onCategorySelect={setSelectedCategory}
+                  onSubCategorySelect={setSelectedSubCategory}
                 />
               </div>
               <div className="flex-1" />
@@ -271,7 +294,8 @@ export default function Page() {
                       This action cannot be undone. <br />
                       If you confirm, the following data will be reset:
                       <ul className="list-disc pl-4">
-                        <li>Multiplier per category</li>
+                        <li>Multiplier per (sub-)category</li>
+                        <li>Sellmode per (sub-)category</li>
                         <li>Overrides/Overprices</li>
                         <li>Unselected items</li>
                       </ul>
@@ -312,26 +336,14 @@ export default function Page() {
           </div>
           {showRightSidePanel && (
             <div className="min-h-full w-[300px] min-w-[215px]">
-              {!showFilter && <div className="h-11" />}
+              <div className="h-11" />
               <div className="flex flex-col gap-2 sticky top-[4.25rem] h-fit">
-                {showFilter && (
-                  <Accordion type="single" collapsible>
-                    <AccordionItem value="item-1">
-                      <AccordionTrigger className="-mt-2">Item Filter</AccordionTrigger>
-                      <AccordionContent>
-                        <ListingFilterCard
-                          category={selectedCategory}
-                          filterGroups={filterGroups}
-                          onFilterGroupsChange={setFilterGroups}
-                        />
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-                )}
                 <MyOfferingsCard
                   league={selectedLeague}
                   setCategory={setSelectedCategory}
+                  setSubCategory={setSelectedSubCategory}
                   setStashes={setStashes}
+                  setListingMode={setSelectedListingMode}
                 />
               </div>
             </div>

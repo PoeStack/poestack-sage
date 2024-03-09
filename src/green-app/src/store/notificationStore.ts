@@ -96,7 +96,7 @@ export const useNotificationStore = create<NotificationState>()(
               toastsToDisplay = [...toastsToDisplay, id]
             }
           }
-          return { notifications: [...state.notifications, notification], toastsToDisplay }
+          return { notifications: [notification, ...state.notifications], toastsToDisplay }
         })
         return id
       },

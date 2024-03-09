@@ -12,15 +12,17 @@ import { useListingToolStore } from './listingToolStore'
 type ListingCardProps = {
   listingMode: ListingMode
   selectedCategory: string | null
+  selectedSubCategory: string | null
   postListingButtonDisabled: boolean
   isPostListingLoading: boolean
-  onListingModeChange: (mode: ListingMode) => void
+  onListingModeChange: (listingMode: ListingMode, category?: string | null) => void
   onPostItemsClicked: () => void
 }
 
 export function ListingCard({
   listingMode,
   selectedCategory,
+  selectedSubCategory,
   postListingButtonDisabled,
   isPostListingLoading,
   onListingModeChange,
@@ -88,7 +90,7 @@ export function ListingCard({
         max={200}
         step={2.5}
         onValueChange={(e) => {
-          setMultiplier(e[0], selectedCategory)
+          setMultiplier(e[0], selectedCategory + (selectedSubCategory || ''))
         }}
       />
       <div className="flex items-center gap-2">

@@ -27,7 +27,7 @@ import {
 } from '@tanstack/react-table'
 import React, { memo, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { useListingsStore } from './listingsStore'
+import { getCategory, useListingsStore } from './listingsStore'
 import { BasicSelect } from '@/components/basic-select'
 import { atom, useAtom } from 'jotai'
 
@@ -47,9 +47,7 @@ const ListingTable = ({ columns, className, globalFilterFn }: DataTableProps) =>
 
   const listing = useListingsStore(
     useShallow((state) => {
-      return state.listingsMap[state.category || '']?.find(
-        (l) => l.uuid === state.selectedListingId
-      )
+      return state.listingsMap[getCategory(state)]?.find((l) => l.uuid === state.selectedListingId)
     })
   )
 

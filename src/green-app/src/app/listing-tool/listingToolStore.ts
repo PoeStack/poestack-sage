@@ -5,19 +5,20 @@ import { calculateItemPrices } from '@/lib/item-util'
 import { ListingCategory } from '@/lib/listing-categories'
 import { IDisplayedItem } from '@/types/echo-api/priced-item'
 import { IStashTab } from '@/types/echo-api/stash'
+import { ListingMode } from '@/types/sage-listing-type'
 import { RowSelectionState } from '@tanstack/react-table'
-import { produce } from 'immer'
 import _ from 'lodash-es'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { immer } from 'zustand/middleware/immer'
 
 type State = {
   league: string // Persisted
   stashes: Record<string, IStashTab[]>
   category: string | null
+  subCategory: string | null
   selectableCategories: ListingCategory[]
   localMultiplier: number
+  categoryListingMode: Record<string, ListingMode> // Persisted
   categoryMultiplier: Record<string, number> // Persisted
   selectedItems: RowSelectionState
   modifiedItems: IDisplayedItem[]
@@ -30,10 +31,12 @@ type Actions = {
   setLeague: (league: string) => void
   setStashes: (stashes: IStashTab[]) => void
   setCategory: (category: string | null) => void
+  setSubCategory: (category: string | null) => void
   setSelectableCategories: (categories: ListingCategory[]) => void
   debouncedMultiplier: _.DebouncedFunc<
     (multiplier: number, selectedCategory: string | null) => void
   >
+  setCategoryListingMode: (listingMode: ListingMode, category?: string | null) => void
   setLocalMultiplier: (multiplier: number, category: string | null) => void
   setMultiplier: (localMultiplier: number, category: string | null) => void
   resetData: () => void
@@ -54,8 +57,10 @@ const initialState: State = {
   league: SUPPORTED_LEAGUES[0], // Persisted
   stashes: Object.fromEntries(SUPPORTED_LEAGUES.map((l) => [l, []])),
   category: null,
+  subCategory: null,
   selectableCategories: [],
   localMultiplier: 100,
+  categoryListingMode: {}, // Persisted
   categoryMultiplier: {}, // Persisted
   selectedItems: {},
   modifiedItems: [],
@@ -77,6 +82,7 @@ export const useListingToolStore = create<State & Actions>()(
           return { stashes }
         }),
       setCategory: (category) => set({ category }),
+      setSubCategory: (subCategory) => set({ subCategory }),
       setSelectableCategories: (selectableCategories) => set({ selectableCategories }),
       resetData: () => {
         set((state) => {
@@ -104,7 +110,19 @@ export const useListingToolStore = create<State & Actions>()(
           }
         })
       },
-
+      setCategoryListingMode: (listingMode, category) =>
+        set((state) => {
+          let categoryListingMode = state.categoryListingMode
+          if (category) {
+            categoryListingMode = { ...state.categoryListingMode, [category]: listingMode }
+          } else if (category === undefined) {
+            categoryListingMode = {
+              ...state.categoryListingMode,
+              [state.category + (state.subCategory || '')]: listingMode
+            }
+          }
+          return { categoryListingMode }
+        }),
       debouncedMultiplier: _.debounce(
         (localMultiplier: number, selectedCategory: string | null) =>
           get().setMultiplier(localMultiplier, selectedCategory),
@@ -118,7 +136,7 @@ export const useListingToolStore = create<State & Actions>()(
       },
       setMultiplier: (localMultiplier, category) =>
         set((state) => {
-          let categoryMultiplier: Record<string, number> = state.categoryMultiplier
+          let categoryMultiplier = state.categoryMultiplier
           if (category) {
             console.log('Set categoryMultiplier', category, localMultiplier)
             categoryMultiplier = { ...state.categoryMultiplier, [category]: localMultiplier }
@@ -232,6 +250,7 @@ export const useListingToolStore = create<State & Actions>()(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         league: state.league,
+        categoryListingMode: state.categoryListingMode,
         categoryMultiplier: state.categoryMultiplier,
         overprices: state.overprices,
         unselectedItems: state.unselectedItems

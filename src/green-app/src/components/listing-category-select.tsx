@@ -5,7 +5,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { LISTING_CATEGORIES, ListingCategory } from '@/lib/listing-categories'
+import { LISTING_CATEGORIES, ListingCategory, ListingSubCategory } from '@/lib/listing-categories'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import { useMemo, useState } from 'react'
@@ -13,60 +13,103 @@ import { ComboboxItem, ComboboxTrigger } from './ui/combobox'
 import { Command, CommandEmpty, CommandGroup, CommandInput } from './ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 
+type SelectableCategory = ListingSubCategory & {
+  selectable: boolean
+}
+
 type OnSelectProps = {
   className?: string
-  selectableCategories?: ListingCategory[]
+  selectableCategories?: ListingCategory[] | ListingSubCategory[]
   category: string | null
+  subCategory: string | null
+  isSubCategory: boolean
   control: 'select' | 'combobox'
   onCategorySelect: (category: string | null) => void
+  onSubCategorySelect: (category: string | null) => void
 }
 
 export function ListingCategorySelect({
   className,
   selectableCategories,
+  isSubCategory,
   category,
+  subCategory,
   control,
-  onCategorySelect
+  onCategorySelect,
+  onSubCategorySelect
 }: OnSelectProps) {
   const [popoverOpen, setPopoverOpen] = useState(false)
-
-  const categories = useMemo(() => {
-    const categories = Object.values(LISTING_CATEGORIES)
-      .map((category) => {
-        return {
-          selectable:
-            !selectableCategories || selectableCategories?.some((c) => c.name === category.name),
-          ...category
-        }
-      })
-      .sort((a, b) => {
-        if (a.selectable && b.selectable) return a.name.localeCompare(b.name)
-        if (!a.selectable && !b.selectable) return a.name.localeCompare(b.name)
-        if (a.selectable && !b.selectable) return -1
-        return 1
-      })
-    categories.unshift({
-      name: '...',
-      tags: [],
-      icon: '',
-      selectable: true
-    })
-    return categories
-  }, [selectableCategories])
 
   const categoryItem = useMemo(() => {
     return LISTING_CATEGORIES.find((c) => c.name === category)
   }, [category])
 
+  const categories = useMemo(() => {
+    let extSelectableCategories: SelectableCategory[] = []
+    if (isSubCategory) {
+      if (categoryItem) {
+        extSelectableCategories = categoryItem.subCategories
+          .map((c) => {
+            return {
+              selectable: true,
+              ...c
+            }
+          })
+          .sort((a, b) => a.name.localeCompare(b.name))
+      }
+    } else {
+      extSelectableCategories = LISTING_CATEGORIES.map((category) => {
+        return {
+          selectable:
+            !selectableCategories || selectableCategories?.some((c) => c.name === category.name),
+          ...category
+        }
+      }).sort((a, b) => {
+        if (a.selectable && b.selectable) return a.name.localeCompare(b.name)
+        if (!a.selectable && !b.selectable) return a.name.localeCompare(b.name)
+        if (a.selectable && !b.selectable) return -1
+        return 1
+      })
+    }
+    extSelectableCategories.unshift({
+      name: '...',
+      tags: [],
+      icon: '',
+      selectable: true
+    })
+    return extSelectableCategories
+  }, [isSubCategory, categoryItem, selectableCategories])
+
+  const selectedCategory = isSubCategory ? subCategory : category
+  const selectedCategoryItem = useMemo(() => {
+    return isSubCategory
+      ? categoryItem?.subCategories.find((c) => c.name === subCategory)
+      : categoryItem
+  }, [categoryItem, isSubCategory, subCategory])
+
+  const handleCategorySelect = (value: string | null) => {
+    if (isSubCategory ? value === subCategory : value === category) return
+    if (isSubCategory) {
+      onSubCategorySelect(value)
+    } else {
+      onCategorySelect(value)
+      onSubCategorySelect(null)
+    }
+  }
+
+  if (isSubCategory && categories.length === 1) {
+    return null
+  }
+
   return (
     <div className="max-w-48 w-full">
       {control === 'select' ? (
         <Select
-          value={category ?? ''}
-          onValueChange={(value) => onCategorySelect(value !== '...' ? value : null)}
+          value={selectedCategory ?? ''}
+          onValueChange={(value) => handleCategorySelect(value !== '...' ? value : null)}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Select a category" />
+            <SelectValue placeholder={isSubCategory ? 'Select subcategory' : 'Select category'} />
           </SelectTrigger>
           <SelectContent className={cn(className)}>
             {categories?.map((c) => (
@@ -87,21 +130,21 @@ export function ListingCategorySelect({
         <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
           <PopoverTrigger asChild>
             <ComboboxTrigger>
-              {category ? (
+              {selectedCategory ? (
                 <div className="flex flex-row gap-2">
-                  {categoryItem && (
+                  {selectedCategoryItem && (
                     <Image
                       className="min-w-5"
                       width={20}
                       height={20}
-                      src={categoryItem.icon}
-                      alt={categoryItem.name}
+                      src={selectedCategoryItem.icon}
+                      alt={selectedCategoryItem.name}
                     />
                   )}
-                  <div className="capitalize truncate">{`${category}`}</div>
+                  <div className="capitalize truncate">{`${selectedCategory}`}</div>
                 </div>
               ) : (
-                <>Select a category</>
+                <>{isSubCategory ? 'Select subcategory' : 'Select category'}</>
               )}
             </ComboboxTrigger>
           </PopoverTrigger>
@@ -117,9 +160,9 @@ export function ListingCategorySelect({
                     disabled={!c.selectable}
                     onSelect={(value) => {
                       setPopoverOpen(false)
-                      onCategorySelect(value !== '...' ? value : null)
+                      handleCategorySelect(value !== '...' ? value : null)
                     }}
-                    selected={c.name === category}
+                    selected={c.name === selectedCategory}
                   >
                     {c.name === '...' ? (
                       <div>{c.name}</div>

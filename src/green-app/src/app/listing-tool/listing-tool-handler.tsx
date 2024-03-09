@@ -31,7 +31,9 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
   const stashes = useListingToolStore(useShallow((state) => state.stashes[state.league] || []))
   const league = useListingToolStore((state) => state.league)
   const selectedCategory = useListingToolStore((state) => state.category)
+  const selectedSubCategory = useListingToolStore((state) => state.subCategory)
   const setSelectedCategory = useListingToolStore((state) => state.setCategory)
+  const setSelectedSubCategory = useListingToolStore((state) => state.setSubCategory)
   const setInitialItems = useListingToolStore((state) => state.setInitialItems)
   const setSelectableCategories = useListingToolStore((state) => state.setSelectableCategories)
 
@@ -128,7 +130,9 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
 
     if (Object.keys(selectableTagsCount).length === 0) {
       console.log('Deselect category')
-      return setSelectedCategory(null)
+      setSelectedCategory(null)
+      setSelectedSubCategory(null)
+      return
     }
 
     const tagToSelect = Object.entries(selectableTagsCount).sort((a, b) => b[1] - a[1])[0]
@@ -137,6 +141,7 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
     if (category) {
       console.log('Autoselect category', category.name)
       setSelectedCategory(category.name)
+      setSelectedSubCategory(null)
     }
     // Some objects are not stable! We use booleans to determine the change
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -208,7 +213,7 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
             compactStash,
             DEFAULT_VALUATION_INDEX
           )
-          pricedItems = filterPricedItems(pricedItems, selectedCategory)
+          pricedItems = filterPricedItems(pricedItems, selectedCategory, selectedSubCategory)
           const pricedStackedItems = mergeItems(pricedItems)
           return mapItemsToDisplayedItems(pricedStackedItems, selectedMultiplier, overprices)
         })
@@ -233,8 +238,8 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
 
   useEffect(() => {
     console.log('Set setInitialItems')
-    setInitialItems(displayedItems, selectedCategory)
-  }, [displayedItems, selectedCategory, setInitialItems])
+    setInitialItems(displayedItems, selectedCategory + (selectedSubCategory || ''))
+  }, [displayedItems, selectedCategory, selectedSubCategory, setInitialItems])
 
   useEffect(() => {
     console.log('Set refetchAll')

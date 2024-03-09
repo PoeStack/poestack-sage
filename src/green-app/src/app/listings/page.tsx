@@ -23,6 +23,9 @@ export default function ListingsPage() {
   const [selectedCategory, setSelectedCategory] = useListingsStore(
     useShallow((state) => [state.category, state.setCategory])
   )
+  const [selectedSubCategory, setSelectedSubCategory] = useListingsStore(
+    useShallow((state) => [state.subCategory, state.setSubCategory])
+  )
   const [filterGroups, setFilterGroups] = useListingsStore(
     useShallow((state) => [state.filterGroups, state.setFilterGroups])
   )
@@ -50,10 +53,22 @@ export default function ListingsPage() {
             <div className="flex flex-row basis-1/2 gap-4">
               <div className="flex w-full max-w-48">
                 <ListingCategorySelect
-                  className=""
                   control="combobox"
+                  isSubCategory={false}
                   category={selectedCategory}
+                  subCategory={selectedSubCategory}
                   onCategorySelect={setSelectedCategory}
+                  onSubCategorySelect={setSelectedSubCategory}
+                />
+              </div>
+              <div className="flex w-full max-w-48">
+                <ListingCategorySelect
+                  control="select"
+                  isSubCategory
+                  category={selectedCategory}
+                  subCategory={selectedSubCategory}
+                  onCategorySelect={setSelectedCategory}
+                  onSubCategorySelect={setSelectedSubCategory}
                 />
               </div>
             </div>

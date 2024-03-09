@@ -7,7 +7,7 @@ import {
   SageSelectedDatabaseOfferingItemType
 } from '@/types/sage-listing-type'
 import { DEFAULT_VALUATION_INDEX } from './constants'
-import { ListingCategory } from './listing-categories'
+import { LISTING_CATEGORIES } from './listing-categories'
 
 type SageSpecialOfferingType = Omit<SageDatabaseOfferingType, 'items'> & {
   items: SageSelectedDatabaseOfferingItemType[]
@@ -16,8 +16,7 @@ type SageSpecialOfferingType = Omit<SageDatabaseOfferingType, 'items'> & {
 export const calculateListingFromOfferingListing = (
   offering: SageSpecialOfferingType,
   summaries: SageItemGroupSummaryShard['summaries'],
-  valuations: SageValuationShard['valuations'],
-  categoryTagItem?: ListingCategory
+  valuations: SageValuationShard['valuations']
 ): SageListingType => {
   const items = offering.items.map((e): SageListingItemType => {
     const valuation = valuations[e.hash]
@@ -48,6 +47,11 @@ export const calculateListingFromOfferingListing = (
     multiplier = (calculatedTotalPrice / calculatedTotalValuation) * 100
   }
 
+  const categoryItem = LISTING_CATEGORIES.find((ca) => ca.name === offering.meta.category)
+  const selectedCategory = offering.meta.subCategory
+    ? categoryItem?.subCategories.find((c) => c.name === offering.meta.subCategory)
+    : categoryItem
+
   return {
     userId: offering.userId,
     uuid: offering.uuid,
@@ -57,7 +61,7 @@ export const calculateListingFromOfferingListing = (
       multiplier,
       calculatedTotalPrice,
       calculatedTotalValuation,
-      icon: categoryTagItem?.icon || '',
+      icon: selectedCategory?.icon || '',
       altIcon: ''
     },
     items

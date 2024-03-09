@@ -1,14 +1,13 @@
 'use client'
-import Axios from 'axios'
-import { lowerCaseCompasses } from './compasses'
-import { SageDatabaseOfferingType, SageOfferingType } from '@/types/sage-listing-type'
-import { IStashTab } from '@/types/echo-api/stash'
-import { SageValuationShard, SageValuationShardInternal } from '@/types/echo-api/valuation'
 import {
   SageItemGroupSummaryShard,
   SageItemGroupSummaryShardInternal
 } from '@/types/echo-api/item-group'
+import { IStashTab } from '@/types/echo-api/stash'
+import { SageValuationShard, SageValuationShardInternal } from '@/types/echo-api/valuation'
 import { PoeCharacter, PoeLeague } from '@/types/poe-api-models'
+import { SageDatabaseOfferingType, SageOfferingType } from '@/types/sage-listing-type'
+import Axios from 'axios'
 import { LISTING_CATEGORIES } from './listing-categories'
 
 const dev = false
@@ -91,7 +90,15 @@ export function deleteListing(league: string, category: string, subCategory: str
   return resp
 }
 
-export async function listListings(league: string, category: string, startTimeMs: number) {
+export async function listListings(
+  league: string,
+  category: string,
+  startTimeMs: number,
+  subCategory?: string
+) {
+  // TODO: Add subcategory
+  // If no subcategory is defined => request all tags incl. subCategories
+  // TODO: If so, optimize timestamps
   const resp = await Axios.get(
     `${baseUrl}/listings/${league.toLowerCase()}/${category}/${includeTimeOffset(startTimeMs)}`,
     {

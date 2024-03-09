@@ -3,10 +3,12 @@
 
 import CurrencyDisplay from '@/components/currency-display'
 import { currentDivinePriceAtom } from '@/components/providers'
+import { TimeTracker } from '@/components/time-tracker'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useWhisperHashCopied } from '@/hooks/useWhisperHash'
 import { CurrencySwitch } from '@/lib/currency'
+import { cn } from '@/lib/utils'
 import { createWishperAndCopyToClipboard } from '@/lib/whsiper-util'
 import { ListingMode, SageListingType } from '@/types/sage-listing-type'
 import { ColumnDef } from '@tanstack/react-table'
@@ -24,8 +26,6 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { TableColumnHeader } from '../../components/column-header'
 import { useListingsStore } from './listingsStore'
-import { TimeTracker } from '@/components/time-tracker'
-import { cn } from '@/lib/utils'
 dayjs.extend(relativeTime)
 dayjs.extend(utc)
 
@@ -37,7 +37,7 @@ export function categoryColumn(): ColumnDef<SageListingType> {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
     accessorKey: key,
     accessorFn: (listing) => {
-      return listing.meta.category
+      return listing.meta.subCategory || listing.meta.category
     },
     enableSorting: true,
     enableGlobalFilter: true,

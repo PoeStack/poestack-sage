@@ -1,6 +1,7 @@
 /* eslint-disable no-extra-boolean-cast */
 'use client'
 
+import { BasicSelect } from '@/components/basic-select'
 import DebouncedInput from '@/components/debounced-input'
 import { TablePagination } from '@/components/table-pagination'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
@@ -13,7 +14,6 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { ListingFilterUtil } from '@/lib/listing-filter-util'
 import { cn } from '@/lib/utils'
 import { SageListingType } from '@/types/sage-listing-type'
 import { DialogPortal } from '@radix-ui/react-dialog'
@@ -31,12 +31,11 @@ import {
 } from '@tanstack/react-table'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
+import { atom, useAtom } from 'jotai'
 import React, { memo, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import ListingDialogContent from './listing-dialog-content'
-import { useListingsStore } from './listingsStore'
-import { atom, useAtom } from 'jotai'
-import { BasicSelect } from '@/components/basic-select'
+import { getCategory, useListingsStore } from './listingsStore'
 dayjs.extend(utc)
 
 type SellModeOptions = 'Show all modes' | 'Show whole listings' | 'Show individual listings'
@@ -62,9 +61,9 @@ const ListingsTable = ({ columns, globalFilterFn, className }: DataTableProps) =
   const [globalFilter, setGlobalFilter] = useState('')
   const modifiedListings = useListingsStore(
     useShallow((state) => {
-      if (!state.category) return []
+      if (!getCategory(state)) return []
       const now = dayjs.utc().valueOf()
-      return state.listingsMap[state.category].filter(
+      return state.listingsMap[getCategory(state)].filter(
         (l) =>
           l.meta.league === state.league &&
           state.filteredByGroupListings[l.uuid] &&
