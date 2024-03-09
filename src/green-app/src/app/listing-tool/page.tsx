@@ -251,6 +251,7 @@ export default function Page() {
               />
               <div className="w-40">
                 <ListingCategorySelect
+                  control="select"
                   category={selectedCategory}
                   selectableCategories={selectableCategories}
                   onCategorySelect={setSelectedCategory}

@@ -51,6 +51,7 @@ export default function ListingsPage() {
               <div className="flex w-full max-w-48">
                 <ListingCategorySelect
                   className=""
+                  control="combobox"
                   category={selectedCategory}
                   onCategorySelect={setSelectedCategory}
                 />
