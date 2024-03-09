@@ -1,7 +1,6 @@
 'use client'
 
 import { listSummaries } from '@/lib/http-util'
-import { CaretSortIcon } from '@radix-ui/react-icons'
 import {
   ChangeEvent,
   Dispatch,
@@ -16,22 +15,17 @@ import {
 import { BasicSelect } from '@/components/basic-select'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem
-} from '@/components/ui/command'
+import { Command, CommandEmpty, CommandGroup, CommandInput } from '@/components/ui/command'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { LISTING_CATEGORIES } from '@/lib/listing-categories'
 import { cn } from '@/lib/utils'
+import { SageItemGroupSummary, SageItemGroupSummaryShard } from '@/types/echo-api/item-group'
 import { SageListingItemType } from '@/types/sage-listing-type'
+import { useQueries } from '@tanstack/react-query'
 import { SquarePenIcon, XIcon } from 'lucide-react'
 import Image from 'next/image'
-import { useQueries } from '@tanstack/react-query'
-import { SageItemGroupSummary, SageItemGroupSummaryShard } from '@/types/echo-api/item-group'
+import { ComboboxItem, ComboboxTrigger } from './ui/combobox'
 
 export type FilterOption = {
   hash: string
@@ -151,6 +145,13 @@ const ListingFilterGroupCard = ({
   const [editMode, setEditMode] = useState(false)
   const [groupSelectOpen, setGroupSelectOpen] = useState(false)
 
+  const availableOptions = useMemo(() => {
+    const selectedHashes = group.filters
+      .filter((g) => g.selected && g.option?.hash)
+      .flatMap((x) => x.option!.hash)
+    return options.filter((o) => !selectedHashes.includes(o.hash))
+  }, [options, group.filters])
+
   function toggleSelected() {
     onGroupChange({
       ...group,
@@ -238,6 +239,7 @@ const ListingFilterGroupCard = ({
               <MemorizedListingGroupFilterSelect
                 key={i}
                 options={options}
+                availableOptions={availableOptions}
                 summaries={summaries}
                 isNextFilter={false}
                 filter={filter}
@@ -249,6 +251,7 @@ const ListingFilterGroupCard = ({
           })}
           <MemorizedListingGroupFilterSelect
             options={options}
+            availableOptions={availableOptions}
             summaries={summaries}
             isNextFilter={true}
             filter={{ option: null, selected: true, minimumQuantity: undefined }}
@@ -276,6 +279,7 @@ type ListingGroupFilterSelectProps = {
   removeFilter: (i: number) => void
   updateFilter: (index: number, filter: ListingFilter) => void
   options: FilterOption[]
+  availableOptions: FilterOption[]
   summaries: Record<string, SageListingItemType['summary']>
   filter: ListingFilter
   index: number
@@ -284,6 +288,7 @@ type ListingGroupFilterSelectProps = {
 
 function ListingGroupFilterSelect({
   options,
+  availableOptions,
   summaries,
   filter,
   index,
@@ -323,67 +328,63 @@ function ListingGroupFilterSelect({
       ) : (
         <div className="w-4 h-4 shrink-0" />
       )}
-      <Popover open={popoverOpen} onOpenChange={setPopoverOpen} modal={true}>
-        <PopoverTrigger asChild>
-          <Button variant="outline" role="combobox" className="flex justify-between w-full">
-            {selectedOption ? (
-              <>
-                <div className="flex flex-row gap-2">
-                  <Image
-                    className="min-w-5"
-                    width={20}
-                    height={20}
-                    src={selectedOption.icon}
-                    alt="d"
-                  />
-                  <div className="truncate">{selectedOption.displayName}</div>
-                </div>
-                <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </>
-            ) : (
-              <>
-                Select ...
-                <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </>
-            )}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="p-0 max-h-[var(--radix-popover-content-available-height)] w-full min-w-[var(--radix-popover-trigger-width)] overflow-hidden">
-          <Command
-            filter={(hash, search) => {
-              if (summaries[hash]?.displayName?.toLowerCase().includes(search.toLowerCase()))
-                return 1
-              return 0
-            }}
-          >
-            <CommandInput placeholder="Search..." />
-            <CommandEmpty>No results.</CommandEmpty>
-            <CommandGroup className="max-h-[calc(var(--radix-popover-content-available-height)-7rem)] overflow-y-auto">
-              {options.map((c) => (
-                <CommandItem
-                  key={c.hash}
-                  value={c.hash}
-                  onSelect={(hash) => {
-                    const selectedOption = options.find((s) => s.hash === hash)
-                    updateFilter(index, { ...filter, option: selectedOption ?? null })
-                    setPopoverOpen(false)
-                  }}
-                >
-                  <div className="flex flex-row gap-2 items-center w-full">
-                    <Image className="min-w-5" width={20} height={20} src={c.icon} alt="d" />
-                    <div className="flex flex-1">{c.displayName}</div>
-                    {c.unsafeHashProperties.uses && (
-                      <div>{`${c.unsafeHashProperties.uses} Uses`}</div>
-                    )}
+      <div className="flex flex-row w-full items-center gap-2">
+        <Popover open={popoverOpen} onOpenChange={setPopoverOpen} modal={true}>
+          <PopoverTrigger asChild>
+            <ComboboxTrigger>
+              {selectedOption ? (
+                <>
+                  <div className="flex flex-row gap-2">
+                    <Image
+                      width={20}
+                      height={20}
+                      src={selectedOption.icon}
+                      alt="d"
+                      className="block h-5 min-h-fit min-w-fit shrink-0"
+                    />
+                    <div className="truncate">{selectedOption.displayName}</div>
                   </div>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </Command>
-        </PopoverContent>
-      </Popover>
-      {!isNextFilter ? (
-        <>
+                </>
+              ) : (
+                <>Select ...</>
+              )}
+            </ComboboxTrigger>
+          </PopoverTrigger>
+          <PopoverContent className="p-0 max-h-[var(--radix-popover-content-available-height)] w-full min-w-[var(--radix-popover-trigger-width)] overflow-hidden">
+            <Command
+              filter={(hash, search) => {
+                if (summaries[hash]?.displayName?.toLowerCase().includes(search.toLowerCase()))
+                  return 1
+                return 0
+              }}
+            >
+              <CommandInput placeholder="Search..." />
+              <CommandEmpty>No results.</CommandEmpty>
+              <CommandGroup className="max-h-[calc(var(--radix-popover-content-available-height)-7rem)] overflow-y-auto">
+                {availableOptions.map((c) => (
+                  <ComboboxItem
+                    key={c.hash}
+                    value={c.hash}
+                    onSelect={(hash) => {
+                      const selectedOption = options.find((s) => s.hash === hash)
+                      updateFilter(index, { ...filter, option: selectedOption ?? null })
+                      setPopoverOpen(false)
+                    }}
+                  >
+                    <div className="flex flex-row gap-2 items-center w-full">
+                      <Image className="min-w-5" width={20} height={20} src={c.icon} alt="d" />
+                      <div className="flex flex-1">{c.displayName}</div>
+                      {c.unsafeHashProperties.uses && (
+                        <div>{`${c.unsafeHashProperties.uses} Uses`}</div>
+                      )}
+                    </div>
+                  </ComboboxItem>
+                ))}
+              </CommandGroup>
+            </Command>
+          </PopoverContent>
+        </Popover>
+        {!isNextFilter ? (
           <Input
             type="number"
             className="max-w-20 text-center remove-arrow"
@@ -392,6 +393,11 @@ function ListingGroupFilterSelect({
             value={minQuantity}
             onChange={handleMinQuantityChange}
           />
+        ) : (
+          <div className="max-w-20 w-full" />
+        )}
+
+        {!isNextFilter ? (
           <Button
             className="w-9 h-9 min-w-9"
             size="icon"
@@ -400,13 +406,10 @@ function ListingGroupFilterSelect({
           >
             <XIcon className="w-4 h-4" />
           </Button>
-        </>
-      ) : (
-        <>
-          <div className="max-w-20 w-full" />
+        ) : (
           <div className="min-w-9" />
-        </>
-      )}
+        )}
+      </div>
     </div>
   )
 }
