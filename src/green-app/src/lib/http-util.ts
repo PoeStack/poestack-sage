@@ -67,6 +67,10 @@ export async function listMyListings() {
         ...listing,
         meta: {
           ...listing.meta,
+          subCategory:
+            !listing.meta.subCategory || listing.meta.subCategory === 'ALL'
+              ? ''
+              : listing.meta.subCategory,
           timestampMs: listing.meta.timestampMs - 2000, // ??? Somehow there is a difference between client & server of approx. 1-3 second
           totalPrice: listing.items.reduce((sum, item) => item.price * item.quantity + sum, 0)
         }
@@ -79,7 +83,7 @@ export type SageDatabaseOfferingTypeExt = Awaited<ReturnType<typeof listMyListin
 
 export function deleteListing(league: string, category: string, subCategory: string, uuid: string) {
   const resp = Axios.post(
-    `${baseUrl}/delete/listing/${league.toLowerCase()}/${category}/${subCategory}`,
+    `${baseUrl}/delete/listing/${league.toLowerCase()}/${category}/${subCategory || 'ALL'}`,
     { uuid: uuid },
     {
       headers: {
@@ -90,15 +94,7 @@ export function deleteListing(league: string, category: string, subCategory: str
   return resp
 }
 
-export async function listListings(
-  league: string,
-  category: string,
-  startTimeMs: number,
-  subCategory?: string
-) {
-  // TODO: Add subcategory
-  // If no subcategory is defined => request all tags incl. subCategories
-  // TODO: If so, optimize timestamps
+export async function listListings(league: string, category: string, startTimeMs: number) {
   const resp = await Axios.get(
     `${baseUrl}/listings/${league.toLowerCase()}/${category}/${includeTimeOffset(startTimeMs)}`,
     {

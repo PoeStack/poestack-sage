@@ -165,7 +165,7 @@ export default function Page() {
       meta: {
         league: selectedLeague,
         category: selectedCategory,
-        subCategory: selectedSubCategory || '',
+        subCategory: selectedSubCategory || 'ALL',
         ign: selectedIgn,
         listingMode: selectedListingMode,
         timestampMs: dayjs.utc().valueOf(),

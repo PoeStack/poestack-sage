@@ -54,6 +54,17 @@ export const getCategory = (
   return (category || state.category || '') + (subCategory || state.subCategory || '')
 }
 
+export const getListingsByCategory = (state: State) => {
+  const categoryKey = getCategory(state)
+  if (state.subCategory) {
+    return state.listingsMap[categoryKey]
+  }
+  // Only main category selected -> Request category + subCategories
+  return Object.entries(state.listingsMap)
+    .filter(([category]) => category.startsWith(categoryKey))
+    .flatMap(([_, listings]) => listings)
+}
+
 const calculateListings = (
   listings: SageListingType[],
   selectedItemsMap: Record<string, RowSelectionState>,
@@ -167,7 +178,7 @@ export const useListingsStore = create<State & Actions>()(
       setDialogOpen: (open) =>
         set((state) => {
           if (!open) {
-            const listing = state.listingsMap[getCategory(state)].find(
+            const listing = getListingsByCategory(state).find(
               (l) => l.uuid === state.selectedListingId
             )
             if (listing) {
@@ -207,7 +218,7 @@ export const useListingsStore = create<State & Actions>()(
           state.filterGroups = [{ selected: true, mode: 'AND', filters: [] }]
           state.filteredByGroupListings = {}
           calculateListings(
-            state.listingsMap[categoryKey],
+            getListingsByCategory(state),
             state.selectedItemsMap,
             state.filterGroups,
             state.filteredByGroupListings
@@ -235,7 +246,7 @@ export const useListingsStore = create<State & Actions>()(
           state.filterGroups = filterGroups
           state.filteredByGroupListings = {}
           calculateListings(
-            state.listingsMap[getCategory(state)],
+            getListingsByCategory(state),
             state.selectedItemsMap,
             state.filterGroups,
             state.filteredByGroupListings
@@ -410,7 +421,7 @@ export const useListingsStore = create<State & Actions>()(
             state.selectedItemsMap[state.selectedListingId || ''] = nextState
           }
 
-          const listing = state.listingsMap[getCategory(state)].find(
+          const listing = getListingsByCategory(state).find(
             (l) => l.uuid === state.selectedListingId
           )
 
@@ -422,7 +433,7 @@ export const useListingsStore = create<State & Actions>()(
 
       updateData: (rowIndex, columnId, value) =>
         set((state) => {
-          const listing = state.listingsMap[getCategory(state)].find(
+          const listing = getListingsByCategory(state).find(
             (l) => l.uuid === state.selectedListingId
           )
           if (!listing) return {}

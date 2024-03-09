@@ -1,6 +1,5 @@
 'use client'
 
-import { DEFAULT_VALUATION_INDEX } from '@/lib/constants'
 import { listListings, listSummaries, listValuations } from '@/lib/http-util'
 import { LISTING_CATEGORIES } from '@/lib/listing-categories'
 import { SageItemGroupSummaryShard } from '@/types/echo-api/item-group'
@@ -21,13 +20,6 @@ const ListingsHandler = () => {
   const categoryItem = useListingsStore(
     useShallow((state) => LISTING_CATEGORIES.find((ca) => ca.name === state.category))
   )
-  const subCategoryItem = useListingsStore(
-    useShallow((state) =>
-      state.subCategory
-        ? categoryItem?.subCategories.find((c) => c.name === state.subCategory)
-        : undefined
-    )
-  )
   // Starts with 0
   const fetchTimeStamp = useListingsStore(
     (state) => state.fetchTimeStamps[state.league]?.[getCategory(state)]
@@ -39,17 +31,13 @@ const ListingsHandler = () => {
   const {
     data: listings,
     isError,
-    isRefetching
+    isLoadingError,
+    isRefetching,
+    isRefetchError
   } = useQuery({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps
-    queryKey: [
-      'listings',
-      league,
-      categoryItem?.name || '',
-      subCategoryItem?.name || '',
-      fetchTimeStamp
-    ],
-    queryFn: () => listListings(league, categoryItem!.name, fetchTimeStamp, subCategoryItem?.name),
+    queryKey: ['listings', league, categoryItem?.name || '', fetchTimeStamp],
+    queryFn: () => listListings(league, categoryItem!.name, fetchTimeStamp),
     // We do not save any cache - this has the effect, that the query starts directly after changing the category
     gcTime: 0,
     enabled: !!categoryItem,
@@ -57,12 +45,12 @@ const ListingsHandler = () => {
     retry: true
   })
 
-  const errorRef = useRef(isError)
-  errorRef.current = isError || isRefetching
+  const enabled = useRef(isError)
+  enabled.current = isError || isLoadingError || isRefetching || isRefetchError
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (errorRef.current) {
+      if (enabled.current) {
         // We do not start the next request until the first is finished
         console.warn('Skip request for next timestamp')
         return

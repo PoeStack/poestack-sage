@@ -35,7 +35,7 @@ import { atom, useAtom } from 'jotai'
 import React, { memo, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import ListingDialogContent from './listing-dialog-content'
-import { getCategory, useListingsStore } from './listingsStore'
+import { getCategory, getListingsByCategory, useListingsStore } from './listingsStore'
 dayjs.extend(utc)
 
 type SellModeOptions = 'Show all modes' | 'Show whole listings' | 'Show individual listings'
@@ -63,7 +63,7 @@ const ListingsTable = ({ columns, globalFilterFn, className }: DataTableProps) =
     useShallow((state) => {
       if (!getCategory(state)) return []
       const now = dayjs.utc().valueOf()
-      return state.listingsMap[getCategory(state)].filter(
+      return getListingsByCategory(state).filter(
         (l) =>
           l.meta.league === state.league &&
           state.filteredByGroupListings[l.uuid] &&

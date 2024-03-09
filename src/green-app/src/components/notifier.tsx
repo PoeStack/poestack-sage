@@ -60,7 +60,9 @@ const Notifier = () => {
   const {
     data: notifications,
     isError,
-    isRefetching
+    isLoadingError,
+    isRefetching,
+    isRefetchError
   } = useQuery({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey: ['notifications', fetchTimeStamp],
@@ -79,7 +81,7 @@ const Notifier = () => {
   })
 
   const enabled = useRef(isError)
-  enabled.current = isError || isRefetching || !currentUser
+  enabled.current = isError || isLoadingError || isRefetching || isRefetchError || !currentUser
 
   useEffect(() => {
     const interval = setInterval(() => {

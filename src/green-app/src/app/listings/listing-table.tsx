@@ -1,6 +1,7 @@
 /* eslint-disable no-extra-boolean-cast */
 'use client'
 
+import { BasicSelect } from '@/components/basic-select'
 import DebouncedInput from '@/components/debounced-input'
 import { TablePagination } from '@/components/table-pagination'
 import {
@@ -25,11 +26,10 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table'
+import { atom, useAtom } from 'jotai'
 import React, { memo, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { getCategory, useListingsStore } from './listingsStore'
-import { BasicSelect } from '@/components/basic-select'
-import { atom, useAtom } from 'jotai'
+import { getListingsByCategory, useListingsStore } from './listingsStore'
 
 interface DataTableProps {
   columns: ColumnDef<SageListingType['items'][number]>[]
@@ -47,7 +47,7 @@ const ListingTable = ({ columns, className, globalFilterFn }: DataTableProps) =>
 
   const listing = useListingsStore(
     useShallow((state) => {
-      return state.listingsMap[getCategory(state)]?.find((l) => l.uuid === state.selectedListingId)
+      return getListingsByCategory(state)?.find((l) => l.uuid === state.selectedListingId)
     })
   )
 

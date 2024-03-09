@@ -15,7 +15,7 @@ import { ListingFilterGroup } from '../../components/trade-filter-card'
 import ListingMetaOverview from './listing-meta-overview'
 import ListingTable from './listing-table'
 import { listingTableBulkModeColumns, listingTradeSingleModeColumns } from './listing-table-columns'
-import { getCategory, useListingsStore } from './listingsStore'
+import { getListingsByCategory, useListingsStore } from './listingsStore'
 import { RefreshCwIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -25,8 +25,7 @@ export default function ListingDialogContent() {
   // FilteredListings can only be undefined, if we would remove deleted listings. But for this we have to ensure, that the dialog get closed automatically or something else
   const selectedListing = useListingsStore(
     useShallow(
-      (state) =>
-        state.listingsMap[getCategory(state)].find((l) => l.uuid === state.selectedListingId)!
+      (state) => getListingsByCategory(state).find((l) => l.uuid === state.selectedListingId)!
     )
   )
   const [copyBtnDisabled, isLoading, messageCopied, messageSent, setMessageCopied] =
