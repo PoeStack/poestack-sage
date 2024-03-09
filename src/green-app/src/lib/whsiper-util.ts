@@ -11,12 +11,12 @@ export const createWishperAndCopyToClipboard = (
     const chaos = selectedListing.meta.calculatedTotalPrice % divinePrice
     const singleItemTradeMode = selectedListing.meta.listingMode === 'single' ? 'ALL' : ''
     if (chaos === 0) {
-      return `@${selectedListing.meta.ign} WTB ${singleItemTradeMode} ${selectedListing.meta.category} listing for ${divines}d`
+      return `@${selectedListing.meta.ign} WTB ${singleItemTradeMode} ${selectedListing.meta.subCategory || selectedListing.meta.category} listing for ${divines}d`
     } else {
       if (divines === 0) {
-        return `@${selectedListing.meta.ign} WTB ${singleItemTradeMode} ${selectedListing.meta.category} listing for ${round(chaos)}c`
+        return `@${selectedListing.meta.ign} WTB ${singleItemTradeMode} ${selectedListing.meta.subCategory || selectedListing.meta.category} listing for ${round(chaos)}c`
       } else {
-        return `@${selectedListing.meta.ign} WTB ${singleItemTradeMode} ${selectedListing.meta.category} listing for ${divines}d ${round(chaos)}c`
+        return `@${selectedListing.meta.ign} WTB ${singleItemTradeMode} ${selectedListing.meta.subCategory || selectedListing.meta.category} listing for ${divines}d ${round(chaos)}c`
       }
     }
   }

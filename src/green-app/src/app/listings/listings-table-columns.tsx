@@ -269,7 +269,7 @@ export function actionsColumn(): ColumnDef<SageListingType> {
               }}
             >
               {messageCopied ? `Whisper copied!` : messageSent ? `Copy again?` : 'Copy whisper'}
-              {((!messageCopied && !messageSent) || isLoading) && (
+              {isLoading && (
                 <RefreshCwIcon className={cn(isLoading && 'animate-spin', 'w-4 h-w shrink-0')} />
               )}
             </Button>

@@ -33,11 +33,6 @@ export default function ListingDialogContent() {
 
   const divinePrice = useAtomValue(currentDivinePriceAtom)
 
-  // TODO: Implement logic
-  const [subFilterGroups, setSubFilterGroups] = useState<ListingFilterGroup[]>([
-    { mode: 'AND', filters: [], selected: true }
-  ])
-
   const fuzzyFilter: FilterFn<SageListingItemType> = useCallback(
     (row, columnId, filterValue, addMeta) => {
       return filterFns.includesString(row, columnId, filterValue, addMeta)
@@ -103,7 +98,7 @@ export default function ListingDialogContent() {
           }}
         >
           {messageCopied ? `Whisper copied!` : messageSent ? `Copy again?` : 'Copy whisper'}
-          {((!messageCopied && !messageSent) || isLoading) && (
+          {isLoading && (
             <RefreshCwIcon className={cn(isLoading && 'animate-spin', 'w-4 h-w shrink-0')} />
           )}
         </Button>
