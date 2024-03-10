@@ -253,7 +253,6 @@ export function actionsColumn(): ColumnDef<SageListingType> {
             <Button
               className="flex flex-row gap-2"
               size="default"
-              // TODO: Add spinner
               disabled={copyBtnDisabled || isLoading}
               variant={messageCopied ? 'outline' : 'secondary'}
               onClick={() => {

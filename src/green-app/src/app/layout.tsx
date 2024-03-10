@@ -48,7 +48,7 @@ export default function RootLayout({
                 </div>
                 <Navbar />
               </div>
-              <div className="flex flex-row gap-2 justify-end">
+              <div className="flex flex-row gap-2 items-center justify-end">
                 <ProfileMenu />
               </div>
             </div>

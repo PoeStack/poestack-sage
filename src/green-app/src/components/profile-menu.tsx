@@ -77,6 +77,17 @@ export function ProfileMenu() {
   if (currentUser?.profile?.name) {
     return (
       <>
+        <Link
+          href="https://discord.gg/path-of-exile-trading-530668348682403841"
+          aria-label="discord"
+          target="_blank"
+          rel="noopener"
+          variant="navbar"
+          external
+          className="mr-2"
+        >
+          PoE Trading Discord
+        </Link>
         <NotificationCenter />
         <AlertDialog>
           <DropdownMenu

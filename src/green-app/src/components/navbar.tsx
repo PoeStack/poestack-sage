@@ -20,16 +20,6 @@ const Navbar = () => {
         <Link href={'/listings'} variant="navbar" selected={pathname.startsWith('/listings')}>
           Bulk Listings
         </Link>
-        <Link
-          href="https://discord.gg/path-of-exile-trading-530668348682403841"
-          aria-label="discord"
-          target="_blank"
-          rel="noopener"
-          variant="navbar"
-          external
-        >
-          PoE Trading Discord
-        </Link>
       </nav>
     </>
   )
