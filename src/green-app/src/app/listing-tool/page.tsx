@@ -47,6 +47,7 @@ dayjs.extend(utc)
 // Hide "Connect discord" when discord is connected? - Get the current connected discord
 // Add "Pin all selected items" switch
 // Clear cache on logout
+// Add hide columns select
 
 type PageProps = {}
 
@@ -56,6 +57,7 @@ export default function Page() {
   const {
     selectedLeague,
     selectableCategories,
+    selectableSubCategories,
     selectedCategory,
     setSelectedCategory,
     selectedSubCategory,
@@ -68,6 +70,7 @@ export default function Page() {
     useShallow((state) => ({
       selectedLeague: state.league,
       selectableCategories: state.selectableCategories,
+      selectableSubCategories: state.selectableSubCategories,
       selectedCategory: state.category,
       setSelectedCategory: state.setCategory,
       selectedSubCategory: state.subCategory,
@@ -262,6 +265,7 @@ export default function Page() {
                   control="select"
                   isSubCategory={false}
                   selectableCategories={selectableCategories}
+                  selectableSubCategories={selectableSubCategories}
                   category={selectedCategory}
                   subCategory={selectedSubCategory}
                   onCategorySelect={setSelectedCategory}
@@ -273,6 +277,7 @@ export default function Page() {
                   control="select"
                   isSubCategory
                   selectableCategories={selectableCategories}
+                  selectableSubCategories={selectableSubCategories}
                   category={selectedCategory}
                   subCategory={selectedSubCategory}
                   onCategorySelect={setSelectedCategory}

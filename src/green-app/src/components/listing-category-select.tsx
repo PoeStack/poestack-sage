@@ -19,7 +19,8 @@ type SelectableCategory = ListingSubCategory & {
 
 type OnSelectProps = {
   className?: string
-  selectableCategories?: ListingCategory[] | ListingSubCategory[]
+  selectableCategories?: ListingCategory[]
+  selectableSubCategories?: ListingSubCategory[]
   category: string | null
   subCategory: string | null
   isSubCategory: boolean
@@ -31,6 +32,7 @@ type OnSelectProps = {
 export function ListingCategorySelect({
   className,
   selectableCategories,
+  selectableSubCategories,
   isSubCategory,
   category,
   subCategory,
@@ -49,13 +51,20 @@ export function ListingCategorySelect({
     if (isSubCategory) {
       if (categoryItem) {
         extSelectableCategories = categoryItem.subCategories
-          .map((c) => {
+          .map((subCat) => {
             return {
-              selectable: true,
-              ...c
+              selectable:
+                !selectableSubCategories ||
+                selectableSubCategories?.some((selsubCat) => selsubCat.name === subCat.name),
+              ...subCat
             }
           })
-          .sort((a, b) => a.name.localeCompare(b.name))
+          .sort((a, b) => {
+            if (a.selectable && b.selectable) return a.name.localeCompare(b.name)
+            if (!a.selectable && !b.selectable) return a.name.localeCompare(b.name)
+            if (a.selectable && !b.selectable) return -1
+            return 1
+          })
       }
     } else {
       extSelectableCategories = LISTING_CATEGORIES.map((category) => {
@@ -78,7 +87,7 @@ export function ListingCategorySelect({
       selectable: true
     })
     return extSelectableCategories
-  }, [isSubCategory, categoryItem, selectableCategories])
+  }, [isSubCategory, categoryItem, selectableCategories, selectableSubCategories])
 
   const selectedCategory = isSubCategory ? subCategory : category
   const selectedCategoryItem = useMemo(() => {

@@ -12,7 +12,7 @@ import {
   mergeItemStacks,
   mergeItems
 } from '@/lib/item-util'
-import { LISTING_CATEGORIES } from '@/lib/listing-categories'
+import { LISTING_CATEGORIES, ListingCategory, ListingSubCategory } from '@/lib/listing-categories'
 import { IStashTab } from '@/types/echo-api/stash'
 import { GroupedItem, StashItem, ValuatedItem } from '@/types/item'
 import { PoeItem } from '@/types/poe-api-models'
@@ -20,6 +20,21 @@ import { useQueries } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
 import { memo, useEffect, useMemo } from 'react'
 import { useShallow } from 'zustand/react/shallow'
+
+type SelectableCategories = Record<
+  string,
+  {
+    category: ListingCategory
+    count: number
+    subcategories: Record<
+      string,
+      {
+        subCategory: ListingSubCategory
+        count: number
+      }
+    >
+  }
+>
 
 type ListingToolHandlerProps = {
   setRefetchAll: (refetchAll: () => void) => void
@@ -36,6 +51,9 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
   const setSelectedSubCategory = useListingToolStore((state) => state.setSubCategory)
   const setInitialItems = useListingToolStore((state) => state.setInitialItems)
   const setSelectableCategories = useListingToolStore((state) => state.setSelectableCategories)
+  const setSelectableSubCategories = useListingToolStore(
+    (state) => state.setSelectableSubCategories
+  )
 
   // const setRefetchAll = useSetAtom(refetchAllAtom)
   // const setStashListFetching = useSetAtom(stashListFetchingAtom)
@@ -65,7 +83,7 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
   })
 
   const {
-    data: [categoryTagItem, selectableTagsCount, ungroupedItems],
+    data: [categoryTagItem, selectableCategories, ungroupedItems],
     // isGroupedItemsPending,
     isGroupedItemsSuccess,
     isGroupedItemsLoading,
@@ -74,15 +92,18 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
     refetchAll
   } = useMemo(() => {
     const categoryTagItem: Record<string, GroupedItem[]> = {}
-    const selectableTags: Record<string, number> = {}
+    const selectableCategories: SelectableCategories = {}
     const ungroupedItems: StashItem[] = []
+
     groupedItemsResults.forEach((result) => {
       result.data?.map((item) => {
-        const category = LISTING_CATEGORIES.find((e) => e.name === selectedCategory)
-        if (
-          item.group &&
-          (category?.tags?.includes(item.group.primaryGroup.tag) || !selectedCategory)
-        ) {
+        const currentCategory =
+          item.group && selectedCategory
+            ? LISTING_CATEGORIES.find(
+                (c) => c.name === selectedCategory && c.tags.includes(item.group!.primaryGroup.tag)
+              )
+            : undefined
+        if (item.group && (currentCategory || !selectedCategory)) {
           if (categoryTagItem[item.group.primaryGroup.tag]) {
             categoryTagItem[item.group.primaryGroup.tag].push(item)
           } else {
@@ -94,14 +115,45 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
         }
 
         if (item.group) {
-          selectableTags[item.group.primaryGroup.tag] ??= 0
-          selectableTags[item.group.primaryGroup.tag] += 1
+          const currentCategory = LISTING_CATEGORIES.find((e) =>
+            e.tags.includes(item.group!.primaryGroup.tag)
+          )
+          if (!currentCategory) return
+
+          if (!selectableCategories[currentCategory.name]) {
+            selectableCategories[currentCategory.name] = {
+              category: currentCategory,
+              count: 1,
+              subcategories: {}
+            }
+          } else {
+            selectableCategories[currentCategory.name].count += 1
+          }
+
+          selectableCategories[currentCategory.name].category.subCategories.forEach(
+            (subCategory) => {
+              if (!item.group) return
+              const itemFound = subCategory.filter?.({ group: item.group.primaryGroup })
+              if (itemFound) {
+                if (!selectableCategories[currentCategory.name].subcategories[subCategory.name]) {
+                  selectableCategories[currentCategory.name].subcategories[subCategory.name] = {
+                    count: 1,
+                    subCategory
+                  }
+                } else {
+                  selectableCategories[currentCategory.name].subcategories[
+                    subCategory.name
+                  ].count += 1
+                }
+              }
+            }
+          )
         }
       })
     })
 
     return {
-      data: [categoryTagItem, selectableTags, ungroupedItems],
+      data: [categoryTagItem, selectableCategories, ungroupedItems],
       // isGroupedItemsPending: groupedItemsResults.some((result) => result.isPending),
       isGroupedItemsSuccess: groupedItemsResults.some((result) => result.isSuccess),
       isGroupedItemsLoading: groupedItemsResults.some((result) => result.isLoading),
@@ -120,27 +172,47 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
     // - If the next stashes contains the selected tag, then do not change the tag. Even if stashes are reloaded
     // - If a stash selected but not loaded the tag will not deselected
     // - Auto deselect tag when the selected tag is not available
-    if (!(isGroupedItemsSuccess && !isGroupedItemsLoading)) return
+    if (!(isGroupedItemsSuccess && !isGroupedItemsFetching)) return
 
-    const selectedCategoryContainsItems = Object.values(categoryTagItem).some(
-      (items) => items.length > 0
+    const selectedCategoryWithItems = Object.values(selectableCategories).find(
+      (category) => category.category.name === selectedCategory && category.count > 0
     )
 
-    if (selectedCategoryContainsItems && selectedCategory) return
+    if (selectedCategoryWithItems) {
+      const selectedSubCategoryWithItems = Object.values(
+        selectedCategoryWithItems.subcategories
+      ).find((category) => category.subCategory.name === selectedSubCategory && category.count > 0)
+      if (!selectedSubCategoryWithItems) {
+        const subCategory = Object.entries(selectedCategoryWithItems.subcategories).toSorted(
+          (a, b) => b[1].count - a[1].count
+        )[0]
+        setSelectedSubCategory(subCategory?.[0] || null)
+      }
+      return
+    }
 
-    if (Object.keys(selectableTagsCount).length === 0) {
+    if (Object.keys(selectableCategories).length === 0) {
       console.log('Deselect category')
       setSelectedCategory(null)
       setSelectedSubCategory(null)
       return
     }
 
-    const tagToSelect = Object.entries(selectableTagsCount).sort((a, b) => b[1] - a[1])[0]
+    const category = Object.entries(selectableCategories).toSorted(
+      (a, b) => b[1].count - a[1].count
+    )[0]
 
-    const category = LISTING_CATEGORIES.find((e) => e.tags.includes(tagToSelect[0]))
-    if (category) {
-      console.log('Autoselect category', category.name)
-      setSelectedCategory(category.name)
+    const subCategory = Object.entries(category[1].subcategories).toSorted(
+      (a, b) => b[1].count - a[1].count
+    )[0]
+
+    if (category[0]) {
+      console.log('Autoselect category', category[0])
+      setSelectedCategory(category[0])
+      setSelectedSubCategory(subCategory?.[0] || null)
+    } else {
+      console.log('Deselect category')
+      setSelectedCategory(null)
       setSelectedSubCategory(null)
     }
     // Some objects are not stable! We use booleans to determine the change
@@ -252,12 +324,14 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
   }, [isGroupedItemsFetching, isValuationPending, setStashListFetching])
 
   useEffect(() => {
-    console.log('Set setSelectableCategories')
-    const selectableCategories = LISTING_CATEGORIES.filter((category) =>
-      Object.keys(selectableTagsCount)?.some((tag) => category.tags.includes(tag))
+    console.log('Set setSelectableCategories and setSelectableSubCategories')
+    setSelectableCategories(Object.values(selectableCategories).map((cat) => cat.category))
+    setSelectableSubCategories(
+      Object.values(selectableCategories).flatMap((cat) =>
+        Object.values(cat.subcategories).map((subCat) => subCat.subCategory)
+      )
     )
-    setSelectableCategories(selectableCategories)
-  }, [selectableTagsCount, setSelectableCategories])
+  }, [selectableCategories, setSelectableCategories, setSelectableSubCategories])
 
   return null
 }

@@ -2,7 +2,7 @@
 
 import { SUPPORTED_LEAGUES } from '@/lib/constants'
 import { calculateItemPrices } from '@/lib/item-util'
-import { ListingCategory } from '@/lib/listing-categories'
+import { ListingCategory, ListingSubCategory } from '@/lib/listing-categories'
 import { IDisplayedItem } from '@/types/echo-api/priced-item'
 import { IStashTab } from '@/types/echo-api/stash'
 import { ListingMode } from '@/types/sage-listing-type'
@@ -25,6 +25,7 @@ type State = {
   category: string | null
   subCategory: string | null
   selectableCategories: ListingCategory[]
+  selectableSubCategories: ListingSubCategory[]
   localMultiplier: number
   categoryListingMode: Record<string, ListingMode> // Persisted
   categoryMultiplier: Record<string, number> // Persisted
@@ -41,6 +42,7 @@ type Actions = {
   setCategory: (category: string | null) => void
   setSubCategory: (category: string | null) => void
   setSelectableCategories: (categories: ListingCategory[]) => void
+  setSelectableSubCategories: (categories: ListingSubCategory[]) => void
   debouncedMultiplier: _.DebouncedFunc<
     (multiplier: number, selectedCategory: string | null) => void
   >
@@ -67,6 +69,7 @@ const initialState: State = {
   category: null,
   subCategory: null,
   selectableCategories: [],
+  selectableSubCategories: [],
   localMultiplier: 100,
   categoryListingMode: {}, // Persisted
   categoryMultiplier: {}, // Persisted
@@ -92,6 +95,7 @@ export const useListingToolStore = create<State & Actions>()(
       setCategory: (category) => set({ category }),
       setSubCategory: (subCategory) => set({ subCategory }),
       setSelectableCategories: (selectableCategories) => set({ selectableCategories }),
+      setSelectableSubCategories: (selectableSubCategories) => set({ selectableSubCategories }),
       resetData: () => {
         set((state) => {
           let totalPrice = 0
@@ -164,7 +168,7 @@ export const useListingToolStore = create<State & Actions>()(
             categoryMultiplier
           }
         }),
-      setInitialItems: (items, category) =>
+      setInitialItems: (items) =>
         set((state) => {
           const preSelectedItems: RowSelectionState = {}
           // Preselect all items
