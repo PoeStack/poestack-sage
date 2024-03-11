@@ -79,7 +79,7 @@ const CharacterSelect = ({ selectedLeague, onIgnSelect }: CharacterSelectProps) 
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0 max-h-[var(--radix-popover-content-available-height)] w-full min-w-[var(--radix-popover-trigger-width)] overflow-hidden">
+      <PopoverContent className="p-0 max-h-[var(--radix-popover-content-available-height)] w-[var(--radix-popover-trigger-width)] overflow-hidden">
         <Command
           filter={(id, search) => {
             const found = selectableCharacters?.some((char) => {
@@ -129,7 +129,6 @@ const CharacterSelect = ({ selectedLeague, onIgnSelect }: CharacterSelectProps) 
                   <div>{c.name}</div>
                   <div className="flex flex-row gap-2 uppercase justify-between">
                     <div>{`Level ${c.level} ${c.class}`}</div>
-                    <div>{`${c.league} League`}</div>
                   </div>
                 </div>
               </CommandItem>
