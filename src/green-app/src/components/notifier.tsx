@@ -69,12 +69,11 @@ const Notifier = () => {
     // We do not save any cache - this has the effect, that the query starts directly after changing the category
     gcTime: 0,
     enabled: !!currentUser,
-    refetchOnWindowFocus: false,
     refetchInterval: 2000,
     retry: true
   })
 
-  const { data: allListings, isLoading } = useQuery({
+  const { data: allListings } = useQuery({
     queryKey: [currentUser?.profile?.uuid, 'my-listings'],
     queryFn: () => listMyListings().then((res) => res.filter((l) => !l.deleted)),
     enabled: !!currentUser?.profile?.uuid

@@ -40,7 +40,6 @@ const ListingsHandler = () => {
     // We do not save any cache - this has the effect, that the query starts directly after changing the category
     gcTime: 0,
     enabled: !!categoryItem,
-    refetchOnWindowFocus: false,
     refetchInterval: 2000,
     retry: true
   })
