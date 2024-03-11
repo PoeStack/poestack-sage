@@ -111,7 +111,7 @@ const SettingsDialogContent = ({ onClose }: SettingsDialogContentProps) => {
           <DialogFooter className="fley flex-row justify-end gap-1">
             <DialogClose asChild>
               <Button type="button" variant="secondary">
-                Discard
+                {form.formState.isDirty ? 'Discard' : 'Close'}
               </Button>
             </DialogClose>
             {/* <DialogClose asChild> */}
