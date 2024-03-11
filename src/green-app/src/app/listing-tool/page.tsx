@@ -47,7 +47,8 @@ dayjs.extend(utc)
 // Hide "Connect discord" when discord is connected? - Get the current connected discord
 // Add "Pin all selected items" switch
 // Clear cache on logout
-// Add hide columns select
+// feat: Add hide columns select
+// feat: Sound notifications
 
 type PageProps = {}
 

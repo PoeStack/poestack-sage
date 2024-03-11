@@ -210,9 +210,11 @@ export const useListingsStore = create<State & Actions>()(
           }
 
           // Set initial timestamp
-          if (state.category && state.fetchTimeStamps[state.league][state.category] === undefined) {
-            state.fetchTimeStamps[state.league][state.category] = 0
-          }
+          SUPPORTED_LEAGUES.forEach((league) => {
+            if (state.category && state.fetchTimeStamps[league][state.category] === undefined) {
+              state.fetchTimeStamps[league][state.category] = 0
+            }
+          })
 
           // Reset filterGroups
           state.filterGroups = [{ selected: true, mode: 'AND', filters: [] }]

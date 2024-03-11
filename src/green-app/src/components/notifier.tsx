@@ -163,11 +163,9 @@ const Notifier = () => {
         .filter((x) => x.data && !x.isPending)
         .map((x) => x.data!)
 
-      let valuations: SageValuationShard['valuations'] = {}
+      const valuations: Record<string, SageValuationShard['valuations']> = {}
       valuationShards.forEach((e) => {
-        // TODO: Distinct between leagues
-        // e.meta.league
-        valuations = { ...valuations, ...e.valuations }
+        valuations[e.meta.league] = { ...valuations[e.meta.league], ...e.valuations }
       })
 
       const isValuationError = valuationResults.some((result) => result.isError)
@@ -225,11 +223,15 @@ const Notifier = () => {
           listing = calculateListingFromOfferingListing(
             { ...offering, items: reqItems },
             summaries,
-            valuations
+            valuations[offering.meta.league]
           )
         }
       } else {
-        listing = calculateListingFromOfferingListing(offering, summaries, valuations)
+        listing = calculateListingFromOfferingListing(
+          offering,
+          summaries,
+          valuations[offering.meta.league]
+        )
       }
 
       if (validNotification && listing) {

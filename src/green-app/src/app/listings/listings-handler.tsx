@@ -107,10 +107,9 @@ const ListingsHandler = () => {
         .filter((x) => x.data && !x.isPending)
         .map((x) => x.data!)
 
-      let valuations: SageValuationShard['valuations'] = {}
+      const valuations: Record<string, SageValuationShard['valuations']> = {}
       valuationShards.forEach((e) => {
-        // TODO: Distinct between leagues
-        valuations = { ...valuations, ...e.valuations }
+        valuations[e.meta.league] = { ...valuations[e.meta.league], ...e.valuations }
       })
 
       const isValuationError = valuationResults.some((result) => result.isError)
@@ -131,7 +130,7 @@ const ListingsHandler = () => {
   useEffect(() => {
     if (listings && listings.length > 0 && startCalculation) {
       const nextListings = listings.map((listing) =>
-        calculateListingFromOfferingListing(listing, summaries, valuations)
+        calculateListingFromOfferingListing(listing, summaries, valuations[listing.meta.league])
       )
 
       // One user can have one category per league active. We delete or replace this
