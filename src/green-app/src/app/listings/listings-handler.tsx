@@ -28,40 +28,22 @@ const ListingsHandler = () => {
   const addListings = useListingsStore((state) => state.addListings)
   const cleanupListings = useListingsStore((state) => state.cleanupListings)
 
-  const {
-    data: listings,
-    isError,
-    isLoadingError,
-    isRefetching,
-    isRefetchError
-  } = useQuery({
+  const { data: listings } = useQuery({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps
-    queryKey: ['listings', league, categoryItem?.name || '', fetchTimeStamp],
-    queryFn: () => listListings(league, categoryItem!.name, fetchTimeStamp),
+    queryKey: ['listings', league, categoryItem?.name || ''],
+    queryFn: async () => {
+      const listings = await listListings(league, categoryItem!.name, fetchTimeStamp)
+      const nextMs = dayjs.utc().valueOf()
+      setFetchTimestamp(nextMs - 2000)
+      return listings
+    },
     // We do not save any cache - this has the effect, that the query starts directly after changing the category
     gcTime: 0,
     enabled: !!categoryItem,
     refetchOnWindowFocus: false,
+    refetchInterval: 2000,
     retry: true
   })
-
-  const enabled = useRef(isError)
-  enabled.current = isError || isLoadingError || isRefetching || isRefetchError
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (enabled.current) {
-        // We do not start the next request until the first is finished
-        console.warn('Skip request for next timestamp')
-        return
-      }
-      const nextMs = dayjs.utc().valueOf()
-      setFetchTimestamp(nextMs - 2000) // Request the data 2 sec ago
-    }, 2000)
-
-    return () => clearInterval(interval)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoryItem?.name])
 
   const { summaries, isSummaryPending, isSummaryFetching, isSummaryError } = useQueries({
     queries: categoryItem

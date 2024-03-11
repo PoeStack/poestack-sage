@@ -52,25 +52,25 @@ const Notifier = () => {
     (state) => state.openTradeOverviewInNewWindow
   )
 
-  const [fetchTimeStamp, setFetchTimestamp] = useState(0)
+  const [fetchTimeStamp, setFetchTimestamp] = useState(dayjs.utc().valueOf() - 2000)
   const currentUser = useAtomValue(currentUserAtom)
   const listedNotifications = useRef<Record<string, boolean>>({})
   const toast = useToast()
 
-  const {
-    data: notifications,
-    isError,
-    isLoadingError,
-    isRefetching,
-    isRefetchError
-  } = useQuery({
+  const { data: notifications } = useQuery({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps
-    queryKey: ['notifications', fetchTimeStamp],
-    queryFn: () => listNotifications(fetchTimeStamp),
+    queryKey: ['notifications'],
+    queryFn: async () => {
+      const notifications = await listNotifications(fetchTimeStamp)
+      const nextMs = dayjs.utc().valueOf()
+      setFetchTimestamp(nextMs - 2000)
+      return notifications
+    },
     // We do not save any cache - this has the effect, that the query starts directly after changing the category
     gcTime: 0,
-    enabled: !!currentUser && !!fetchTimeStamp,
+    enabled: !!currentUser,
     refetchOnWindowFocus: false,
+    refetchInterval: 2000,
     retry: true
   })
 
@@ -79,24 +79,6 @@ const Notifier = () => {
     queryFn: () => listMyListings().then((res) => res.filter((l) => !l.deleted)),
     enabled: !!currentUser?.profile?.uuid
   })
-
-  const enabled = useRef(isError)
-  enabled.current = isError || isLoadingError || isRefetching || isRefetchError || !currentUser
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (enabled.current) {
-        // We do not start the next request until the first is finished
-        console.warn('Skip request for next timestamp')
-        return
-      }
-      const nextMs = dayjs.utc().valueOf()
-      setFetchTimestamp(nextMs - 2000) // Request the data 2 sec ago
-    }, 2000)
-
-    return () => clearInterval(interval)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const parsedNotifications = useMemo(() => {
     return notifications?.notifications.map((n): ParsedNotification => {
