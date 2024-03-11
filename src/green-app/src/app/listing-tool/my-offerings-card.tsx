@@ -225,7 +225,7 @@ export function MyOfferingsCard({
                                   onClick={() => {
                                     const stashesToSelect = stashes
                                       ?.map((x) => x.children || x)
-                                      .flatMap((x) => x)
+                                      .flat()
                                       ?.filter((x) => meta.tabs.some((y) => x.id === y))
                                     if (stashesToSelect) {
                                       setCategory(meta.category)

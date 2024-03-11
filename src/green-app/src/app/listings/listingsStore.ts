@@ -210,8 +210,8 @@ export const useListingsStore = create<State & Actions>()(
           }
 
           // Set initial timestamp
-          if (categoryKey && state.fetchTimeStamps[state.league][categoryKey] === undefined) {
-            state.fetchTimeStamps[state.league][categoryKey] = 0
+          if (state.category && state.fetchTimeStamps[state.league][state.category] === undefined) {
+            state.fetchTimeStamps[state.league][state.category] = 0
           }
 
           // Reset filterGroups
@@ -236,7 +236,7 @@ export const useListingsStore = create<State & Actions>()(
 
       setFetchTimestamps: (timestamp) =>
         set((state) => {
-          state.fetchTimeStamps[state.league][getCategory(state)] = timestamp
+          state.fetchTimeStamps[state.league][state.category || ''] = timestamp
         }),
 
       setFilterGroups: (filterGroups) =>

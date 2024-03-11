@@ -217,7 +217,7 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
           const pricedStackedItems = mergeItems(pricedItems)
           return mapItemsToDisplayedItems(pricedStackedItems, selectedMultiplier, overprices)
         })
-        .flatMap((x) => x)
+        .flat()
 
       displayedItems = mergeItemStacks(displayedItems)
 

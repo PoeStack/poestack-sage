@@ -175,7 +175,7 @@ const Notifier = () => {
           }
         })
       )
-      .flatMap((x) => x),
+      .flat(),
     combine: (valuationResults) => {
       // TODO: How to handle multiple leagues???
       const valuationShards = valuationResults
