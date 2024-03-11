@@ -119,7 +119,7 @@ const ListingsHandler = () => {
                 }
               })
             )
-            .flatMap((x) => x)
+            .flat()
         : [],
     combine: (valuationResults) => {
       const valuationShards = valuationResults

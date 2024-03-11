@@ -217,7 +217,7 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
     }
     // Some objects are not stable! We use booleans to determine the change
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [league, stashes, isGroupedItemsSuccess, isGroupedItemsLoading, setSelectedCategory])
+  }, [league, stashes, isGroupedItemsSuccess, isGroupedItemsFetching, setSelectedCategory])
 
   const { data: displayedItems, isValuationPending } = useQueries({
     queries:
@@ -250,7 +250,7 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
             return item
           })
         })
-        .flatMap((x) => x)
+        .flat()
 
       // Merge all items to stashtabs
       const mergedStashItems: { stashTab: IStashTab; valuation: ValuatedItem[] }[] = []
