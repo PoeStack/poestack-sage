@@ -40,7 +40,7 @@ export type FilterOption = {
 export type ListingFilter = {
   option: FilterOption | null
   selected: boolean
-  minimumQuantity: number | undefined
+  minimumQuantity?: number
 }
 
 export type ListingFilterGroupModes = 'AND' | 'NOT' | 'COUNT'
@@ -48,6 +48,7 @@ export type ListingFilterGroupModes = 'AND' | 'NOT' | 'COUNT'
 export type ListingFilterGroup = {
   mode: ListingFilterGroupModes
   selected: boolean
+  minimumQuantity?: number // For COUNT
   filters: ListingFilter[]
 }
 
@@ -162,7 +163,8 @@ const ListingFilterGroupCard = ({
   function setMode(mode: ListingFilterGroupModes) {
     onGroupChange({
       ...group,
-      mode: mode
+      mode: mode,
+      minimumQuantity: undefined
     })
   }
 
@@ -188,49 +190,76 @@ const ListingFilterGroupCard = ({
     [group, onGroupChange]
   )
 
+  const handleMinQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const newValue = parseInt(e.target.value)
+    if (Number.isNaN(newValue) || newValue < 0) {
+      onGroupChange({
+        ...group,
+        minimumQuantity: undefined
+      })
+    } else {
+      onGroupChange({
+        ...group,
+        minimumQuantity: newValue
+      })
+    }
+  }
+
   return (
-    <div className="flex flex-col gap-1 px-2">
+    <div className="flex flex-col gap-1 px-2 mt-1">
       <div className="flex flex-row items-center px-1 gap-4">
         <Checkbox checked={group.selected} onClick={() => toggleSelected()} />
-        {!editMode && (
+        <div className="flex flex-row w-full items-center gap-2">
+          {!editMode && (
+            <Button
+              className="flex flex-1 justify-start hover:bg-inherit border-b rounded-none"
+              variant="ghost"
+              onClick={() => toggleSelected()}
+            >
+              {group.mode}
+            </Button>
+          )}
+          {editMode && (
+            <div className="flex flex-1 justify-start hover:bg-inherit">
+              <BasicSelect
+                options={['AND', 'NOT', 'COUNT'] as ListingFilterGroupModes[]}
+                onSelect={(m) => {
+                  setEditMode(false)
+                  setMode(m as ListingFilterGroupModes)
+                }}
+                defaultOption={group.mode}
+                open={groupSelectOpen}
+                onOpenChange={(open) => {
+                  setGroupSelectOpen(open)
+                  if (!open) setTimeout(() => setEditMode(false), 0)
+                }}
+              />
+            </div>
+          )}
           <Button
-            className="flex flex-1 justify-start hover:bg-inherit border-b rounded-none"
+            size="icon"
             variant="ghost"
-            onClick={() => toggleSelected()}
+            onClick={() => {
+              setEditMode(true)
+              setGroupSelectOpen(true)
+            }}
           >
-            {group.mode}
+            <SquarePenIcon className="w-4 h-4" />
           </Button>
-        )}
-        {editMode && (
-          <div className="flex flex-1 justify-start hover:bg-inherit">
-            <BasicSelect
-              options={['AND', 'NOT', 'COUNT'] as ListingFilterGroupModes[]}
-              onSelect={(m) => {
-                setEditMode(false)
-                setMode(m as ListingFilterGroupModes)
-              }}
-              defaultOption={group.mode}
-              open={groupSelectOpen}
-              onOpenChange={(open) => {
-                setGroupSelectOpen(open)
-                if (!open) setTimeout(() => setEditMode(false), 0)
-              }}
+          {group.mode === 'COUNT' && (
+            <Input
+              type="number"
+              className="max-w-20 text-center remove-arrow"
+              placeholder="MIN"
+              min={0}
+              value={group.minimumQuantity || ''}
+              onChange={handleMinQuantityChange}
             />
-          </div>
-        )}
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={() => {
-            setEditMode(true)
-            setGroupSelectOpen(true)
-          }}
-        >
-          <SquarePenIcon className="w-4 h-4" />
-        </Button>
-        <Button className="w-9 h-9" size="icon" variant="ghost" onClick={() => removeGroup()}>
-          <XIcon className="w-4 h-4" />
-        </Button>
+          )}
+          <Button className="w-9 h-9" size="icon" variant="ghost" onClick={() => removeGroup()}>
+            <XIcon className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
       {group.selected && (
         <>
@@ -298,8 +327,6 @@ function ListingGroupFilterSelect({
 }: ListingGroupFilterSelectProps) {
   const [popoverOpen, setPopoverOpen] = useState(false)
 
-  const [minQuantity, setMinQuantity] = useState<number | string>(filter.minimumQuantity || '')
-
   const selectedOption = useMemo(
     () => options?.find((option) => option.hash === filter.option?.hash),
     [filter.option?.hash, options]
@@ -308,10 +335,8 @@ function ListingGroupFilterSelect({
   const handleMinQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newValue = parseFloat(e.target.value)
     if (Number.isNaN(newValue) || newValue < 0) {
-      setMinQuantity('')
       updateFilter(index, { ...filter, minimumQuantity: undefined })
     } else {
-      setMinQuantity(newValue)
       updateFilter(index, { ...filter, minimumQuantity: newValue })
     }
   }
@@ -390,7 +415,7 @@ function ListingGroupFilterSelect({
             className="max-w-20 text-center remove-arrow"
             placeholder="MIN"
             min={0}
-            value={minQuantity}
+            value={filter.minimumQuantity || ''}
             onChange={handleMinQuantityChange}
           />
         ) : (

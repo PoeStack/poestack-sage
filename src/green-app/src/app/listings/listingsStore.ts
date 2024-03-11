@@ -243,9 +243,8 @@ export const useListingsStore = create<State & Actions>()(
 
       setFilterGroups: (filterGroups) =>
         set((state) => {
-          if (!getCategory(state)) return
-
           state.filterGroups = filterGroups
+          if (!getCategory(state)) return
           state.filteredByGroupListings = {}
           calculateListings(
             getListingsByCategory(state),

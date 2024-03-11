@@ -158,7 +158,6 @@ const Notifier = () => {
       )
       .flat(),
     combine: (valuationResults) => {
-      // TODO: How to handle multiple leagues???
       const valuationShards = valuationResults
         .filter((x) => x.data && !x.isPending)
         .map((x) => x.data!)
@@ -310,18 +309,12 @@ const Notifier = () => {
           }
         )
       } else {
-        toast(
-          'You received an invalid notification because a buyer want to buy items which are not offered',
-          'warning',
-          {
-            toastId: n.id,
-            data: listing
-          }
-        )
-        console.warn('The received notification body is invalid. Not all items found')
+        toast(`Be careful ${n.body.ign} wants to buy items which are not offered ...`, 'warning', {
+          toastId: n.id,
+          data: listing
+        })
+        console.warn(`Be careful ${n.body.ign} wants to buy items which are not offered ...`)
       }
-
-      // TODO: List username + vouchrank + short message what he wants to buy
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startCalculation, parsedNotifications])
