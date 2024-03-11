@@ -238,7 +238,7 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
 
   useEffect(() => {
     console.log('Set setInitialItems')
-    setInitialItems(displayedItems, selectedCategory + (selectedSubCategory || ''))
+    setInitialItems(displayedItems)
   }, [displayedItems, selectedCategory, selectedSubCategory, setInitialItems])
 
   useEffect(() => {

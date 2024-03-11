@@ -54,14 +54,13 @@ export async function authDiscord(code: string) {
 }
 
 export async function listMyListings() {
-  const resp = await Axios.get(`${baseUrl}/my/listings`, {
+  const resp = await Axios.get<SageDatabaseOfferingType[]>(`${baseUrl}/my/listings`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('doNotShareJwt')}`
     }
   })
-  const listings = resp.data as SageDatabaseOfferingType[]
 
-  return listings
+  return resp.data
     .map((listing): SageOfferingType => {
       return {
         ...listing,
@@ -95,7 +94,7 @@ export function deleteListing(league: string, category: string, subCategory: str
 }
 
 export async function listListings(league: string, category: string, startTimeMs: number) {
-  const resp = await Axios.get(
+  const resp = await Axios.get<SageDatabaseOfferingType[]>(
     `${baseUrl}/listings/${league.toLowerCase()}/${category}/${includeTimeOffset(startTimeMs)}`,
     {
       headers: {
@@ -103,7 +102,12 @@ export async function listListings(league: string, category: string, startTimeMs
       }
     }
   )
-  return resp.data as SageDatabaseOfferingType[]
+  resp.data.forEach((listing) => {
+    if (!listing.meta.subCategory || listing.meta.subCategory === 'ALL') {
+      listing.meta.subCategory = ''
+    }
+  })
+  return resp.data
 }
 
 export async function listValuations(league: string, tag: string): Promise<SageValuationShard> {
@@ -141,54 +145,57 @@ export type Notification = {
   body: string
 }
 export async function listNotifications(startTimeMs: number) {
-  const resp = await Axios.get(`${baseUrl}/notifications/${includeTimeOffset(startTimeMs)}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('doNotShareJwt')}`
+  const resp = await Axios.get<{ notifications: Notification[] }>(
+    `${baseUrl}/notifications/${includeTimeOffset(startTimeMs)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('doNotShareJwt')}`
+      }
     }
-  })
-  return resp.data as { notifications: Notification[] }
+  )
+  return resp.data
 }
 
 //#region GGG-API
 
 export async function listStashes(league: string) {
-  const resp = await Axios.get(`${baseUrl}/stashes/${league}`, {
+  const resp = await Axios.get<IStashTab[]>(`${baseUrl}/stashes/${league}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('doNotShareJwt')}`
     },
     timeout: 6 * 60 * 1000
   })
-  return resp.data as IStashTab[]
+  return resp.data
 }
 
 export async function listStash(league: string, stashId: string) {
-  const resp = await Axios.get(`${baseUrl}/stash/${league}/${stashId}`, {
+  const resp = await Axios.get<IStashTab>(`${baseUrl}/stash/${league}/${stashId}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('doNotShareJwt')}`
     },
     timeout: 6 * 60 * 1000
   })
-  return resp.data as IStashTab
+  return resp.data
 }
 
 export async function listCharacters() {
-  const resp = await Axios.get(`${baseUrl}/characters`, {
+  const resp = await Axios.get<PoeCharacter[]>(`${baseUrl}/characters`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('doNotShareJwt')}`
     },
     timeout: 6 * 60 * 1000
   })
-  return resp.data as PoeCharacter[]
+  return resp.data
 }
 
 export async function listLeagues() {
-  const resp = await Axios.get(`${baseUrl}/leagues`, {
+  const resp = await Axios.get<PoeLeague[]>(`${baseUrl}/leagues`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('doNotShareJwt')}`
     },
     timeout: 6 * 60 * 1000
   })
-  return resp.data as PoeLeague[]
+  return resp.data
 }
 
 //#endregion

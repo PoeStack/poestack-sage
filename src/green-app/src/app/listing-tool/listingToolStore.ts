@@ -11,6 +11,14 @@ import _ from 'lodash-es'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
+export const getCategory = (
+  state?: State,
+  category?: string | null,
+  subCategory?: string | null
+) => {
+  return (category || state?.category || '') + (subCategory || state?.subCategory || '')
+}
+
 type State = {
   league: string // Persisted
   stashes: Record<string, IStashTab[]>
@@ -40,7 +48,7 @@ type Actions = {
   setLocalMultiplier: (multiplier: number, category: string | null) => void
   setMultiplier: (localMultiplier: number, category: string | null) => void
   resetData: () => void
-  setInitialItems: (items: IDisplayedItem[], category: string | null) => void
+  setInitialItems: (items: IDisplayedItem[]) => void
   updateData: (rowIndex: number, columnId: string, value: number | string) => void
   setSelectedItems: React.Dispatch<React.SetStateAction<RowSelectionState>>
   reset: () => void
@@ -118,7 +126,7 @@ export const useListingToolStore = create<State & Actions>()(
           } else if (category === undefined) {
             categoryListingMode = {
               ...state.categoryListingMode,
-              [state.category + (state.subCategory || '')]: listingMode
+              [getCategory(state)]: listingMode
             }
           }
           return { categoryListingMode }
@@ -165,9 +173,8 @@ export const useListingToolStore = create<State & Actions>()(
               preSelectedItems[item.group.hash] = true
             }
           })
-
-          const multiplier = category
-            ? state.categoryMultiplier[category] || state.localMultiplier
+          const multiplier = getCategory(state)
+            ? state.categoryMultiplier[getCategory(state)] || state.localMultiplier
             : state.localMultiplier
 
           let totalPrice = 0

@@ -27,6 +27,7 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
+import { getCategory } from './listingToolStore'
 dayjs.extend(relativeTime)
 dayjs.extend(utc)
 
@@ -233,7 +234,7 @@ export function MyOfferingsCard({
                                       setStashes(stashesToSelect)
                                       setListingMode(
                                         meta.listingMode,
-                                        meta.category + (!meta.subCategory ? '' : meta.subCategory)
+                                        getCategory(undefined, meta.category, meta.subCategory)
                                       )
                                     }
                                   }}

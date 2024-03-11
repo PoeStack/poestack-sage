@@ -35,7 +35,7 @@ import { ListingCard } from './listing-card'
 import ListingToolHandler from './listing-tool-handler'
 import ListingToolTable from './listing-tool-table'
 import { listingToolTableEditModeColumns } from './listing-tool-table-columns'
-import { useListingToolStore } from './listingToolStore'
+import { getCategory, useListingToolStore } from './listingToolStore'
 import { MyOfferingsCard } from './my-offerings-card'
 dayjs.extend(utc)
 
@@ -74,8 +74,7 @@ export default function Page() {
       setSelectedSubCategory: state.setSubCategory,
       stashes: state.stashes[state.league] || [],
       setStashes: state.setStashes,
-      selectedListingMode:
-        state.categoryListingMode[state.category + (state.subCategory || '')] || 'bulk',
+      selectedListingMode: state.categoryListingMode[getCategory(state)] || 'bulk',
       setSelectedListingMode: state.setCategoryListingMode
     }))
   )

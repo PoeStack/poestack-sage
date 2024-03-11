@@ -48,10 +48,9 @@ export const calculateListingFromOfferingListing = (
   }
 
   const categoryItem = LISTING_CATEGORIES.find((ca) => ca.name === offering.meta.category)
-  const selectedCategory =
-    offering.meta.subCategory && offering.meta.subCategory !== 'ALL'
-      ? categoryItem?.subCategories.find((c) => c.name === offering.meta.subCategory)
-      : categoryItem
+  const selectedCategory = offering.meta.subCategory
+    ? categoryItem?.subCategories.find((c) => c.name === offering.meta.subCategory)
+    : categoryItem
 
   return {
     userId: offering.userId,
@@ -59,10 +58,6 @@ export const calculateListingFromOfferingListing = (
     deleted: offering.deleted,
     meta: {
       ...offering.meta,
-      subCategory:
-        !offering.meta.subCategory || offering.meta.subCategory === 'ALL'
-          ? ''
-          : offering.meta.subCategory,
       multiplier,
       calculatedTotalPrice,
       calculatedTotalValuation,
