@@ -23,11 +23,13 @@ import {
   CircleUserIcon,
   LayoutListIcon,
   PackageIcon,
+  RefreshCwIcon,
   Trash2Icon
 } from 'lucide-react'
 import Image from 'next/image'
 import { memo, useEffect, useMemo, useState } from 'react'
 import { getCategory } from './listingToolStore'
+import { cn } from '@/lib/utils'
 dayjs.extend(relativeTime)
 dayjs.extend(utc)
 
@@ -79,9 +81,16 @@ function MyOfferingsCard({
     enabled: !!currentUser?.profile?.uuid && !!league
   })
 
-  const { data: allListings, isLoading } = useQuery({
+  const { data: allListings, isFetching } = useQuery({
     queryKey: [currentUser?.profile?.uuid, 'my-listings'],
-    queryFn: () => listMyListings().then((res) => res.filter((l) => !l.deleted)),
+    queryFn: () =>
+      listMyListings().then((res) =>
+        res.filter((l) => {
+          if (l.deleted) return false
+          const now = dayjs.utc().valueOf()
+          return now - l.meta.timestampMs < 30 * 60 * 1000
+        })
+      ),
     enabled: !!currentUser?.profile?.uuid
   })
 
@@ -257,7 +266,7 @@ function MyOfferingsCard({
                             <Button
                               size="icon"
                               variant="ghost"
-                              disabled={isLoading || !currentUser?.profile?.uuid}
+                              disabled={isFetching || !currentUser?.profile?.uuid}
                               onClick={() => {
                                 deleteMutation.mutate({
                                   league: meta.league,
@@ -280,6 +289,11 @@ function MyOfferingsCard({
                   </motion.div>
                 )
               })
+            ) : isFetching ? (
+              <div className="flex flex-row justify-center items-center h-20 text-sm gap-2">
+                Loading ...
+                <RefreshCwIcon className="w-4 h-w shrink-0 animate-spin" />
+              </div>
             ) : (
               <div className="flex justify-center items-center h-20 text-sm">No offerings.</div>
             )}

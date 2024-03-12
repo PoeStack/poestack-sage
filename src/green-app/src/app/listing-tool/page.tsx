@@ -43,7 +43,6 @@ dayjs.extend(utc)
 // Save listings to the localstore without items => When they got inactive(> 30min) then they will move over to another subsection in my-offerings-view
 // Errorhandling
 // Go through all categories
-// Add offerings loading indicator
 // Hide "Connect discord" when discord is connected? - Get the current connected discord
 // Add "Pin all selected items" switch
 // Clear cache on logout
