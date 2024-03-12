@@ -14,6 +14,7 @@ export const modifiedItemsAtom = atom<IDisplayedItem[]>([])
 interface DataTableProps {
   columns: ColumnDef<IDisplayedItem>[]
   className?: string
+  isLoading?: boolean
   globalFilter: string
   onGlobalFilterChange: (value: string) => void
   globalFilterFn?: FilterFnOption<IDisplayedItem>
@@ -23,6 +24,7 @@ interface DataTableProps {
 const ListingToolTable = ({
   columns,
   className,
+  isLoading,
   globalFilter,
   onGlobalFilterChange,
   globalFilterFn
@@ -87,7 +89,7 @@ const ListingToolTable = ({
 
   return (
     <div className={className}>
-      <DataTable options={tableOptions} pageSizes={pageSizes} />
+      <DataTable options={tableOptions} pageSizes={pageSizes} isLoading={isLoading} />
     </div>
   )
 }

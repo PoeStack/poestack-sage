@@ -20,6 +20,7 @@ import {
 } from '@tanstack/react-table'
 import React, { memo } from 'react'
 import { TablePagination } from '../table-pagination'
+import { RefreshCwIcon } from 'lucide-react'
 
 export type DataTableOptions<TData> = Omit<
   TableOptions<TData>,
@@ -29,9 +30,10 @@ export type DataTableOptions<TData> = Omit<
 type DataTableProps<TData> = {
   options: DataTableOptions<TData>
   pageSizes?: number[]
+  isLoading?: boolean
 }
 
-const DataTable = <TData,>({ options, pageSizes }: DataTableProps<TData>) => {
+const DataTable = <TData,>({ options, pageSizes, isLoading }: DataTableProps<TData>) => {
   const table = useReactTable({
     enableColumnResizing: true,
     columnResizeMode: 'onChange',
@@ -133,7 +135,14 @@ const DataTable = <TData,>({ options, pageSizes }: DataTableProps<TData>) => {
             ) : (
               <TableRow>
                 <TableCell colSpan={options.columns.length} className="h-[6.5rem] text-center">
-                  No results.
+                  {isLoading ? (
+                    <div className="flex flex-row justify-center items-center gap-2">
+                      Loading items ...
+                      <RefreshCwIcon className="w-4 h-w shrink-0 animate-spin" />
+                    </div>
+                  ) : (
+                    <>No results.</>
+                  )}
                 </TableCell>
               </TableRow>
             )}

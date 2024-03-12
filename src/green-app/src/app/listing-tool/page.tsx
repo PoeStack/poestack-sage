@@ -296,6 +296,7 @@ export default function Page() {
             </div>
             <ListingToolTable
               className=""
+              isLoading={isStashListItemsFetching}
               columns={columns as any}
               globalFilter={globalFilter}
               onGlobalFilterChange={setGlobalFilter}

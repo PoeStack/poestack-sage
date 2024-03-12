@@ -84,7 +84,6 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
 
   const {
     data: [categoryTagItem, selectableCategories, ungroupedItems],
-    // isGroupedItemsPending,
     isGroupedItemsSuccess,
     isGroupedItemsLoading,
     isGroupedItemsFetching,
@@ -154,7 +153,6 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
 
     return {
       data: [categoryTagItem, selectableCategories, ungroupedItems],
-      // isGroupedItemsPending: groupedItemsResults.some((result) => result.isPending),
       isGroupedItemsSuccess: groupedItemsResults.some((result) => result.isSuccess),
       isGroupedItemsLoading: groupedItemsResults.some((result) => result.isLoading),
       isGroupedItemsFetching: groupedItemsResults.some((result) => result.isFetching),
@@ -219,7 +217,11 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [league, stashes, isGroupedItemsSuccess, isGroupedItemsFetching, setSelectedCategory])
 
-  const { data: displayedItems, isValuationPending } = useQueries({
+  const {
+    data: displayedItems,
+    isValuationPending,
+    isValuationError
+  } = useQueries({
     queries:
       categoryTagItem && league
         ? Object.keys(categoryTagItem).map((tag) => {
@@ -293,16 +295,12 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
 
       displayedItems = mergeItemStacks(displayedItems)
 
+      const isValuationPending = valuationResults.some((result) => result.isPending)
       const isValuationError =
         isGroupedItemsError || valuationResults.some((result) => result.isError)
-      const isValuationFetching =
-        isGroupedItemsFetching || valuationResults.some((result) => result.isFetching)
       return {
-        data: isValuationError || isValuationFetching ? [] : displayedItems,
-        // We have stash indicators for error handling or informations
-        // data: displayedItems,
-        isValuationPending: valuationResults.some((result) => result.isPending),
-        isValuationFetching,
+        data: isGroupedItemsLoading || isValuationPending || isValuationError ? [] : displayedItems,
+        isValuationPending,
         isValuationError
       }
     }
@@ -320,8 +318,8 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
 
   useEffect(() => {
     console.log('Set setStashListFetching')
-    setStashListFetching(isGroupedItemsFetching || isValuationPending)
-  }, [isGroupedItemsFetching, isValuationPending, setStashListFetching])
+    setStashListFetching(isGroupedItemsLoading || isValuationPending || isValuationError)
+  }, [isGroupedItemsLoading, isValuationPending, isValuationError, setStashListFetching])
 
   useEffect(() => {
     console.log('Set setSelectableCategories and setSelectableSubCategories')
