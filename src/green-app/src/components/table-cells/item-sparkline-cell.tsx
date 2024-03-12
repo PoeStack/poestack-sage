@@ -6,7 +6,7 @@ import { Area, AreaChart, ResponsiveContainer } from 'recharts'
 
 type SparklineCellProps = {
   valuation?: SageValuation
-  totalChange: number
+  totalChange: number | string
   mode: '2 days' | '7 days'
   animation?: boolean
 }
@@ -55,13 +55,15 @@ export const SparklineCell = ({ valuation, totalChange, mode, animation }: Spark
           <div
             className={cn(
               'shrink-0 text-right whitespace-nowrap pl-1 -mr-1 min-w-12',
-              totalChange > 0 && ` text-green-400`,
-              totalChange < 0 && ` text-red-400`
+              typeof totalChange === 'number' && totalChange > 0 && ` text-green-400`,
+              typeof totalChange === 'number' && totalChange < 0 && ` text-red-400`
             )}
           >
-            {totalChange.toLocaleString(undefined, {
-              maximumFractionDigits: 1
-            })}{' '}
+            {typeof totalChange === 'number'
+              ? totalChange.toLocaleString(undefined, {
+                  maximumFractionDigits: 1
+                }) + ' '
+              : totalChange}
             %
           </div>
         </div>

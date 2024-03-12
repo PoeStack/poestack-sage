@@ -19,13 +19,13 @@ export function historyColumn<T extends { valuation?: SageValuation }>(
     accessorKey: key,
     accessorFn: (pricedItem) => {
       const valuation = pricedItem.valuation
-      if (!valuation) return 0
+      if (!valuation) return '- '
       // Remove indexes
       const history =
         mode === '2 days'
           ? valuation.history.primaryValueHourly
           : valuation.history.primaryValueDaily
-      if (history.length < 2) return 0
+      if (history.length < 2) return '- '
       let i = history.length
       let indexToUse = history.length
       while (i--) {
@@ -34,7 +34,10 @@ export function historyColumn<T extends { valuation?: SageValuation }>(
           break
         }
       }
-      if (indexToUse === 0) return 0
+      if (indexToUse === 0) return '- '
+
+      if (!history[indexToUse]) return '- '
+      if (!history[0]) return '- '
 
       return (history[indexToUse] / history[0] - 1) * 100
     },
@@ -48,7 +51,7 @@ export function historyColumn<T extends { valuation?: SageValuation }>(
     },
     cell: ({ row }) => {
       const value = row.original.valuation
-      const totalChange = row.getValue<number>(key)
+      const totalChange = row.getValue<number | string>(key)
       return (
         <SparklineCell
           valuation={value}
