@@ -26,7 +26,7 @@ import {
   Trash2Icon
 } from 'lucide-react'
 import Image from 'next/image'
-import { useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { getCategory } from './listingToolStore'
 dayjs.extend(relativeTime)
 dayjs.extend(utc)
@@ -58,7 +58,7 @@ type MyOfferingsCardProps = {
   setListingMode: (listingMode: ListingMode, category?: string | null) => void
 }
 
-export function MyOfferingsCard({
+function MyOfferingsCard({
   league,
   setCategory,
   setSubCategory,
@@ -289,3 +289,5 @@ export function MyOfferingsCard({
     </div>
   )
 }
+
+export default memo(MyOfferingsCard)
