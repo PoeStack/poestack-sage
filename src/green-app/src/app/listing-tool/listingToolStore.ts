@@ -178,8 +178,8 @@ export const useListingToolStore = create<State & Actions>()(
             }
           })
           const multiplier = getCategory(state)
-            ? state.categoryMultiplier[getCategory(state)] || state.localMultiplier
-            : state.localMultiplier
+            ? state.categoryMultiplier[getCategory(state)] || 100
+            : 100
 
           let totalPrice = 0
           items.forEach((item) => {
