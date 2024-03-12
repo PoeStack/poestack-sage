@@ -18,6 +18,8 @@ export const SparklineCell = ({ valuation, totalChange, mode, animation }: Spark
     const history =
       mode === '2 days' ? valuation.history.primaryValueHourly : valuation.history.primaryValueDaily
 
+    if (history.length < 2) return []
+
     return history.map((value) => {
       const format = formatValue(value, 'chaos')
       return {

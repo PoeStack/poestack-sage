@@ -9,7 +9,7 @@ type ColumnProps<T> = Partial<ColumnDef<T>> & {
 }
 
 export function historyColumn<T extends { valuation?: SageValuation }>(
-  { mode, animation, ...props }: ColumnProps<T> = { mode: '7 days' }
+  { mode, animation, ...props }: ColumnProps<T> = { mode: '2 days' }
 ): ColumnDef<T> {
   const key = 'valuation'
   const header = mode === '2 days' ? 'Price last 2 days' : 'Price last 7 days'

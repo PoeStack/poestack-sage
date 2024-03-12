@@ -15,7 +15,7 @@ export const listingTableBulkModeColumns = (): ColumnDef<SageListingItemType>[] 
   nameColumn(),
   propsColumn(),
   quantityColumn(),
-  historyColumn({ mode: '7 days', animation: false }),
+  historyColumn({ mode: '2 days', animation: false }),
   priceColumn({
     accessorKey: 'price',
     accessorFn: (item) => item.price,
@@ -42,7 +42,7 @@ export const listingTradeSingleModeColumns = (): ColumnDef<SageListingItemType>[
   nameColumn(),
   propsColumn(),
   quantityColumn(),
-  historyColumn({ mode: '7 days', animation: false }),
+  historyColumn({ mode: '2 days', animation: false }),
   priceColumn({
     accessorKey: 'price',
     accessorFn: (item) => item.price,
