@@ -15,10 +15,8 @@ export function multiplierColumn<T extends {}>(props: ColumnProps<T>): ColumnDef
     accessorKey: key,
     enableSorting: true,
     enableGlobalFilter: false,
-    size: 110,
     meta: {
-      headerWording: header,
-      staticResizing: true
+      headerWording: header
     },
     cell: ({ cell }) => {
       const value = cell.getValue<string>()

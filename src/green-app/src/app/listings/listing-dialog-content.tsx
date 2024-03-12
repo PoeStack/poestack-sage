@@ -42,9 +42,9 @@ export default function ListingDialogContent() {
 
   const columns = useMemo(() => {
     if (selectedListing.meta.listingMode === 'bulk') {
-      return listingTableBulkModeColumns({ listingMode: selectedListing.meta.listingMode })
+      return listingTableBulkModeColumns()
     } else {
-      return listingTradeSingleModeColumns({ listingMode: selectedListing.meta.listingMode })
+      return listingTradeSingleModeColumns()
     }
   }, [selectedListing.meta.listingMode])
 
@@ -104,7 +104,7 @@ export default function ListingDialogContent() {
         </Button>
         <DialogClose asChild>
           <Button type="button" variant="secondary">
-            {selectedListing.meta.listingMode === 'bulk' ? 'Close' : 'Close & Discard Changes'}
+            Close
           </Button>
         </DialogClose>
       </DialogFooter>

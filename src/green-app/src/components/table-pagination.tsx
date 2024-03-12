@@ -48,7 +48,7 @@ export function TablePagination<TData>({
   }, [enableHotkeyNavigation, table])
 
   return (
-    <div className={cn('flex items-center justify-between px-2 py-4', className)}>
+    <div className={cn('flex items-center justify-between px-2 pt-4', className)}>
       {showSelected ? (
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{' '}
