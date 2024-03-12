@@ -58,7 +58,7 @@ type Actions = {
 
 const calculateTotalPrice = (item: IDisplayedItem, selectedItems: RowSelectionState) => {
   if (item.group && selectedItems[item.group.hash]) {
-    return item.calculatedTotal
+    return item.calculatedTotalPrice
   }
   return 0
 }

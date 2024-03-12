@@ -1,19 +1,17 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 'use client'
 
-import CurrencyDisplay from '@/components/currency-display'
 import { currentDivinePriceAtom } from '@/components/providers'
+import { priceColumn } from '@/components/table-columns/price-column'
 import { TimeTracker } from '@/components/time-tracker'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useWhisperHashCopied } from '@/hooks/useWhisperHash'
-import { CurrencySwitch } from '@/lib/currency'
 import { cn } from '@/lib/utils'
 import { createWishperAndCopyToClipboard } from '@/lib/whsiper-util'
 import { ListingMode, SageListingType } from '@/types/sage-listing-type'
 import { ColumnDef } from '@tanstack/react-table'
 import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
 import utc from 'dayjs/plugin/utc'
 import { useAtomValue } from 'jotai'
 import {
@@ -26,7 +24,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { TableColumnHeader } from '../../components/column-header'
 import { useListingsStore } from './listingsStore'
-dayjs.extend(relativeTime)
+import { multiplierColumn } from '@/components/table-columns/multiplier-column'
 dayjs.extend(utc)
 
 export function categoryColumn(): ColumnDef<SageListingType> {
@@ -110,79 +108,6 @@ export function sellerColumn(): ColumnDef<SageListingType> {
     cell: ({ row }) => {
       const value = row.getValue<string>(key)
       return <div>{value}</div>
-    }
-  }
-}
-
-export function totalPriceColumn(): ColumnDef<SageListingType> {
-  const key = 'totalPrice'
-  const header = 'Price'
-
-  return {
-    header: ({ column }) => <TableColumnHeader column={column} title={header} align="right" />,
-    accessorKey: key,
-    accessorFn: (listing) => {
-      return listing.meta.calculatedTotalPrice
-    },
-    enableResizing: false,
-    enableSorting: true,
-    enableGlobalFilter: false,
-    meta: {
-      headerWording: header
-    },
-    cell: ({ row }) => {
-      const value = row.getValue<number>(key)
-      return <ItemValueCell value={value} />
-    }
-  }
-}
-
-type ItemValueCellProps = {
-  value: number | string
-  editable?: boolean
-  showChange?: boolean
-  toCurrency?: CurrencySwitch
-}
-
-const ItemValueCell = ({ value, showChange, toCurrency }: ItemValueCellProps) => {
-  return (
-    <div className="float-end">
-      {typeof value === 'number' ? (
-        <CurrencyDisplay
-          value={value}
-          showChange={showChange}
-          toCurrency={toCurrency}
-          splitIcons={false}
-        />
-      ) : (
-        value
-      )}
-    </div>
-  )
-}
-
-export function multiplierColumn(): ColumnDef<SageListingType> {
-  const key = 'multiplier'
-  const header = 'Multiplier'
-
-  return {
-    header: ({ column }) => <TableColumnHeader column={column} title={header} align="right" />,
-    accessorKey: key,
-    accessorFn: (listing) => {
-      if (listing.meta.multiplier === -1) return '- '
-      return listing.meta.multiplier.toLocaleString(undefined, {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2
-      })
-    },
-    enableSorting: true,
-    enableGlobalFilter: false,
-    meta: {
-      headerWording: header
-    },
-    cell: ({ row }) => {
-      const value = row.getValue<string>(key)
-      return <div className="text-right">{value}%</div>
     }
   }
 }
@@ -309,8 +234,20 @@ export const listingsTableColumns = (): ColumnDef<SageListingType>[] => [
   categoryColumn(),
   listingModeColumn(),
   sellerColumn(),
-  totalPriceColumn(),
-  multiplierColumn(),
+  priceColumn({
+    accessorKey: 'totalPrice',
+    headerName: 'Price',
+    accessorFn: (listing) => listing.meta.calculatedTotalPrice
+  }),
+  multiplierColumn({
+    accessorFn: (listing) => {
+      if (listing.meta.multiplier === -1) return '- '
+      return listing.meta.multiplier.toLocaleString(undefined, {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2
+      })
+    }
+  }),
   createdColumn(),
   actionsColumn()
 ]

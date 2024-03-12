@@ -9,6 +9,6 @@ declare module '@tanstack/table-core' {
     removePadding?: boolean
   }
   interface TableMeta<TData extends RowData> {
-    updateData: (rowIndex: number, columnId: string, value: number | string) => void
+    updateData?: (rowIndex: number, columnId: string, value: number | string) => void
   }
 }

@@ -303,10 +303,10 @@ export const createCompactTab = (stashTab: IStashTab | string): ICompactTab => {
 
 export const calculateItemPrices = (item: IDisplayedItem, multiplier: number) => {
   item.calculatedPrice = undefined
-  item.calculatedTotal = 0
+  item.calculatedTotalPrice = 0
   if (item.selectedPrice !== undefined || item.originalPrice !== undefined) {
     item.calculatedPrice = round((item.selectedPrice! ?? item.originalPrice!) * multiplier, 4)
-    item.calculatedTotal = round(
+    item.calculatedTotalPrice = round(
       (item.selectedPrice! ?? item.originalPrice!) * item.stackSize * multiplier,
       4
     )
@@ -364,7 +364,7 @@ export const mapItemsToDisplayedItems = (
       calculatedPrice: valuation?.pValues
         ? valuation.pValues[pItem.percentile] * (multiplier ?? 1)
         : undefined,
-      calculatedTotal: valuation?.pValues
+      calculatedTotalPrice: valuation?.pValues
         ? valuation.pValues[pItem.percentile] * stackSize * (multiplier ?? 1)
         : 0,
       selectedPrice: undefined, // We use the price as placeholder
@@ -378,7 +378,7 @@ export const mapItemsToDisplayedItems = (
     if (mappedItem.group && mappedItem.displayName === 'Chaos Orb') {
       mappedItem.originalPrice = 1
       mappedItem.calculatedPrice = 1 * (multiplier ?? 1)
-      mappedItem.calculatedTotal = 1 * stackSize * (multiplier ?? 1)
+      mappedItem.calculatedTotalPrice = 1 * stackSize * (multiplier ?? 1)
     }
 
     if (mappedItem.group && overprices && overprices[mappedItem.group.hash] !== undefined) {

@@ -395,6 +395,7 @@ function ListingGroupFilterSelect({
                       updateFilter(index, { ...filter, option: selectedOption ?? null })
                       setPopoverOpen(false)
                     }}
+                    disableSelection
                   >
                     <div className="flex flex-row gap-2 items-center w-full">
                       <Image className="min-w-5" width={20} height={20} src={c.icon} alt="d" />

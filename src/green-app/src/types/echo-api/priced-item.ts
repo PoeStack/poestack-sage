@@ -20,7 +20,7 @@ export interface IDisplayedItem extends IPricedItem {
   displayName: string
   originalPrice?: number
   calculatedPrice?: number
-  calculatedTotal: number
+  calculatedTotalPrice: number
   stackSize: number
   totalStacksize: number
   icon: string
