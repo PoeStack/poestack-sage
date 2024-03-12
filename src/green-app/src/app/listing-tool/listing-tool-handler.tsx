@@ -318,7 +318,7 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
 
   useEffect(() => {
     console.log('Set setStashListFetching')
-    setStashListFetching(isGroupedItemsLoading || isValuationPending || isValuationError)
+    setStashListFetching(isGroupedItemsLoading || isValuationPending)
   }, [isGroupedItemsLoading, isValuationPending, isValuationError, setStashListFetching])
 
   useEffect(() => {
