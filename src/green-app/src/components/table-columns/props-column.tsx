@@ -26,8 +26,8 @@ export function propsColumn<
     },
     enableSorting: true,
     enableGlobalFilter: true,
-    size: 200,
-    minSize: 100,
+    size: 120,
+    minSize: 85,
     meta: {
       headerWording: header,
       staticResizing: true
