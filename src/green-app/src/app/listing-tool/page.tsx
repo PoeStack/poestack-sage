@@ -26,7 +26,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { FilterFn, filterFns } from '@tanstack/react-table'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import { useAtomValue } from 'jotai'
+import { atom, useAtom, useAtomValue } from 'jotai'
 import { ArrowLeftToLineIcon, ArrowRightToLineIcon } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
@@ -51,6 +51,8 @@ dayjs.extend(utc)
 // feat: Sound notifications
 
 type PageProps = {}
+
+const showRightSidePanelAtom = atom(false)
 
 export default function Page() {
   const queryClient = useQueryClient()
@@ -98,7 +100,7 @@ export default function Page() {
   const currentUser = useAtomValue(currentUserAtom)
   const [selectedIgn, setSelectedIgn] = useState<string | null>(null)
 
-  const [showRightSidePanel, setShowRightSidePanel] = useState(false)
+  const [showRightSidePanel, setShowRightSidePanel] = useAtom(showRightSidePanelAtom)
   const [globalFilter, setGlobalFilter] = useState('')
   const resetData = useListingToolStore((state) => state.resetData)
 
