@@ -22,6 +22,7 @@ export function priceColumn<T extends {}>({
   ...props
 }: ColumnProps<T>): ColumnDef<T> {
   return {
+    id: accessorKey,
     accessorKey: accessorKey,
     accessorFn: accessorFn,
     header: ({ column }) => (

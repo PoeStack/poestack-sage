@@ -8,6 +8,7 @@ export function checkColumn<T extends { group?: SageItemGroup } | {}>(
   props?: ColumnProps<T>
 ): ColumnDef<T> {
   const id = 'selected'
+  const header = 'Selection'
 
   return {
     header: ({ table }) => {
@@ -37,6 +38,7 @@ export function checkColumn<T extends { group?: SageItemGroup } | {}>(
     enableMultiSort: true,
     size: 40,
     meta: {
+      headerWording: header,
       className: 'min-w-[40px] max-w-fit p-0',
       removePadding: true
     },

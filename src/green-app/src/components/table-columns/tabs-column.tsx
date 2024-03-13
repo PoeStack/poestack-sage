@@ -14,6 +14,7 @@ export function tabsColumn<T extends { tabs: ICompactTab[] }>(
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
+    id: key,
     accessorKey: key,
     accessorFn: (val) => parseTabNames(val.tabs),
     enableSorting: true,

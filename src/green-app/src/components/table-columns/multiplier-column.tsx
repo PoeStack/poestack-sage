@@ -12,6 +12,7 @@ export function multiplierColumn<T extends {}>(props: ColumnProps<T>): ColumnDef
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="right" />,
+    id: key,
     accessorKey: key,
     enableSorting: true,
     enableGlobalFilter: false,

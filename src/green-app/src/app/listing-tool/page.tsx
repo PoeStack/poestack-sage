@@ -23,12 +23,19 @@ import { PoeItem } from '@/types/poe-api-models'
 import { SageDatabaseOfferingType } from '@/types/sage-listing-type'
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { FilterFn, filterFns } from '@tanstack/react-table'
+import {
+  Column,
+  ColumnOrderState,
+  FilterFn,
+  Table,
+  VisibilityState,
+  filterFns
+} from '@tanstack/react-table'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import { atom, useAtom, useAtomValue } from 'jotai'
 import { ArrowLeftToLineIcon, ArrowRightToLineIcon } from 'lucide-react'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { useShallow } from 'zustand/react/shallow'
 import { ListingCard } from './listing-card'
@@ -37,6 +44,10 @@ import ListingToolTable from './listing-tool-table'
 import { listingToolTableEditModeColumns } from './listing-tool-table-columns'
 import { getCategory, useListingToolStore } from './listingToolStore'
 import MyOfferingsCard from './my-offerings-card'
+import TableColumnToggle from '@/components/table-column-toggle'
+import { IDisplayedItem } from '@/types/echo-api/priced-item'
+import React from 'react'
+import { atomWithLocalStorage } from '@/lib/localstorageAtom'
 dayjs.extend(utc)
 
 // TODO:
@@ -52,6 +63,16 @@ dayjs.extend(utc)
 type PageProps = {}
 
 const showRightSidePanelAtom = atom(false)
+
+const columnOrderAtom = atomWithLocalStorage<ColumnOrderState>('listing-tool-table-columnOrder', [])
+const columnVisiblityAtom = atomWithLocalStorage<VisibilityState>(
+  'listing-tool-table-columnVisibility',
+  {
+    tag: false,
+    cumulative: false,
+    '7_day_history': false
+  }
+)
 
 export default function Page() {
   const queryClient = useQueryClient()
@@ -174,6 +195,14 @@ export default function Page() {
     setRefetchAll([refetchAll])
   }, [])
 
+  const tableRef = useRef<Table<IDisplayedItem> | undefined>()
+  const [columnVisibility, setColumnVisibility] = useAtom(columnVisiblityAtom)
+  const [columnOrder, setColumnOrder] = useAtom(columnOrderAtom)
+  const handleTableReset = useCallback(() => {
+    tableRef.current?.resetColumnOrder()
+    tableRef.current?.resetColumnVisibility()
+  }, [])
+
   return (
     <>
       <ListingToolHandler
@@ -211,7 +240,7 @@ export default function Page() {
             </div>
           </div>
           <div className="flex flex-col w-[1024px]">
-            <div className="flex flex-row justify-start items-center pb-2 gap-x-2">
+            <div className="flex flex-row justify-start items-center pb-2 gap-2">
               <DebouncedInput
                 value={globalFilter ?? ''}
                 onChange={(value) => setGlobalFilter(String(value))}
@@ -249,6 +278,14 @@ export default function Page() {
                 />
               </div>
               <div className="flex-1" />
+              <TableColumnToggle
+                columns={columns as any}
+                columnVisibility={columnVisibility}
+                columnOrder={columnOrder}
+                onColumnVisibility={setColumnVisibility}
+                onColumnOrder={setColumnOrder}
+                resetTable={handleTableReset}
+              />
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="outline" size="default">
@@ -286,13 +323,6 @@ export default function Page() {
                   <ArrowRightToLineIcon className="w-4 h-4" />
                 )}
               </Button>
-              {/* <Button
-              variant="secondary"
-              size="default"
-              onClick={() => setShowFilter((prev) => !prev)}
-            >
-              Show Filter
-            </Button> */}
             </div>
             <ListingToolTable
               className=""
@@ -301,6 +331,11 @@ export default function Page() {
               globalFilter={globalFilter}
               onGlobalFilterChange={setGlobalFilter}
               globalFilterFn={fuzzyFilter as any}
+              columnVisibility={columnVisibility}
+              columnOrder={columnOrder}
+              onColumnVisibility={setColumnVisibility}
+              onColumnOrder={setColumnOrder}
+              tableRef={tableRef}
             />
           </div>
           {showRightSidePanel && (

@@ -13,6 +13,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import utc from 'dayjs/plugin/utc'
+import { tagColumn } from '@/components/table-columns/tag-column'
 dayjs.extend(relativeTime)
 dayjs.extend(utc)
 
@@ -20,10 +21,11 @@ export const listingToolTableEditModeColumns = (): ColumnDef<IDisplayedItem>[] =
   checkColumn(),
   nameColumn(),
   propsColumn(),
-  // itemTag(),
+  tagColumn(),
   tabsColumn(),
   quantityColumn(),
   historyColumn(),
+  historyColumn({ mode: '7 days' }),
   priceInputColumn(),
   priceColumn({
     accessorKey: 'calculatedPrice',
@@ -34,10 +36,10 @@ export const listingToolTableEditModeColumns = (): ColumnDef<IDisplayedItem>[] =
     accessorKey: 'calculatedTotal',
     headerName: 'Total Value',
     accessorFn: (item) => item.calculatedTotalPrice
+  }),
+  priceColumn({
+    accessorKey: 'cumulative',
+    headerName: 'Commulative',
+    cumulativeColumn: 'calculatedTotal'
   })
-  // priceColumn({
-  //   accessorKey: 'cumulative',
-  //   headerName: 'Commulative',
-  //   cumulative: true
-  // })
 ]

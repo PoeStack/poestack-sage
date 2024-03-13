@@ -15,6 +15,7 @@ export function priceInputColumn<
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="right" />,
+    id: key,
     accessorKey: key,
     enableSorting: true,
     enableGlobalFilter: false,

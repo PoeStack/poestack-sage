@@ -4,7 +4,14 @@
 import DataTable, { DataTableOptions } from '@/components/data-table/data-table'
 import { useSkipper } from '@/hooks/useSkipper'
 import { IDisplayedItem } from '@/types/echo-api/priced-item'
-import { ColumnDef, FilterFnOption } from '@tanstack/react-table'
+import {
+  Column,
+  ColumnDef,
+  ColumnOrderState,
+  FilterFnOption,
+  Table,
+  VisibilityState
+} from '@tanstack/react-table'
 import { atom } from 'jotai'
 import { memo, useMemo } from 'react'
 import { useListingToolStore } from './listingToolStore'
@@ -18,6 +25,11 @@ interface DataTableProps {
   globalFilter: string
   onGlobalFilterChange: (value: string) => void
   globalFilterFn?: FilterFnOption<IDisplayedItem>
+  columnVisibility: VisibilityState
+  columnOrder: ColumnOrderState
+  onColumnVisibility: React.Dispatch<React.SetStateAction<VisibilityState>>
+  onColumnOrder: React.Dispatch<React.SetStateAction<ColumnOrderState>>
+  tableRef: React.MutableRefObject<Table<IDisplayedItem> | undefined>
 }
 
 // Tutorial: https://ui.shadcn.com/docs/components/data-table
@@ -27,7 +39,12 @@ const ListingToolTable = ({
   isLoading,
   globalFilter,
   onGlobalFilterChange,
-  globalFilterFn
+  globalFilterFn,
+  columnVisibility,
+  columnOrder,
+  onColumnVisibility,
+  onColumnOrder,
+  tableRef
 }: DataTableProps) => {
   //   const { t } = useTranslation();
 
@@ -51,20 +68,34 @@ const ListingToolTable = ({
       onGlobalFilterChange: onGlobalFilterChange,
       onRowSelectionChange: setSelectedItems,
       globalFilterFn: globalFilterFn,
+      onColumnVisibilityChange: onColumnVisibility,
+      onColumnOrderChange: onColumnOrder,
       state: {
         rowSelection: selectedItems,
-        globalFilter: globalFilter
+        globalFilter: globalFilter,
+        columnVisibility: columnVisibility,
+        columnOrder: columnOrder
       },
       initialState: {
         pagination: {
           pageSize: 25
         },
         sorting: [
-          {
-            desc: true,
-            id: 'valuation'
-          }
-        ]
+          columnVisibility['2_day_history'] ?? true
+            ? {
+                desc: true,
+                id: '2_day_history'
+              }
+            : {
+                desc: true,
+                id: '7_day_history'
+              }
+        ],
+        columnVisibility: {
+          tag: false,
+          cumulative: false,
+          '7_day_history': false
+        }
       },
       meta: {
         // https://muhimasri.com/blogs/react-editable-table/
@@ -76,10 +107,14 @@ const ListingToolTable = ({
     }
   }, [
     autoResetPageIndex,
+    columnOrder,
+    columnVisibility,
     columns,
     globalFilter,
     globalFilterFn,
     modifiedItems,
+    onColumnOrder,
+    onColumnVisibility,
     onGlobalFilterChange,
     selectedItems,
     setSelectedItems,
@@ -89,7 +124,12 @@ const ListingToolTable = ({
 
   return (
     <div className={className}>
-      <DataTable options={tableOptions} pageSizes={pageSizes} isLoading={isLoading} />
+      <DataTable
+        options={tableOptions}
+        pageSizes={pageSizes}
+        isLoading={isLoading}
+        tableRef={tableRef}
+      />
     </div>
   )
 }

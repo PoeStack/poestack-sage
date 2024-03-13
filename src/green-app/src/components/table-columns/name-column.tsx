@@ -16,6 +16,7 @@ export function nameColumn<T extends { displayName: string; icon: string; frameT
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
+    id: key,
     accessorKey: key,
     enableSorting: true,
     enableGlobalFilter: true,

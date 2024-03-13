@@ -15,6 +15,7 @@ export function quantityColumn<T extends { stackSize: number } | { quantity: num
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="right" />,
+    id: key,
     accessorKey: key,
     accessorFn: (value) => {
       if ('stackSize' in value) {

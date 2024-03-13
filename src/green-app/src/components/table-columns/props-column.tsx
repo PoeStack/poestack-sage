@@ -15,6 +15,7 @@ export function propsColumn<
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
+    id: key,
     accessorKey: key,
     accessorFn: (val) => {
       if ('group' in val) {

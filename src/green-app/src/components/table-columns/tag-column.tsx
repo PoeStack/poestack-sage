@@ -13,6 +13,7 @@ export function tagColumn<T extends { group?: SageItemGroup }>(
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
+    id: key,
     accessorKey: key,
     accessorFn: (val) => val.group?.tag,
     enableSorting: true,

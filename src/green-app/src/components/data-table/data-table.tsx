@@ -10,6 +10,7 @@ import {
 import { cn } from '@/lib/utils'
 
 import {
+  Table as DataTable,
   TableOptions,
   flexRender,
   getCoreRowModel,
@@ -18,9 +19,9 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table'
+import { RefreshCwIcon } from 'lucide-react'
 import React, { memo } from 'react'
 import { TablePagination } from '../table-pagination'
-import { RefreshCwIcon } from 'lucide-react'
 
 export type DataTableOptions<TData> = Omit<
   TableOptions<TData>,
@@ -31,9 +32,10 @@ type DataTableProps<TData> = {
   options: DataTableOptions<TData>
   pageSizes?: number[]
   isLoading?: boolean
+  tableRef?: React.MutableRefObject<DataTable<TData> | undefined>
 }
 
-const DataTable = <TData,>({ options, pageSizes, isLoading }: DataTableProps<TData>) => {
+const DataTable = <TData,>({ options, pageSizes, isLoading, tableRef }: DataTableProps<TData>) => {
   const table = useReactTable({
     enableColumnResizing: true,
     columnResizeMode: 'onChange',
@@ -43,6 +45,10 @@ const DataTable = <TData,>({ options, pageSizes, isLoading }: DataTableProps<TDa
     getFilteredRowModel: getFilteredRowModel(),
     ...options
   })
+
+  if (tableRef) {
+    tableRef.current = table
+  }
 
   const columnSizeVars = React.useMemo(() => {
     const headers = table.getFlatHeaders()

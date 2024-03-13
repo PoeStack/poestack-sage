@@ -14,6 +14,7 @@ export function quantityInputColumn<T extends { quantity: number; selectedQuanti
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="right" />,
+    id: key,
     accessorKey: key,
     enableSorting: true,
     enableGlobalFilter: false,
