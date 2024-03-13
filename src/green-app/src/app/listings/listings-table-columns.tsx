@@ -25,6 +25,7 @@ import { useState } from 'react'
 import { TableColumnHeader } from '../../components/column-header'
 import { useListingsStore } from './listingsStore'
 import { multiplierColumn } from '@/components/table-columns/multiplier-column'
+import useStore from '@/hooks/useStore'
 dayjs.extend(utc)
 
 export function categoryColumn(): ColumnDef<SageListingType> {
@@ -33,6 +34,7 @@ export function categoryColumn(): ColumnDef<SageListingType> {
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
+    id: key,
     accessorKey: key,
     accessorFn: (listing) => {
       return listing.meta.subCategory || listing.meta.category
@@ -65,6 +67,7 @@ export function listingModeColumn(): ColumnDef<SageListingType> {
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
+    id: key,
     accessorKey: key,
     accessorFn: (listing) => {
       return listing.meta.listingMode
@@ -96,6 +99,7 @@ export function sellerColumn(): ColumnDef<SageListingType> {
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
+    id: key,
     accessorKey: key,
     accessorFn: (listing) => {
       return listing.meta.ign
@@ -118,6 +122,7 @@ export function createdColumn(): ColumnDef<SageListingType> {
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
+    id: key,
     accessorKey: key,
     accessorFn: (listing) => {
       return Math.trunc(listing.meta.timestampMs / 10000) * 10000
@@ -140,6 +145,7 @@ export function actionsColumn(): ColumnDef<SageListingType> {
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
+    id: key,
     accessorKey: key,
     enableSorting: false,
     enableGlobalFilter: false,

@@ -16,15 +16,16 @@ export const listingTableBulkModeColumns = (): ColumnDef<SageListingItemType>[] 
   propsColumn(),
   quantityColumn(),
   historyColumn({ mode: '2 days', animation: false }),
+  historyColumn({ mode: '7 days', animation: false }),
   priceColumn({
     accessorKey: 'price',
     accessorFn: (item) => item.price,
-    header: 'Value'
+    headerName: 'Price'
   }),
   priceColumn({
     accessorKey: 'calculatedTotal',
-    header: 'Total Value',
-    accessorFn: (item) => item.price * item.selectedQuantity
+    accessorFn: (item) => item.price * item.selectedQuantity,
+    headerName: 'Total Price'
   }),
   multiplierColumn({
     accessorFn: (item) => {
@@ -34,6 +35,12 @@ export const listingTableBulkModeColumns = (): ColumnDef<SageListingItemType>[] 
         maximumFractionDigits: 2
       })
     }
+  }),
+  priceColumn({
+    accessorKey: 'cumulative',
+    headerName: 'Commulative',
+    cumulativeColumn: 'calculatedTotal',
+    enableSorting: false
   })
 ]
 
@@ -43,17 +50,16 @@ export const listingTradeSingleModeColumns = (): ColumnDef<SageListingItemType>[
   propsColumn(),
   quantityColumn(),
   historyColumn({ mode: '2 days', animation: false }),
+  historyColumn({ mode: '7 days', animation: false }),
   priceColumn({
     accessorKey: 'price',
     accessorFn: (item) => item.price,
-    header: 'Value',
-    enableSorting: true
+    headerName: 'Price'
   }),
   priceColumn({
     accessorKey: 'calculatedTotal',
-    header: 'Total Value',
-    enableSorting: true,
-    accessorFn: (item) => item.price * item.selectedQuantity
+    accessorFn: (item) => item.price * item.selectedQuantity,
+    headerName: 'Total Price'
   }),
   multiplierColumn({
     accessorFn: (item) => {
@@ -64,5 +70,11 @@ export const listingTradeSingleModeColumns = (): ColumnDef<SageListingItemType>[
       })
     }
   }),
-  quantityInputColumn()
+  quantityInputColumn(),
+  priceColumn({
+    accessorKey: 'cumulative',
+    headerName: 'Commulative',
+    cumulativeColumn: 'calculatedTotal',
+    enableSorting: false
+  })
 ]

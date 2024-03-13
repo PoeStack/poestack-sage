@@ -5,18 +5,21 @@ import DataTable, { DataTableOptions } from '@/components/data-table/data-table'
 import { useSkipper } from '@/hooks/useSkipper'
 import { IDisplayedItem } from '@/types/echo-api/priced-item'
 import {
-  Column,
   ColumnDef,
   ColumnOrderState,
+  ColumnSizingState,
   FilterFnOption,
   Table,
   VisibilityState
 } from '@tanstack/react-table'
-import { atom } from 'jotai'
-import { memo, useMemo } from 'react'
+import { atom, useAtom } from 'jotai'
+import { atomWithStorage } from 'jotai/utils'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { useListingToolStore } from './listingToolStore'
 
 export const modifiedItemsAtom = atom<IDisplayedItem[]>([])
+
+const columnSizingAtom = atomWithStorage<ColumnSizingState>('lt-table-columnSizing', {})
 
 interface DataTableProps {
   columns: ColumnDef<IDisplayedItem>[]
@@ -53,6 +56,19 @@ const ListingToolTable = ({
   const setSelectedItems = useListingToolStore((state) => state.setSelectedItems)
   const updateData = useListingToolStore((state) => state.updateData)
 
+  const [columnSizing, setColumnSizing] = useAtom(columnSizingAtom)
+
+  const [localColumnSizing, setLocalColumnSizing] = useState(columnSizing)
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setColumnSizing(localColumnSizing)
+    }, 250)
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [localColumnSizing, setColumnSizing])
+
   const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper()
 
   const pageSizes = useMemo(() => [10, 15, 25, 50, 75, 100], [])
@@ -70,11 +86,13 @@ const ListingToolTable = ({
       globalFilterFn: globalFilterFn,
       onColumnVisibilityChange: onColumnVisibility,
       onColumnOrderChange: onColumnOrder,
+      onColumnSizingChange: setLocalColumnSizing,
       state: {
-        rowSelection: selectedItems,
         globalFilter: globalFilter,
+        rowSelection: selectedItems,
         columnVisibility: columnVisibility,
-        columnOrder: columnOrder
+        columnOrder: columnOrder,
+        columnSizing: localColumnSizing
       },
       initialState: {
         pagination: {
@@ -112,6 +130,7 @@ const ListingToolTable = ({
     columns,
     globalFilter,
     globalFilterFn,
+    localColumnSizing,
     modifiedItems,
     onColumnOrder,
     onColumnVisibility,

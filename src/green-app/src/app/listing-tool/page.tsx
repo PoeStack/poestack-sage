@@ -5,6 +5,7 @@ import DebouncedInput from '@/components/debounced-input'
 import { ListingCategorySelect } from '@/components/listing-category-select'
 import { currentUserAtom } from '@/components/providers'
 import StashSelect from '@/components/stash-select'
+import TableColumnToggle from '@/components/table-column-toggle'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,12 +20,12 @@ import {
 import { Button } from '@/components/ui/button'
 import { useDivinePrice } from '@/hooks/useDivinePrice'
 import { postListing } from '@/lib/http-util'
+import { IDisplayedItem } from '@/types/echo-api/priced-item'
 import { PoeItem } from '@/types/poe-api-models'
 import { SageDatabaseOfferingType } from '@/types/sage-listing-type'
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-  Column,
   ColumnOrderState,
   FilterFn,
   Table,
@@ -34,6 +35,7 @@ import {
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import { atom, useAtom, useAtomValue } from 'jotai'
+import { atomWithStorage } from 'jotai/utils'
 import { ArrowLeftToLineIcon, ArrowRightToLineIcon } from 'lucide-react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
@@ -44,10 +46,6 @@ import ListingToolTable from './listing-tool-table'
 import { listingToolTableEditModeColumns } from './listing-tool-table-columns'
 import { getCategory, useListingToolStore } from './listingToolStore'
 import MyOfferingsCard from './my-offerings-card'
-import TableColumnToggle from '@/components/table-column-toggle'
-import { IDisplayedItem } from '@/types/echo-api/priced-item'
-import React from 'react'
-import { atomWithLocalStorage } from '@/lib/localstorageAtom'
 dayjs.extend(utc)
 
 // TODO:
@@ -64,15 +62,12 @@ type PageProps = {}
 
 const showRightSidePanelAtom = atom(false)
 
-const columnOrderAtom = atomWithLocalStorage<ColumnOrderState>('listing-tool-table-columnOrder', [])
-const columnVisiblityAtom = atomWithLocalStorage<VisibilityState>(
-  'listing-tool-table-columnVisibility',
-  {
-    tag: false,
-    cumulative: false,
-    '7_day_history': false
-  }
-)
+const columnOrderAtom = atomWithStorage<ColumnOrderState>('lt-table-columnOrder', [])
+const columnVisiblityAtom = atomWithStorage<VisibilityState>('lt-table-columnVisibility', {
+  tag: false,
+  cumulative: false,
+  '7_day_history': false
+})
 
 export default function Page() {
   const queryClient = useQueryClient()
@@ -201,6 +196,7 @@ export default function Page() {
   const handleTableReset = useCallback(() => {
     tableRef.current?.resetColumnOrder()
     tableRef.current?.resetColumnVisibility()
+    tableRef.current?.resetColumnSizing()
   }, [])
 
   return (

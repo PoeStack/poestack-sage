@@ -4,12 +4,21 @@
 import { BasicSelect } from '@/components/basic-select'
 import DataTable, { DataTableOptions } from '@/components/data-table/data-table'
 import DebouncedInput from '@/components/debounced-input'
+import TableColumnToggle from '@/components/table-column-toggle'
 import { useSkipper } from '@/hooks/useSkipper'
 import { SageListingItemType, SageListingType } from '@/types/sage-listing-type'
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons'
-import { ColumnDef, FilterFnOption } from '@tanstack/react-table'
+import {
+  ColumnDef,
+  ColumnOrderState,
+  ColumnSizingState,
+  FilterFnOption,
+  Table,
+  VisibilityState
+} from '@tanstack/react-table'
 import { atom, useAtom } from 'jotai'
-import { memo, useMemo, useState } from 'react'
+import { atomWithStorage } from 'jotai/utils'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { getListingsByCategory, useListingsStore } from './listingsStore'
 
@@ -21,6 +30,13 @@ interface DataTableProps {
 
 type ShowItemMode = 'Show all' | 'Show selected' | 'Show unselected'
 const showItemsModeAtom = atom<ShowItemMode>('Show all')
+
+const columnOrderAtom = atomWithStorage<ColumnOrderState>('l-table-columnOrder', [])
+const columnVisiblityAtom = atomWithStorage<VisibilityState>('l-table-columnVisibility', {
+  cumulative: false,
+  '7_day_history': false
+})
+const columnSizingAtom = atomWithStorage<ColumnSizingState>('l-table-columnSizing', {})
 
 // Tutorial: https://ui.shadcn.com/docs/components/data-table
 const ListingTable = ({ columns, className, globalFilterFn }: DataTableProps) => {
@@ -54,30 +70,66 @@ const ListingTable = ({ columns, className, globalFilterFn }: DataTableProps) =>
 
   const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper()
 
+  const tableRef = useRef<Table<SageListingItemType> | undefined>()
+  const [columnVisibility, setColumnVisibility] = useAtom(columnVisiblityAtom)
+  const [columnOrder, setColumnOrder] = useAtom(columnOrderAtom)
+  const [columnSizing, setColumnSizing] = useAtom(columnSizingAtom)
+  const handleTableReset = useCallback(() => {
+    tableRef.current?.resetColumnOrder()
+    tableRef.current?.resetColumnVisibility()
+    tableRef.current?.resetColumnSizing()
+  }, [])
+
+  const [localColumnSizing, setLocalColumnSizing] = useState(columnSizing)
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setColumnSizing(localColumnSizing)
+    }, 250)
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [localColumnSizing, setColumnSizing])
+
   const tableOptions = useMemo((): DataTableOptions<SageListingItemType> => {
     return {
       data: filteredItems,
       columns,
       getRowId: (row) => row.hash,
-      enableMultiSort: listing?.meta.listingMode !== 'bulk',
+      enableMultiSort: true,
       autoResetPageIndex,
       onGlobalFilterChange: setGlobalFilter,
       onRowSelectionChange: setSelectedItems,
       globalFilterFn: globalFilterFn,
+      onColumnVisibilityChange: setColumnVisibility,
+      onColumnOrderChange: setColumnOrder,
+      onColumnSizingChange: setLocalColumnSizing,
       state: {
+        globalFilter: globalFilter,
         rowSelection: selectedItems,
-        globalFilter: globalFilter
+        columnVisibility: columnVisibility,
+        columnOrder: columnOrder,
+        columnSizing: localColumnSizing
       },
       initialState: {
         pagination: {
           pageSize: 10
         },
         sorting: [
-          {
-            desc: true,
-            id: 'valuation'
-          }
-        ]
+          columnVisibility['2_day_history'] ?? true
+            ? {
+                desc: true,
+                id: '2_day_history'
+              }
+            : {
+                desc: true,
+                id: '7_day_history'
+              }
+        ],
+        columnVisibility: {
+          cumulative: false,
+          '7_day_history': false
+        }
       },
       meta: {
         // https://muhimasri.com/blogs/react-editable-table/
@@ -91,11 +143,15 @@ const ListingTable = ({ columns, className, globalFilterFn }: DataTableProps) =>
     filteredItems,
     columns,
     autoResetPageIndex,
-    globalFilter,
-    globalFilterFn,
-    listing?.meta.listingMode,
-    selectedItems,
     setSelectedItems,
+    globalFilterFn,
+    setColumnVisibility,
+    setColumnOrder,
+    globalFilter,
+    selectedItems,
+    columnVisibility,
+    columnOrder,
+    localColumnSizing,
     skipAutoResetPageIndex,
     updateData
   ])
@@ -124,8 +180,17 @@ const ListingTable = ({ columns, className, globalFilterFn }: DataTableProps) =>
             />
           </div>
         )}
+        <div className="flex-1" />
+        <TableColumnToggle
+          columns={columns as any}
+          columnVisibility={columnVisibility}
+          columnOrder={columnOrder}
+          onColumnVisibility={setColumnVisibility}
+          onColumnOrder={setColumnOrder}
+          resetTable={handleTableReset}
+        />
       </div>
-      <DataTable options={tableOptions} />
+      <DataTable options={tableOptions} tableRef={tableRef} />
     </div>
   )
 }

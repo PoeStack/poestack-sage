@@ -4,18 +4,27 @@
 import { BasicSelect } from '@/components/basic-select'
 import DataTable, { DataTableOptions } from '@/components/data-table/data-table'
 import DebouncedInput from '@/components/debounced-input'
+import TableColumnToggle from '@/components/table-column-toggle'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
+import { atomWithStorage, createJSONStorage } from 'jotai/utils'
 import { cn } from '@/lib/utils'
 import { SageListingType } from '@/types/sage-listing-type'
 import { DialogPortal } from '@radix-ui/react-dialog'
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons'
 import * as SliderPrimitive from '@radix-ui/react-slider'
-import { ColumnDef, FilterFnOption } from '@tanstack/react-table'
+import {
+  ColumnDef,
+  ColumnOrderState,
+  ColumnSizingState,
+  FilterFnOption,
+  Table,
+  VisibilityState
+} from '@tanstack/react-table'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import { atom, useAtom } from 'jotai'
-import { memo, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import ListingDialogContent from './listing-dialog-content'
 import { getCategory, getListingsByCategory, useListingsStore } from './listingsStore'
@@ -23,6 +32,10 @@ dayjs.extend(utc)
 
 type SellModeOptions = 'Show all modes' | 'Show whole listings' | 'Show individual listings'
 const showSellModeAtom = atom<SellModeOptions>('Show all modes')
+
+const columnOrderAtom = atomWithStorage<ColumnOrderState>('ls-table-columnOrder', [])
+const columnVisiblityAtom = atomWithStorage<VisibilityState>('ls-table-columnVisibility', {})
+const columnSizingAtom = atomWithStorage<ColumnSizingState>('ls-table-columnSizing', {})
 
 interface DataTableProps {
   className?: string
@@ -65,6 +78,27 @@ const ListingsTable = ({ columns, globalFilterFn, className }: DataTableProps) =
     })
   }, [modifiedListings, showSellMode])
 
+  const tableRef = useRef<Table<SageListingType> | undefined>()
+  const [columnVisibility, setColumnVisibility] = useAtom(columnVisiblityAtom)
+  const [columnOrder, setColumnOrder] = useAtom(columnOrderAtom)
+  const [columnSizing, setColumnSizing] = useAtom(columnSizingAtom)
+  const handleTableReset = useCallback(() => {
+    tableRef.current?.resetColumnOrder()
+    tableRef.current?.resetColumnVisibility()
+    tableRef.current?.resetColumnSizing()
+  }, [])
+
+  const [localColumnSizing, setLocalColumnSizing] = useState(columnSizing)
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setColumnSizing(localColumnSizing)
+    }, 250)
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [localColumnSizing, setColumnSizing])
+
   const tableOptions = useMemo((): DataTableOptions<SageListingType> => {
     return {
       data: filteredListings,
@@ -73,8 +107,14 @@ const ListingsTable = ({ columns, globalFilterFn, className }: DataTableProps) =
       enableMultiSort: true,
       onGlobalFilterChange: setGlobalFilter,
       globalFilterFn: globalFilterFn,
+      onColumnVisibilityChange: setColumnVisibility,
+      onColumnOrderChange: setColumnOrder,
+      onColumnSizingChange: setLocalColumnSizing,
       state: {
-        globalFilter: globalFilter
+        globalFilter: globalFilter,
+        columnVisibility: columnVisibility,
+        columnOrder: columnOrder,
+        columnSizing: localColumnSizing
       },
       initialState: {
         pagination: {
@@ -92,7 +132,17 @@ const ListingsTable = ({ columns, globalFilterFn, className }: DataTableProps) =
         ]
       }
     }
-  }, [columns, filteredListings, globalFilter, globalFilterFn])
+  }, [
+    columnOrder,
+    columnVisibility,
+    columns,
+    filteredListings,
+    globalFilter,
+    globalFilterFn,
+    localColumnSizing,
+    setColumnOrder,
+    setColumnVisibility
+  ])
 
   return (
     <div className={className}>
@@ -134,8 +184,17 @@ const ListingsTable = ({ columns, globalFilterFn, className }: DataTableProps) =
               <SliderPrimitive.Thumb className="block h-4 w-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" />
             </SliderPrimitive.Root>
           </div>
+          <div className="flex-1" />
+          <TableColumnToggle
+            columns={columns as any}
+            columnVisibility={columnVisibility}
+            columnOrder={columnOrder}
+            onColumnVisibility={setColumnVisibility}
+            onColumnOrder={setColumnOrder}
+            resetTable={handleTableReset}
+          />
         </div>
-        <DataTable options={tableOptions} />
+        <DataTable options={tableOptions} tableRef={tableRef} />
         <DialogPortal>
           <DialogContent
             className="max-w-screen-xl overflow-y-auto max-h-screen"

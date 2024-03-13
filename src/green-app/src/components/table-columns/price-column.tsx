@@ -3,7 +3,7 @@ import { TableColumnHeader } from '../column-header'
 import { ItemValueCell } from '../table-cells/item-price-cell'
 
 type ColumnProps<T> = Omit<ColumnDef<T>, 'accessorKey' | 'accessorFn'> & {
-  headerName?: string
+  headerName: string
   toCurrency?: 'chaos' | 'divine' | 'both'
   showChange?: boolean
   cumulativeColumn?: string

@@ -1,6 +1,8 @@
 // import { MixerHorizontalIcon } from '@radix-ui/react-icons'
+import { ColumnDef, ColumnOrderState, VisibilityState } from '@tanstack/react-table'
 import { ChevronDown, ChevronDownIcon, ChevronUpIcon, ListRestartIcon } from 'lucide-react'
-import { Column, ColumnDef, ColumnOrderState, VisibilityState } from '@tanstack/react-table'
+import React, { useMemo, useState } from 'react'
+import { Button } from './ui/button'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -9,9 +11,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from './ui/dropdown-menu'
-import { Button } from './ui/button'
-import { useMemo } from 'react'
-import React from 'react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip'
 
 interface TableColumnToggleProps<TData> {
@@ -32,11 +31,20 @@ function TableColumnToggle<TData>({
   resetTable
 }: TableColumnToggleProps<TData>) {
   // const { t } = useTranslation()
+  const [open, setOpen] = useState(false)
 
   const columnsValid = useMemo(() => columns.every((c) => c.id), [columns])
   const sortedColumns = useMemo(() => {
     if (columnOrder.length > 0) {
-      const sortedColumns = columnOrder.map((co) => columns.find((c) => c.id === co))
+      const clonedColumns = [...columns]
+      const sortedColumns = columnOrder.map((co) => {
+        const idx = clonedColumns.findIndex((c) => c.id === co)
+        if (idx > -1) {
+          return clonedColumns.splice(idx, 1)[0]
+        }
+      })
+      sortedColumns.push(...clonedColumns)
+
       if (sortedColumns.every((c) => c)) {
         return sortedColumns as ColumnDef<TData>[]
       }
@@ -63,7 +71,7 @@ function TableColumnToggle<TData>({
   }
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="ml-auto">
           <ChevronDown className="mr-2 h-4 w-4" />
@@ -76,7 +84,14 @@ function TableColumnToggle<TData>({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" onClick={resetTable}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    resetTable()
+                    setOpen(false)
+                  }}
+                >
                   <ListRestartIcon className="w-4 h-4" />
                 </Button>
               </TooltipTrigger>
@@ -89,7 +104,7 @@ function TableColumnToggle<TData>({
           return (
             <DropdownMenuCheckboxItem
               key={column.id}
-              className="flex justify-between capitalize gap-2 py-0 focus:bg-accent/50"
+              className="flex justify-between capitalize gap-2 pr-0 py-0 focus:bg-accent/50"
               checked={columnVisibility[column.id!] ?? true}
               onCheckedChange={(value) => {
                 onColumnVisibility((state) => ({ ...state, [column.id!]: !!value }))

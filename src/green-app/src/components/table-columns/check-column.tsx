@@ -35,7 +35,6 @@ export function checkColumn<T extends { group?: SageItemGroup } | {}>(
     enableSorting: true,
     enableGlobalFilter: false,
     enableResizing: false,
-    enableMultiSort: true,
     size: 40,
     meta: {
       headerWording: header,
