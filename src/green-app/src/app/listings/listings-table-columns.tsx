@@ -47,12 +47,20 @@ export function categoryColumn(): ColumnDef<SageListingType> {
     cell: ({ row }) => {
       const value = row.getValue<string>(key)
       return (
-        <div className="flex flex-row gap-1">
+        <div className="flex flex-row gap-2 items-center">
           <Image
             src={row.original.meta.icon}
-            width={20}
-            height={20}
+            height={32}
+            width={32}
             alt={row.original.meta.altIcon}
+            sizes="33vw"
+            style={{
+              width: 'auto',
+              height: '32px',
+              objectFit: 'contain',
+              flexShrink: 0,
+              paddingBlock: '0.125rem'
+            }}
           />
           <span className="capitalize">{value}</span>
         </div>

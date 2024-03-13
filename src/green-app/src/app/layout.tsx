@@ -39,11 +39,12 @@ export default function RootLayout({
                   <Image
                     src={poestackPic}
                     alt="poestack"
-                    width={28}
-                    height={28}
-                    className="block h-7 min-h-fit min-w-fit shrink-0"
+                    width={36}
+                    height={36}
                     sizes="33vw"
+                    style={{ width: 'auto', height: '36px', objectFit: 'contain', flexShrink: 0 }}
                   />
+
                   <div>PoeStack</div>
                 </div>
                 <Navbar />

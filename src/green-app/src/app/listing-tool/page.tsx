@@ -49,14 +49,21 @@ import MyOfferingsCard from './my-offerings-card'
 dayjs.extend(utc)
 
 // TODO:
-// Save listings to the localstore without items => When they got inactive(> 30min) then they will move over to another subsection in my-offerings-view
-// Errorhandling
-// Go through all categories
+// improve errorhandling
 // Hide "Connect discord" when discord is connected? - Get the current connected discord
 // Add "Pin all selected items" switch
 // Clear cache on logout
-// feat: Add hide columns select
-// feat: Sound notifications
+
+// feat: translations
+// improve: all categories & add subcategories
+// feat: economy page
+// feat: minimum value
+// feat: notification page
+// feat: sound notifications
+
+// Backend errors:
+// Switch back to redis?
+// Listing deletion should not delete the listings immediately
 
 type PageProps = {}
 

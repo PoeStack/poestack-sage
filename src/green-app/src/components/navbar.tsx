@@ -1,6 +1,5 @@
 'use client'
 
-import { cn } from '@/lib/utils'
 import { usePathname } from 'next/navigation'
 import { Link } from './ui/link'
 

@@ -9,7 +9,7 @@ type ItemIconCellProps = {
 
 export const ItemIconCell = ({ value, frameType, showRarityIndicator }: ItemIconCellProps) => {
   return (
-    <div className="flex flex-row gap-1 shrink-0">
+    <div className="flex flex-row gap-2 shrink-0">
       {showRarityIndicator && frameType !== undefined && (
         <div
           style={{
@@ -20,13 +20,18 @@ export const ItemIconCell = ({ value, frameType, showRarityIndicator }: ItemIcon
         />
       )}
       <Image
-        className="block h-6 min-h-fit min-w-fit shrink-0"
         src={typeof value === 'string' ? value : ''}
         alt={''}
-        height={24}
-        width={24}
+        height={32}
+        width={32}
         sizes="33vw"
-        style={{ width: 'auto', height: '24px' }}
+        style={{
+          width: 'auto',
+          height: '32px',
+          objectFit: 'contain',
+          flexShrink: 0,
+          paddingBlock: '0.125rem'
+        }}
       />
     </div>
   )
