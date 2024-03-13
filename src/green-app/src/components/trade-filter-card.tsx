@@ -15,7 +15,13 @@ import {
 import { BasicSelect } from '@/components/basic-select'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Command, CommandEmpty, CommandGroup, CommandInput } from '@/components/ui/command'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandList
+} from '@/components/ui/command'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { LISTING_CATEGORIES } from '@/lib/listing-categories'
@@ -385,28 +391,30 @@ function ListingGroupFilterSelect({
             >
               <CommandInput placeholder="Search..." />
               <CommandEmpty>No results.</CommandEmpty>
-              <CommandGroup className="max-h-[calc(var(--radix-popover-content-available-height)-7rem)] overflow-y-auto">
-                {availableOptions.map((c) => (
-                  <ComboboxItem
-                    key={c.hash}
-                    value={c.hash}
-                    onSelect={(hash) => {
-                      const selectedOption = options.find((s) => s.hash === hash)
-                      updateFilter(index, { ...filter, option: selectedOption ?? null })
-                      setPopoverOpen(false)
-                    }}
-                    disableSelection
-                  >
-                    <div className="flex flex-row gap-2 items-center w-full">
-                      <Image className="min-w-5" width={20} height={20} src={c.icon} alt="d" />
-                      <div className="flex flex-1">{c.displayName}</div>
-                      {c.unsafeHashProperties.uses && (
-                        <div>{`${c.unsafeHashProperties.uses} Uses`}</div>
-                      )}
-                    </div>
-                  </ComboboxItem>
-                ))}
-              </CommandGroup>
+              <CommandList className="max-h-[calc(var(--radix-popover-content-available-height)-7rem)] overflow-y-auto">
+                <CommandGroup>
+                  {availableOptions.map((c) => (
+                    <ComboboxItem
+                      key={c.hash}
+                      value={c.hash}
+                      onSelect={(hash) => {
+                        const selectedOption = options.find((s) => s.hash === hash)
+                        updateFilter(index, { ...filter, option: selectedOption ?? null })
+                        setPopoverOpen(false)
+                      }}
+                      disableSelection
+                    >
+                      <div className="flex flex-row gap-2 items-center w-full">
+                        <Image className="min-w-5" width={20} height={20} src={c.icon} alt="d" />
+                        <div className="flex flex-1">{c.displayName}</div>
+                        {c.unsafeHashProperties.uses && (
+                          <div>{`${c.unsafeHashProperties.uses} Uses`}</div>
+                        )}
+                      </div>
+                    </ComboboxItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
             </Command>
           </PopoverContent>
         </Popover>

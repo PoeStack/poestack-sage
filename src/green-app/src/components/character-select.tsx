@@ -5,7 +5,14 @@ import { currentUserAtom } from './providers'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 import { Button } from './ui/button'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from './ui/command'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList
+} from './ui/command'
 import { PoeCharacter } from '@/types/poe-api-models'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import { RefreshCwIcon } from 'lucide-react'
@@ -113,27 +120,29 @@ const CharacterSelect = ({ selectedLeague, onIgnSelect }: CharacterSelectProps) 
             </Button>
           </div>
           <CommandEmpty>No results.</CommandEmpty>
-          <CommandGroup className="max-h-[calc(var(--radix-popover-content-available-height)-7rem)] overflow-y-auto">
-            {selectableCharacters?.map((c) => (
-              <CommandItem
-                key={c.id}
-                value={c.id}
-                onSelect={(id) => {
-                  const selectedCharacter = selectableCharacters.find((s) => s.id === id)
-                  setSelectedCharacter(selectedCharacter)
-                  onIgnSelect(selectedCharacter?.name || null)
-                  setPopoverOpen(false)
-                }}
-              >
-                <div className="flex flex-col gap-1 items-start">
-                  <div>{c.name}</div>
-                  <div className="flex flex-row gap-2 uppercase justify-between">
-                    <div>{`Level ${c.level} ${c.class}`}</div>
+          <CommandList className="max-h-[calc(var(--radix-popover-content-available-height)-7rem)] overflow-y-auto">
+            <CommandGroup>
+              {selectableCharacters?.map((c) => (
+                <CommandItem
+                  key={c.id}
+                  value={c.id}
+                  onSelect={(id) => {
+                    const selectedCharacter = selectableCharacters.find((s) => s.id === id)
+                    setSelectedCharacter(selectedCharacter)
+                    onIgnSelect(selectedCharacter?.name || null)
+                    setPopoverOpen(false)
+                  }}
+                >
+                  <div className="flex flex-col gap-1 items-start">
+                    <div>{c.name}</div>
+                    <div className="flex flex-row gap-2 uppercase justify-between">
+                      <div>{`Level ${c.level} ${c.class}`}</div>
+                    </div>
                   </div>
-                </div>
-              </CommandItem>
-            ))}
-          </CommandGroup>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
         </Command>
       </PopoverContent>
     </Popover>

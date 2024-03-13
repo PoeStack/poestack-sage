@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import { useMemo, useState } from 'react'
 import { ComboboxItem, ComboboxTrigger } from './ui/combobox'
-import { Command, CommandEmpty, CommandGroup, CommandInput } from './ui/command'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandList } from './ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 
 type SelectableCategory = ListingSubCategory & {
@@ -161,35 +161,37 @@ export function ListingCategorySelect({
             <Command>
               <CommandInput placeholder="Search..." />
               <CommandEmpty>No results.</CommandEmpty>
-              <CommandGroup className="max-h-[calc(var(--radix-popover-content-available-height)-7rem)] overflow-y-auto">
-                {categories?.map((c) => (
-                  <ComboboxItem
-                    key={c.name}
-                    value={c.name}
-                    disabled={!c.selectable}
-                    onSelect={(value) => {
-                      setPopoverOpen(false)
-                      handleCategorySelect(value !== '...' ? value : null)
-                    }}
-                    selected={c.name === selectedCategory}
-                  >
-                    {c.name === '...' ? (
-                      <div>{c.name}</div>
-                    ) : (
-                      <div className="flex flex-row gap-2">
-                        <Image
-                          className="min-w-5"
-                          width={20}
-                          height={20}
-                          src={c.icon}
-                          alt={c.name}
-                        />
-                        <div className="capitalize truncate">{c.name}</div>
-                      </div>
-                    )}
-                  </ComboboxItem>
-                ))}
-              </CommandGroup>
+              <CommandList className="max-h-[calc(var(--radix-popover-content-available-height)-7rem)] overflow-y-auto">
+                <CommandGroup>
+                  {categories?.map((c) => (
+                    <ComboboxItem
+                      key={c.name}
+                      value={c.name}
+                      disabled={!c.selectable}
+                      onSelect={(value) => {
+                        setPopoverOpen(false)
+                        handleCategorySelect(value !== '...' ? value : null)
+                      }}
+                      selected={c.name === selectedCategory}
+                    >
+                      {c.name === '...' ? (
+                        <div>{c.name}</div>
+                      ) : (
+                        <div className="flex flex-row gap-2">
+                          <Image
+                            className="min-w-5"
+                            width={20}
+                            height={20}
+                            src={c.icon}
+                            alt={c.name}
+                          />
+                          <div className="capitalize truncate">{c.name}</div>
+                        </div>
+                      )}
+                    </ComboboxItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
             </Command>
           </PopoverContent>
         </Popover>

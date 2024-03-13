@@ -216,7 +216,7 @@ const StashItem = ({ currentUser, league, stash, selected, onSelect }: StashItem
           key={stash.id}
           value={stash.id}
           className={cn(
-            'hover:!bg-accent hover:!text-accent-foreground aria-selected:bg-inherit aria-selected:text-inherit px-0 py-0',
+            "hover:!bg-accent hover:!text-accent-foreground aria-[selected='true']:bg-inherit aria-[selected='true']:text-inherit px-0 py-0",
             isFetching ? 'cursor-progress' : 'cursor-pointer',
             isUnsupported && 'cursor-not-allowed'
           )}
@@ -327,7 +327,7 @@ function SubCommand({
                   setOpen(false)
                 }}
                 className={cn(
-                  'hover:!bg-accent hover:!text-accent-foreground aria-selected:bg-inherit aria-selected:text-inherit cursor-pointer',
+                  "hover:!bg-accent hover:!text-accent-foreground aria-[selected='true']:bg-inherit aria-[selected='true']:text-inherit cursor-pointer",
                   isStashListFetching && 'cursor-not-allowed'
                 )}
                 disabled={isStashListFetching}
@@ -342,7 +342,7 @@ function SubCommand({
                   onUnselectStashtabsClicked()
                   setOpen(false)
                 }}
-                className="hover:!bg-accent hover:!text-accent-foreground aria-selected:bg-inherit aria-selected:text-inherit cursor-pointer"
+                className="hover:!bg-accent hover:!text-accent-foreground aria-[selected='true']:bg-inherit aria-[selected='true']:text-inherit cursor-pointer"
               >
                 <div className="flex flex-row gap-2 items-center w-full">
                   <Trash2Icon className="w-4 h-w" />

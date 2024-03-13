@@ -38,8 +38,8 @@ const ComboboxItem = React.forwardRef<React.ElementRef<typeof CommandItem>, Comm
       <CommandItem
         ref={ref}
         className={cn(
-          'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-          disableSelection ? 'pr-2' : 'pr-8',
+          "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled='true']:pointer-events-none data-[disabled='true']:opacity-50",
+          disableSelection ? 'pr-2' : 'pr-8', 
           className
         )}
         aria-disabled={props.disabled === true ? true : undefined}
