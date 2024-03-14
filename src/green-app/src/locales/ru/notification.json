@@ -1,19 +1,21 @@
 {
   "success": {
-    "title": "",
-    "description": ""
+    "title": {},
+    "description": {}
   },
   "error": {
-    "unknown_error": "Algo deu errado: {{message}}",
-    "title": "",
-    "description": ""
+    "unknown_error": "Что-то пошло не так: {{message}}",
+    "title": {},
+    "description": {}
   },
   "warning": {
-    "title": "",
-    "description": "Cuidado, {{ign}} quer comprar itens que não estão sendo oferecidos..."
+    "title": {},
+    "description": {
+      "tradeRequestNotValid": "Будьте осторожны, {{ign}} хочет купить предметы, которые не предлагаются ..."
+    }
   },
   "info": {
-    "title": "",
-    "description": ""
+    "title": {},
+    "description": {}
   }
 }

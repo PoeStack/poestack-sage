@@ -1,19 +1,21 @@
 {
   "success": {
-    "title": "",
-    "description": ""
+    "title": {},
+    "description": {}
   },
   "error": {
     "unknown_error": "Quelque chose s'est mal passé : {{message}}",
-    "title": "",
-    "description": ""
+    "title": {},
+    "description": {}
   },
   "warning": {
-    "title": "",
-    "description": "Faites attention, {{ign}} veut acheter des objets qui ne sont pas offerts..."
+    "title": {},
+    "description": {
+      "tradeRequestNotValid": "Fais attention, {{ign}} veut acheter des objets qui ne sont pas offerts ..."
+    }
   },
   "info": {
-    "title": "",
-    "description": ""
+    "title": {},
+    "description": {}
   }
 }

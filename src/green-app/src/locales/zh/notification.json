@@ -1,19 +1,21 @@
 {
   "success": {
-    "title": "",
-    "description": ""
+    "title": {},
+    "description": {}
   },
   "error": {
     "unknown_error": "发生了一些问题：{{message}}",
-    "title": "",
-    "description": ""
+    "title": {},
+    "description": {}
   },
   "warning": {
-    "title": "",
-    "description": "小心，{{ign}} 想购买未提供的物品..."
+    "title": {},
+    "description": {
+      "tradeRequestNotValid": "小心，{{ign}} 想购买未提供的物品 ..."
+    }
   },
   "info": {
-    "title": "",
-    "description": ""
+    "title": {},
+    "description": {}
   }
 }

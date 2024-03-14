@@ -1,19 +1,21 @@
 {
   "success": {
-    "title": "",
-    "description": ""
+    "title": {},
+    "description": {}
   },
   "error": {
     "unknown_error": "문제가 발생했습니다: {{message}}",
-    "title": "",
-    "description": ""
+    "title": {},
+    "description": {}
   },
   "warning": {
-    "title": "",
-    "description": "{{ign}}님이 제공되지 않는 항목을 구매하려고 합니다..."
+    "title": {},
+    "description": {
+      "tradeRequestNotValid": "{{ign}}님이 제공되지 않는 항목을 구매하려고 합니다..."
+    }
   },
   "info": {
-    "title": "",
-    "description": ""
+    "title": {},
+    "description": {}
   }
 }

@@ -1,19 +1,21 @@
 {
   "success": {
-    "title": "",
-    "description": ""
+    "title": {},
+    "description": {}
   },
   "error": {
     "unknown_error": "Etwas ist schiefgelaufen: {{message}}",
-    "title": "",
-    "description": ""
+    "title": {},
+    "description": {}
   },
   "warning": {
-    "title": "",
-    "description": "Handeln Sie vorsichtig, {{ign}} möchte Gegenstände kaufen, die nicht angeboten werden ..."
+    "title": {},
+    "description": {
+      "tradeRequestNotValid": "Sei vorsichtig, {{ign}} möchte Gegenstände kaufen, die nicht angeboten werden ..."
+    }
   },
   "info": {
-    "title": "",
-    "description": ""
+    "title": {},
+    "description": {}
   }
 }
