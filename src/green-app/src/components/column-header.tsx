@@ -5,6 +5,7 @@ import { Column } from '@tanstack/react-table'
 
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { useTranslation } from 'react-i18next'
 // import { useTranslation } from 'react-i18next'
 
 interface TableColumnHeaderProps<TData, TValue> extends React.HTMLAttributes<HTMLDivElement> {
@@ -20,12 +21,16 @@ export function TableColumnHeader<TData, TValue>({
   align,
   className
 }: TableColumnHeaderProps<TData, TValue>) {
-  // const { t } = useTranslation()
+  const { t } = useTranslation()
 
   const alignDir =
     align === 'left' ? 'justify-start' : align === 'right' ? 'justify-end' : 'justify-center'
   if (!column.getCanSort()) {
-    return <div className={cn('flex whitespace-nowrap', alignDir, className)}>{title}</div>
+    return (
+      <div className={cn('flex whitespace-nowrap', alignDir, className)}>
+        {t(`columnTitle.${title}` as any)}
+      </div>
+    )
   }
 
   return (
@@ -37,7 +42,7 @@ export function TableColumnHeader<TData, TValue>({
         )}
         onClick={() => column.toggleSorting(undefined, true)}
       >
-        <span>{title}</span>
+        <span>{t(`columnTitle.${title}` as any)}</span>
         {column.getIsSorted() === 'desc' ? (
           <ArrowDownIcon className="h-4 w-4 shrink-0" />
         ) : column.getIsSorted() === 'asc' ? (

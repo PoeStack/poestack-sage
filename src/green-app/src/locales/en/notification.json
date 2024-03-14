@@ -4,13 +4,15 @@
     "description": {}
   },
   "error": {
-    "unknown_error": "Unknown error occurred",
+    "unknown_error": "Something went wrong: {{message}}",
     "title": {},
     "description": {}
   },
   "warning": {
     "title": {},
-    "description": {}
+    "description": {
+      "tradeRequestNotValid": "Be careful {{ign}} wants to buy items which are not offered ..."
+    }
   },
   "info": {
     "title": {},

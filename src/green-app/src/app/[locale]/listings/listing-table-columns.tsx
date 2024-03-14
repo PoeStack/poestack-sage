@@ -20,12 +20,12 @@ export const listingTableBulkModeColumns = (): ColumnDef<SageListingItemType>[] 
   priceColumn({
     accessorKey: 'price',
     accessorFn: (item) => item.price,
-    headerName: 'Price'
+    headerName: 'price'
   }),
   priceColumn({
     accessorKey: 'calculatedTotal',
     accessorFn: (item) => item.price * item.selectedQuantity,
-    headerName: 'Total Price'
+    headerName: 'totalPrice'
   }),
   multiplierColumn({
     accessorFn: (item) => {
@@ -38,7 +38,7 @@ export const listingTableBulkModeColumns = (): ColumnDef<SageListingItemType>[] 
   }),
   priceColumn({
     accessorKey: 'cumulative',
-    headerName: 'Commulative',
+    headerName: 'commulativePrice',
     cumulativeColumn: 'calculatedTotal',
     enableSorting: false
   })
@@ -54,12 +54,12 @@ export const listingTradeSingleModeColumns = (): ColumnDef<SageListingItemType>[
   priceColumn({
     accessorKey: 'price',
     accessorFn: (item) => item.price,
-    headerName: 'Price'
+    headerName: 'price'
   }),
   priceColumn({
     accessorKey: 'calculatedTotal',
     accessorFn: (item) => item.price * item.selectedQuantity,
-    headerName: 'Total Price'
+    headerName: 'totalPrice'
   }),
   multiplierColumn({
     accessorFn: (item) => {
@@ -73,7 +73,7 @@ export const listingTradeSingleModeColumns = (): ColumnDef<SageListingItemType>[
   quantityInputColumn(),
   priceColumn({
     accessorKey: 'cumulative',
-    headerName: 'Commulative',
+    headerName: 'commulativePrice',
     cumulativeColumn: 'calculatedTotal',
     enableSorting: false
   })

@@ -13,8 +13,10 @@ import {
 } from './ui/alert-dialog'
 import { useListingToolStore } from '@/app/[locale]/listing-tool/listingToolStore'
 import { useListingsStore } from '@/app/[locale]/listings/listingsStore'
+import { useTranslation } from 'react-i18next'
 
-function fallbackRender({ error, resetErrorBoundary }: FallbackProps) {
+function FallbackRender({ error, resetErrorBoundary }: FallbackProps) {
+  const { t } = useTranslation()
   // Call resetErrorBoundary() to reset the error boundary and retry the render.
 
   return (
@@ -23,15 +25,14 @@ function fallbackRender({ error, resetErrorBoundary }: FallbackProps) {
         <AlertDialogHeader>
           <AlertDialogTitle>Oops ... Something went wrong</AlertDialogTitle>
           <AlertDialogDescription className="flex flex-col gap-2">
-            <div>
-              If you confirm, all data will be reset. To fix the bug, it would help to report it.
-              Thanks!
-            </div>
+            <div>{t('body.fallbackRenderInfo')}</div>
             <div className="text-red-400">{error.message}</div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogAction onClick={() => resetErrorBoundary()}>Reset Data</AlertDialogAction>
+          <AlertDialogAction onClick={() => resetErrorBoundary()}>
+            {t('action.hardReset')}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
@@ -46,7 +47,7 @@ const ErrorBoundaryContainer = ({ children }: ErrorBoundaryContainerProps) => {
 
   return (
     <ErrorBoundary
-      fallbackRender={fallbackRender}
+      fallbackRender={FallbackRender}
       onReset={(details) => {
         // Reset the state of your app so the error doesn't happen again
         resetListinsStore()

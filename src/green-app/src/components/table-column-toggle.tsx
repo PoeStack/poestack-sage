@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger
 } from './ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip'
+import { useTranslation } from 'react-i18next'
 
 interface TableColumnToggleProps<TData> {
   columns: ColumnDef<TData>[]
@@ -30,7 +31,7 @@ function TableColumnToggle<TData>({
   onColumnOrder,
   resetTable
 }: TableColumnToggleProps<TData>) {
-  // const { t } = useTranslation()
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
 
   const columnsValid = useMemo(() => columns.every((c) => c.id), [columns])
@@ -75,12 +76,12 @@ function TableColumnToggle<TData>({
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="ml-auto">
           <ChevronDown className="mr-2 h-4 w-4" />
-          View
+          {t('action.view')}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel className="flex justify-between items-center py-0 pr-0">
-          Column settings
+          {t('label.columnSettings')}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -95,7 +96,7 @@ function TableColumnToggle<TData>({
                   <ListRestartIcon className="w-4 h-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Reset settings</TooltipContent>
+              <TooltipContent>{t('label.columnSettingsResetTT')}</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </DropdownMenuLabel>
@@ -110,7 +111,9 @@ function TableColumnToggle<TData>({
                 onColumnVisibility((state) => ({ ...state, [column.id!]: !!value }))
               }}
             >
-              <span className="truncate">{column.meta?.headerWording}</span>
+              <span className="truncate">
+                {t(`columnTitle.${column.meta?.headerWording}` as any)}
+              </span>
               <div className="flex flex-row gap-1 shrink-0">
                 <Button
                   variant="ghost"

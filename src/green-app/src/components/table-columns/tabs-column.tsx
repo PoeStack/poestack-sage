@@ -10,7 +10,7 @@ export function tabsColumn<T extends { tabs: ICompactTab[] }>(
   props?: ColumnProps<T>
 ): ColumnDef<T> {
   const key = 'tabs'
-  const header = 'Tab'
+  const header = 'tabs'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,

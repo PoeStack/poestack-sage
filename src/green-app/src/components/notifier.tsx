@@ -30,6 +30,7 @@ import { ReactNode, memo, useEffect, useMemo, useRef, useState } from 'react'
 import CurrencyDisplay from './currency-display'
 import { Button } from './ui/button'
 import { Tooltip, TooltipProvider, TooltipTrigger } from './ui/tooltip'
+import { useTranslation } from 'react-i18next'
 
 type ParsedNotification = Omit<Notification, 'body'> & {
   body: string | { listing: SageOfferingType; requestedItems?: NotificationItem[]; ign: string }
@@ -48,6 +49,7 @@ interface NotificationHandlerProps {}
 
 // Tutorial: https://ui.shadcn.com/docs/components/data-table
 const Notifier = () => {
+  const { t } = useTranslation(['common', 'notification'])
   const openTradeOverviewInNewWindow = useNotificationStore(
     (state) => state.openTradeOverviewInNewWindow
   )
@@ -236,10 +238,15 @@ const Notifier = () => {
       if (validNotification && listing) {
         let description: ReactNode
         if (requestedItems.length === 0) {
-          description = ` wtb all ${listing.meta.subCategory || listing.meta.category}`
+          description = t('body.wtbAll', {
+            category: listing.meta.subCategory || listing.meta.category
+          })
         } else {
           const totalItems = listing.items.reduce((sum, item) => item.selectedQuantity + sum, 0)
-          description = ` wtb ${totalItems} ${listing.meta.subCategory || listing.meta.category}`
+          description = t('body.wtbPartial', {
+            count: totalItems,
+            category: listing.meta.subCategory || listing.meta.category
+          })
         }
 
         const toastBody = (
@@ -269,7 +276,7 @@ const Notifier = () => {
                 sizes="33vw"
                 style={{ width: 'auto', height: '20px' }}
               />
-              <div className="text-nowrap">Total:</div>
+              <div className="text-nowrap">{t('label.total')}</div>
               <CurrencyDisplay
                 ttContentClassName="z-[100]"
                 iconRect={{ width: 20, height: 20 }}
@@ -309,10 +316,14 @@ const Notifier = () => {
           }
         )
       } else {
-        toast(`Be careful ${n.body.ign} wants to buy items which are not offered ...`, 'warning', {
-          toastId: n.id,
-          data: listing
-        })
+        toast(
+          t('notification:warning.description.tradeRequestNotValid', { ign: n.body.ign }),
+          'warning',
+          {
+            toastId: n.id,
+            data: listing
+          }
+        )
         console.warn(`Be careful ${n.body.ign} wants to buy items which are not offered ...`)
       }
     })

@@ -20,9 +20,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Switch } from '../ui/switch'
 import PulsatingDot from './pulsating-dot'
 import SettingsDialogContent from './settings-dialog-content'
+import { useTranslation } from 'react-i18next'
 dayjs.extend(relativeTime)
-
-const types = ['success', 'info', 'warning', 'error']
 
 const variants = {
   // used to stagger item animation when switching from closed to open and vice versa
@@ -52,30 +51,20 @@ const variants = {
   }
 }
 
-type NotificationCenterProps = {}
-
 const NotificationCenter = () => {
-  const {
-    notifications,
-    // addNotification: addToast,
-    clear,
-    markAllAsRead,
-    markAsRead,
-    remove,
-    dismissAll,
-    blockDisplay
-  } = useNotificationStore(
-    useShallow((state) => ({
-      notifications: state.notifications,
-      // addNotification: state.addNotification,
-      clear: state.clear,
-      markAllAsRead: state.markAllAsRead,
-      markAsRead: state.markAsRead,
-      remove: state.remove,
-      dismissAll: state.dismissAll,
-      blockDisplay: state.blockDisplay
-    }))
-  )
+  const { t } = useTranslation()
+  const { notifications, clear, markAllAsRead, markAsRead, remove, dismissAll, blockDisplay } =
+    useNotificationStore(
+      useShallow((state) => ({
+        notifications: state.notifications,
+        clear: state.clear,
+        markAllAsRead: state.markAllAsRead,
+        markAsRead: state.markAsRead,
+        remove: state.remove,
+        dismissAll: state.dismissAll,
+        blockDisplay: state.blockDisplay
+      }))
+    )
 
   const unreadCount = useNotificationStore((state) => {
     return state.notifications.filter((n) => {
@@ -87,24 +76,6 @@ const NotificationCenter = () => {
   const [showUnreadOnly, setShowUnreadOnly] = useState(true)
   const [settingsDialogOpen, setSettingsDialogOpen] = useState(false)
   const [popoverOpen, setPopoverOpen] = useState(false)
-
-  // const addNotificationToStore = useNotificationStore((state) => state.addNotification)
-
-  // const counterRef = useRef(0)
-
-  // const addNotification = () => {
-  //   // use a random type of notification
-  //   // const toastId = uuidv4()
-  //   const toastId = counterRef.current
-  //   addToast(`Toast: ${toastId}`, types[Math.floor(Math.random() * types.length)] as TypeOptions, {
-  //     toastId: toastId
-  //   })
-  //   counterRef.current++
-  // }
-
-  // useEffect(() => {
-  //   setInterval(addNotification, 2000)
-  // }, [])
 
   const handlePopoverOpenChange = (open: boolean) => {
     if (open) {
@@ -119,7 +90,6 @@ const NotificationCenter = () => {
   return (
     <Dialog open={settingsDialogOpen} onOpenChange={setSettingsDialogOpen}>
       <Popover open={popoverOpen} onOpenChange={handlePopoverOpenChange}>
-        {/* <Button onClick={() => addNotification()}>Add notification</Button> */}
         <PopoverTrigger asChild>
           <Button className={cn('relative select-none')} variant="ghost" size="icon">
             {unreadCount > 0 && (
@@ -137,14 +107,18 @@ const NotificationCenter = () => {
         <PopoverContent className="w-fit">
           <div className="flex flex-col gap-y-1.5 text-center sm:text-left">
             <div className="flex flex-row p-2 justify-between items-center gap-4">
-              <h2 className="text-lg font-semibold leading-none tracking-tight">Notifications</h2>
+              <h2 className="text-lg font-semibold leading-none tracking-tight">
+                {t('title.notifications')}
+              </h2>
               <div className="flex flex-row gap-2">
                 <div
                   className="flex flex-row gap-2 items-center cursor-pointer"
                   onClick={() => setShowUnreadOnly((prev) => !prev)}
                 >
                   <Switch checked={showUnreadOnly} />
-                  <Label className="cursor-pointer">Show unread only</Label>
+                  <Label className="cursor-pointer">
+                    {t('action.showUnreadNotificationsOnly')}
+                  </Label>
                 </div>
                 <DialogTrigger asChild>
                   <Button variant="ghost" size="icon">
@@ -160,12 +134,7 @@ const NotificationCenter = () => {
                 className="flex flex-col gap-2 h-[400px] w-[300px] lg:w-[400px] overflow-y-auto overflow-x-hidden"
               >
                 {(!notifications.length || (unreadCount === 0 && showUnreadOnly)) && (
-                  <h4>
-                    Your queue is empty! you are all set{' '}
-                    <span role="img" aria-label="dunno what to put">
-                      🎉
-                    </span>
-                  </h4>
+                  <h4>{t('label.noNotificationResults')}</h4>
                 )}
                 <AnimatePresence>
                   {(showUnreadOnly ? notifications.filter((v) => !v.read) : notifications).map(
@@ -202,8 +171,8 @@ const NotificationCenter = () => {
               </motion.section>
             </AnimatePresence>
             <div className="flex flex-row p-2 justify-between items-center">
-              <Button onClick={clear}>Clear All</Button>
-              <Button onClick={markAllAsRead}>Mark all as read</Button>
+              <Button onClick={clear}>{t('action.clearAllNotifications')}</Button>
+              <Button onClick={markAllAsRead}>{t('action.markAllNotifications')}</Button>
             </div>
           </div>
         </PopoverContent>

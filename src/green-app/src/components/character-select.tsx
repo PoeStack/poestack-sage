@@ -17,6 +17,7 @@ import { PoeCharacter } from '@/types/poe-api-models'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import { RefreshCwIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
 type CharacterSelectProps = {
   selectedLeague: string | null
@@ -24,6 +25,7 @@ type CharacterSelectProps = {
 }
 
 const CharacterSelect = ({ selectedLeague, onIgnSelect }: CharacterSelectProps) => {
+  const { t } = useTranslation()
   const currentUser = useAtomValue(currentUserAtom)
   const [popoverOpen, setPopoverOpen] = useState(false)
   const [selectedCharacter, setSelectedCharacter] = useState<PoeCharacter>()
@@ -71,7 +73,7 @@ const CharacterSelect = ({ selectedLeague, onIgnSelect }: CharacterSelectProps) 
             </>
           ) : (
             <>
-              <div>Select ...</div>
+              <div>{t('label.selectPh')}</div>
               {isLoading ? (
                 <div className="flex flex-row items-center gap-2">
                   <RefreshCwIcon
@@ -104,7 +106,7 @@ const CharacterSelect = ({ selectedLeague, onIgnSelect }: CharacterSelectProps) 
           }}
         >
           <div className="flex flex-row gap-1 relative">
-            <CommandInput className="pr-8" placeholder="Search..." />
+            <CommandInput className="pr-8" placeholder={t('label.searchPh')} />
             <Button
               variant="ghost"
               size="icon"
@@ -119,7 +121,7 @@ const CharacterSelect = ({ selectedLeague, onIgnSelect }: CharacterSelectProps) 
               />
             </Button>
           </div>
-          <CommandEmpty>No results.</CommandEmpty>
+          <CommandEmpty>{t('label.noResults')}</CommandEmpty>
           <CommandList className="max-h-[calc(var(--radix-popover-content-available-height)-7rem)] overflow-y-auto">
             <CommandGroup>
               {selectableCharacters?.map((c) => (
@@ -136,7 +138,7 @@ const CharacterSelect = ({ selectedLeague, onIgnSelect }: CharacterSelectProps) 
                   <div className="flex flex-col gap-1 items-start">
                     <div>{c.name}</div>
                     <div className="flex flex-row gap-2 uppercase justify-between">
-                      <div>{`Level ${c.level} ${c.class}`}</div>
+                      <div>{t('body.characterInfo', { level: c.level, class: c.class })}</div>
                     </div>
                   </div>
                 </CommandItem>

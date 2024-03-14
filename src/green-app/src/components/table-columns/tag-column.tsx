@@ -9,7 +9,7 @@ export function tagColumn<T extends { group?: SageItemGroup }>(
   props?: ColumnProps<T>
 ): ColumnDef<T> {
   const key = 'tag'
-  const header = 'Tag'
+  const header = 'tag'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,

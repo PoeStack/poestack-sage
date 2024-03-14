@@ -32,6 +32,7 @@ import { useQueries } from '@tanstack/react-query'
 import { SquarePenIcon, XIcon } from 'lucide-react'
 import Image from 'next/image'
 import { ComboboxItem, ComboboxTrigger } from './ui/combobox'
+import { useTranslation } from 'react-i18next'
 
 export type FilterOption = {
   hash: string
@@ -71,6 +72,7 @@ const ListingFilterCard = ({
   filterGroups,
   onFilterGroupsChange
 }: ListingFilterCardProps) => {
+  const { t } = useTranslation()
   const [options, setOptions] = useState<FilterOption[]>([])
   const [summaries, setSummaries] = useState<Record<string, SageListingItemType['summary']>>({})
   const [addGroupPreviewOpen, setAddGroupPreviewOpen] = useState(false)
@@ -114,7 +116,7 @@ const ListingFilterCard = ({
       ))}
       {!addGroupPreviewOpen ? (
         <Button className="self-end" variant="outline" onClick={() => setAddGroupPreviewOpen(true)}>
-          Add Group
+          {t('action.addGroup')}
         </Button>
       ) : (
         <div className="self-end w-32">
@@ -127,6 +129,7 @@ const ListingFilterCard = ({
             onOpenChange={(open) => {
               setTimeout(() => setAddGroupPreviewOpen(open), 0)
             }}
+            translate
           />
         </div>
       )}
@@ -149,6 +152,7 @@ const ListingFilterGroupCard = ({
   onGroupChange,
   removeGroup
 }: ListingFilterGroupCardProps) => {
+  const { t } = useTranslation()
   const [editMode, setEditMode] = useState(false)
   const [groupSelectOpen, setGroupSelectOpen] = useState(false)
 
@@ -222,7 +226,7 @@ const ListingFilterGroupCard = ({
               variant="ghost"
               onClick={() => toggleSelected()}
             >
-              {group.mode}
+              {t(`option.${group.mode}`)}
             </Button>
           )}
           {editMode && (
@@ -239,6 +243,7 @@ const ListingFilterGroupCard = ({
                   setGroupSelectOpen(open)
                   if (!open) setTimeout(() => setEditMode(false), 0)
                 }}
+                translate
               />
             </div>
           )}
@@ -256,7 +261,7 @@ const ListingFilterGroupCard = ({
             <Input
               type="number"
               className="max-w-20 text-center remove-arrow"
-              placeholder="MIN"
+              placeholder={t('label.minPh')}
               min={0}
               value={group.minimumQuantity || ''}
               onChange={handleMinQuantityChange}
@@ -331,6 +336,7 @@ function ListingGroupFilterSelect({
   removeFilter,
   isNextFilter
 }: ListingGroupFilterSelectProps) {
+  const { t } = useTranslation()
   const [popoverOpen, setPopoverOpen] = useState(false)
 
   const selectedOption = useMemo(
@@ -377,7 +383,7 @@ function ListingGroupFilterSelect({
                   </div>
                 </>
               ) : (
-                <>Select ...</>
+                <>{t('label.selectPh')}</>
               )}
             </ComboboxTrigger>
           </PopoverTrigger>
@@ -389,8 +395,8 @@ function ListingGroupFilterSelect({
                 return 0
               }}
             >
-              <CommandInput placeholder="Search..." />
-              <CommandEmpty>No results.</CommandEmpty>
+              <CommandInput placeholder={t('label.searchPh')} />
+              <CommandEmpty>{t('label.noResults')}</CommandEmpty>
               <CommandList className="max-h-[calc(var(--radix-popover-content-available-height)-7rem)] overflow-y-auto">
                 <CommandGroup>
                   {availableOptions.map((c) => (
@@ -422,7 +428,7 @@ function ListingGroupFilterSelect({
           <Input
             type="number"
             className="max-w-20 text-center remove-arrow"
-            placeholder="MIN"
+            placeholder={t('label.minPh')}
             min={0}
             value={filter.minimumQuantity || ''}
             onChange={handleMinQuantityChange}

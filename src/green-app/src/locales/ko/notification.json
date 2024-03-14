@@ -4,13 +4,13 @@
     "description": ""
   },
   "error": {
-    "unknown_error": "Etwas ist schiefgelaufen: {{message}}",
+    "unknown_error": "문제가 발생했습니다: {{message}}",
     "title": "",
     "description": ""
   },
   "warning": {
     "title": "",
-    "description": "Handeln Sie vorsichtig, {{ign}} möchte Gegenstände kaufen, die nicht angeboten werden ..."
+    "description": "{{ign}}님이 제공되지 않는 항목을 구매하려고 합니다..."
   },
   "info": {
     "title": "",

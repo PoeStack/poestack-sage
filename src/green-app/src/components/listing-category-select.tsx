@@ -12,6 +12,7 @@ import { useMemo, useState } from 'react'
 import { ComboboxItem, ComboboxTrigger } from './ui/combobox'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandList } from './ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
+import { useTranslation } from 'react-i18next'
 
 type SelectableCategory = ListingSubCategory & {
   selectable: boolean
@@ -40,6 +41,7 @@ export function ListingCategorySelect({
   onCategorySelect,
   onSubCategorySelect
 }: OnSelectProps) {
+  const { t } = useTranslation()
   const [popoverOpen, setPopoverOpen] = useState(false)
 
   const categoryItem = useMemo(() => {
@@ -118,7 +120,11 @@ export function ListingCategorySelect({
           onValueChange={(value) => handleCategorySelect(value !== '...' ? value : null)}
         >
           <SelectTrigger>
-            <SelectValue placeholder={isSubCategory ? 'Select subcategory' : 'Select category'} />
+            <SelectValue
+              placeholder={
+                isSubCategory ? t('label.selectSubCategoryPh') : t('label.selectCategoryPh')
+              }
+            />
           </SelectTrigger>
           <SelectContent className={cn(className)}>
             {categories?.map((c) => (
@@ -128,7 +134,7 @@ export function ListingCategorySelect({
                 ) : (
                   <div className="flex flex-row gap-2">
                     <Image className="min-w-5" width={20} height={20} src={c.icon} alt={c.name} />
-                    <div className="capitalize">{c.name}</div>
+                    <div className="truncate">{t(`categories.${c.name}` as any)}</div>
                   </div>
                 )}
               </SelectItem>
@@ -153,14 +159,14 @@ export function ListingCategorySelect({
                   <div className="capitalize truncate">{`${selectedCategory}`}</div>
                 </div>
               ) : (
-                <>{isSubCategory ? 'Select subcategory' : 'Select category'}</>
+                <>{isSubCategory ? t('label.selectSubCategoryPh') : t('label.selectCategoryPh')}</>
               )}
             </ComboboxTrigger>
           </PopoverTrigger>
           <PopoverContent className="p-0 max-h-[var(--radix-popover-content-available-height)] w-[var(--radix-popover-trigger-width)] overflow-hidden">
             <Command>
-              <CommandInput placeholder="Search..." />
-              <CommandEmpty>No results.</CommandEmpty>
+              <CommandInput placeholder={t('label.searchPh')} />
+              <CommandEmpty>{t('label.noResults')}</CommandEmpty>
               <CommandList className="max-h-[calc(var(--radix-popover-content-available-height)-7rem)] overflow-y-auto">
                 <CommandGroup>
                   {categories?.map((c) => (
@@ -185,7 +191,7 @@ export function ListingCategorySelect({
                             src={c.icon}
                             alt={c.name}
                           />
-                          <div className="capitalize truncate">{c.name}</div>
+                          <div className="truncate">{t(`categories.${c.name}` as any)}</div>
                         </div>
                       )}
                     </ComboboxItem>

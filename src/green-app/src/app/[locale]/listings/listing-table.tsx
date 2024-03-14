@@ -21,6 +21,7 @@ import { atomWithStorage } from 'jotai/utils'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { getListingsByCategory, useListingsStore } from './listingsStore'
+import { useTranslation } from 'react-i18next'
 
 interface DataTableProps {
   columns: ColumnDef<SageListingType['items'][number]>[]
@@ -28,8 +29,9 @@ interface DataTableProps {
   globalFilterFn?: FilterFnOption<SageListingType['items'][number]>
 }
 
-type ShowItemMode = 'Show all' | 'Show selected' | 'Show unselected'
-const showItemsModeAtom = atom<ShowItemMode>('Show all')
+type ShowItemMode = 'showAll' | 'showSelected' | 'showUnselected'
+const options: ShowItemMode[] = ['showAll', 'showSelected', 'showUnselected']
+const showItemsModeAtom = atom<ShowItemMode>('showAll')
 
 const columnOrderAtom = atomWithStorage<ColumnOrderState>('l-table-columnOrder', [])
 const columnVisiblityAtom = atomWithStorage<VisibilityState>('l-table-columnVisibility', {
@@ -40,6 +42,7 @@ const columnSizingAtom = atomWithStorage<ColumnSizingState>('l-table-columnSizin
 
 // Tutorial: https://ui.shadcn.com/docs/components/data-table
 const ListingTable = ({ columns, className, globalFilterFn }: DataTableProps) => {
+  const { t } = useTranslation()
   const [globalFilter, setGlobalFilter] = useState('')
   const [showItemsMode, setShowItemsMode] = useAtom(showItemsModeAtom)
 
@@ -57,10 +60,10 @@ const ListingTable = ({ columns, className, globalFilterFn }: DataTableProps) =>
 
   const filteredItems = useMemo((): SageListingItemType[] => {
     if (!listing) return []
-    if (listing.meta.listingMode === 'bulk' || showItemsMode === 'Show all') return listing.items
+    if (listing.meta.listingMode === 'bulk' || showItemsMode === 'showAll') return listing.items
     return listing.items.filter((item) => {
       const selected = !!selectedItems[item.hash]
-      if (showItemsMode === 'Show selected') return selected
+      if (showItemsMode === 'showSelected') return selected
       return !selected
     })
   }, [listing, showItemsMode, selectedItems])
@@ -164,7 +167,7 @@ const ListingTable = ({ columns, className, globalFilterFn }: DataTableProps) =>
           onChange={(value) => setGlobalFilter(String(value))}
           onBlur={(value) => setGlobalFilter(String(value))}
           className="pl-8 max-w-60"
-          placeholder={'Search ...'}
+          placeholder={t('label.searchPh')}
           startIcon={
             <div className="p-2">
               <MagnifyingGlassIcon className="h-4 w-4 shrink-0 opacity-50" />
@@ -174,9 +177,10 @@ const ListingTable = ({ columns, className, globalFilterFn }: DataTableProps) =>
         {listing?.meta.listingMode === 'single' && (
           <div className="w-full max-w-40">
             <BasicSelect
-              options={['Show all', 'Show selected', 'Show unselected']}
+              options={options}
               onSelect={setShowItemsMode}
               value={showItemsMode}
+              translate
             />
           </div>
         )}

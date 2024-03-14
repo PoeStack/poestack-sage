@@ -29,17 +29,17 @@ export const listingToolTableEditModeColumns = (): ColumnDef<IDisplayedItem>[] =
   priceInputColumn(),
   priceColumn({
     accessorKey: 'calculatedPrice',
-    accessorFn: (item) => (item.calculatedPrice !== undefined ? item.calculatedPrice : '?'),
-    headerName: 'Price'
+    headerName: 'price',
+    accessorFn: (item) => (item.calculatedPrice !== undefined ? item.calculatedPrice : '?')
   }),
   priceColumn({
     accessorKey: 'calculatedTotal',
-    headerName: 'Total Price',
+    headerName: 'totalPrice',
     accessorFn: (item) => item.calculatedTotalPrice
   }),
   priceColumn({
     accessorKey: 'cumulative',
-    headerName: 'Commulative',
+    headerName: 'commulativePrice',
     cumulativeColumn: 'calculatedTotal',
     enableSorting: false
   })

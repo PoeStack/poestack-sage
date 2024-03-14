@@ -10,7 +10,7 @@ import {
 import { cn } from '@/lib/utils'
 
 import {
-  Table as DataTable,
+  Table as TTable,
   TableOptions,
   flexRender,
   getCoreRowModel,
@@ -22,6 +22,7 @@ import {
 import { RefreshCwIcon } from 'lucide-react'
 import React, { memo } from 'react'
 import { TablePagination } from '../table-pagination'
+import { useTranslation } from 'react-i18next'
 
 export type DataTableOptions<TData> = Omit<
   TableOptions<TData>,
@@ -32,10 +33,11 @@ type DataTableProps<TData> = {
   options: DataTableOptions<TData>
   pageSizes?: number[]
   isLoading?: boolean
-  tableRef?: React.MutableRefObject<DataTable<TData> | undefined>
+  tableRef?: React.MutableRefObject<TTable<TData> | undefined>
 }
 
 const DataTable = <TData,>({ options, pageSizes, isLoading, tableRef }: DataTableProps<TData>) => {
+  const { t } = useTranslation()
   const table = useReactTable({
     enableColumnResizing: true,
     columnResizeMode: 'onChange',
@@ -143,11 +145,11 @@ const DataTable = <TData,>({ options, pageSizes, isLoading, tableRef }: DataTabl
                 <TableCell colSpan={options.columns.length} className="h-[6.5rem] text-center">
                   {isLoading ? (
                     <div className="flex flex-row justify-center items-center gap-2">
-                      Loading items ...
+                      {t('label.loadingItems')}
                       <RefreshCwIcon className="w-4 h-w shrink-0 animate-spin" />
                     </div>
                   ) : (
-                    <>No results.</>
+                    <>{t('label.noResults')}</>
                   )}
                 </TableCell>
               </TableRow>

@@ -4,13 +4,13 @@
     "description": ""
   },
   "error": {
-    "unknown_error": "Etwas ist schiefgelaufen: {{message}}",
+    "unknown_error": "Algo deu errado: {{message}}",
     "title": "",
     "description": ""
   },
   "warning": {
     "title": "",
-    "description": "Handeln Sie vorsichtig, {{ign}} möchte Gegenstände kaufen, die nicht angeboten werden ..."
+    "description": "Cuidado, {{ign}} quer comprar itens que não estão sendo oferecidos..."
   },
   "info": {
     "title": "",

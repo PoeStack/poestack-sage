@@ -28,10 +28,12 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import ListingDialogContent from './listing-dialog-content'
 import { getCategory, getListingsByCategory, useListingsStore } from './listingsStore'
+import { useTranslation } from 'react-i18next'
 dayjs.extend(utc)
 
-type SellModeOptions = 'Show all modes' | 'Show whole listings' | 'Show individual listings'
-const showSellModeAtom = atom<SellModeOptions>('Show all modes')
+type SellModeOptions = 'showAllModes' | 'showWholeListings' | 'showIndividualListings'
+const options: SellModeOptions[] = ['showAllModes', 'showWholeListings', 'showIndividualListings']
+const showSellModeAtom = atom<SellModeOptions>('showAllModes')
 
 const columnOrderAtom = atomWithStorage<ColumnOrderState>('ls-table-columnOrder', [])
 const columnVisiblityAtom = atomWithStorage<VisibilityState>('ls-table-columnVisibility', {})
@@ -45,7 +47,7 @@ interface DataTableProps {
 
 // Tutorial: https://ui.shadcn.com/docs/components/data-table
 const ListingsTable = ({ columns, globalFilterFn, className }: DataTableProps) => {
-  //   const { t } = useTranslation();
+  const { t } = useTranslation()
   const [showSellMode, setShowSellMode] = useAtom(showSellModeAtom)
   const [dialogOpen, setDialogOpen] = useListingsStore(
     useShallow((state) => [state.dialogOpen, state.setDialogOpen])
@@ -71,9 +73,9 @@ const ListingsTable = ({ columns, globalFilterFn, className }: DataTableProps) =
   )
 
   const filteredListings = useMemo((): SageListingType[] => {
-    if (showSellMode === 'Show all modes') return modifiedListings
+    if (showSellMode === 'showAllModes') return modifiedListings
     return modifiedListings.filter((l) => {
-      if (showSellMode === 'Show whole listings') return l.meta.listingMode === 'bulk'
+      if (showSellMode === 'showWholeListings') return l.meta.listingMode === 'bulk'
       else return l.meta.listingMode === 'single'
     })
   }, [modifiedListings, showSellMode])
@@ -153,7 +155,7 @@ const ListingsTable = ({ columns, globalFilterFn, className }: DataTableProps) =
             onChange={(value) => setGlobalFilter(String(value))}
             onBlur={(value) => setGlobalFilter(String(value))}
             className="pl-8 max-w-48"
-            placeholder={'Search ...'}
+            placeholder={t('label.searchPh')}
             startIcon={
               <div className="p-2">
                 <MagnifyingGlassIcon className="h-4 w-4 shrink-0 opacity-50" />
@@ -162,13 +164,19 @@ const ListingsTable = ({ columns, globalFilterFn, className }: DataTableProps) =
           />
           <div className="w-full max-w-48">
             <BasicSelect
-              options={['Show all modes', 'Show whole listings', 'Show individual listings']}
+              options={options}
               onSelect={setShowSellMode}
               value={showSellMode}
+              translate
             />
           </div>
           <div className="flex flex-col items-center gap-2 w-full max-w-48">
-            <Label>{`Multiplier: ${multiplierRange[0]}% - ${multiplierRange[1]}%`}</Label>
+            <Label>
+              {t('label.multiplierRange', {
+                multiplierFrom: multiplierRange[0],
+                multiplierTo: multiplierRange[1]
+              })}
+            </Label>
             <SliderPrimitive.Root
               className={cn('relative flex w-full touch-none select-none items-center')}
               min={0}

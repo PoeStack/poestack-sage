@@ -7,8 +7,9 @@ import {
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 
-type BasicSelectProps<TData, TValue> = {
+type BasicSelectProps<TData extends { value: string; t: string } | string, TValue> = {
   options: TData[] | ReactNode
   onSelect: (select: TValue) => void
   defaultOption?: string | undefined
@@ -17,9 +18,10 @@ type BasicSelectProps<TData, TValue> = {
   defaultOpen?: boolean
   value?: string
   itemClassName?: string
+  translate?: boolean
 }
 
-export function BasicSelect<TData, TValue>({
+export function BasicSelect<TData extends { value: string; t: string } | string, TValue>({
   open,
   value,
   onSelect,
@@ -27,8 +29,10 @@ export function BasicSelect<TData, TValue>({
   defaultOption,
   defaultOpen,
   onOpenChange,
-  itemClassName
+  itemClassName,
+  translate
 }: BasicSelectProps<TData, TValue>) {
+  const { t } = useTranslation()
   return (
     <Select
       open={open}
@@ -39,17 +43,21 @@ export function BasicSelect<TData, TValue>({
       onOpenChange={onOpenChange}
     >
       <SelectTrigger>
-        <SelectValue placeholder="Select..." />
+        <SelectValue placeholder={t('label.searchPh')} />
       </SelectTrigger>
       <SelectContent>
         {Array.isArray(options) ? (
-          options.map((c) => (
-            <SelectItem key={`${c}`} value={`${c}`}>
-              <div className={cn(itemClassName, 'flex flex-row gap-2')}>
-                <div>{`${c}`}</div>
-              </div>
-            </SelectItem>
-          ))
+          options.map((c) => {
+            const value = typeof c === 'object' ? c.value : c
+            const tValue = typeof c === 'object' || translate ? t(`option.${c}` as any) : c
+            return (
+              <SelectItem key={`${value}`} value={`${value}`}>
+                <div className={cn(itemClassName, 'flex flex-row gap-2')}>
+                  <div>{tValue}</div>
+                </div>
+              </SelectItem>
+            )
+          })
         ) : (
           <>{options}</>
         )}

@@ -10,12 +10,14 @@ import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
 import { currentUserAtom } from './providers'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 type OnSelectProps = {
   onSelect: (category: string) => void
 }
 
 export function LeagueSelect({ onSelect }: OnSelectProps) {
+  const { t } = useTranslation()
   const currentUser = useAtomValue(currentUserAtom)
 
   const { data, isFetching } = useQuery({
@@ -43,7 +45,7 @@ export function LeagueSelect({ onSelect }: OnSelectProps) {
   return (
     <Select onValueChange={onSelect} defaultValue={defaultLeague} disabled={isFetching}>
       <SelectTrigger>
-        <SelectValue placeholder="Select a League" />
+        <SelectValue placeholder={t('label.selectLeaguePh')} />
       </SelectTrigger>
       <SelectContent>
         {data?.map((c) => (

@@ -10,7 +10,7 @@ export function quantityInputColumn<T extends { quantity: number; selectedQuanti
   props: ColumnProps<T> = {}
 ): ColumnDef<T> {
   const key = 'selectedQuantity'
-  const header = 'Asking Quantity'
+  const header = 'selectedQuantity'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="right" />,

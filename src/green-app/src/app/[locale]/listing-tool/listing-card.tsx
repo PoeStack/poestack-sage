@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { ListingMode } from '@/types/sage-listing-type'
 import { LayoutListIcon, PackageIcon, RefreshCwIcon } from 'lucide-react'
 import { useListingToolStore } from './listingToolStore'
+import { useTranslation } from 'react-i18next'
 
 type ListingCardProps = {
   listingMode: ListingMode
@@ -28,6 +29,7 @@ export function ListingCard({
   onListingModeChange,
   onPostItemsClicked
 }: ListingCardProps) {
+  const { t } = useTranslation()
   const setMultiplier = useListingToolStore((state) => state.setLocalMultiplier)
   const multiplier = useListingToolStore((state) => state.localMultiplier)
   const totalPrice = useListingToolStore((state) => state.totalPrice)
@@ -49,12 +51,12 @@ export function ListingCard({
                 {listingMode === 'bulk' ? (
                   <>
                     <PackageIcon className="w-4 h-4" />
-                    {'Whole Offering '}
+                    {t('label.wholeOffering')}
                   </>
                 ) : (
                   <>
                     <LayoutListIcon className="w-4 h-4" />
-                    {'Individual Priced Items '}
+                    {t('label.individualOffering')}
                   </>
                 )}
 
@@ -73,17 +75,19 @@ export function ListingCard({
           <TooltipContent>
             <div className="flex flex-col text-sm">
               <div className="flex flex-row gap-2 items-center">
-                <PackageIcon className="w-4 h-4" /> Whole offering: Sell the whole offering at once
+                <PackageIcon className="w-4 h-4" />
+                {t('label.wholeOfferingTT')}
               </div>
               <div className="flex flex-row gap-2 items-center">
-                <LayoutListIcon className="w-4 h-4" /> Individual: Sell individual priced items
+                <LayoutListIcon className="w-4 h-4" />
+                {t('label.individualOfferingTT')}
               </div>
             </div>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
 
-      <Label>Multiplier: {multiplier}%</Label>
+      <Label>{t('label.multiplier', { multiplier: multiplier })}</Label>
       <Slider
         min={0}
         value={[multiplier]}
@@ -94,7 +98,7 @@ export function ListingCard({
         }}
       />
       <div className="flex items-center gap-2">
-        <Label>Total Value: </Label>
+        <Label>{t('label.totalPrice')}</Label>
         <CurrencyDisplay iconRect={{ width: 24, height: 24 }} value={totalPrice} />
       </div>
 
@@ -106,7 +110,7 @@ export function ListingCard({
         }
         className="flex flex-row gap-2"
       >
-        Post Offering
+        {t('action.postOffering')}
         <RefreshCwIcon className={cn(isPostListingLoading && 'animate-spin', 'w-4 h-w')} />
       </Button>
     </div>

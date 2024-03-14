@@ -11,7 +11,7 @@ export function propsColumn<
   T extends { group?: SageItemGroup } | { summary?: SageItemGroupSummary }
 >(props?: ColumnProps<T>): ColumnDef<T> {
   const key = 'unsafeHashProperties'
-  const header = 'Props'
+  const header = 'props'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,

@@ -42,8 +42,8 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={dir(locale)}>
       <body className={cn('min-h-screen bg-background font-sans antialiased', inter.className)}>
-        <Providers>
-          <TranslationsProvider locale={locale} resources={resources}>
+        <TranslationsProvider locale={locale} resources={resources}>
+          <Providers>
             <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
               <div className="container flex h-14 max-w-screen-2xl items-center justify-between">
                 <div className="flex justify-center gap-12">
@@ -67,8 +67,8 @@ export default async function RootLayout({
               </div>
             </header>
             <main className="flex flex-col p-4 gap-2 lg:gap-4">{children}</main>
-          </TranslationsProvider>
-        </Providers>
+          </Providers>
+        </TranslationsProvider>
       </body>
     </html>
   )

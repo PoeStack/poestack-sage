@@ -18,6 +18,7 @@ import {
 } from '../ui/form'
 import { Input } from '../ui/input'
 import { Switch } from '../ui/switch'
+import { useTranslation } from 'react-i18next'
 
 const formSchema = z.object({
   maxActiveToasts: z.coerce.number().min(0),
@@ -29,6 +30,7 @@ type SettingsDialogContentProps = {
 }
 
 const SettingsDialogContent = ({ onClose }: SettingsDialogContentProps) => {
+  const { t } = useTranslation()
   const {
     maxActiveToasts,
     setMaxActiveToasts,
@@ -66,7 +68,7 @@ const SettingsDialogContent = ({ onClose }: SettingsDialogContentProps) => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogHeader>
-            <DialogTitle>Notification Settings</DialogTitle>
+            <DialogTitle>{t('title.notificationSettings')}</DialogTitle>
           </DialogHeader>
           <div className="p-6 space-y-5">
             <FormField
@@ -74,13 +76,11 @@ const SettingsDialogContent = ({ onClose }: SettingsDialogContentProps) => {
               name="maxActiveToasts"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Maximum displayed notifications:</FormLabel>
+                  <FormLabel>{t('label.maxNotification')}</FormLabel>
                   <FormControl>
                     <Input placeholder="Default 4" {...field} type="number" min={0} />
                   </FormControl>
-                  <FormDescription>
-                    Notifications are queued to appear when the maximum number is reached.
-                  </FormDescription>
+                  <FormDescription>{t('body.maxNotification')}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -90,7 +90,7 @@ const SettingsDialogContent = ({ onClose }: SettingsDialogContentProps) => {
               name="openTradeOverviewInNewWindow"
               render={({ field: { value, onChange, ...props } }) => (
                 <FormItem className="">
-                  <FormLabel>Open trade requests in new window:</FormLabel>
+                  <FormLabel>{t('label.tradeInNewWindow')}</FormLabel>
                   <FormControl>
                     <Switch
                       className="ml-2"
@@ -99,10 +99,7 @@ const SettingsDialogContent = ({ onClose }: SettingsDialogContentProps) => {
                       {...props}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Trade requests notifications appear when someone clicks “Copy Whisper” for one
-                    of your offers.
-                  </FormDescription>
+                  <FormDescription>{t('body.tradeInNewWindow')}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -111,12 +108,10 @@ const SettingsDialogContent = ({ onClose }: SettingsDialogContentProps) => {
           <DialogFooter className="fley flex-row justify-end gap-1">
             <DialogClose asChild>
               <Button type="button" variant="secondary">
-                {form.formState.isDirty ? 'Discard' : 'Close'}
+                {form.formState.isDirty ? t('action.discard') : t('action.close')}
               </Button>
             </DialogClose>
-            {/* <DialogClose asChild> */}
-            <Button type="submit">Save</Button>
-            {/* </DialogClose> */}
+            <Button type="submit">{t('action.save')}</Button>
           </DialogFooter>
         </form>
       </Form>

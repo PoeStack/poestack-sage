@@ -25,11 +25,12 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { TableColumnHeader } from '../../../components/column-header'
 import { useListingsStore } from './listingsStore'
+import { useTranslation } from 'react-i18next'
 dayjs.extend(utc)
 
 export function categoryColumn(): ColumnDef<SageListingType> {
   const key = 'category'
-  const header = 'Category'
+  const header = 'category'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
@@ -44,6 +45,7 @@ export function categoryColumn(): ColumnDef<SageListingType> {
       headerWording: header
     },
     cell: ({ row }) => {
+      const { t } = useTranslation()
       const value = row.getValue<string>(key)
       return (
         <div className="flex flex-row gap-2 items-center">
@@ -61,7 +63,7 @@ export function categoryColumn(): ColumnDef<SageListingType> {
               paddingBlock: '0.125rem'
             }}
           />
-          <span className="capitalize">{value}</span>
+          <span className="truncate">{t(`categories.${value}` as any)}</span>
         </div>
       )
     }
@@ -70,7 +72,7 @@ export function categoryColumn(): ColumnDef<SageListingType> {
 
 export function listingModeColumn(): ColumnDef<SageListingType> {
   const key = 'listingMode'
-  const header = 'Sell Mode'
+  const header = 'listingMode'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
@@ -85,6 +87,7 @@ export function listingModeColumn(): ColumnDef<SageListingType> {
       headerWording: header
     },
     cell: ({ row }) => {
+      const { t } = useTranslation()
       const mode = row.getValue<ListingMode>(key)
       return (
         <div className="flex flex-row gap-1 items-center">
@@ -93,7 +96,9 @@ export function listingModeColumn(): ColumnDef<SageListingType> {
           ) : (
             <LayoutListIcon className="w-4 h-4" />
           )}
-          <span className="capitalize">{mode === 'bulk' ? 'Whole Listing' : 'Individual'}</span>
+          <span className="truncate">
+            {mode === 'bulk' ? t('label.wholeListingShort') : t('label.individualListingShort')}
+          </span>
         </div>
       )
     }
@@ -102,7 +107,7 @@ export function listingModeColumn(): ColumnDef<SageListingType> {
 
 export function sellerColumn(): ColumnDef<SageListingType> {
   const key = 'seller'
-  const header = 'Seller'
+  const header = 'seller'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
@@ -125,7 +130,7 @@ export function sellerColumn(): ColumnDef<SageListingType> {
 
 export function createdColumn(): ColumnDef<SageListingType> {
   const key = 'created'
-  const header = 'Created'
+  const header = 'created'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
@@ -148,7 +153,7 @@ export function createdColumn(): ColumnDef<SageListingType> {
 
 export function actionsColumn(): ColumnDef<SageListingType> {
   const key = 'actions'
-  const header = 'Actions'
+  const header = 'actions'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
@@ -160,6 +165,7 @@ export function actionsColumn(): ColumnDef<SageListingType> {
       headerWording: header
     },
     cell: ({ row }) => {
+      const { t } = useTranslation()
       const divinePrice = useAtomValue(currentDivinePriceAtom)
       const [detailsTooltipOpen, setDetailsTooltipOpen] = useState(false)
       const setSelectedListingId = useListingsStore((state) => state.setSelectedListingId)
@@ -184,7 +190,7 @@ export function actionsColumn(): ColumnDef<SageListingType> {
                 </Button>
                 {/* </DialogTrigger> */}
               </TooltipTrigger>
-              <TooltipContent>{'Show Details'}</TooltipContent>
+              <TooltipContent>{t('label.showDetailsTT')}</TooltipContent>
             </Tooltip>
             {/* <Tooltip>
               <TooltipTrigger asChild> */}
@@ -205,7 +211,11 @@ export function actionsColumn(): ColumnDef<SageListingType> {
                 setMessageCopied()
               }}
             >
-              {messageCopied ? `Whisper copied!` : messageSent ? `Copy again?` : 'Copy whisper'}
+              {messageCopied
+                ? t('action.whisperCopied')
+                : messageSent
+                  ? t('action.copyWhisperAgain')
+                  : t('action.copyWhisper')}
               {isLoading && (
                 <RefreshCwIcon className={cn(isLoading && 'animate-spin', 'w-4 h-w shrink-0')} />
               )}
@@ -249,7 +259,7 @@ export const listingsTableColumns = (): ColumnDef<SageListingType>[] => [
   sellerColumn(),
   priceColumn({
     accessorKey: 'totalPrice',
-    headerName: 'Price',
+    headerName: 'price',
     accessorFn: (listing) => listing.meta.calculatedTotalPrice
   }),
   multiplierColumn({

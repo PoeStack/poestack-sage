@@ -3,6 +3,7 @@
 import CurrencyDisplay from '@/components/currency-display'
 import { Label } from '@/components/ui/label'
 import { SageListingType } from '@/types/sage-listing-type'
+import { t } from 'i18next'
 import { LayoutListIcon, PackageIcon } from 'lucide-react'
 import Image from 'next/image'
 import { useMemo } from 'react'
@@ -23,9 +24,9 @@ export default function ListingMetaOverview({ selectedListing }: ListingMetaOver
   return (
     <>
       <div className="grid grid-cols-6 w-fit gap-1 text-sm gap-x-3 h-fit">
-        <Label className="text-sm">Seller:</Label>
+        <Label className="text-sm">{t('label.seller')}</Label>
         <div className="col-span-5">{selectedListing.meta.ign}</div>
-        <Label className="text-sm">Category:</Label>
+        <Label className="text-sm">{t('label.category')}</Label>
         <div className="col-span-5 flex flex-row gap-1 items-center">
           <Image
             className="max-w-5 max-h-5 shrink-0"
@@ -34,29 +35,29 @@ export default function ListingMetaOverview({ selectedListing }: ListingMetaOver
             height={20}
             alt={selectedListing.meta.altIcon}
           />
-          <div className="capitalize">{selectedListing.meta.category}</div>
+          <div>{t(`categories.${selectedListing.meta.category}` as any)}</div>
         </div>
-        <Label className="text-sm">Sell Mode:</Label>
+        <Label className="text-sm">{t('label.sellMode')}</Label>
         <div className="col-span-5 flex flex-row gap-1 items-center">
           {selectedListing.meta.listingMode === 'bulk' ? (
             <>
               <PackageIcon className="w-4 h-4" />
-              {'Whole Offering '}
+              {t('label.wholeListingShort')}
             </>
           ) : (
             <>
               <LayoutListIcon className="w-4 h-4" />
-              {'Individual Priced Items '}
+              {t('label.individualListingShort')}
             </>
           )}
         </div>
-        <Label className="text-sm">Asking Price:</Label>
+        <Label className="text-sm">{t('label.askingPrice')}</Label>
         <div className="col-span-5">
           <div className="w-fit">
             <CurrencyDisplay value={selectedListing.meta.calculatedTotalPrice} />
           </div>
         </div>
-        <Label className="text-sm">Multiplier:</Label>
+        <Label className="text-sm">{t('label.multiplierLabel')}</Label>
         <div className="col-span-5">{multiplier}%</div>
       </div>
     </>

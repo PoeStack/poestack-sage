@@ -8,7 +8,7 @@ type ColumnProps<T> = Omit<ColumnDef<T>, 'accessorKey' | 'accessorFn'> & {
 
 export function multiplierColumn<T extends {}>(props: ColumnProps<T>): ColumnDef<T> {
   const key = 'multiplier'
-  const header = 'Multiplier'
+  const header = 'multiplier'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="right" />,

@@ -8,7 +8,7 @@ export function checkColumn<T extends { group?: SageItemGroup } | {}>(
   props?: ColumnProps<T>
 ): ColumnDef<T> {
   const id = 'selected'
-  const header = 'Selection'
+  const header = 'selection'
 
   return {
     header: ({ table }) => {

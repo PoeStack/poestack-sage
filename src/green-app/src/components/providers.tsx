@@ -11,6 +11,7 @@ import { ReactNode, useState } from 'react'
 import { ToastContainer } from 'react-toastify'
 import ErrorBoundaryContainer from './error-boundary-container'
 import Notifier from './notifier'
+import { useTranslation } from 'react-i18next'
 
 const leagueDivineStore = createStore()
 export const currentDivinePriceAtom = atom<number>(0)
@@ -25,6 +26,7 @@ type ProvidersProps = {
 }
 
 export function Providers({ children }: ProvidersProps) {
+  const { t } = useTranslation('notification')
   const toast = useToast()
   const [queryClient] = useState(
     () =>
@@ -35,7 +37,7 @@ export function Providers({ children }: ProvidersProps) {
             // which indicates a failed background update
             console.error(error)
             if (query.state.data !== undefined) {
-              toast(`Something went wrong: ${error.message}`, 'error')
+              toast(t('error.unknown_error', { message: error.message }), 'error')
             }
           }
         })

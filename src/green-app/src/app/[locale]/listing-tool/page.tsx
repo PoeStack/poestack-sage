@@ -38,6 +38,7 @@ import { atom, useAtom, useAtomValue } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import { ArrowLeftToLineIcon, ArrowRightToLineIcon } from 'lucide-react'
 import { useCallback, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { v4 as uuidv4 } from 'uuid'
 import { useShallow } from 'zustand/react/shallow'
 import { ListingCard } from './listing-card'
@@ -46,8 +47,6 @@ import ListingToolTable from './listing-tool-table'
 import { listingToolTableEditModeColumns } from './listing-tool-table-columns'
 import { getCategory, useListingToolStore } from './listingToolStore'
 import MyOfferingsCard from './my-offerings-card'
-import TranslationsProvider from '@/components/translations-provider'
-import { useTranslation } from 'react-i18next'
 dayjs.extend(utc)
 
 // TODO:
@@ -250,7 +249,7 @@ export default function Page() {
                 onChange={(value) => setGlobalFilter(String(value))}
                 onBlur={(value) => setGlobalFilter(String(value))}
                 className="pl-8 max-w-60"
-                placeholder={'Search ...'}
+                placeholder={t('label.searchPh')}
                 startIcon={
                   <div className="p-2">
                     <MagnifyingGlassIcon className="h-4 w-4 shrink-0 opacity-50" />
@@ -293,26 +292,27 @@ export default function Page() {
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="outline" size="default">
-                    Reset data
+                    {t('action.softReset')}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. <br />
-                      If you confirm, the following data will be reset:
+                    <AlertDialogTitle> {t('title.alertDialogQuesting')}</AlertDialogTitle>
+                    <AlertDialogDescription className="whitespace-pre-line">
+                      {t('body.softReset')}
                       <ul className="list-disc pl-4">
-                        <li>Multiplier per (sub-)category</li>
-                        <li>Sellmode per (sub-)category</li>
-                        <li>Overrides/Overprices</li>
-                        <li>Unselected items</li>
+                        <li>{t('body.softResetLi1')}</li>
+                        <li>{t('body.softResetLi2')}</li>
+                        <li>{t('body.softResetLi3')}</li>
+                        <li>{t('body.softResetLi4')}</li>
                       </ul>
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => resetData()}>Reset Data</AlertDialogAction>
+                    <AlertDialogCancel>{t('action.cancel')}</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => resetData()}>
+                      {t('action.softReset')}
+                    </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>

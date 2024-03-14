@@ -4,13 +4,13 @@
     "description": ""
   },
   "error": {
-    "unknown_error": "Etwas ist schiefgelaufen: {{message}}",
+    "unknown_error": "Quelque chose s'est mal passé : {{message}}",
     "title": "",
     "description": ""
   },
   "warning": {
     "title": "",
-    "description": "Handeln Sie vorsichtig, {{ign}} möchte Gegenstände kaufen, die nicht angeboten werden ..."
+    "description": "Faites attention, {{ign}} veut acheter des objets qui ne sont pas offerts..."
   },
   "info": {
     "title": "",

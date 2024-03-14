@@ -14,7 +14,7 @@ import {
   CommandList
 } from './ui/command'
 import { IStashTab } from '@/types/echo-api/stash'
-// import { useTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 
 export type OptionType = IStashTab
 
@@ -28,7 +28,7 @@ interface MultiSelectProps {
 
 const StashTabMultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
   ({ options, selected, onChange, className, ...props }, ref) => {
-    //  const { t } = useTranslation()
+    const { t } = useTranslation()
     const [open, setOpen] = React.useState(false)
 
     const handleUnselect = (item: IStashTab) => {
@@ -97,8 +97,8 @@ const StashTabMultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps
         </PopoverTrigger>
         <PopoverContent className="p-0 w-[var(--radix-popover-trigger-width)]">
           <Command className={className}>
-            <CommandInput placeholder={'Suchen...'} />
-            <CommandEmpty>No item found.</CommandEmpty>
+            <CommandInput placeholder={t('label.searchPh')} />
+            <CommandEmpty>{t('label.noResults')}</CommandEmpty>
             <CommandList>
               <CommandGroup>
                 {options.map((option) => {

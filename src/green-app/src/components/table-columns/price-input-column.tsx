@@ -11,7 +11,7 @@ export function priceInputColumn<
   T extends { selectedPrice?: number; originalPrice?: number; group?: SageItemGroup }
 >(props: ColumnProps<T> = {}): ColumnDef<T> {
   const key = 'selectedPrice'
-  const header = 'Override'
+  const header = 'selectedPrice'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="right" />,

@@ -11,7 +11,7 @@ export function quantityColumn<T extends { stackSize: number } | { quantity: num
   ...props
 }: ColumnProps<T> = {}): ColumnDef<T> {
   const key = 'quantity'
-  const header = 'Quantity'
+  const header = 'quantity'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="right" />,

@@ -5,23 +5,24 @@ import { Button } from '@/components/ui/button'
 import { DialogClose, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useWhisperHashCopied } from '@/hooks/useWhisperHash'
+import { cn } from '@/lib/utils'
 import { createWishperAndCopyToClipboard } from '@/lib/whsiper-util'
 import { SageListingItemType } from '@/types/sage-listing-type'
 import { FilterFn, filterFns } from '@tanstack/react-table'
 import { useAtomValue } from 'jotai'
-import { useCallback, useMemo, useState } from 'react'
+import { RefreshCwIcon } from 'lucide-react'
+import { useCallback, useMemo } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { ListingFilterGroup } from '../../components/trade-filter-card'
 import ListingMetaOverview from './listing-meta-overview'
 import ListingTable from './listing-table'
 import { listingTableBulkModeColumns, listingTradeSingleModeColumns } from './listing-table-columns'
 import { getListingsByCategory, useListingsStore } from './listingsStore'
-import { RefreshCwIcon } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
 type ListingDialogContentProps = {}
 
 export default function ListingDialogContent() {
+  const { t } = useTranslation()
   // FilteredListings can only be undefined, if we would remove deleted listings. But for this we have to ensure, that the dialog get closed automatically or something else
   const selectedListing = useListingsStore(
     useShallow(
@@ -51,7 +52,7 @@ export default function ListingDialogContent() {
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Bulk Listing</DialogTitle>
+        <DialogTitle>{t('title.bulkListing')}</DialogTitle>
         {/* <DialogDescription></DialogDescription> */}
       </DialogHeader>
       <ScrollArea className="max-h-[70vh]">
@@ -97,14 +98,18 @@ export default function ListingDialogContent() {
             setMessageCopied?.()
           }}
         >
-          {messageCopied ? `Whisper copied!` : messageSent ? `Copy again?` : 'Copy whisper'}
+          {messageCopied
+            ? t('action.whisperCopied')
+            : messageSent
+              ? t('action.copyWhisperAgain')
+              : t('action.copyWhisper')}
           {isLoading && (
             <RefreshCwIcon className={cn(isLoading && 'animate-spin', 'w-4 h-w shrink-0')} />
           )}
         </Button>
         <DialogClose asChild>
           <Button type="button" variant="secondary">
-            Close
+            {t('action.close')}
           </Button>
         </DialogClose>
       </DialogFooter>

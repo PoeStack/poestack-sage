@@ -30,6 +30,7 @@ import Image from 'next/image'
 import { memo, useEffect, useMemo, useState } from 'react'
 import { getCategory } from './listingToolStore'
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 dayjs.extend(relativeTime)
 dayjs.extend(utc)
 
@@ -67,6 +68,7 @@ function MyOfferingsCard({
   setStashes,
   setListingMode
 }: MyOfferingsCardProps) {
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
   const currentUser = useAtomValue(currentUserAtom)
   const [listings, setListings] = useState<SageOfferingType[]>()
@@ -148,7 +150,7 @@ function MyOfferingsCard({
 
   return (
     <div className="flex flex-col border w-full bg-card text-card-foreground shadow rounded-md relative divide-y">
-      <h3 className="p-2">My Offerings</h3>
+      <h3 className="p-2">{t('title.myOfferings')}</h3>
       <div className="overflow-y-auto overflow-x-hidden max-h-[630px] h-[630px]">
         <div className="p-1">
           <AnimatePresence>
@@ -185,7 +187,9 @@ function MyOfferingsCard({
                               alt={selectedCategory.name}
                             />
                           )}
-                          <div className="capitalize">{selectedCategory?.name || ''}</div>
+                          <div className="truncate">
+                            {t(`categories.${selectedCategory?.name || ''}` as any)}
+                          </div>
                         </div>
                         <div className="flex flex-row items-center ">
                           <CurrencyDisplay
@@ -202,12 +206,12 @@ function MyOfferingsCard({
                           {meta.listingMode === 'bulk' ? (
                             <>
                               <PackageIcon className="w-4 h-4" />
-                              Whole Offering
+                              {t('label.wholeOfferingShort')}
                             </>
                           ) : (
                             <>
                               <LayoutListIcon className="w-4 h-4" />
-                              Individual
+                              {t('label.individualOfferingShort')}
                             </>
                           )}
                           {/* {meta.tabs.map((tab, i) => (
@@ -251,15 +255,12 @@ function MyOfferingsCard({
                                   <ArrowLeftToLineIcon className="w-4 h-4" />
                                 </Button>
                               </TooltipTrigger>
-                              <TooltipContent>
-                                This selects <b>only</b> the stashtabs, category, subcategory and
-                                sellmode.
-                                <br />
-                                All other settings are still applied:
+                              <TooltipContent className="whitespace-pre-line">
+                                {t('label.offeringPreviewTT')}
                                 <ul className="list-disc pl-4">
-                                  <li>Multiplier per (sub-)category</li>
-                                  <li>Overrides/Overprices</li>
-                                  <li>Unselected items</li>
+                                  <li>{t('label.offeringPreviewLi1TT')}</li>
+                                  <li>{t('label.offeringPreviewLi2TT')}</li>
+                                  <li>{t('label.offeringPreviewLi3TT')}</li>
                                 </ul>
                               </TooltipContent>
                             </Tooltip>
@@ -291,11 +292,13 @@ function MyOfferingsCard({
               })
             ) : isFetching ? (
               <div className="flex flex-row justify-center items-center h-20 text-sm gap-2">
-                Loading ...
+                {t('label.loading')}
                 <RefreshCwIcon className="w-4 h-w shrink-0 animate-spin" />
               </div>
             ) : (
-              <div className="flex justify-center items-center h-20 text-sm">No offerings.</div>
+              <div className="flex justify-center items-center h-20 text-sm">
+                {t('label.noOfferingResults')}
+              </div>
             )}
           </AnimatePresence>
         </div>

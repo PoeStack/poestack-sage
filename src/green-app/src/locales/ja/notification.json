@@ -4,13 +4,13 @@
     "description": ""
   },
   "error": {
-    "unknown_error": "Etwas ist schiefgelaufen: {{message}}",
+    "unknown_error": "何かがうまくいきませんでした：{{message}}",
     "title": "",
     "description": ""
   },
   "warning": {
     "title": "",
-    "description": "Handeln Sie vorsichtig, {{ign}} möchte Gegenstände kaufen, die nicht angeboten werden ..."
+    "description": "{{ign}}が提供されていないアイテムを購入しようとしています..."
   },
   "info": {
     "title": "",

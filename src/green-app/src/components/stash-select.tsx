@@ -27,6 +27,7 @@ import { Skeleton } from './ui/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip'
 import { TimeTracker } from './time-tracker'
 import { UserInfo } from '@/types/userInfo'
+import { useTranslation } from 'react-i18next'
 dayjs.extend(relativeTime)
 
 // Inspiration:
@@ -51,6 +52,7 @@ const StashSelect = ({
   onSelect,
   onLoadStashTabsClicked
 }: StashSelectProps) => {
+  const { t } = useTranslation()
   const currentUser = useAtomValue(currentUserAtom)
 
   const {
@@ -93,7 +95,7 @@ const StashSelect = ({
       }}
     >
       <div className="flex flex-row gap-1 relative">
-        <CommandInput className="pr-8" placeholder="Search..." />
+        <CommandInput className="pr-8" placeholder={t('label.searchPh')} />
         <Button
           variant="ghost"
           size="icon"
@@ -106,7 +108,7 @@ const StashSelect = ({
           />
         </Button>
       </div>
-      <CommandEmpty>No results.</CommandEmpty>
+      <CommandEmpty>{t('label.noResults')}</CommandEmpty>
 
       <CommandList className="max-h-max mb-10">
         <CommandGroup>
@@ -161,7 +163,10 @@ const StashSelect = ({
           disabled={isStashListItemsFetching || !currentUser?.profile?.uuid || !league}
         >
           <RefreshCwIcon className={cn(isStashListItemsFetching && 'animate-spin', 'w-4 h-w')} />
-          Load {selected.length} of {Object.keys(stashesMap).length} Tabs
+          {t('action.loadTabs', {
+            selected: selected.length,
+            total: Object.keys(stashesMap).length
+          })}
         </Button>
         <div className="flex flex-1" />
         {/* <div className="flex-1 text-xs text-muted-foreground truncate">
@@ -193,6 +198,7 @@ type StashItemProps = {
 }
 
 const StashItem = ({ currentUser, league, stash, selected, onSelect }: StashItemProps) => {
+  const { t } = useTranslation()
   const isSelected = useMemo(() => selected.some((x) => x.id === stash.id), [selected, stash.id])
   const [open, setOpen] = useState(false)
 
@@ -261,10 +267,10 @@ const StashItem = ({ currentUser, league, stash, selected, onSelect }: StashItem
             <TooltipContent side="top">
               <Label>
                 {dataUpdatedAt === 0 ? (
-                  `Not loaded`
+                  t('label.notLoadedTT')
                 ) : (
                   <span className="flex flex-row gap-1">
-                    {'Updated'}
+                    {t('label.updatedTT')}
                     <TimeTracker createdAt={dataUpdatedAt} />
                   </span>
                 )}
@@ -298,6 +304,7 @@ function SubCommand({
   onRefreshStashtabsClicked,
   onUnselectStashtabsClicked
 }: SubCommandProps) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
 
   return (
@@ -320,7 +327,7 @@ function SubCommand({
       >
         <Command>
           <CommandList>
-            <CommandGroup heading="Actions">
+            <CommandGroup heading={t('title.actions')}>
               <CommandItem
                 onSelect={() => {
                   onRefreshStashtabsClicked()
@@ -334,7 +341,7 @@ function SubCommand({
               >
                 <div className="flex flex-row gap-2 items-center w-full">
                   <RefreshCwIcon className={cn(isStashListFetching && 'animate-spin', 'w-4 h-w')} />
-                  Refresh Stashtabs
+                  {t('action.refreshStashTabs')}
                 </div>
               </CommandItem>
               <CommandItem
@@ -346,7 +353,7 @@ function SubCommand({
               >
                 <div className="flex flex-row gap-2 items-center w-full">
                   <Trash2Icon className="w-4 h-w" />
-                  Unselect Stashtabs
+                  {t('action.unselectStashTabs')}
                 </div>
               </CommandItem>
             </CommandGroup>

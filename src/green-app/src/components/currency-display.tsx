@@ -8,6 +8,7 @@ import { Separator } from './ui/separator'
 import { Label } from './ui/label'
 import { currentDivinePriceAtom } from './providers'
 import { useAtomValue } from 'jotai'
+import { useTranslation } from 'react-i18next'
 
 interface CurrencyDisplayProps {
   format?: FormattedValue
@@ -145,6 +146,7 @@ const CurrencyDisplayWithTooltip: React.FC<CurrencyDisplayWithTooltipProps> = ({
   showChange = false,
   iconRect
 }) => {
+  const { t } = useTranslation()
   const divinePrice = useAtomValue(currentDivinePriceAtom)
 
   const format = useMemo(
@@ -181,7 +183,7 @@ const CurrencyDisplayWithTooltip: React.FC<CurrencyDisplayWithTooltipProps> = ({
           </div>
         </TooltipTrigger>
         <TooltipContent className={cn('space-y-1', ttContentClassName)}>
-          <Label>OTHER CALCULATIONS</Label>
+          <Label>{t('label.otherCalculations')}</Label>
           <Separator orientation="horizontal" />
           <div className="flex flex-row flex-grow-0 gap-1 justify-end">
             <div className="flex flex-row gap-1 items-center">

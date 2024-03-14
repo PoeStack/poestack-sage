@@ -17,8 +17,10 @@ import ListingsHandler from './listings-handler'
 import ListingsTable from './listings-table'
 import { listingsTableColumns } from './listings-table-columns'
 import { useListingsStore } from './listingsStore'
+import { useTranslation } from 'react-i18next'
 
 export default function ListingsPage() {
+  const { t } = useTranslation()
   const selectedLeague = useListingsStore((state) => state.league)
   const [selectedCategory, setSelectedCategory] = useListingsStore(
     useShallow((state) => [state.category, state.setCategory])
@@ -74,7 +76,7 @@ export default function ListingsPage() {
             </div>
             <Accordion type="single" collapsible className="flex basis-1/2 w-full">
               <AccordionItem className="w-full" value="item-1">
-                <AccordionTrigger>Item Filter</AccordionTrigger>
+                <AccordionTrigger>{t('title.itemFilter')}</AccordionTrigger>
                 <AccordionContent>
                   <ListingFilterCard
                     className=""

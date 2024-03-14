@@ -12,7 +12,7 @@ export function nameColumn<T extends { displayName: string; icon: string; frameT
   ...props
 }: ColumnProps<T> = {}): ColumnDef<T> {
   const key = 'displayName'
-  const header = 'Name'
+  const header = 'name'
 
   return {
     header: ({ column }) => <TableColumnHeader column={column} title={header} align="left" />,
