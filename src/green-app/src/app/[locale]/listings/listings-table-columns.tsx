@@ -2,6 +2,7 @@
 'use client'
 
 import { currentDivinePriceAtom } from '@/components/providers'
+import { multiplierColumn } from '@/components/table-columns/multiplier-column'
 import { priceColumn } from '@/components/table-columns/price-column'
 import { TimeTracker } from '@/components/time-tracker'
 import { Button } from '@/components/ui/button'
@@ -22,10 +23,8 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
-import { TableColumnHeader } from '../../components/column-header'
+import { TableColumnHeader } from '../../../components/column-header'
 import { useListingsStore } from './listingsStore'
-import { multiplierColumn } from '@/components/table-columns/multiplier-column'
-import useStore from '@/hooks/useStore'
 dayjs.extend(utc)
 
 export function categoryColumn(): ColumnDef<SageListingType> {

@@ -2,15 +2,15 @@
 
 import { listListings, listSummaries, listValuations } from '@/lib/http-util'
 import { LISTING_CATEGORIES } from '@/lib/listing-categories'
+import { calculateListingFromOfferingListing } from '@/lib/listing-util'
 import { SageItemGroupSummaryShard } from '@/types/echo-api/item-group'
 import { SageValuationShard } from '@/types/echo-api/valuation'
 import { SageListingType } from '@/types/sage-listing-type'
 import { useQueries, useQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
-import { memo, useEffect, useMemo, useRef } from 'react'
+import { memo, useEffect, useMemo } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { getCategory, useListingsStore } from './listingsStore'
-import { calculateListingFromOfferingListing } from '@/lib/listing-util'
+import { useListingsStore } from './listingsStore'
 
 interface ListingsHandlerProps {}
 

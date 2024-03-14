@@ -46,6 +46,8 @@ import ListingToolTable from './listing-tool-table'
 import { listingToolTableEditModeColumns } from './listing-tool-table-columns'
 import { getCategory, useListingToolStore } from './listingToolStore'
 import MyOfferingsCard from './my-offerings-card'
+import TranslationsProvider from '@/components/translations-provider'
+import { useTranslation } from 'react-i18next'
 dayjs.extend(utc)
 
 // TODO:
@@ -65,8 +67,6 @@ dayjs.extend(utc)
 // Switch back to redis?
 // Listing deletion should not delete the listings immediately
 
-type PageProps = {}
-
 const showRightSidePanelAtom = atom(false)
 
 const columnOrderAtom = atomWithStorage<ColumnOrderState>('lt-table-columnOrder', [])
@@ -77,6 +77,7 @@ const columnVisiblityAtom = atomWithStorage<VisibilityState>('lt-table-columnVis
 })
 
 export default function Page() {
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
 
   const {

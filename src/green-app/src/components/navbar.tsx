@@ -12,11 +12,11 @@ const Navbar = () => {
         <Link
           href={'/listing-tool'}
           variant="navbar"
-          selected={pathname.startsWith('/listing-tool')}
+          selected={pathname.includes('/listing-tool')}
         >
           Bulk Offerings
         </Link>
-        <Link href={'/listings'} variant="navbar" selected={pathname.startsWith('/listings')}>
+        <Link href={'/listings'} variant="navbar" selected={pathname.includes('/listings')}>
           Bulk Listings
         </Link>
       </nav>

@@ -1,6 +1,4 @@
 'use client'
-import { useListingToolStore } from '@/app/listing-tool/listingToolStore'
-import { useListingsStore } from '@/app/listings/listingsStore'
 import { Button } from '@/components/ui/button'
 import { SUPPORTED_LEAGUES } from '@/lib/constants'
 import { useNotificationStore } from '@/store/notificationStore'
@@ -33,6 +31,8 @@ import {
   DropdownMenuTrigger
 } from './ui/dropdown-menu'
 import { Link } from './ui/link'
+import { useListingsStore } from '@/app/[locale]/listings/listingsStore'
+import { useListingToolStore } from '@/app/[locale]/listing-tool/listingToolStore'
 
 export function ProfileMenu() {
   const router = useRouter()

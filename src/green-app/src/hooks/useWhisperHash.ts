@@ -1,4 +1,4 @@
-import { useListingsStore } from '@/app/listings/listingsStore'
+import { useListingsStore } from '@/app/[locale]/listings/listingsStore'
 import { currentUserAtom } from '@/components/providers'
 import { generateHashFromListing } from '@/lib/hash-utils'
 import { NotificationCreate, listCharacters, postNotifications } from '@/lib/http-util'

@@ -2,8 +2,6 @@
 
 import { PropsWithChildren } from 'react'
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
-import { useListingsStore } from '@/app/listings/listingsStore'
-import { useListingToolStore } from '@/app/listing-tool/listingToolStore'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,6 +11,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from './ui/alert-dialog'
+import { useListingToolStore } from '@/app/[locale]/listing-tool/listingToolStore'
+import { useListingsStore } from '@/app/[locale]/listings/listingsStore'
 
 function fallbackRender({ error, resetErrorBoundary }: FallbackProps) {
   // Call resetErrorBoundary() to reset the error boundary and retry the render.

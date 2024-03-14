@@ -1,4 +1,4 @@
-import { useListingToolStore } from '@/app/listing-tool/listingToolStore'
+import { useListingToolStore } from '@/app/[locale]/listing-tool/listingToolStore'
 import { currentUserAtom } from '@/components/providers'
 import { DEFAULT_VALUATION_INDEX } from '@/lib/constants'
 import { listStash, listValuations } from '@/lib/http-util'
