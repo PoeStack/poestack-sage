@@ -7,7 +7,7 @@ import updateLocale from 'dayjs/plugin/updateLocale'
 dayjs.extend(updateLocale)
 
 export const i18nConfig: Config = {
-  locales: ['en', 'de'],
+  locales: ['en', 'de', 'fr', 'ja', 'ko', 'pt', 'ru', 'zh'],
   defaultLocale: 'en'
 }
 
