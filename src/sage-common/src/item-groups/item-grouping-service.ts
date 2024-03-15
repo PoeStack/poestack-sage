@@ -1,7 +1,7 @@
 import objectHash from 'object-hash'
 import { from, map } from 'rxjs'
-import { PoeItem } from '../ggg/poe-api-models';
-import { ItemUtils } from './item-utils';
+import { PoeItem } from '../ggg/poe-api-models'
+import { ItemUtils } from './item-utils'
 
 export type SageItemGroup = { key: string; tag: string; hash: string; unsafeHashProperties: any }
 
@@ -19,7 +19,7 @@ export class ItemGroupingService {
       new TimelessJewelGroupIdentifier(),
       new TattooGroupIdentifier(),
       new BloodFilledVesselGroupIdentifier(),
-      new UnqiueGearGroupIdentifier(),
+      new UnqiueGearGroupIdentifier(), // TODO: Identify unique maps
       new CorpseGroupIdentifier(),
       new TomeGroupIdentifier(),
       new BeastGroupIdentifier(),
@@ -102,8 +102,8 @@ export class InscribedUltimatumGroupIndentifier implements ItemGroupIdentifier {
         ?.values?.[0]?.[0]
       const reward = item.properties?.filter((prop) => prop.name?.startsWith('Reward'))?.[0]
         ?.values?.[0]?.[0]
-      const sacrifice = item.properties?.filter((prop) =>
-        prop.name?.startsWith('Requires Sacrifice')
+      const sacrifice = item.properties?.filter(
+        (prop) => prop.name?.startsWith('Requires Sacrifice')
       )?.[0]?.values?.[0]?.[0]
 
       const group: InternalGroup = {
@@ -323,67 +323,67 @@ export class UnqiueGearGroupIdentifier implements ItemGroupIdentifier {
 }
 
 export class BeastGroupIdentifier implements ItemGroupIdentifier {
-
   private sellableRedBeasts = [
-    "craicic chimeral",
-    "vivid vulture",
-    "wild hellion alpha",
-    "vivid abberarach",
-    "farric lynx alpha",
-    "farric wolf alpha",
-    "craicic savage crab",
-    "saqawine cobra",
-    "primal rhex matriarch",
-    "vivid watcher",
-    "wild bristle matron",
-    "fenumal plagued arachnid",
-    "wild brambleback",
-    "craicic maw ",
-    "farric frost hellion alpha",
-    "farric tiger alpha",
+    'craicic chimeral',
+    'vivid vulture',
+    'wild hellion alpha',
+    'vivid abberarach',
+    'farric lynx alpha',
+    'farric wolf alpha',
+    'craicic savage crab',
+    'saqawine cobra',
+    'primal rhex matriarch',
+    'vivid watcher',
+    'wild bristle matron',
+    'fenumal plagued arachnid',
+    'wild brambleback',
+    'craicic maw ',
+    'farric frost hellion alpha',
+    'farric tiger alpha'
   ]
 
   private beastMods = [
-    "fertile presence",
-    "aspect of the hellion",
-    "farric presence",
-    "satyr storm",
-    "tiger prey",
-    "spectral swipe",
+    'fertile presence',
+    'aspect of the hellion',
+    'farric presence',
+    'satyr storm',
+    'tiger prey',
+    'spectral swipe',
     "deep one's presence",
-    "churning claws",
-    "winter bloom",
-    "craicic presence",
-    "crushing claws",
-    "hadal dive",
-    "raven caller",
-    "putrid flight",
-    "saqawine presence",
-    "vile hatchery",
-    "spectral stampede",
-    "fenumal presence",
-    "unstable swarm",
-    "blood geyser",
-    "crimson flock",
-    "incendiary mite",
-    "infested earth",
+    'churning claws',
+    'winter bloom',
+    'craicic presence',
+    'crushing claws',
+    'hadal dive',
+    'raven caller',
+    'putrid flight',
+    'saqawine presence',
+    'vile hatchery',
+    'spectral stampede',
+    'fenumal presence',
+    'unstable swarm',
+    'blood geyser',
+    'crimson flock',
+    'incendiary mite',
+    'infested earth'
   ]
 
   group(item: PoeItem): InternalGroup | null {
     if (item?.descrText === 'Right-click to add this to your bestiary.') {
-      const beastModCount = (item.explicitMods ?? []).filter((e) => this.beastMods.includes(e.toLowerCase())).length
+      const beastModCount = (item.explicitMods ?? []).filter((e) =>
+        this.beastMods.includes(e.toLowerCase())
+      ).length
 
-      const baseType = item.baseType?.toLocaleLowerCase() ?? ""
-      if (this.sellableRedBeasts.includes(baseType) || item?.rarity === "Unique") {
+      const baseType = item.baseType?.toLocaleLowerCase() ?? ''
+      if (this.sellableRedBeasts.includes(baseType) || item?.rarity === 'Unique') {
         return {
           key: baseType!!,
           tag: 'beast',
           hashProperties: {}
         }
-      }
-      else {
+      } else {
         return {
-          key: beastModCount === 1 ? "yellow beast" : "red beast",
+          key: beastModCount === 1 ? 'yellow beast' : 'red beast',
           tag: 'beast',
           hashProperties: {}
         }
@@ -486,20 +486,18 @@ export class HeistBlueprintsGroupIdentifier implements ItemGroupIdentifier {
     if (baseType?.includes('blueprint:')) {
       const wingsRevealed = item.properties?.filter((p) => p.name === 'Wings Revealed')?.[0]
         ?.values?.[0]?.[0]
-      const target = item.properties
-        ?.filter((p) => p.name === 'Heist Target: {0}')?.[0]
-        ?.values?.[0]?.[0]?.toLowerCase()
       const ilvl = item['ilvl'] ?? item.itemLevel
       const totalWings = wingsRevealed?.split('/')?.[1]
       const fullyRevealed = wingsRevealed?.split('/')?.[0] === totalWings
-      if (totalWings && ilvl && target) {
+      if (totalWings && ilvl) {
         return {
-          key: target + ' blueprint',
+          key: 'blueprint',
           tag: 'blueprint',
           hashProperties: {
             ilvl: ilvl >= 81 ? '81+' : '<81',
             totalWings: parseInt(totalWings),
-            fullyRevealed
+            fullyRevealed,
+            unmodifiable: !!item.corrupted || !!item.split || !!item.duplicated
           }
         }
       }
@@ -515,7 +513,7 @@ export class HeistContractsGroupIdentifier implements ItemGroupIdentifier {
 
     const baseType = item.baseType?.toLowerCase()
 
-    if (baseType?.includes('contract:') && !item.corrupted && !item.split) {
+    if (baseType?.includes('contract:')) {
       const ilvl = item['ilvl'] ?? item.itemLevel
       const type = item.properties
         ?.filter((p) => p.name === 'Requires {1} (Level {0})')?.[0]
@@ -525,7 +523,8 @@ export class HeistContractsGroupIdentifier implements ItemGroupIdentifier {
           key: type + ' contract',
           tag: 'contract',
           hashProperties: {
-            ilvl: ilvl >= 81 ? '83+' : '<83'
+            ilvl: ilvl >= 81 ? '83+' : '<83',
+            unmodifiable: !!item.corrupted || !!item.split || !!item.duplicated
           }
         }
       }
@@ -560,8 +559,7 @@ export class LogbookGroupIdentifier implements ItemGroupIdentifier {
           tag: 'logbook',
           hashProperties: {
             ilvl: ilvl >= 83 ? '83+' : '<83',
-            corrupted: !!item.corrupted,
-            split: !!item.split
+            unmodifiable: !!item.corrupted || !!item.split || !!item.duplicated
           }
         }
       }
@@ -728,6 +726,7 @@ export class MapGroupIdentifier implements ItemGroupIdentifier {
     'Map is occupied by The Constrictor': "constrictor's map",
     'Map is occupied by The Enslaver': "enslaver's map",
     'Map is occupied by The Eradicator': "eradicator's map"
+    // Missing: Valdos Puzzle Box
   }
 
   group(item: PoeItem): InternalGroup | null {
