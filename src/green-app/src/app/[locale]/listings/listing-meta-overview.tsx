@@ -3,16 +3,17 @@
 import CurrencyDisplay from '@/components/currency-display'
 import { Label } from '@/components/ui/label'
 import { SageListingType } from '@/types/sage-listing-type'
-import { t } from 'i18next'
 import { LayoutListIcon, PackageIcon } from 'lucide-react'
 import Image from 'next/image'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 type ListingMetaOverviewProps = {
   selectedListing: SageListingType
 }
 
 export default function ListingMetaOverview({ selectedListing }: ListingMetaOverviewProps) {
+  const { t } = useTranslation()
   const multiplier = useMemo(() => {
     if (selectedListing.meta.multiplier === -1) return '- '
     return selectedListing.meta.multiplier.toLocaleString(undefined, {
