@@ -87,7 +87,8 @@
     "askingPrice": "Asking Price:",
     "sellMode": "Sell Mode:",
     "seller": "Seller:",
-    "category": "Category:"
+    "category": "Category:",
+    "language": "Language"
   },
   "body": {
     "fallbackRenderInfo": "If you confirm, all data will be reset. To fix the bug, it would help to report it. Thanks!",
@@ -169,5 +170,16 @@
     "MM": "%d months",
     "y": "a year",
     "yy": "%d years"
+  },
+  "locales": {
+    "de": "Deutsch ",
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "ja": "日本語",
+    "ko": "한국어",
+    "pt": "Português",
+    "ru": "Русский",
+    "zh": "中文"
   }
 }

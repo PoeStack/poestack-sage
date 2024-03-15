@@ -1,0 +1,21 @@
+{
+  "success": {
+    "title": {},
+    "description": {}
+  },
+  "error": {
+    "unknown_error": "Algo salió mal: {{message}}",
+    "title": {},
+    "description": {}
+  },
+  "warning": {
+    "title": {},
+    "description": {
+      "tradeRequestNotValid": "Ten cuidado, {{ign}} quiere comprar artículos que no están siendo ofrecidos..."
+    }
+  },
+  "info": {
+    "title": {},
+    "description": {}
+  }
+}

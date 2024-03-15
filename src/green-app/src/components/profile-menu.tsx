@@ -5,8 +5,8 @@ import { useNotificationStore } from '@/store/notificationStore'
 import { useAtom } from 'jotai'
 import { jwtDecode } from 'jwt-decode'
 import { UserRoundIcon } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import NotificationCenter from './notificationCenter/notification-center'
 import { currentUserAtom } from './providers'
@@ -25,19 +25,29 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger
 } from './ui/dropdown-menu'
 import { Link } from './ui/link'
 import { useListingsStore } from '@/app/[locale]/listings/listingsStore'
 import { useListingToolStore } from '@/app/[locale]/listing-tool/listingToolStore'
 import { useTranslation } from 'react-i18next'
+import { i18nConfig } from '../config/i18n.config'
 
 export function ProfileMenu() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const currentLocale = i18n.language
   const router = useRouter()
+  const currentPathname = usePathname()
+
+  const [hydrated, setHydrated] = useState(false)
 
   const [open, setOpen] = useState(false)
 
@@ -74,7 +84,27 @@ export function ProfileMenu() {
     if (jwt) {
       setCurrentUser(jwtDecode(jwt))
     }
+    setHydrated(true)
   }, [setCurrentUser])
+
+  const handleLanguageChange = (newLocale: string) => {
+    // set cookie for next-i18n-router
+    const days = 30
+    const date = new Date()
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000)
+    document.cookie = `NEXT_LOCALE=${newLocale};expires=${date.toUTCString()};path=/`
+
+    // redirect to the new locale path
+    if (currentLocale === i18nConfig.defaultLocale && !i18nConfig.prefixDefault) {
+      router.push('/' + newLocale + currentPathname)
+    } else {
+      router.push(currentPathname.replace(`/${currentLocale}`, `/${newLocale}`))
+    }
+
+    router.refresh()
+  }
+
+  if (!hydrated) return null
 
   if (currentUser?.profile?.name) {
     return (
@@ -149,14 +179,31 @@ export function ProfileMenu() {
                 </DropdownMenuCheckboxItem>
               ))}
               <DropdownMenuSeparator />
-
+              <DropdownMenuGroup>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>{t('label.language')}</DropdownMenuSubTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuSubContent>
+                      {i18nConfig.locales.map((l) => (
+                        <DropdownMenuCheckboxItem
+                          key={l}
+                          checked={l === currentLocale}
+                          onCheckedChange={() => handleLanguageChange(l)}
+                        >
+                          {t(`locales.${l}` as any)}
+                        </DropdownMenuCheckboxItem>
+                      ))}
+                    </DropdownMenuSubContent>
+                  </DropdownMenuPortal>
+                </DropdownMenuSub>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
               <AlertDialogTrigger asChild>
                 <DropdownMenuItem>
                   {t('label.hardReset')}
                   {/* <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut> */}
                 </DropdownMenuItem>
               </AlertDialogTrigger>
-
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {
