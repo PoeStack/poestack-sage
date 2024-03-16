@@ -68,28 +68,40 @@ export const LISTING_CATEGORIES: ListingCategory[] = [
   },
   {
     name: 'heist',
-    tags: ['contract', 'blueprint'],
+    tags: ['contract'],
+    // TODO: Readd blueprints once the backend is fixed
+    // tags: ['contract', 'blueprint'],
     icon: 'https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvSGVpc3QvQ29udHJhY3RJdGVtIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/8262f2ca0e/ContractItem.png',
     filter: (item) => {
-      if (!item.group || item.group.tag !== 'blueprint') return true
-      const ilvl = item?.group?.unsafeHashProperties?.['ilvl']
-      return ilvl === '81+'
+      if (!item.group) return true
+      if (item.group.tag === 'blueprint') {
+        const ilvl = item?.group?.unsafeHashProperties?.['ilvl']
+        return ilvl === '81+'
+      } else if (item.group.tag === 'contract') {
+        const ilvl = item?.group?.unsafeHashProperties?.['ilvl']
+        return ilvl === '83+'
+      }
+      return true
     },
     subCategories: [
       {
         name: 'contract',
         tags: ['contract'],
-        icon: 'https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvSGVpc3QvQ29udHJhY3RJdGVtIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/8262f2ca0e/ContractItem.png'
-      },
-      {
-        name: 'blueprint',
-        tags: ['blueprint'],
-        icon: 'https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvSGVpc3QvQmx1ZXByaW50Tm90QXBwcm92ZWQ4IiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/cc90ce9113/BlueprintNotApproved8.png',
+        icon: 'https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvSGVpc3QvQ29udHJhY3RJdGVtIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/8262f2ca0e/ContractItem.png',
         filter: (item) => {
           const ilvl = item?.group?.unsafeHashProperties?.['ilvl']
-          return ilvl === '81+'
+          return ilvl === '83+'
         }
       }
+      // {
+      //   name: 'blueprint',
+      //   tags: ['blueprint'],
+      //   icon: 'https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvSGVpc3QvQmx1ZXByaW50Tm90QXBwcm92ZWQ4IiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/cc90ce9113/BlueprintNotApproved8.png',
+      //   filter: (item) => {
+      //     const ilvl = item?.group?.unsafeHashProperties?.['ilvl']
+      //     return ilvl === '81+'
+      //   }
+      // }
     ]
   },
   {
