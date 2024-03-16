@@ -20,11 +20,12 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandInput,
+  CommandItem,
   CommandList
 } from '@/components/ui/command'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { LISTING_CATEGORIES } from '@/lib/listing-categories'
+import { LISTING_CATEGORIES, ListingCategory, ListingSubCategory } from '@/lib/listing-categories'
 import { cn } from '@/lib/utils'
 import { SageItemGroupSummary, SageItemGroupSummaryShard } from '@/types/echo-api/item-group'
 import { SageListingItemType } from '@/types/sage-listing-type'
@@ -33,6 +34,7 @@ import { SquarePenIcon, XIcon } from 'lucide-react'
 import Image from 'next/image'
 import { ComboboxItem, ComboboxTrigger } from './ui/combobox'
 import { useTranslation } from 'react-i18next'
+import { Skeleton } from './ui/skeleton'
 
 export type FilterOption = {
   hash: string
@@ -62,6 +64,7 @@ export type ListingFilterGroup = {
 type ListingFilterCardProps = {
   className?: string
   category: string | null
+  subCategory: string | null
   filterGroups: ListingFilterGroup[]
   onFilterGroupsChange: (filterGroups: ListingFilterGroup[]) => void
 }
@@ -69,12 +72,14 @@ type ListingFilterCardProps = {
 const ListingFilterCard = ({
   className,
   category,
+  subCategory,
   filterGroups,
   onFilterGroupsChange
 }: ListingFilterCardProps) => {
   const { t } = useTranslation()
   const [options, setOptions] = useState<FilterOption[]>([])
   const [summaries, setSummaries] = useState<Record<string, SageListingItemType['summary']>>({})
+  const [summariesPending, setSummariesPending] = useState(false)
   const [addGroupPreviewOpen, setAddGroupPreviewOpen] = useState(false)
 
   const updateGroup = useMemo(() => {
@@ -101,8 +106,10 @@ const ListingFilterCard = ({
     <div className={cn('flex flex-col gap-4', className)}>
       <MemorizedSummariesQueries
         category={category}
+        subCategory={subCategory}
         setOptions={setOptions}
         setSummaries={setSummaries}
+        setSummariesPending={setSummariesPending}
       />
       {filterGroups.map((group, i) => (
         <MemorizedListingFilterGroupCard
@@ -110,6 +117,7 @@ const ListingFilterCard = ({
           options={options}
           summaries={summaries}
           group={group}
+          loading={summariesPending}
           onGroupChange={updateGroup[i]}
           removeGroup={removeGroup[i]}
         />
@@ -141,6 +149,7 @@ type ListingFilterGroupCardProps = {
   options: FilterOption[]
   summaries: Record<string, SageListingItemType['summary']>
   group: ListingFilterGroup
+  loading: boolean
   onGroupChange: (f: ListingFilterGroup) => void
   removeGroup: () => void
 }
@@ -149,6 +158,7 @@ const ListingFilterGroupCard = ({
   options,
   summaries,
   group,
+  loading,
   onGroupChange,
   removeGroup
 }: ListingFilterGroupCardProps) => {
@@ -284,6 +294,7 @@ const ListingFilterGroupCard = ({
                 isNextFilter={false}
                 filter={filter}
                 index={i}
+                loading={loading}
                 updateFilter={updateFilter}
                 removeFilter={removeFilter}
               />
@@ -296,6 +307,7 @@ const ListingFilterGroupCard = ({
             isNextFilter={true}
             filter={{ option: null, selected: true, minimumQuantity: undefined }}
             index={group.filters.length}
+            loading={loading}
             updateFilter={updateFilter}
             removeFilter={removeFilter}
           />
@@ -324,6 +336,7 @@ type ListingGroupFilterSelectProps = {
   filter: ListingFilter
   index: number
   isNextFilter: boolean
+  loading: boolean
 }
 
 function ListingGroupFilterSelect({
@@ -334,7 +347,8 @@ function ListingGroupFilterSelect({
   index,
   updateFilter,
   removeFilter,
-  isNextFilter
+  isNextFilter,
+  loading
 }: ListingGroupFilterSelectProps) {
   const { t } = useTranslation()
   const [popoverOpen, setPopoverOpen] = useState(false)
@@ -399,26 +413,41 @@ function ListingGroupFilterSelect({
               <CommandEmpty>{t('label.noResults')}</CommandEmpty>
               <CommandList className="max-h-[calc(var(--radix-popover-content-available-height)-7rem)] overflow-y-auto">
                 <CommandGroup>
-                  {availableOptions.map((c) => (
-                    <ComboboxItem
-                      key={c.hash}
-                      value={c.hash}
-                      onSelect={(hash) => {
-                        const selectedOption = options.find((s) => s.hash === hash)
-                        updateFilter(index, { ...filter, option: selectedOption ?? null })
-                        setPopoverOpen(false)
-                      }}
-                      disableSelection
-                    >
-                      <div className="flex flex-row gap-2 items-center w-full">
-                        <Image className="min-w-5" width={20} height={20} src={c.icon} alt="d" />
-                        <div className="flex flex-1">{c.displayName}</div>
-                        {c.unsafeHashProperties.uses && (
-                          <div>{`${c.unsafeHashProperties.uses} Uses`}</div>
-                        )}
-                      </div>
-                    </ComboboxItem>
-                  ))}
+                  {loading
+                    ? Array.from(Array(5)).map((_, i) => (
+                        <CommandItem key={i}>
+                          <div className="flex items-center space-x-4 w-full">
+                            <Skeleton className="h-7 w-7 shrink-0 rounded-full" />
+                            <Skeleton className="h-4 flex flex-1" />
+                          </div>
+                        </CommandItem>
+                      ))
+                    : availableOptions.map((c) => (
+                        <ComboboxItem
+                          key={c.hash}
+                          value={c.hash}
+                          onSelect={(hash) => {
+                            const selectedOption = options.find((s) => s.hash === hash)
+                            updateFilter(index, { ...filter, option: selectedOption ?? null })
+                            setPopoverOpen(false)
+                          }}
+                          disableSelection
+                        >
+                          <div className="flex flex-row gap-2 items-center w-full">
+                            <Image
+                              className="min-w-5"
+                              width={20}
+                              height={20}
+                              src={c.icon}
+                              alt="d"
+                            />
+                            <div className="flex flex-1">{c.displayName}</div>
+                            {c.unsafeHashProperties.uses && (
+                              <div>{`${c.unsafeHashProperties.uses} Uses`}</div>
+                            )}
+                          </div>
+                        </ComboboxItem>
+                      ))}
                 </CommandGroup>
               </CommandList>
             </Command>
@@ -458,19 +487,44 @@ const MemorizedListingGroupFilterSelect = memo(ListingGroupFilterSelect)
 
 type SummariesQueriesType = {
   category: string | null
+  subCategory: string | null
   setSummaries: Dispatch<SetStateAction<Record<string, SageItemGroupSummary>>>
   setOptions: Dispatch<SetStateAction<FilterOption[]>>
+  setSummariesPending: Dispatch<SetStateAction<boolean>>
 }
 
-const SummariesQueries = ({ category, setSummaries, setOptions }: SummariesQueriesType) => {
-  const categoryTagItem = useMemo(
+const SummariesQueries = ({
+  category,
+  subCategory,
+  setSummaries,
+  setOptions,
+  setSummariesPending
+}: SummariesQueriesType) => {
+  const categoryItem = useMemo(
     () => LISTING_CATEGORIES.find((ca) => ca.name === category),
     [category]
   )
 
-  const { summaries, options, isSummaryPending, isSummaryLoading, isSummaryError } = useQueries({
-    queries: categoryTagItem
-      ? categoryTagItem.tags.map((tag) => {
+  const [selectedCategoryItem, categoriesToExclude] = useMemo(() => {
+    let selectedCategoryItem: ListingCategory | ListingSubCategory | undefined
+    if (subCategory) {
+      selectedCategoryItem = categoryItem?.subCategories.find((c) => c.name === subCategory)
+      if (!selectedCategoryItem) return []
+      if (selectedCategoryItem.restItems) {
+        const categoriesToExclude = categoryItem?.subCategories.filter(
+          (c) => c.name !== selectedCategoryItem?.name
+        )
+        return [selectedCategoryItem, categoriesToExclude]
+      }
+      return [selectedCategoryItem]
+    }
+
+    return [categoryItem]
+  }, [categoryItem, subCategory])
+
+  const { summaries, options, isSummaryPending } = useQueries({
+    queries: selectedCategoryItem
+      ? selectedCategoryItem.tags.map((tag) => {
           return {
             queryKey: ['summaries', tag],
             queryFn: () => listSummaries(tag),
@@ -491,6 +545,14 @@ const SummariesQueries = ({ category, setSummaries, setOptions }: SummariesQueri
           .filter((x) => x.data && !x.isPending)
           .map((x) => x.data!)
         summaryShards.forEach((e) => {
+          const tagCategoriesToExclude = categoriesToExclude?.filter((c) =>
+            c.tags.includes(e.meta.tag)
+          )
+          // Remove entire tag from output
+          if (tagCategoriesToExclude?.some((c) => c.filter === undefined)) {
+            return
+          }
+
           Object.entries(e.summaries).forEach(([key, value]) => {
             if (
               !(
@@ -503,7 +565,20 @@ const SummariesQueries = ({ category, setSummaries, setOptions }: SummariesQueri
                 }) === false
               )
             ) {
-              summaries[key] = e.summaries[key]
+              const summary = e.summaries[key]
+              if (
+                !tagCategoriesToExclude?.some((c) =>
+                  c.filter?.({
+                    group: {
+                      tag: e.meta.tag,
+                      key: summary.key,
+                      unsafeHashProperties: summary.unsafeHashProperties
+                    }
+                  })
+                )
+              ) {
+                summaries[key] = e.summaries[key]
+              }
             }
           })
         })
@@ -534,7 +609,8 @@ const SummariesQueries = ({ category, setSummaries, setOptions }: SummariesQueri
   useEffect(() => {
     setSummaries(summaries)
     setOptions(options)
-  }, [setSummaries, summaries, setOptions, options])
+    setSummariesPending(isSummaryPending)
+  }, [setSummaries, summaries, setOptions, options, isSummaryPending, setSummariesPending])
 
   return null
 }

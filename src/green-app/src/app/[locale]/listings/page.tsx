@@ -81,6 +81,7 @@ export default function ListingsPage() {
                   <ListingFilterCard
                     className=""
                     category={selectedCategory}
+                    subCategory={selectedSubCategory}
                     filterGroups={filterGroups}
                     onFilterGroupsChange={setFilterGroups}
                   />
