@@ -484,28 +484,28 @@ const SummariesQueries = ({ category, setSummaries, setOptions }: SummariesQueri
       const isSummaryError = summaryResults.some((result) => result.isError)
       const isSummaryLoading = summaryResults.some((result) => result.isLoading)
 
-      let summaries: SageItemGroupSummaryShard['summaries'] = {}
+      const summaries: SageItemGroupSummaryShard['summaries'] = {}
       let options: FilterOption[] = []
       if (!(isSummaryError || isSummaryLoading)) {
         const summaryShards = summaryResults
           .filter((x) => x.data && !x.isPending)
           .map((x) => x.data!)
         summaryShards.forEach((e) => {
-          Object.entries(e.summaries).filter(([key, value]) => {
+          Object.entries(e.summaries).forEach(([key, value]) => {
             if (
-              categoryTagItem?.filter?.({
-                group: {
-                  tag: e.meta.tag,
-                  key: value.key,
-                  unsafeHashProperties: value.unsafeHashProperties
-                }
-              }) === false
+              !(
+                selectedCategoryItem?.filter?.({
+                  group: {
+                    tag: e.meta.tag,
+                    key: value.key,
+                    unsafeHashProperties: value.unsafeHashProperties
+                  }
+                }) === false
+              )
             ) {
-              delete e.summaries[key]
+              summaries[key] = e.summaries[key]
             }
           })
-
-          summaries = { ...summaries, ...e.summaries }
         })
 
         options = Object.entries(summaries).map(([key, value]): FilterOption => {
