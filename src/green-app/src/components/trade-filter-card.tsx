@@ -492,7 +492,15 @@ const SummariesQueries = ({ category, setSummaries, setOptions }: SummariesQueri
           .map((x) => x.data!)
         summaryShards.forEach((e) => {
           Object.entries(e.summaries).filter(([key, value]) => {
-            if (categoryTagItem?.filter?.({ group: value }) === false) {
+            if (
+              categoryTagItem?.filter?.({
+                group: {
+                  tag: e.meta.tag,
+                  key: value.key,
+                  unsafeHashProperties: value.unsafeHashProperties
+                }
+              }) === false
+            ) {
               delete e.summaries[key]
             }
           })

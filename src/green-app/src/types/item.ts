@@ -1,4 +1,4 @@
-import { SageItemGroup } from '@/lib/item-grouping-service'
+import { SageItemGroup } from 'sage-common'
 import { IStashTab } from './echo-api/stash'
 import { PoeItem } from './poe-api-models'
 import { SageValuation } from './echo-api/valuation'

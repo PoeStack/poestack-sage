@@ -2,7 +2,7 @@ import { useListingToolStore } from '@/app/[locale]/listing-tool/listingToolStor
 import { currentUserAtom } from '@/components/providers'
 import { DEFAULT_VALUATION_INDEX } from '@/lib/constants'
 import { listStash, listValuations } from '@/lib/http-util'
-import { ItemGroupingService } from '@/lib/item-grouping-service'
+import { ItemGroupingService } from 'sage-common'
 import {
   createCompactTab,
   filterPricedItems,
@@ -96,13 +96,94 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
 
     groupedItemsResults.forEach((result) => {
       result.data?.map((item) => {
-        const currentCategory =
-          item.group && selectedCategory
-            ? LISTING_CATEGORIES.find(
-                (c) => c.name === selectedCategory && c.tags.includes(item.group!.primaryGroup.tag)
-              )
-            : undefined
-        if (item.group && (currentCategory || !selectedCategory)) {
+        let itemInSelectedCategory = false
+
+        if (item.group) {
+          const selectedItemMainCategory = LISTING_CATEGORIES.find(
+            (c) => c.name === selectedCategory && c.tags.includes(item.group!.primaryGroup.tag)
+          )
+          const selectedItemSubCategory = selectedItemMainCategory?.subCategories.find(
+            (c) => c.name === selectedSubCategory
+          )
+
+          itemInSelectedCategory = selectedSubCategory
+            ? !!selectedItemSubCategory?.tags.includes(item.group.primaryGroup.tag)
+            : !!selectedItemMainCategory
+
+          const currentItemCategories = LISTING_CATEGORIES.filter((e) =>
+            e.tags.includes(item.group!.primaryGroup.tag)
+          )
+
+          currentItemCategories.forEach((currentCategory) => {
+            const itemIncluded = currentCategory.filter?.({ group: item.group!.primaryGroup })
+            if (itemIncluded === false) {
+              itemInSelectedCategory = false
+              return
+            }
+            if (!selectableCategories[currentCategory.name]) {
+              selectableCategories[currentCategory.name] = {
+                category: currentCategory,
+                count: 1,
+                subcategories: {}
+              }
+            } else {
+              selectableCategories[currentCategory.name].count += 1
+            }
+
+            const selectableSubcategories =
+              selectableCategories[currentCategory.name].category.subCategories
+
+            const selectableMainSubcategories = selectableSubcategories.filter((c) => !c.restItems)
+            const selectableRestSubcategories = selectableSubcategories.filter((c) => c.restItems)
+
+            const excludeItem = (subCategory: ListingSubCategory) => {
+              if (subCategory === selectedItemSubCategory) {
+                itemInSelectedCategory = false
+              }
+            }
+
+            selectableMainSubcategories.forEach((subCategory) => {
+              if (!item.group) return excludeItem(subCategory)
+              const itemInGroup = subCategory.tags.includes(item.group.primaryGroup.tag)
+              const itemIncluded = subCategory.filter?.({ group: item.group.primaryGroup })
+              if (!((itemIncluded ?? true) && itemInGroup)) return excludeItem(subCategory)
+
+              if (!selectableCategories[currentCategory.name].subcategories[subCategory.name]) {
+                selectableCategories[currentCategory.name].subcategories[subCategory.name] = {
+                  count: 1,
+                  subCategory
+                }
+              } else {
+                selectableCategories[currentCategory.name].subcategories[subCategory.name].count +=
+                  1
+              }
+            })
+            selectableRestSubcategories.forEach((subCategory) => {
+              if (!item.group) return excludeItem(subCategory)
+              const itemInGroup = subCategory.tags.includes(item.group.primaryGroup.tag)
+              const itemIncluded = subCategory.filter?.({ group: item.group.primaryGroup })
+              if (!((itemIncluded ?? true) && itemInGroup)) return excludeItem(subCategory)
+              const itemInOtherCat = selectableMainSubcategories.some((c) => {
+                const itemInGroup = c.tags.includes(item.group!.primaryGroup.tag)
+                const itemIncluded = c.filter?.({ group: item.group!.primaryGroup })
+                return (itemIncluded ?? true) && itemInGroup
+              })
+              if (itemInOtherCat) return excludeItem(subCategory)
+
+              if (!selectableCategories[currentCategory.name].subcategories[subCategory.name]) {
+                selectableCategories[currentCategory.name].subcategories[subCategory.name] = {
+                  count: 1,
+                  subCategory
+                }
+              } else {
+                selectableCategories[currentCategory.name].subcategories[subCategory.name].count +=
+                  1
+              }
+            })
+          })
+        }
+
+        if (item.group && (itemInSelectedCategory || !selectedCategory)) {
           if (categoryTagItem[item.group.primaryGroup.tag]) {
             categoryTagItem[item.group.primaryGroup.tag].push(item)
           } else {
@@ -112,44 +193,10 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
           // No category items; No valuated items; Only stackable items will be shown
           ungroupedItems.push(item)
         }
-
-        if (item.group) {
-          const currentCategory = LISTING_CATEGORIES.find((e) =>
-            e.tags.includes(item.group!.primaryGroup.tag)
-          )
-          if (!currentCategory) return
-
-          if (!selectableCategories[currentCategory.name]) {
-            selectableCategories[currentCategory.name] = {
-              category: currentCategory,
-              count: 1,
-              subcategories: {}
-            }
-          } else {
-            selectableCategories[currentCategory.name].count += 1
-          }
-
-          selectableCategories[currentCategory.name].category.subCategories.forEach(
-            (subCategory) => {
-              if (!item.group) return
-              const itemFound = subCategory.filter?.({ group: item.group.primaryGroup })
-              if (itemFound) {
-                if (!selectableCategories[currentCategory.name].subcategories[subCategory.name]) {
-                  selectableCategories[currentCategory.name].subcategories[subCategory.name] = {
-                    count: 1,
-                    subCategory
-                  }
-                } else {
-                  selectableCategories[currentCategory.name].subcategories[
-                    subCategory.name
-                  ].count += 1
-                }
-              }
-            }
-          )
-        }
       })
     })
+
+    console.log(selectableCategories)
 
     return {
       data: [categoryTagItem, selectableCategories, ungroupedItems],
@@ -162,7 +209,7 @@ const ListingToolHandler = ({ setRefetchAll, setStashListFetching }: ListingTool
           result.refetch()
         })
     }
-  }, [groupedItemsResults, selectedCategory])
+  }, [groupedItemsResults, selectedCategory, selectedSubCategory])
 
   useEffect(() => {
     // Autoselect logic:

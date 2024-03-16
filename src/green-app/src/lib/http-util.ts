@@ -259,7 +259,11 @@ function itemGroupMapInternalToExternal(
       if (parseFn) {
         out.summaries[k]['displayName'] =
           parseFn({
-            group: out.summaries[k]
+            group: {
+              tag: out.meta.tag,
+              key: out.summaries[k].key,
+              unsafeHashProperties: out.summaries[k].unsafeHashProperties
+            }
           }) || ''
       }
     }

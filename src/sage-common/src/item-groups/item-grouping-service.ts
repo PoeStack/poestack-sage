@@ -726,7 +726,6 @@ export class MapGroupIdentifier implements ItemGroupIdentifier {
     'Map is occupied by The Constrictor': "constrictor's map",
     'Map is occupied by The Enslaver': "enslaver's map",
     'Map is occupied by The Eradicator': "eradicator's map"
-    // Missing: Valdos Puzzle Box
   }
 
   group(item: PoeItem): InternalGroup | null {
@@ -1067,6 +1066,7 @@ export class CurrencyGroupIdentifier implements ItemGroupIdentifier {
         'timeless vaal splinter',
         'timeless eternal empire splinter',
         'simulacrum splinter'
+        // Missing: Valdos Puzzle Box
       ])
     },
     invocation: {

@@ -13,7 +13,7 @@ export type SageItemGroupSummary = {
 }
 
 export type SageItemGroupSummaryShard = {
-  meta: { tag?: string }
+  meta: { tag: string }
   summaries: { [itemGroupHashString: string]: SageItemGroupSummary }
 }
 
@@ -25,6 +25,6 @@ export type SageItemGroupSummaryInternal = {
 }
 
 export type SageItemGroupSummaryShardInternal = {
-  meta: { tag?: string }
+  meta: { tag: string }
   summaries: { [itemGroupHashString: string]: SageItemGroupSummaryInternal }
 }

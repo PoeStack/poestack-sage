@@ -3,7 +3,7 @@ import { TableColumnHeader } from '../column-header'
 import { ChangeEvent } from 'react'
 import { round } from '@/lib/currency'
 import DebouncedInput from '../debounced-input'
-import { SageItemGroup } from '@/lib/item-grouping-service'
+import { SageItemGroup } from 'sage-common'
 
 type ColumnProps<T> = Partial<ColumnDef<T>> & {}
 

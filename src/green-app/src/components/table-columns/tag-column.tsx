@@ -1,6 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { TableColumnHeader } from '../column-header'
-import { SageItemGroup } from '@/lib/item-grouping-service'
+import { SageItemGroup } from 'sage-common'
 import { ItemNameCell } from '../table-cells/item-name-cell'
 
 type ColumnProps<T> = Partial<ColumnDef<T>> & {}

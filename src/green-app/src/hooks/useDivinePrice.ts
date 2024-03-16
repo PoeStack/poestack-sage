@@ -1,10 +1,10 @@
 import { currentDivinePriceAtom } from '@/components/providers'
 import { DEFAULT_VALUATION_INDEX } from '@/lib/constants'
 import { listValuations } from '@/lib/http-util'
-import { ItemGroupingService } from '@/lib/item-grouping-service'
 import { useQuery } from '@tanstack/react-query'
 import { useSetAtom } from 'jotai'
 import { useEffect } from 'react'
+import { ItemGroupingService } from 'sage-common'
 
 export const useDivinePrice = (league: string | null) => {
   const setDivinePrice = useSetAtom(currentDivinePriceAtom)

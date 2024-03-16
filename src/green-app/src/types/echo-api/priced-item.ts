@@ -1,6 +1,6 @@
 // Ref networth-plugin
 
-import { SageItemGroup } from '@/lib/item-grouping-service'
+import { SageItemGroup } from 'sage-common'
 import { SageValuation } from './valuation'
 import { PoeItem } from '../poe-api-models'
 import { ICompactTab } from './stash'

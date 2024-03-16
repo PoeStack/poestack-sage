@@ -47,6 +47,7 @@ import ListingToolTable from './listing-tool-table'
 import { listingToolTableEditModeColumns } from './listing-tool-table-columns'
 import { getCategory, useListingToolStore } from './listingToolStore'
 import MyOfferingsCard from './my-offerings-card'
+import { cn } from '@/lib/utils'
 dayjs.extend(utc)
 
 // TODO:
@@ -242,7 +243,7 @@ export default function Page() {
               />
             </div>
           </div>
-          <div className="flex flex-col w-[1024px]">
+          <div className={cn('flex flex-col w-[1024px]', !showRightSidePanel && 'w-[1332px]')}>
             <div className="flex flex-row justify-start items-center pb-2 gap-2">
               <DebouncedInput
                 value={globalFilter ?? ''}
@@ -258,7 +259,7 @@ export default function Page() {
               />
               <div className="w-40">
                 <ListingCategorySelect
-                  control="select"
+                  control="combobox"
                   isSubCategory={false}
                   selectableCategories={selectableCategories}
                   selectableSubCategories={selectableSubCategories}
@@ -270,7 +271,7 @@ export default function Page() {
               </div>
               <div className="w-40">
                 <ListingCategorySelect
-                  control="select"
+                  control="combobox"
                   isSubCategory
                   selectableCategories={selectableCategories}
                   selectableSubCategories={selectableSubCategories}

@@ -229,7 +229,29 @@ export const useListingsStore = create<State & Actions>()(
       setSubCategory: (subCategory) =>
         set((state) => {
           state.subCategory = subCategory
-          state.setCategory(state.category)
+
+          // Set initial key to listingsmap
+          const categoryKey = getCategory(state)
+          if (!state.listingsMap[categoryKey]) {
+            state.listingsMap[categoryKey] = []
+          }
+
+          // Set initial timestamp
+          SUPPORTED_LEAGUES.forEach((league) => {
+            if (state.category && state.fetchTimeStamps[league][state.category] === undefined) {
+              state.fetchTimeStamps[league][state.category] = 0
+            }
+          })
+
+          // Reset filterGroups
+          state.filterGroups = [{ selected: true, mode: 'AND', filters: [] }]
+          state.filteredByGroupListings = {}
+          calculateListings(
+            getListingsByCategory(state),
+            state.selectedItemsMap,
+            state.filterGroups,
+            state.filteredByGroupListings
+          )
         }),
       setMultiplierRange: (range) =>
         set((state) => {

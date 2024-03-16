@@ -1,5 +1,5 @@
-import { SageItemGroup } from '@/lib/item-grouping-service'
 import { ColumnDef } from '@tanstack/react-table'
+import { SageItemGroup } from 'sage-common'
 import { Checkbox } from '../ui/checkbox'
 
 type ColumnProps<T> = Partial<ColumnDef<T>> & {}

@@ -65,7 +65,7 @@ export default function ListingsPage() {
               </div>
               <div className="flex w-full max-w-48">
                 <ListingCategorySelect
-                  control="select"
+                  control="combobox"
                   isSubCategory
                   category={selectedCategory}
                   subCategory={selectedSubCategory}

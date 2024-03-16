@@ -223,10 +223,8 @@ const StashItem = ({ currentUser, league, stash, selected, onSelect }: StashItem
           value={stash.id}
           className={cn(
             "hover:!bg-accent hover:!text-accent-foreground aria-[selected='true']:bg-inherit aria-[selected='true']:text-inherit px-0 py-0",
-            isFetching ? 'cursor-progress' : 'cursor-pointer',
-            isUnsupported && 'cursor-not-allowed'
+            isFetching ? 'cursor-progress' : 'cursor-pointer'
           )}
-          data-selected="true"
           disabled={isFetching || isUnsupported}
           onSelect={() => {
             onSelect(

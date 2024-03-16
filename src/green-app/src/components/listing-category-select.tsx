@@ -156,7 +156,7 @@ export function ListingCategorySelect({
                       alt={selectedCategoryItem.name}
                     />
                   )}
-                  <div className="capitalize truncate">{`${selectedCategory}`}</div>
+                  <div className="truncate">{t(`categories.${selectedCategory}` as any)}</div>
                 </div>
               ) : (
                 <>{isSubCategory ? t('label.selectSubCategoryPh') : t('label.selectCategoryPh')}</>
