@@ -35,6 +35,8 @@ import Image from 'next/image'
 import { ComboboxItem, ComboboxTrigger } from './ui/combobox'
 import { useTranslation } from 'react-i18next'
 import { Skeleton } from './ui/skeleton'
+import { parseUnsafeHashProps } from '@/lib/item-util'
+import { Badge } from './ui/badge'
 
 export type FilterOption = {
   hash: string
@@ -442,9 +444,11 @@ function ListingGroupFilterSelect({
                               alt="d"
                             />
                             <div className="flex flex-1">{c.displayName}</div>
-                            {c.unsafeHashProperties.uses && (
-                              <div>{`${c.unsafeHashProperties.uses} Uses`}</div>
-                            )}
+                            {parseUnsafeHashProps(c.unsafeHashProperties).map(({ name, value }) => (
+                              <Badge key={name} variant="secondary" className="capitalize">
+                                {value}
+                              </Badge>
+                            ))}
                           </div>
                         </ComboboxItem>
                       ))}
@@ -575,7 +579,8 @@ const SummariesQueries = ({
                       unsafeHashProperties: summary.unsafeHashProperties
                     }
                   })
-                )
+                ) &&
+                e.summaries[key].displayName
               ) {
                 summaries[key] = e.summaries[key]
               }

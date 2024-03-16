@@ -50,6 +50,13 @@ export const parseTabNames = (tabs: ICompactTab[]) => {
   return tabs.map((t) => t.name).join(', ')
 }
 
+export const parseUnsafeHashPropsToStr = (unsafeHashProperties: any) => {
+  // Filterfn does not work, when an object is returned
+  return parseUnsafeHashProps(unsafeHashProperties)
+    .map((p) => `${p.name};;${p.value}`)
+    .join(';;;')
+}
+
 export const parseUnsafeHashProps = (unsafeHashProperties: any) => {
   const hashProps = Object.entries(unsafeHashProperties || {})
     .filter(([name, value]) => {
@@ -72,8 +79,8 @@ export const parseUnsafeHashProps = (unsafeHashProperties: any) => {
     })
 
   hashProps.sort((a, b) => a.displayValue.length - b.displayValue.length)
-  // Filterfn does not work, when an object is returned
-  return hashProps.map((p) => `${p.name};;${p.displayValue}`).join(';;;')
+
+  return hashProps.map((p) => ({ name: p.name, value: p.displayValue }))
 }
 
 export const getItemName = (name?: string, typeline?: string) => {

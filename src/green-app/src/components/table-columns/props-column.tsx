@@ -1,4 +1,4 @@
-import { parseUnsafeHashProps } from '@/lib/item-util'
+import { parseUnsafeHashPropsToStr } from '@/lib/item-util'
 import { ColumnDef } from '@tanstack/react-table'
 import { TableColumnHeader } from '../column-header'
 import { SageItemGroup } from 'sage-common'
@@ -19,9 +19,9 @@ export function propsColumn<
     accessorKey: key,
     accessorFn: (val) => {
       if ('group' in val) {
-        return parseUnsafeHashProps(val.group?.unsafeHashProperties)
+        return parseUnsafeHashPropsToStr(val.group?.unsafeHashProperties)
       } else if ('summary' in val) {
-        return parseUnsafeHashProps(val.summary?.unsafeHashProperties)
+        return parseUnsafeHashPropsToStr(val.summary?.unsafeHashProperties)
       }
       return ''
     },
