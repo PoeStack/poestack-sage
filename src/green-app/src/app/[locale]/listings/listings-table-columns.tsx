@@ -207,7 +207,7 @@ export function actionsColumn(): ColumnDef<SageListingType> {
                 const selectedItems = row.original.items.filter(
                   (item) => selectedItemsMap[item.hash]
                 )
-                createWishperAndCopyToClipboard(divinePrice, row.original, selectedItems)
+                createWishperAndCopyToClipboard(divinePrice, row.original, selectedItems, t)
                 setMessageCopied()
               }}
             >

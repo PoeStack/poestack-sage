@@ -239,13 +239,13 @@ const Notifier = () => {
         let description: ReactNode
         if (requestedItems.length === 0) {
           description = t('body.wtbAll', {
-            category: listing.meta.subCategory || listing.meta.category
+            category: t(`categories.${listing.meta.subCategory || listing.meta.category}` as any)
           })
         } else {
           const totalItems = listing.items.reduce((sum, item) => item.selectedQuantity + sum, 0)
           description = t('body.wtbPartial', {
             count: totalItems,
-            category: listing.meta.subCategory || listing.meta.category
+            category: t(`categories.${listing.meta.subCategory || listing.meta.category}` as any)
           })
         }
 

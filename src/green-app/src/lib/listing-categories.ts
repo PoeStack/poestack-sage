@@ -177,7 +177,7 @@ export const LISTING_CATEGORIES: ListingCategory[] = [
     },
     subCategories: [
       {
-        name: 'relic',
+        name: 'uniqueRelic',
         tags: ['relic'],
         icon: 'https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvUmVsaWNzL1JlbGljVW5pcXVlMngyIiwidyI6MiwiaCI6Miwic2NhbGUiOjF9XQ/15bd9eec94/RelicUnique2x2.png'
       },
@@ -440,9 +440,10 @@ export const LISTING_CATEGORIES: ListingCategory[] = [
           )
         }
       }
+      // TODO: Normal maps not(corrupted, mirrored, split)
       // TODO: Unique maps
       // TODO: Blighted maps
-      // TODO: Support normal maps
+      // TODO: Blighted revanged maps
     ]
   }
 ]

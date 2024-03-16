@@ -57,7 +57,6 @@ dayjs.extend(utc)
 // Clear cache on logout
 
 // feat: translations
-// improve: all categories & add subcategories
 // feat: economy page
 // feat: minimum value
 // feat: notification page
@@ -66,6 +65,8 @@ dayjs.extend(utc)
 // Backend errors:
 // Switch back to redis?
 // Listing deletion should not delete the listings immediately
+// Ratelimiter changes?
+// Listing group changes? Forbidden tome; unmodifiable
 
 const showRightSidePanelAtom = atom(false)
 

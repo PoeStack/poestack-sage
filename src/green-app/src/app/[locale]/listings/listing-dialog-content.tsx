@@ -94,7 +94,7 @@ export default function ListingDialogContent() {
             const selectedItems = selectedListing.items.filter(
               (item) => selectedItemsMap[item.hash]
             )
-            createWishperAndCopyToClipboard(divinePrice, selectedListing, selectedItems)
+            createWishperAndCopyToClipboard(divinePrice, selectedListing, selectedItems, t)
             setMessageCopied?.()
           }}
         >
