@@ -29,7 +29,7 @@ export function postListing(listing: SageDatabaseOfferingType) {
 
 export async function listSummaries(tag: string) {
   const resp = await Axios.get(
-    `https://pub-1ac9e2cd6dca4bda9dc260cb6a6f7c90.r2.dev/v10/summaries/${tag}.json`,
+    `https://pub-1ac9e2cd6dca4bda9dc260cb6a6f7c90.r2.dev/v10/summaries/${tag.replaceAll(' ', '_')}.json`,
     {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('doNotShareJwt')}`
@@ -237,7 +237,8 @@ function itemGroupMapInternalToExternal(
   internal: SageItemGroupSummaryShardInternal
 ): SageItemGroupSummaryShard {
   const out: SageItemGroupSummaryShard = {
-    meta: internal.meta,
+    // FIXME: Return the original tag
+    meta: { ...internal.meta, tag: internal.meta.tag.replaceAll('_', ' ') },
     summaries: {}
   }
 

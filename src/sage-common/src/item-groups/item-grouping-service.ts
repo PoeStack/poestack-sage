@@ -125,6 +125,7 @@ export class RelicGroupIdentifier implements ItemGroupIdentifier {
   group(item: PoeItem): InternalGroup | null {
     if (item.typeLine?.endsWith(' Relic') && item.rarity === 'Unique') {
       const group: InternalGroup = {
+        // FIXME: There is one relic without a item.name
         key: item.name!!.toLowerCase(),
         tag: 'relic',
         hashProperties: {}
@@ -226,6 +227,7 @@ export class TomeGroupIdentifier implements ItemGroupIdentifier {
         key: 'forbidden tome',
         tag: 'forbidden tome',
         hashProperties: {
+          // TODO: Define level range < 83 & >= 83
           ilvl: ilvl!!
         }
       }
