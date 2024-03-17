@@ -499,7 +499,7 @@ export class HeistBlueprintsGroupIdentifier implements ItemGroupIdentifier {
             ilvl: ilvl >= 81 ? '81+' : '<81',
             totalWings: parseInt(totalWings),
             fullyRevealed,
-            unmodifiable: !!item.corrupted || !!item.split || !!item.duplicated
+            unmodifiable: !!item.corrupted || !!item.duplicated
           }
         }
       }
@@ -526,7 +526,7 @@ export class HeistContractsGroupIdentifier implements ItemGroupIdentifier {
           tag: 'contract',
           hashProperties: {
             ilvl: ilvl >= 81 ? '83+' : '<83',
-            unmodifiable: !!item.corrupted || !!item.split || !!item.duplicated
+            unmodifiable: !!item.corrupted || !!item.duplicated
           }
         }
       }
@@ -561,7 +561,8 @@ export class LogbookGroupIdentifier implements ItemGroupIdentifier {
           tag: 'logbook',
           hashProperties: {
             ilvl: ilvl >= 83 ? '83+' : '<83',
-            unmodifiable: !!item.corrupted || !!item.split || !!item.duplicated
+            unmodifiable: !!item.corrupted || !!item.duplicated,
+            split: !!item.split
           }
         }
       }
